@@ -1,6 +1,20 @@
-# Blockcore Notes
 
-Notes is an app for your public and personal notes. It is built to support the Nostr and Web5 (coming in the future).
+<p align="center">
+  <p align="center">
+    <img src="src/assets/icons/icon-128x128.png" height="100" alt="Blockcore" />
+  </p>
+  <h1 align="center">
+    About Blockcore Notes
+  </h1>
+  <p align="center">
+    Notes app for decentralized infrastructures (Nostr and Web5)
+  </p>
+  <p align="center">
+      <a href="https://github.com/block-core/blockcore-notes/actions"><img src="https://github.com/block-core/blockcore-notes/workflows/Build%20and%20Publish%20Web%20Site/badge.svg" /></a>
+  </p>
+</p>
+
+Blockcore Notes is an app for your public and personal notes. It is built to support the Nostr and Web5 (coming in the future).
 
 ## Nostr
 
