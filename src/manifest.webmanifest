@@ -2,7 +2,7 @@
   "name": "Blockcore Notes",
   "short_name": "Notes",
   "author": "Blockcore",
-  "theme_color": "#22a893",
+  "theme_color": "#630781",
   "background_color": "#212121",
   "display": "standalone",
   "scope": "./",
