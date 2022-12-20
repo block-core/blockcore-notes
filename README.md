@@ -1,6 +1,22 @@
 # Blockcore Notes
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.4.
+Notes is an app for your public and personal notes. It is built to support the Nostr and Web5 (coming in the future).
+
+## Nostr
+
+The Nostr support for Blockcore Notes relies on using your Nostr identity (public key) and uses a set of relays to publish and store your notes. You can run your own personal relay to always keep a backup of your notes.
+
+## Web5
+
+The Web5 support for Blockcore Notes relies on using your DID and use your DWN (Decentralized Web Nodes) to publish and store your notes. The Blockcore Wallet already supports and hosts an internal DWN within the extension, this can be used to store a local copy of all your notes.
+
+## Connect using extension
+
+Blockcore Notes require that you use an extension that keeps your keys secure and is responsible for performing signing of your notes, and performs encryption and decryption for private notes.
+
+We suggest using [Blockcore Wallet](https://github.com/block-core/blockcore-wallet) ([Chrome Web Store](https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj)), but other options are available such as [nos2x](https://github.com/fiatjaf/nos2x) and [Alby](https://github.com/getAlby/lightning-browser-extension).
+
+# Development
 
 ## Development server
 
