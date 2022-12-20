@@ -4,7 +4,7 @@
     <img src="src/assets/icons/icon-128x128.png" height="100" alt="Blockcore" />
   </p>
   <h1 align="center">
-    About Blockcore Notes
+    Blockcore Notes
   </h1>
   <p align="center">
     Notes app for decentralized infrastructures (Nostr and Web5)

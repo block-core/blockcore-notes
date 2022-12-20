@@ -14,7 +14,7 @@ export class HomeComponent {
     // initial verification that user has extension (this happens on Connect component), then we persist some state
     // and assume extension is approve (when we have pubkey available).
     if (this.appState.authenticated) {
-      this.router.navigateByUrl('/notes');
+      // this.router.navigateByUrl('/notes');
     } else {
       this.router.navigateByUrl('/connect');
     }

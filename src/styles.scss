@@ -50,7 +50,11 @@ body {
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  // overflow: hidden;
+  font-size: 16px;
+  background-color: #212121;
+  color: white;
+  overscroll-behavior-y: contain;
 }
 
 * {
