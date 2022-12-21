@@ -6,6 +6,7 @@ import { HomeComponent } from './home/home.component';
 import { LogoutComponent } from './logout/logout.component';
 import { NotesComponent } from './notes/notes.component';
 import { AuthGuardService as AuthGuard } from './services/auth-guard.service';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,11 @@ const routes: Routes = [
   {
     path: 'help',
     component: HelpComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
     canActivate: [AuthGuard],
   },
   {
