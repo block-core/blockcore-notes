@@ -1,8 +1,8 @@
-<div *ngIf="!appState.authenticated">
+<div *ngIf="!appState.authenticated$">
   <router-outlet></router-outlet>
 </div>
 
-<mat-toolbar class="app-header" *ngIf="appState.authenticated">
+<mat-toolbar class="app-header" *ngIf="appState.authenticated$">
   <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
@@ -21,7 +21,7 @@
   </button>
 </mat-toolbar>
 
-<mat-sidenav-container class="sidenav-container" *ngIf="appState.authenticated">
+<mat-sidenav-container class="sidenav-container" *ngIf="appState.authenticated$">
   <mat-sidenav #drawer class="sidenav print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'">
     <mat-toolbar class="logo-icon">
       <img src="assets/icons/icon-128x128.png" />

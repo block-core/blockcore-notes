@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ReplaySubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -6,7 +7,9 @@ import { Injectable } from '@angular/core';
 export class ApplicationState {
   title = 'Blockcore Notes';
 
-  authenticated = false;
+  // authenticated = false;
+
+  authenticated$: Subject<boolean> = new ReplaySubject();
 
   publicKey?: string;
 

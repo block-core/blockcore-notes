@@ -13,7 +13,8 @@ export class AppComponent {
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
 
   constructor(public appState: ApplicationState, private router: Router) {
-    appState.title = 'Blockcore Notes';
+    // appState.title = 'Blockcore Notes';
+    console.log('APP COMPONENT CONSTRUCTOR!!');
   }
 
   goBack() {

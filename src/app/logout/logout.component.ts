@@ -10,7 +10,7 @@ export class LogoutComponent {
   constructor(private appState: ApplicationState, private router: Router) {}
 
   ngOnInit() {
-    this.appState.authenticated = false;
+    this.appState.authenticated$.next(false);
     this.appState.publicKeyHex = undefined;
     this.appState.publicKey = undefined;
     this.appState.short = undefined;

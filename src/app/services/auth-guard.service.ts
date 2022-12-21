@@ -6,7 +6,7 @@ import { ApplicationState } from './applicationstate.service';
 export class AuthGuardService implements CanActivate {
   constructor(public appState: ApplicationState, public router: Router) {}
   canActivate(): boolean {
-    if (!this.appState.authenticated) {
+    if (!this.appState.authenticated$.observed) {
       this.router.navigate(['connect']);
       return false;
     }

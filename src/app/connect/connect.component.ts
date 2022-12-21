@@ -24,12 +24,14 @@ export class ConnectComponent {
 
     localStorage.setItem('blockcore:notes:nostr:pubkey', publicKey);
 
-    this.appState.authenticated = true;
+    // this.appState.authenticated = true;
+    this.appState.authenticated$.next(true);
     this.router.navigateByUrl('/');
   }
 
   anonymous() {
-    this.appState.authenticated = true;
+    this.appState.authenticated$.next(true);
+    // this.appState.authenticated = true;
     this.router.navigateByUrl('/');
   }
 

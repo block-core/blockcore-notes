@@ -12,9 +12,30 @@ import { NostrEvent } from '../services/interfaces';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
+  publicKey?: string | null;
+
   constructor(public appState: ApplicationState, private validator: EventValidation, private utilities: Utilities, private router: Router) {
-    this.appState.title = 'Blockcore Notes';
-    this.appState.showBackButton = false;
+    // this.appState.title = 'Blockcore Notes';
+    // this.appState.showBackButton = false;
+
+    console.log('NG ON INIT FOR CTOR!!!');
+
+    this.publicKey = localStorage.getItem('blockcore:notes:nostr:pubkey');
+
+    if (this.publicKey) {
+      this.appState.publicKeyHex = this.publicKey;
+      this.appState.publicKey = this.utilities.getNostrIdentifier(this.publicKey);
+      this.appState.short = this.appState.publicKey.substring(0, 10) + '...'; // TODO: Figure out a good way to minimize the public key, "5...5"?
+      this.appState.authenticated$.next(true);
+    }
+  }
+
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit');
+  }
+
+  ngAfterContentInit() {
+    console.log('ngAfterContentInit');
   }
 
   public trackByFn(index: number, item: NostrEvent) {
@@ -54,23 +75,16 @@ export class HomeComponent {
   }
 
   async ngOnInit() {
-    const publicKey = localStorage.getItem('blockcore:notes:nostr:pubkey');
-
-    if (publicKey) {
-      this.appState.publicKeyHex = publicKey;
-      this.appState.publicKey = this.utilities.getNostrIdentifier(publicKey);
-      this.appState.short = this.appState.publicKey.substring(0, 10) + '...'; // TODO: Figure out a good way to minimize the public key, "5...5"?
-      this.appState.authenticated = true;
-    }
+    console.log('NG ON INIT FOR HOME COMPONENT!!!');
 
     // TODO: Initialize of extension can take time, first load we wait longer to see if extension is there. After
     // initial verification that user has extension (this happens on Connect component), then we persist some state
     // and assume extension is approve (when we have pubkey available).
-    if (this.appState.authenticated) {
-      // this.router.navigateByUrl('/notes');
-    } else {
-      this.router.navigateByUrl('/connect');
-    }
+    // if (this.appState.authenticated) {
+    //   // this.router.navigateByUrl('/notes');
+    // } else {
+    //   this.router.navigateByUrl('/connect');
+    // }
 
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit('wss://relay.damus.io');
