@@ -184,6 +184,8 @@ a:hover {
 
 .name {
   grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .date {
