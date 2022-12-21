@@ -19,5 +19,12 @@
 }
 
 .sidenav {
-    width: 200px;
- }
+  width: 200px;
+}
+
+.top-spacer {
+  flex: 1 1 auto;
+  margin-left: 0.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
