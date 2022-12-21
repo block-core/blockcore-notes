@@ -1,0 +1,23 @@
+.logo-icon {
+  justify-content: center;
+  cursor: pointer;
+}
+
+.logo-icon img {
+  height: 60%;
+}
+
+.logo-icon div {
+  font-size: 0.8em;
+  margin-left: 1em;
+}
+
+.sidenav-container {
+  // overflow: auto overlay;
+  height: 100%;
+  overflow: hidden !important;
+}
+
+.sidenav {
+    width: 200px;
+ }

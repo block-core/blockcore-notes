@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ApplicationState } from './services/applicationstate.service';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,11 @@ import { ApplicationState } from './services/applicationstate.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  @ViewChild('drawer') drawer!: MatSidenav;
+
   constructor(public appState: ApplicationState) {
     appState.title = 'Blockcore Notes';
   }
+
+  goBack() {}
 }

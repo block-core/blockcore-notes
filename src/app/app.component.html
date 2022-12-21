@@ -2,10 +2,30 @@
   <router-outlet></router-outlet>
 </div>
 
+<mat-toolbar class="app-header" *ngIf="appState.authenticated">
+  <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span></span>
+
+  <button *ngIf="appState.showBackButton" mat-icon-button (click)="goBack()">
+    <mat-icon class="arrow-back">arrow_back</mat-icon>
+  </button>
+
+  <div class="top-spacer">{{ appState.title }}</div>
+
+  <!-- <app-language-selector></app-language-selector> -->
+
+  <button mat-icon-button >
+    <!-- <mat-icon *ngIf="walletManager.activeAccount">{{ walletManager.activeAccount?.icon }}</mat-icon> -->
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>
+
 <mat-sidenav-container class="sidenav-container" *ngIf="appState.authenticated">
   <mat-sidenav #drawer class="sidenav print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'">
     <mat-toolbar class="logo-icon" [matMenuTriggerFor]="animals">
-      <img src="assets/blockcore-light-small.png" />
+      <img src="assets/icons/icon-128x128.png" />
       <div>Blockcore Notes</div>
     </mat-toolbar>
 
@@ -22,34 +42,34 @@
     </mat-menu>
 
     <mat-nav-list class="menu-options">
-      <a mat-list-item [routerLink]="['/dashboard']" routerLinkActive="active-link">
+      <a mat-list-item [routerLink]="['/']" routerLinkActive="active-link">
         <mat-icon mat-list-icon>dashboard</mat-icon>
         <div mat-line>Dashboard</div>
       </a>
-      
-      <a mat-list-item [routerLink]="['/events']" routerLinkActive="active-link">
+
+      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
         <mat-icon mat-list-icon>category</mat-icon>
         <div mat-line>Events</div>
       </a>
 
-      <a mat-list-item [routerLink]="['/identities']" routerLinkActive="active-link">
+      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
         <mat-icon mat-list-icon>people</mat-icon>
         <div mat-line>Identities</div>
       </a>
 
-      <a mat-list-item [routerLink]="['/servers']" routerLinkActive="active-link">
+      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
         <mat-icon mat-list-icon>computer</mat-icon>
         <div mat-line>Relays</div>
       </a>
 
       <mat-divider></mat-divider>
 
-      <a mat-list-item [routerLink]="['/settings']" routerLinkActive="active-link">
+      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
         <mat-icon mat-list-icon mat-list-icon>settings</mat-icon>
         <div mat-line>Settings</div>
       </a>
 
-      <a mat-list-item [routerLink]="['/help']" routerLinkActive="active-link">
+      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
         <mat-icon mat-list-icon mat-list-icon>help_outline</mat-icon>
         <div mat-line>Help</div>
       </a>
@@ -66,6 +86,10 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+
+  <!-- <mat-sidenav-content>
     <mat-toolbar color="primary" class="print-hidden">
       <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
@@ -80,10 +104,7 @@
 
       <span *ngIf="appState.authenticated">{{ appState.short }}</span>
 
-      <!-- <button *ngFor="let action of appState.actions" (click)="action.click()" mat-icon-button [matTooltip]="action.tooltip">
-        <mat-icon>{{ action.icon }}</mat-icon>
-      </button> -->
     </mat-toolbar>
     <router-outlet></router-outlet>
-  </mat-sidenav-content>
+  </mat-sidenav-content> -->
 </mat-sidenav-container>

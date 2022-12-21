@@ -1,16 +1,28 @@
-<p>Hi, welcome to Blockcore Notes.</p>
+<div class="page">
+  <mat-card>
+    <mat-card-content>
+      <h1>Blockcore Notes</h1>
 
-<p>To get started using notes and accessing the incredible world of nostr, you must first connect your browser extension with this website.</p>
+      <p>Hi, welcome to Blockcore Notes.</p>
 
-<p>Browser extension keeps your account safe and secret from everyone, including us.</p>
+      <p>To get started using notes and accessing the incredible world of Nostr, you must first connect your browser extension with this website.</p>
 
-<p>
-  Whenever we need you to perform a signing of a note, we'll notify your extension of choice to perform the signing. We suggest not approving a permanent permission, but instead accept each individual confirmation. This ensures you never
-  sign anything you did not intend.
-</p>
+      <p>Browser extension keeps your account safe and secret from everyone, including us.</p>
 
-<br />
+      <p>
+        <a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a> (Chrome Web Store)
+      </p>
 
-<div *ngIf="!extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" disabled="disabled">Waiting for extension...</button></div>
+      <p>
+        Whenever we need you to perform a signing of a note, we'll notify your extension of choice to perform the signing. We suggest not approving a permanent permission, but instead accept each individual confirmation. This ensures you
+        never sign anything you did not intend.
+      </p>
 
-<div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary">Connect with extension</button></div>
+      <br />
+
+      <div *ngIf="!extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" disabled="disabled">Waiting for extension...</button></div>
+
+      <div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary">Connect using extension</button></div>
+    </mat-card-content>
+  </mat-card>
+</div>

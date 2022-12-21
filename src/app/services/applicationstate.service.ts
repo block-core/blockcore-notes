@@ -8,7 +8,13 @@ export class ApplicationState {
 
   authenticated = false;
 
+  publicKey?: string;
+
+  publicKeyHex?: string;
+
   goBack = false;
 
-  short = 'npub...';
+  showBackButton = true;
+
+  short = '';
 }
