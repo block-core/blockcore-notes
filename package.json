@@ -29,7 +29,7 @@
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "moment": "^2.29.4",
-    "nostr-tools": "^1.0.0-beta",
+    "nostr-tools": "^1.0.0-beta2",
     "rxjs": "~7.5.0",
     "sanitize-html": "^2.8.1",
     "stream-browserify": "^3.0.0",
