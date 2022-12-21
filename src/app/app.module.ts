@@ -38,9 +38,10 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AgoPipe } from './shared/ago.pipe';
+import { HelpComponent } from './help/help.component';
 
 @NgModule({
-  declarations: [AppComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe],
+  declarations: [AppComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe, HelpComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

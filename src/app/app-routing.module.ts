@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ConnectComponent } from './connect/connect.component';
+import { HelpComponent } from './help/help.component';
 import { HomeComponent } from './home/home.component';
 import { LogoutComponent } from './logout/logout.component';
 import { NotesComponent } from './notes/notes.component';
@@ -13,13 +14,18 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'connect',
+    component: ConnectComponent,
+  },
+  {
     path: 'notes',
     component: NotesComponent,
     canActivate: [AuthGuard],
   },
   {
-    path: 'connect',
-    component: ConnectComponent,
+    path: 'help',
+    component: HelpComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'logout',

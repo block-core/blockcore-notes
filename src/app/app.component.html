@@ -29,32 +29,32 @@
     </mat-toolbar>
 
     <mat-nav-list>
-      <a [routerLink]="['/']" mat-menu-item>
+      <a [routerLink]="['/']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>dashboard</mat-icon>
         <span>Dashboard</span>
       </a>
-      <a [routerLink]="['/']" mat-menu-item>
+      <a [routerLink]="['/']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>category</mat-icon>
         <span>Events</span>
       </a>
-      <a [routerLink]="['/notes']" mat-menu-item>
+      <a [routerLink]="['/notes']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>people</mat-icon>
         <span>Identities</span>
       </a>
-      <a [routerLink]="['/notes']" mat-menu-item>
+      <a [routerLink]="['/notes']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>computer</mat-icon>
         <span>Relays</span>
       </a>
       <mat-divider></mat-divider>
-      <a [routerLink]="['/notes']" mat-menu-item>
+      <a [routerLink]="['/notes']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>settings</mat-icon>
         <span>Settings</span>
       </a>
-      <a [routerLink]="['/notes']" mat-menu-item>
+      <a [routerLink]="['/help']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>help_outline</mat-icon>
         <span>Help</span>
       </a>
-      <a [routerLink]="['/logout']" mat-menu-item>
+      <a [routerLink]="['/logout']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>logout</mat-icon>
         <span>Logout</span>
       </a>
