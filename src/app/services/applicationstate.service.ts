@@ -16,5 +16,5 @@ export class ApplicationState {
 
   showBackButton = false;
 
-  short = '';
+  short?: string;
 }
