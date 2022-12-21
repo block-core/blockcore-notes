@@ -55,3 +55,11 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## Notes
+
+Thoughts and ideas:
+
+- Validate the content of certain limit and don't render at all if content is too long, or at least cut the content and only render X length. Then allow users to manually retrieve
+that exact event upon request.
+

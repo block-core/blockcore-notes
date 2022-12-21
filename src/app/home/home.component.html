@@ -1,1 +1,11 @@
-Notes!
+<mat-list>
+  <div mat-subheader>Latest 100 Events</div>
+  <mat-list-item *ngFor="let event of events; trackBy: trackByFn">
+    <mat-icon matListItemIcon>text_snippet</mat-icon>
+    <!-- <div matListItemTitle>{{ event.pubkey }} - {{ event.kind }}-{{ event.id }}</div> -->
+    <div matListItemTitle>{{ event.content }}</div>
+    <div matListItemLine>{{ event.created_at | ago }}</div>
+  </mat-list-item>
+</mat-list>
+
+<!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->

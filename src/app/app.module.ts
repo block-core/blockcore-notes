@@ -37,9 +37,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AgoPipe } from './shared/ago.pipe';
 
 @NgModule({
-  declarations: [AppComponent, ConnectComponent, LogoutComponent, HomeComponent],
+  declarations: [AppComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe],
   imports: [
     BrowserModule,
     AppRoutingModule,
