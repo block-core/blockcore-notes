@@ -1,8 +1,7 @@
 <div class="page">
   <mat-card>
     <mat-card-content>
-
-      <img class="connect-logo" src="assets/icons/icon-256x256.png">
+      <img class="connect-logo" src="assets/icons/icon-256x256.png" />
 
       <h1 class="marginless">Blockcore Notes</h1>
 
@@ -12,9 +11,7 @@
 
       <p>Browser extension keeps your account safe and secret from everyone, including us.</p>
 
-      <p>
-        <a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a> (Chrome Web Store)
-      </p>
+      <p><a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a> (Chrome Web Store)</p>
 
       <p>
         Whenever we need you to perform a signing of a note, we'll notify your extension of choice to perform the signing. We suggest not approving a permanent permission, but instead accept each individual confirmation. This ensures you
@@ -26,6 +23,10 @@
       <div *ngIf="!extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" disabled="disabled">Waiting for extension...</button></div>
 
       <div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary">Connect using extension</button></div>
+
+      <p>Want to view the app first?</p>
+
+      <div><button (click)="anonymous()" mat-raised-button>Go straight in</button></div>
     </mat-card-content>
   </mat-card>
 </div>

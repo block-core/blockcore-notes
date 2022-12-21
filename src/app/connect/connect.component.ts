@@ -7,7 +7,7 @@ import { Utilities } from '../services/utilities.service';
 @Component({
   selector: 'app-connect',
   templateUrl: './connect.component.html',
-  styleUrls: ['./connect.component.css']
+  styleUrls: ['./connect.component.css'],
 })
 export class ConnectComponent {
   extensionDiscovered = false;
@@ -24,6 +24,11 @@ export class ConnectComponent {
 
     localStorage.setItem('blockcore:notes:nostr:pubkey', publicKey);
 
+    this.appState.authenticated = true;
+    this.router.navigateByUrl('/');
+  }
+
+  anonymous() {
     this.appState.authenticated = true;
     this.router.navigateByUrl('/');
   }
