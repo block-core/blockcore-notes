@@ -1,11 +1,24 @@
-<mat-list>
+<div class="feed-page">
+  <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+    <div class="event-header">
+      <div class="icon"><img src="assets/profile.jpg" /></div>
+      <div class="name">{{ event.pubkey }}</div>
+      <div class="date">{{ event.created_at | ago }}</div>
+    </div>
+    <div class="content">
+      {{ event.content }}
+    </div>
+  </div>
+</div>
+
+<!-- <mat-list>
   <div mat-subheader>Latest 100 Events</div>
   <mat-list-item *ngFor="let event of events; trackBy: trackByFn">
-    <mat-icon matListItemIcon>text_snippet</mat-icon>
-    <!-- <div matListItemTitle>{{ event.pubkey }} - {{ event.kind }}-{{ event.id }}</div> -->
-    <div matListItemTitle>{{ event.content }}</div>
+    <mat-icon matListItemIcon>text_snippet</mat-icon> -->
+<!-- <div matListItemTitle>{{ event.pubkey }} - {{ event.kind }}-{{ event.id }}</div> -->
+<!-- <div matListItemTitle>{{ event.content }}</div>
     <div matListItemLine>{{ event.created_at | ago }}</div>
   </mat-list-item>
-</mat-list>
+</mat-list> -->
 
 <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
