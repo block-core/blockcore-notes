@@ -7,6 +7,7 @@ import { Utilities } from '../services/utilities.service';
 @Component({
   selector: 'app-connect',
   templateUrl: './connect.component.html',
+  styleUrls: ['./connect.component.css']
 })
 export class ConnectComponent {
   extensionDiscovered = false;
