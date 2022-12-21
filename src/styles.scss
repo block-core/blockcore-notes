@@ -77,6 +77,11 @@ $blockcore-notes-theme: mat.define-dark-theme(
 html,
 body {
   height: 100%;
+
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 body {
   // margin: 0;
@@ -107,4 +112,38 @@ a:hover {
 
 .mat-sidenav-content {
   overflow: overlay !important;
+}
+
+.sidenav-container {
+  // overflow: auto overlay;
+  height: 100%;
+  overflow: hidden !important;
+}
+
+.sidenav-left {
+}
+
+.sidenav-right {
+  min-width: 200px;
+}
+
+
+::-webkit-scrollbar {
+  width: 20px;
+  height: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #595b5ca4;
+  // border-radius: 20px;
+  border: 8px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a3a5a7c2;
 }

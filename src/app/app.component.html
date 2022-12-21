@@ -16,73 +16,119 @@
 
   <!-- <app-language-selector></app-language-selector> -->
 
-  <button mat-icon-button >
-    <!-- <mat-icon *ngIf="walletManager.activeAccount">{{ walletManager.activeAccount?.icon }}</mat-icon> -->
+  <button mat-icon-button (click)="draweraccount.toggle()">
     <mat-icon>account_circle</mat-icon>
   </button>
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container" *ngIf="appState.authenticated">
   <mat-sidenav #drawer class="sidenav print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'">
-    <mat-toolbar class="logo-icon" [matMenuTriggerFor]="animals">
+    <mat-toolbar class="logo-icon">
       <img src="assets/icons/icon-128x128.png" />
       <div>Blockcore Notes</div>
     </mat-toolbar>
 
-    <mat-menu #animals="matMenu" hasBackdrop="true" backdropClass="menu-mode-backdrop" overlapTrigger="false">
-      <a mat-menu-item target="_blank" href="https://id.blockcore.net/">Blockcore DID Server</a>
-      <a mat-menu-item target="_blank" href="https://did.is/">did:is DID Method</a>
-      <a mat-menu-item target="_blank" href="https://identity.city-chain.org/">City Chain Identity</a>
-      <a mat-menu-item target="_blank" href="https://registry.city-chain.org/">City Chain Registry</a>
-    </mat-menu>
-
-    <mat-menu #accounts="matMenu">
-      <button mat-menu-item>John</button>
-      <button mat-menu-item>John Doe</button>
-    </mat-menu>
-
-    <mat-nav-list class="menu-options">
-      <a mat-list-item [routerLink]="['/']" routerLinkActive="active-link">
-        <mat-icon mat-list-icon>dashboard</mat-icon>
-        <div mat-line>Dashboard</div>
+    <mat-nav-list>
+      <a [routerLink]="['/notes']" mat-menu-item>
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
       </a>
-
-      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
-        <mat-icon mat-list-icon>category</mat-icon>
-        <div mat-line>Events</div>
+      <a [routerLink]="['/notes']" mat-menu-item>
+        <mat-icon>category</mat-icon>
+        <span>Events</span>
       </a>
-
-      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
-        <mat-icon mat-list-icon>people</mat-icon>
-        <div mat-line>Identities</div>
+      <a [routerLink]="['/notes']" mat-menu-item>
+        <mat-icon>people</mat-icon>
+        <span>Identities</span>
       </a>
-
-      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
-        <mat-icon mat-list-icon>computer</mat-icon>
-        <div mat-line>Relays</div>
+      <a [routerLink]="['/notes']" mat-menu-item>
+        <mat-icon>computer</mat-icon>
+        <span>Relays</span>
       </a>
-
       <mat-divider></mat-divider>
-
-      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
-        <mat-icon mat-list-icon mat-list-icon>settings</mat-icon>
-        <div mat-line>Settings</div>
+      <a [routerLink]="['/notes']" mat-menu-item>
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
       </a>
-
-      <a mat-list-item [routerLink]="['/notes']" routerLinkActive="active-link">
-        <mat-icon mat-list-icon mat-list-icon>help_outline</mat-icon>
-        <div mat-line>Help</div>
+      <a [routerLink]="['/notes']" mat-menu-item>
+        <mat-icon>help_outline</mat-icon>
+        <span>Help</span>
       </a>
-
-      <a mat-list-item routerLink="/logout" routerLinkActive="active-link">
-        <mat-icon mat-list-icon mat-list-icon>logout</mat-icon>
-        <div mat-line>Logout</div>
+      <a [routerLink]="['/logout']" mat-menu-item>
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>
 
-  <mat-sidenav #draweraccount class="sidenav print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'" position="end">
-    <button mat-button (click)="draweraccount.toggle()">Close</button>
+  <mat-sidenav #draweraccount class="sidenav-right print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'" position="end">
+    <div class="account-details">
+      <button class="close-sidenav-icon" mat-icon-button (click)="draweraccount.toggle()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <h2 class="name-field">Name</h2>
+
+      <div class="detail-box">
+        <mat-icon mat-list-icon class="account-icon">account</mat-icon>
+        <div class="detail-network">{{ appState.publicKey }}<br /></div>
+      </div>
+
+      <button mat-button [routerLink]="['account', 'edit']" (click)="draweraccount.toggle()">Edit Profile</button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-menu #accounts="matMenu" hasBackdrop="true" backdropClass="menu-mode-backdrop" overlapTrigger="false">
+      <button mat-menu-item>Wallet 1</button>
+      <button mat-menu-item>Wallet 2</button>
+    </mat-menu>
+
+    <mat-nav-list class="menu-options">
+      <!-- <mat-form-field appearance="fill" *ngIf="appState.hasWallets">
+        <mat-label>Choose Wallet</mat-label>
+        <mat-select (selectionChange)="onAccountChanged($event)" [(value)]="appState.persisted.activeWalletIndex">
+          <mat-option [value]="-1">Create new wallet</mat-option>
+          <mat-option *ngFor="let wallet of appState.persisted.wallets; let i = index" [value]="i">{{wallet.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+
+      <a mat-list-item routerLinkActive="active-link">
+        <mat-icon mat-list-icon>machine</mat-icon>
+        <div mat-line class="name-field">asdfasdf</div>
+        <div mat-line>ddd</div>
+      </a>
+
+      <!-- <a mat-list-item *ngIf="appState.activeWallet && appState.unlocked" [routerLink]="['/wallet/edit']"
+        (click)="drawer.toggle()" routerLinkActive="active-link">
+        <mat-icon mat-list-icon>edit</mat-icon>
+        <div mat-line>Edit Wallet</div>
+      </a>
+
+      <mat-list-item *ngIf="appState.activeWallet && appState.unlocked" (click)="lock()"
+        routerLinkActive="active-link">
+        <mat-icon mat-list-icon>lock</mat-icon>
+        <div mat-line>Lock Wallet</div>
+      </mat-list-item>
+
+      <a mat-list-item *ngIf="appState.activeWallet" [routerLink]="['/wallet/remove']" (click)="drawer.toggle()"
+        routerLinkActive="active-link">
+        <mat-icon mat-list-icon>delete</mat-icon>
+        <div mat-line>Remove Wallet</div>
+      </a> -->
+
+      <mat-divider></mat-divider>
+
+      <!-- <mat-form-field appearance="fill" *ngIf="appState.hasWallets">
+        <mat-label>Choose account</mat-label>
+        <mat-select>
+          <mat-option [value]="-1">Account 0</mat-option>
+          <mat-option *ngFor="let wallet of appState.persisted.wallets; let i = index" [value]="i">{{wallet.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+    </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content>

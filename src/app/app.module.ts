@@ -32,6 +32,11 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { ConnectComponent } from './connect/connect.component';
 import { LogoutComponent } from './logout/logout.component';
 import { HomeComponent } from './home/home.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ReactiveFormsModule } from '@angular/forms';
+import { LayoutModule } from '@angular/cdk/layout';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [AppComponent, ConnectComponent, LogoutComponent, HomeComponent],
@@ -61,6 +66,13 @@ import { HomeComponent } from './home/home.component';
     MatProgressSpinnerModule,
     MatChipsModule,
     MatPaginatorModule,
+
+    ReactiveFormsModule,
+    LayoutModule,
+    MatSnackBarModule,
+    MatProgressBarModule,
+    MatDialogModule,
+
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable

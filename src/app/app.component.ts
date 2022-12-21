@@ -9,6 +9,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 })
 export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
+  @ViewChild('draweraccount') draweraccount!: MatSidenav;
 
   constructor(public appState: ApplicationState) {
     appState.title = 'Blockcore Notes';
