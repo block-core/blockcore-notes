@@ -12,7 +12,10 @@ import { NostrEvent } from '../services/interfaces';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  constructor(public appState: ApplicationState, private validator: EventValidation, private utilities: Utilities, private router: Router) {}
+  constructor(public appState: ApplicationState, private validator: EventValidation, private utilities: Utilities, private router: Router) {
+    this.appState.title = 'Blockcore Notes';
+    this.appState.showBackButton = false;
+  }
 
   public trackByFn(index: number, item: NostrEvent) {
     return item.id;
