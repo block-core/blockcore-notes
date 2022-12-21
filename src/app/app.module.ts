@@ -40,9 +40,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { AgoPipe } from './shared/ago.pipe';
 import { HelpComponent } from './help/help.component';
 import { SettingsComponent } from './settings/settings.component';
+import { ProfileComponent } from './profile/profile.component';
+import { IdentitiesComponent } from './identities/identities.component';
 
 @NgModule({
-  declarations: [AppComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe, HelpComponent, SettingsComponent],
+  declarations: [AppComponent, IdentitiesComponent, ProfileComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe, HelpComponent, SettingsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

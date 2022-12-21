@@ -1,8 +1,8 @@
-<div *ngIf="!appState.authenticated$">
+<div *ngIf="!authenticated">
   <router-outlet></router-outlet>
 </div>
 
-<mat-toolbar class="app-header" *ngIf="appState.authenticated$">
+<mat-toolbar class="app-header" *ngIf="authenticated">
   <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
@@ -21,7 +21,7 @@
   </button>
 </mat-toolbar>
 
-<mat-sidenav-container class="sidenav-container" *ngIf="appState.authenticated$">
+<mat-sidenav-container class="sidenav-container" *ngIf="authenticated">
   <mat-sidenav #drawer class="sidenav print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'">
     <mat-toolbar class="logo-icon">
       <img src="assets/icons/icon-128x128.png" />
@@ -31,13 +31,13 @@
     <mat-nav-list>
       <a [routerLink]="['/']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>dashboard</mat-icon>
-        <span>Dashboard</span>
+        <span>Explore</span>
       </a>
       <a [routerLink]="['/']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>category</mat-icon>
-        <span>Events</span>
+        <span>Circle</span>
       </a>
-      <a [routerLink]="['/notes']" mat-menu-item (click)="drawer.toggle()">
+      <a [routerLink]="['/identities']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>people</mat-icon>
         <span>Identities</span>
       </a>
@@ -71,10 +71,10 @@
 
       <div class="detail-box">
         <mat-icon mat-list-icon class="account-icon">account</mat-icon>
-        <div class="detail-network">{{ appState.short }}<br /></div>
+        <div class="detail-network">{{ authService.authInfo$.getValue().short }}<br /></div>
       </div>
 
-      <button mat-button [routerLink]="['account', 'edit']" (click)="draweraccount.toggle()">Edit Profile</button>
+      <button mat-button routerLink="/profile" (click)="draweraccount.toggle()">Edit Profile</button>
     </div>
 
     <mat-divider></mat-divider>

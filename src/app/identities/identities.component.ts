@@ -8,16 +8,15 @@ import { EventValidation } from '../services/eventvalidation.service';
 import { NostrEvent } from '../services/interfaces';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
+  selector: 'app-identities',
+  templateUrl: './identities.component.html',
 })
-export class HomeComponent {
+export class IdentitiesComponent {
   publicKey?: string | null;
 
   constructor(public appState: ApplicationState, private validator: EventValidation, private utilities: Utilities, private router: Router) {
-    this.appState.title = 'Blockcore Notes';
-    this.appState.showBackButton = false;
-    console.log('NG ON INIT FOR CTOR!!!');
+    // this.appState.title = 'Blockcore Notes';
+    // this.appState.showBackButton = false;
   }
 
   ngAfterViewInit() {
@@ -67,6 +66,7 @@ export class HomeComponent {
   relay: any;
 
   async ngOnInit() {
+    
     if (this.relay) {
       return;
     }

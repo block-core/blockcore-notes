@@ -2,6 +2,7 @@ import { NgZone } from '@angular/core';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
+import { AuthenticationService } from '../services/authentication.service';
 import { Utilities } from '../services/utilities.service';
 
 @Component({
@@ -11,32 +12,34 @@ import { Utilities } from '../services/utilities.service';
 })
 export class ConnectComponent {
   extensionDiscovered = false;
+  timeout: any;
 
-  constructor(private appState: ApplicationState, private utilities: Utilities, private router: Router, private ngZone: NgZone) {}
+  constructor(private appState: ApplicationState, private authService: AuthenticationService, private utilities: Utilities, private router: Router, private ngZone: NgZone) {}
 
   async connect() {
-    const gt = globalThis as any;
+    const userInfo = await this.authService.login();
 
-    const publicKey = await gt.nostr.getPublicKey();
-    this.appState.publicKeyHex = publicKey;
-    this.appState.publicKey = this.utilities.getNostrIdentifier(publicKey);
-    this.appState.short = this.appState.publicKey.substring(0, 10) + '...'; // TODO: Figure out a good way to minimize the public key, "5...5"?
-
-    localStorage.setItem('blockcore:notes:nostr:pubkey', publicKey);
-
-    // this.appState.authenticated = true;
-    this.appState.authenticated$.next(true);
-    this.router.navigateByUrl('/');
+    if (userInfo.authenticated()) {
+      this.router.navigateByUrl('/');
+    }
   }
 
-  anonymous() {
-    this.appState.authenticated$.next(true);
-    // this.appState.authenticated = true;
-    this.router.navigateByUrl('/');
+  async anonymous() {
+    const userInfo = await this.authService.anonymous();
+
+    if (userInfo.authenticated()) {
+      this.router.navigateByUrl('/');
+    }
   }
 
   ngOnInit() {
     this.checkForExtension();
+  }
+
+  ngOnDestroy() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
   }
 
   checkForExtension() {
@@ -47,7 +50,7 @@ export class ConnectComponent {
       return;
     }
 
-    setTimeout(() => {
+    this.timeout = setTimeout(() => {
       this.ngZone.run(() => {
         this.checkForExtension();
       });
