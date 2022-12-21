@@ -9,4 +9,8 @@
   sign anything you did not intend.
 </p>
 
-<button (click)="connect()">Connect using extension</button>
+<br />
+
+<div *ngIf="!extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" disabled="disabled">Waiting for extension...</button></div>
+
+<div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary">Connect with extension</button></div>

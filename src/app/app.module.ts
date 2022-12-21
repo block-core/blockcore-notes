@@ -29,9 +29,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AuthGuardService } from './services/auth-guard.service';
+import { ConnectComponent } from './connect/connect.component';
+import { LogoutComponent } from './logout/logout.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ConnectComponent, LogoutComponent, HomeComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
