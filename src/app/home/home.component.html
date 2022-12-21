@@ -1,3 +1,5 @@
+<mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
+
 <div class="feed-page">
   <div class="events" *ngFor="let event of events; trackBy: trackByFn">
     <div class="event-header">
