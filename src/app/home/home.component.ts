@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent } from '../services/interfaces';
+import { NostrEvent, NostrProfile } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 
@@ -16,7 +16,7 @@ import { SettingsService } from '../services/settings.service';
 export class HomeComponent {
   publicKey?: string | null;
 
-  constructor(public appState: ApplicationState, public settings: SettingsService, public profiles: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
+  constructor(public appState: ApplicationState, private cd: ChangeDetectorRef, public settings: SettingsService, public profiles: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
     this.appState.title = 'Blockcore Notes';
     this.appState.showBackButton = false;
     console.log('NG ON INIT FOR CTOR!!!');
@@ -118,6 +118,8 @@ export class HomeComponent {
 
       // Initial load completed, let's go fetch profiles for those initial events.
       this.fetchProfiles(relay, pubKeys);
+
+      this.cd.detectChanges();
     });
   }
 
@@ -135,7 +137,7 @@ export class HomeComponent {
 
     const profileSub = relay.sub([{ kinds: [0], authors: filteredAuthors }], {});
 
-    profileSub.on('event', (event: any) => {
+    profileSub.on('event', async (event: any) => {
       const valid = this.validator.validateProfile(event);
 
       if (!valid) {
@@ -146,8 +148,39 @@ export class HomeComponent {
 
       const parsed = this.validator.sanitizeProfile(event);
 
+      // const parsed = this.validator.sanitizeProfile(event);
+
+      // const test1 = JSON.parse('{"name":"stat","picture":"https://i.imgur.com/s1scsdH_d.webp?maxwidth=640&amp;shape=thumb&amp;fidelity=medium","about":"senior software engineer at amazon\\n\\n#bitcoin","nip05":"stat@no.str.cr"}');
+      // console.log('WHAT IS WRONG WITH THIS??');
+      // console.log(test1);
+
       try {
-        this.profiles.profiles[parsed.pubkey] = JSON.parse(parsed.content);
+        const parsedProfile = JSON.parse(parsed.content) as NostrProfile;
+
+        this.profiles.profiles[parsed.pubkey] = parsedProfile;
+
+        const displayName = encodeURIComponent(parsedProfile.name);
+
+        const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
+
+        const rawResponse = await fetch(url, {
+          method: 'GET',
+          mode: 'cors',
+        });
+
+        if (rawResponse.status === 200) {
+          const content = await rawResponse.json();
+          const directoryPublicKey = content.names[displayName];
+
+          if (parsed.pubkey === directoryPublicKey) {
+            parsedProfile.verified = true;
+          } else {
+            parsedProfile.verified = false;
+            console.warn('Nickname reuse:', url);
+          }
+        } else {
+          parsedProfile.verified = false;
+        }
       } catch (err) {
         console.warn('This profile was not parsed due to errors:', parsed.content);
       }

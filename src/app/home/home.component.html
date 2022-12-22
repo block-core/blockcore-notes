@@ -5,7 +5,7 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>Options</mat-panel-title>
-        <mat-panel-description>{{activeOptions()}}</mat-panel-description>
+        <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
       </mat-expansion-panel-header>
       <p>
         <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
@@ -21,7 +21,10 @@
         <app-profile-image [publicKey]="event.pubkey"></app-profile-image>
       </div>
       <div class="name"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></div>
-      <div class="date">{{ event.created_at | ago }}</div>
+      <div class="date">
+        {{ event.created_at | ago }}
+        <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
+      </div>
     </div>
     <div class="content">
       {{ event.content }}

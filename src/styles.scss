@@ -98,6 +98,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
+h3 {
+  margin-block-start: 2em;
+}
+
 .page {
   padding: 2em;
 }
@@ -228,4 +232,10 @@ app-root mat-sidenav-container {
 .content {
   padding: 0.2em 0.2em 0.2em 0.2em;
   overflow-wrap: break-word;
+}
+
+.directory-icon {
+  font-size: 10px;
+  height: auto !important;
+  width: auto !important;
 }

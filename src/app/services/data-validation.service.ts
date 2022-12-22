@@ -91,10 +91,13 @@ export class DataValidation {
   }
 
   sanitizeProfile(event: NostrEvent) {
-    const clean = sanitizeHtml(event.content, {
+    let clean = sanitizeHtml(event.content, {
       allowedTags: [],
       allowedAttributes: {},
     });
+
+    // This escapes any linebreaks that might happen to be within the .content or elsewhere, ensuring that the content will parse to JSON.
+    clean = clean.replace('\\r', '\\\\r').replace('\\n', '\\\\n');
 
     event.content = clean;
 

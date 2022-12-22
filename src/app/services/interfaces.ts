@@ -9,4 +9,5 @@ export interface NostrProfile {
   name: string;
   about: string;
   picture: string;
+  verified: boolean;
 }
