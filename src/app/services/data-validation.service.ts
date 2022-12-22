@@ -5,9 +5,12 @@ import * as sanitizeHtml from 'sanitize-html';
 @Injectable({
   providedIn: 'root',
 })
-export class EventValidation {
+export class DataValidation {
   contentLimit = 280;
   tagsLimit = 10;
+
+  profileLimit = 1024;
+  profileTagsLimit = 10;
 
   sanitizeEvent(event: NostrEvent) {
     // Allow only a super restricted set of tags and attributes
@@ -55,6 +58,53 @@ export class EventValidation {
 
     if (event.tags && event.tags.length > this.tagsLimit) {
       event.tags = event.tags.splice(0, this.tagsLimit);
+      event.tagsCut = true;
+    }
+
+    return event;
+  }
+
+  sanitizeProfile(event: NostrEvent) {
+    const clean = sanitizeHtml(event.content, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+
+    event.content = clean;
+
+    return event;
+  }
+
+  /** Returns true if valid, false if not valid. Does not throw error for optimization purposes. */
+  validateProfile(event: NostrEvent) {
+    if (event.pubkey.length < 60 || event.pubkey.length > 70) {
+      return null;
+    }
+
+    if (!event.sig || !event.id) {
+      return null;
+    }
+
+    if (event.sig.length < 100 || event.pubkey.length > 150) {
+      return null;
+    }
+
+    if (event.id.length !== 64) {
+      return null;
+    }
+
+    if (typeof event.kind !== 'number' || typeof event.created_at !== 'number') {
+      return null;
+    }
+
+    // Reduce the content length to reduce system resource usage and improve UI experience.
+    if (event.content.length > this.profileLimit) {
+      event.content = event.content.substring(0, this.profileLimit);
+      event.contentCut = true;
+    }
+
+    if (event.tags && event.tags.length > this.profileTagsLimit) {
+      event.tags = event.tags.splice(0, this.profileTagsLimit);
       event.tagsCut = true;
     }
 

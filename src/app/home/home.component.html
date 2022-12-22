@@ -3,8 +3,10 @@
 <div class="feed-page">
   <div class="events" *ngFor="let event of events; trackBy: trackByFn">
     <div class="event-header">
-      <div class="icon"><img src="assets/profile.jpg" /></div>
-      <div class="name">{{ event.pubkey }}</div>
+      <div class="icon">
+        <app-profile-image [publicKey]="event.pubkey"></app-profile-image>
+      </div>
+      <div class="name"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></div>
       <div class="date">{{ event.created_at | ago }}</div>
     </div>
     <div class="content">

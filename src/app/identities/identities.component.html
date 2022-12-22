@@ -3,6 +3,7 @@
 <div class="feed-page">
   <div class="events" *ngFor="let event of events; trackBy: trackByFn">
     <div class="event-header">
+      <!-- <img ngSrc="hero.jpg" ngSrcset="100w, 200w, 300w" sizes="50vw"> -->
       <div class="icon"><img src="assets/profile.jpg" /></div>
       <div class="name">{{ event.pubkey }}</div>
       <div class="date">{{ event.created_at | ago }}</div>

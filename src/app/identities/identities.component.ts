@@ -4,7 +4,7 @@ import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
 import { relayInit } from 'nostr-tools';
 import * as moment from 'moment';
-import { EventValidation } from '../services/eventvalidation.service';
+import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent } from '../services/interfaces';
 
 @Component({
@@ -14,7 +14,7 @@ import { NostrEvent } from '../services/interfaces';
 export class IdentitiesComponent {
   publicKey?: string | null;
 
-  constructor(public appState: ApplicationState, private validator: EventValidation, private utilities: Utilities, private router: Router) {
+  constructor(public appState: ApplicationState, private validator: DataValidation, private utilities: Utilities, private router: Router) {
     // this.appState.title = 'Blockcore Notes';
     // this.appState.showBackButton = false;
   }
@@ -38,11 +38,11 @@ export class IdentitiesComponent {
     const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
 
     //const sub = relay.sub([{ ids: ['d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027'] }], {  });
-    const sub = relay.sub([{ kinds: [1], since: fiveMinutesAgo }], {});
+    this.sub = relay.sub([{ kinds: [0], since: fiveMinutesAgo }], {});
 
     this.events = [];
 
-    sub.on('event', (event: any) => {
+    this.sub.on('event', (event: any) => {
       // Validate the event:
       const valid = this.validator.validateEvent(event);
 
@@ -64,9 +64,15 @@ export class IdentitiesComponent {
   }
 
   relay: any;
+  sub: any;
+
+  ngOnDestroy() {
+    if (this.sub) {
+      this.sub.unsub();
+    }
+  }
 
   async ngOnInit() {
-    
     if (this.relay) {
       return;
     }
