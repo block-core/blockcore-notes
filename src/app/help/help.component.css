@@ -3,9 +3,14 @@
   max-width: 1024px;
 }
 
-.connect-logo {
-  float: right;
+.logo {
+  float: left;
   margin-bottom: 1em;
-  margin-left: 1em;
+  margin-right: 1em;
   max-width: 128px;
+  margin-left: -8em;
+}
+
+.help {
+    padding-left: 10em;
 }

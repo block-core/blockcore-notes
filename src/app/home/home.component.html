@@ -1,43 +1,49 @@
 <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
 
-<div class="feed-page">
-  <mat-accordion class="options">
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Options</mat-panel-title>
-        <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
-      </mat-expansion-panel-header>
-      <p>
-        <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
-        <mat-checkbox [(ngModel)]="settings.options.hideInvoice" color="primary" (ngModelChange)="optionsUpdated()"> Hide LN invoices </mat-checkbox>
-        <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox>
-      </p>
-    </mat-expansion-panel>
-  </mat-accordion>
+<mat-tab-group>
+  <mat-tab label="My Notes">  </mat-tab>
+  <mat-tab label="Our Notes">  </mat-tab>
+  <mat-tab label="Their Notes">
+    <div class="feed-page">
+      <mat-accordion class="options">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Options</mat-panel-title>
+            <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>
+            <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
+            <mat-checkbox [(ngModel)]="settings.options.hideInvoice" color="primary" (ngModelChange)="optionsUpdated()"> Hide LN invoices </mat-checkbox>
+            <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox>
+          </p>
+        </mat-expansion-panel>
+      </mat-accordion>
 
-  <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-    <div class="event-header">
-      <div class="icon">
-        <app-profile-image [publicKey]="event.pubkey"></app-profile-image>
-      </div>
-      <div class="name"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></div>
-      <div class="date">
-        <span [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
-        <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
+      <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+        <div class="event-header">
+          <div class="icon">
+            <app-profile-image [publicKey]="event.pubkey"></app-profile-image>
+          </div>
+          <div class="name"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></div>
+          <div class="date">
+            <span [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
+            <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
+          </div>
+        </div>
+        <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
       </div>
     </div>
-    <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
-  </div>
-</div>
 
-<!-- <mat-list>
-  <div mat-subheader>Latest 100 Events</div>
-  <mat-list-item *ngFor="let event of events; trackBy: trackByFn">
-    <mat-icon matListItemIcon>text_snippet</mat-icon> -->
-<!-- <div matListItemTitle>{{ event.pubkey }} - {{ event.kind }}-{{ event.id }}</div> -->
-<!-- <div matListItemTitle>{{ event.content }}</div>
-    <div matListItemLine>{{ event.created_at | ago }}</div>
-  </mat-list-item>
-</mat-list> -->
+    <!-- <mat-list>
+      <div mat-subheader>Latest 100 Events</div>
+      <mat-list-item *ngFor="let event of events; trackBy: trackByFn">
+        <mat-icon matListItemIcon>text_snippet</mat-icon> -->
+    <!-- <div matListItemTitle>{{ event.pubkey }} - {{ event.kind }}-{{ event.id }}</div> -->
+    <!-- <div matListItemTitle>{{ event.content }}</div>
+        <div matListItemLine>{{ event.created_at | ago }}</div>
+      </mat-list-item>
+    </mat-list> -->
 
-<!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
+    <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
+  </mat-tab>
+</mat-tab-group>
