@@ -1,0 +1,11 @@
+.mascot {
+  width: 100%;
+  max-width: 1024px;
+}
+
+.connect-logo {
+  float: right;
+  margin-bottom: 1em;
+  margin-left: 1em;
+  max-width: 128px;
+}
