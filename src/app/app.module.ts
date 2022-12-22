@@ -46,9 +46,24 @@ import { ProfileImageComponent } from './shared/profile-image/profile-image.comp
 import { ProfileNameComponent } from './shared/profile-name/profile-name.component';
 import { Bech32Pipe } from './shared/bech32.pipe';
 import { DirectoryIconComponent } from './shared/directory-icon/directory-icon.component';
+import { AppUpdateService } from './services/app-update.service';
 
 @NgModule({
-  declarations: [AppComponent, ProfileImageComponent, DirectoryIconComponent, ProfileNameComponent, IdentitiesComponent, ProfileComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe, Bech32Pipe, HelpComponent, SettingsComponent],
+  declarations: [
+    AppComponent,
+    ProfileImageComponent,
+    DirectoryIconComponent,
+    ProfileNameComponent,
+    IdentitiesComponent,
+    ProfileComponent,
+    ConnectComponent,
+    LogoutComponent,
+    HomeComponent,
+    AgoPipe,
+    Bech32Pipe,
+    HelpComponent,
+    SettingsComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -90,7 +105,7 @@ import { DirectoryIconComponent } from './shared/directory-icon/directory-icon.c
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
-  providers: [AuthGuardService],
+  providers: [AuthGuardService, AppUpdateService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
