@@ -1,6 +1,20 @@
 <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
 
 <div class="feed-page">
+  <mat-accordion class="options">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Options</mat-panel-title>
+        <mat-panel-description>{{activeOptions()}}</mat-panel-description>
+      </mat-expansion-panel-header>
+      <p>
+        <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
+        <mat-checkbox [(ngModel)]="settings.options.hideInvoice" color="primary" (ngModelChange)="optionsUpdated()"> Hide LN invoices </mat-checkbox>
+        <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox>
+      </p>
+    </mat-expansion-panel>
+  </mat-accordion>
+
   <div class="events" *ngFor="let event of events; trackBy: trackByFn">
     <div class="event-header">
       <div class="icon">

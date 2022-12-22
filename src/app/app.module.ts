@@ -33,7 +33,7 @@ import { ConnectComponent } from './connect/connect.component';
 import { LogoutComponent } from './logout/logout.component';
 import { HomeComponent } from './home/home.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -74,6 +74,7 @@ import { ProfileNameComponent } from './shared/profile-name/profile-name.compone
     MatChipsModule,
     MatPaginatorModule,
 
+    FormsModule,
     ReactiveFormsModule,
     LayoutModule,
     MatSnackBarModule,

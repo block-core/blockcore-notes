@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NostrEvent } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,8 @@ export class DataValidation {
 
   profileLimit = 1024;
   profileTagsLimit = 10;
+
+  constructor(private settings: SettingsService) {}
 
   sanitizeEvent(event: NostrEvent) {
     // Allow only a super restricted set of tags and attributes
@@ -26,6 +29,29 @@ export class DataValidation {
     event.content = clean;
 
     return event;
+  }
+
+  filterEvent(event: NostrEvent) {
+    if (this.settings.options.hideInvoice) {
+      if (event.content.indexOf('lnbc') > -1) {
+        return false;
+      }
+    }
+
+    if (this.settings.options.hideSpam) {
+      // If the first 200 characters does not contain a space, just filter it out.
+      if (event.content.substring(0, 200).indexOf(' ') == -1) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  filterEvents(events: NostrEvent[]) {
+    return events.filter((e) => {
+      return this.filterEvent(e);
+    });
   }
 
   /** Returns true if valid, false if not valid. Does not throw error for optimization purposes. */

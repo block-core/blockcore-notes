@@ -10,6 +10,7 @@ export class ProfileImageComponent {
   @Input() publicKey: string = '';
 
   imagePath = '/assets/profile.jpg';
+  tooltip = '';
 
   constructor(private profiles: ProfileService) {}
 
@@ -26,5 +27,6 @@ export class ProfileImageComponent {
     }
 
     this.imagePath = profile.picture;
+    this.tooltip = profile.about;
   }
 }

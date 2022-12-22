@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
+import { SettingsService } from '../services/settings.service';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,7 @@ import { ProfileService } from '../services/profile.service';
 export class HomeComponent {
   publicKey?: string | null;
 
-  constructor(public appState: ApplicationState, public profiles: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
+  constructor(public appState: ApplicationState, public settings: SettingsService, public profiles: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
     this.appState.title = 'Blockcore Notes';
     this.appState.showBackButton = false;
     console.log('NG ON INIT FOR CTOR!!!');
@@ -27,6 +28,30 @@ export class HomeComponent {
 
   ngAfterContentInit() {
     console.log('ngAfterContentInit');
+  }
+
+  optionsUpdated() {
+    // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
+    // Parse existing content.
+    this.events = this.validator.filterEvents(this.events);
+  }
+
+  activeOptions() {
+    let options = '';
+
+    if (this.settings.options.hideSpam) {
+      options += ' Spam: Filtered';
+    } else {
+      options += ' Spam: Allowed';
+    }
+
+    if (this.settings.options.hideInvoice) {
+      options += ' Invoices: Hidden';
+    } else {
+      options += ' Invoices: Displayed';
+    }
+
+    return options;
   }
 
   public trackByFn(index: number, item: NostrEvent) {
@@ -50,6 +75,10 @@ export class HomeComponent {
     this.events = [];
 
     this.sub.on('event', (event: any) => {
+      if (this.settings.options.paused) {
+        return;
+      }
+
       // Validate the event:
       const valid = this.validator.validateEvent(event);
 
@@ -61,6 +90,12 @@ export class HomeComponent {
 
       const parsed = this.validator.sanitizeEvent(event);
       // console.log('we got the event we wanted:', parsed);
+
+      const allowed = this.validator.filterEvent(event);
+
+      if (!allowed) {
+        return;
+      }
 
       // If not initial load, we'll grab the profile.
       if (!this.initialLoad) {
@@ -76,7 +111,6 @@ export class HomeComponent {
 
     this.sub.on('eose', () => {
       this.initialLoad = false;
-      console.log('EOSE!!!');
 
       const pubKeys = this.events.map((e) => {
         return e.pubkey;
@@ -112,11 +146,14 @@ export class HomeComponent {
 
       const parsed = this.validator.sanitizeProfile(event);
 
-      this.profiles.profiles[parsed.pubkey] = JSON.parse(parsed.content);
+      try {
+        this.profiles.profiles[parsed.pubkey] = JSON.parse(parsed.content);
+      } catch (err) {
+        console.warn('This profile was not parsed due to errors:', parsed.content);
+      }
     });
 
     profileSub.on('eose', () => {
-      console.log(this.profiles.profiles);
       profileSub.unsub();
     });
   }

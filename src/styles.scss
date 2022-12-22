@@ -81,7 +81,8 @@ body {
   padding: 0;
   margin: 0;
   height: 100%;
-  overflow: hidden;
+  overflow: overlay !important;
+  // overflow: hidden;
 }
 body {
   // margin: 0;
@@ -102,7 +103,7 @@ body {
 }
 
 .feed-page {
-  padding: 1em;
+  padding: 1em 1em 0 1em;
 }
 
 a {
@@ -115,14 +116,40 @@ a:hover {
 }
 
 .mat-sidenav-content {
+  /* This puts the scrollbar inside the content */
   overflow: overlay !important;
 }
 
-.sidenav-container {
-  // overflow: auto overlay;
-  height: 100%;
-  overflow: hidden !important;
+.mat-drawer-content {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: calc(100% - 100px);
+  overflow: auto;
 }
+
+/* TODO: The toolbar becomes a few pixel smaller with this setup.. debug why. */
+app-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+app-root mat-toolbar {
+  flex-grow: 1;
+}
+
+app-root mat-sidenav-container {
+  flex-grow: 2;
+  flex-basis: auto;
+  height: 100%;
+}
+
+// .sidenav-container {
+//   // overflow: auto overlay;
+//   // height: 100%;
+//   overflow: hidden !important;
+// }
 
 .sidenav-left {
 }
@@ -156,10 +183,14 @@ a:hover {
 }
 
 .events {
+  margin-top: 1em;
   padding: 1em;
   margin-bottom: 1em;
   background-color: #424242;
   border-radius: 10px;
+}
+
+.options {
 }
 
 .event-header {

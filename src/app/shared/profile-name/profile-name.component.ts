@@ -10,12 +10,13 @@ export class ProfileNameComponent {
   @Input() publicKey: string = '';
 
   profileName = '';
+  tooltip = '';
 
   constructor(private profiles: ProfileService) {}
 
   ngOnInit() {
     this.profileName = this.publicKey;
-
+    
     const profile = this.profiles.profiles[this.publicKey] as NostrProfile;
 
     if (!profile || !profile.name) {
@@ -28,6 +29,7 @@ export class ProfileNameComponent {
     }
 
     this.profileName = profile.name;
+    this.tooltip = this.publicKey; // Only set tooltip if we replace the publicKey with it.
   }
 
   //   get class(): string {
