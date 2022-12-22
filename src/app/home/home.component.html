@@ -22,13 +22,11 @@
       </div>
       <div class="name"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></div>
       <div class="date">
-        {{ event.created_at | ago }}
+        <span [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
         <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
       </div>
     </div>
-    <div class="content">
-      {{ event.content }}
-    </div>
+    <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
   </div>
 </div>
 
