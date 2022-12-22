@@ -74,35 +74,23 @@ export class HomeComponent {
 
     this.events = [];
 
-    this.sub.on('event', (event: any) => {
+    this.sub.on('event', (originalEvent: any) => {
       if (this.settings.options.paused) {
         return;
       }
 
-      // Validate the event:
-      const valid = this.validator.validateEvent(event);
+      const event = this.processEvent(originalEvent);
 
-      if (!valid) {
-        debugger;
-        console.log('INVALID EVENT!');
-        return;
-      }
-
-      const parsed = this.validator.sanitizeEvent(event);
-      // console.log('we got the event we wanted:', parsed);
-
-      const allowed = this.validator.filterEvent(event);
-
-      if (!allowed) {
+      if (!event) {
         return;
       }
 
       // If not initial load, we'll grab the profile.
       if (!this.initialLoad) {
-        this.fetchProfiles(relay, [parsed.pubkey]);
+        this.fetchProfiles(relay, [event.pubkey]);
       }
 
-      this.events.unshift(parsed);
+      this.events.unshift(event);
 
       if (this.events.length > 100) {
         this.events.length = 80;
@@ -123,6 +111,26 @@ export class HomeComponent {
     });
   }
 
+  processEvent(originalEvent: NostrEvent): NostrEvent | null {
+    // Validate the event:
+    let event = this.validator.validateEvent(originalEvent);
+
+    if (!event) {
+      debugger;
+      console.log('INVALID EVENT!');
+      return null;
+    }
+
+    event = this.validator.sanitizeEvent(event);
+    event = this.validator.filterEvent(event);
+
+    if (!event) {
+      return null;
+    }
+
+    return event;
+  }
+
   fetchProfiles(relay: Relay, authors: string[]) {
     const filteredAuthors = authors.filter((a) => {
       return this.profiles.profiles[a] == null;
@@ -137,29 +145,24 @@ export class HomeComponent {
 
     const profileSub = relay.sub([{ kinds: [0], authors: filteredAuthors }], {});
 
-    profileSub.on('event', async (event: any) => {
-      const valid = this.validator.validateProfile(event);
+    profileSub.on('event', async (originalEvent: NostrEvent) => {
+      const event = this.processEvent(originalEvent);
 
-      if (!valid) {
-        debugger;
-        console.log('INVALID EVENT!');
+      if (!event) {
         return;
       }
 
-      const parsed = this.validator.sanitizeProfile(event);
-
       // const parsed = this.validator.sanitizeProfile(event);
-
       // const test1 = JSON.parse('{"name":"stat","picture":"https://i.imgur.com/s1scsdH_d.webp?maxwidth=640&amp;shape=thumb&amp;fidelity=medium","about":"senior software engineer at amazon\\n\\n#bitcoin","nip05":"stat@no.str.cr"}');
       // console.log('WHAT IS WRONG WITH THIS??');
       // console.log(test1);
 
       try {
-        const parsedProfile = JSON.parse(parsed.content) as NostrProfile;
+        const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfile);
 
-        this.profiles.profiles[parsed.pubkey] = parsedProfile;
+        this.profiles.profiles[event.pubkey] = profile;
 
-        const displayName = encodeURIComponent(parsedProfile.name);
+        const displayName = encodeURIComponent(profile.name);
 
         const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
 
@@ -172,17 +175,17 @@ export class HomeComponent {
           const content = await rawResponse.json();
           const directoryPublicKey = content.names[displayName];
 
-          if (parsed.pubkey === directoryPublicKey) {
-            parsedProfile.verified = true;
+          if (event.pubkey === directoryPublicKey) {
+            profile.verified = true;
           } else {
-            parsedProfile.verified = false;
+            profile.verified = false;
             console.warn('Nickname reuse:', url);
           }
         } else {
-          parsedProfile.verified = false;
+          profile.verified = false;
         }
       } catch (err) {
-        console.warn('This profile was not parsed due to errors:', parsed.content);
+        console.warn('This profile event was not parsed due to errors:', event);
       }
     });
 

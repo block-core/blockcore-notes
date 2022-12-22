@@ -1,9 +1,7 @@
 <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
 
 <mat-tab-group>
-  <mat-tab label="My Notes">  </mat-tab>
-  <mat-tab label="Our Notes">  </mat-tab>
-  <mat-tab label="Their Notes">
+  <mat-tab label="Feed">
     <div class="feed-page">
       <mat-accordion class="options">
         <mat-expansion-panel>
@@ -12,6 +10,7 @@
             <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
           </mat-expansion-panel-header>
           <p>
+            <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Only </mat-checkbox>
             <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
             <mat-checkbox [(ngModel)]="settings.options.hideInvoice" color="primary" (ngModelChange)="optionsUpdated()"> Hide LN invoices </mat-checkbox>
             <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox>
@@ -26,7 +25,7 @@
           </div>
           <div class="name"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></div>
           <div class="date">
-            <span [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
+            <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
             <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
           </div>
         </div>
@@ -46,4 +45,18 @@
 
     <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
+  <mat-tab label="Channels">
+    <div class="page">
+      <h2>To be implemented</h2>
+
+      <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
+    </div>
+  </mat-tab>
+  <mat-tab label="Notes">
+    <div class="page">
+      <h2>To be implemented</h2>
+
+      <p>Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.</p>
+    </div></mat-tab
+  >
 </mat-tab-group>

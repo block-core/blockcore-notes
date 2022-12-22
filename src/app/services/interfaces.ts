@@ -10,4 +10,5 @@ export interface NostrProfile {
   about: string;
   picture: string;
   verified: boolean;
+  nip05: string;
 }

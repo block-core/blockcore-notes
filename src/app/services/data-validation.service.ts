@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent } from './interfaces';
+import { NostrEvent, NostrProfile } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
 
@@ -7,7 +7,7 @@ import { SettingsService } from './settings.service';
   providedIn: 'root',
 })
 export class DataValidation {
-  contentLimit = 280;
+  contentLimit = 560;
   tagsLimit = 10;
 
   profileLimit = 1024;
@@ -17,7 +17,7 @@ export class DataValidation {
 
   sanitizeEvent(event: NostrEvent) {
     // Allow only a super restricted set of tags and attributes
-    const clean = sanitizeHtml(event.content, {
+    let clean = sanitizeHtml(event.content, {
       allowedTags: ['b', 'i', 'em', 'strong', 'a', 'img'],
       allowedAttributes: {
         a: ['href'],
@@ -25,6 +25,12 @@ export class DataValidation {
       },
       allowedIframeHostnames: ['www.youtube.com'],
     });
+
+    // Some JSON content returned have new lines that breaks parsing.
+    clean = this.escapeNewLineChars(clean);
+
+    // This escapes any linebreaks that might happen to be within the .content or elsewhere, ensuring that the content will parse to JSON.
+    clean = clean.replace('\\r', '\\\\r').replace('\\n', '\\\\n');
 
     event.content = clean;
 
@@ -34,18 +40,18 @@ export class DataValidation {
   filterEvent(event: NostrEvent) {
     if (this.settings.options.hideInvoice) {
       if (event.content.indexOf('lnbc') > -1) {
-        return false;
+        return null;
       }
     }
 
     if (this.settings.options.hideSpam) {
       // If the first 200 characters does not contain a space, just filter it out.
       if (event.content.substring(0, 200).indexOf(' ') == -1) {
-        return false;
+        return null;
       }
     }
 
-    return true;
+    return event;
   }
 
   filterEvents(events: NostrEvent[]) {
@@ -90,53 +96,43 @@ export class DataValidation {
     return event;
   }
 
-  sanitizeProfile(event: NostrEvent) {
-    let clean = sanitizeHtml(event.content, {
+  escapeNewLineChars(valueToEscape: string) {
+    if (valueToEscape != null && valueToEscape != '') {
+      return valueToEscape.replace(/\n/g, ' ');
+    } else {
+      return valueToEscape;
+    }
+  }
+
+  sanitizeProfile(profile: NostrProfile) {
+    let clean = sanitizeHtml(profile.about, {
       allowedTags: [],
       allowedAttributes: {},
     });
 
-    // This escapes any linebreaks that might happen to be within the .content or elsewhere, ensuring that the content will parse to JSON.
-    clean = clean.replace('\\r', '\\\\r').replace('\\n', '\\\\n');
+    profile.about = clean;
 
-    event.content = clean;
-
-    return event;
+    return profile;
   }
 
   /** Returns true if valid, false if not valid. Does not throw error for optimization purposes. */
-  validateProfile(event: NostrEvent) {
-    if (event.pubkey.length < 60 || event.pubkey.length > 70) {
+  validateProfile(profile: NostrProfile) {
+    if (profile.picture.length > 2000) {
       return null;
     }
 
-    if (!event.sig || !event.id) {
+    if (profile.name.length > 280) {
       return null;
     }
 
-    if (event.sig.length < 100 || event.pubkey.length > 150) {
+    if (profile.about.length > 280) {
       return null;
     }
 
-    if (event.id.length !== 64) {
+    if (profile.nip05.length > 2000) {
       return null;
     }
 
-    if (typeof event.kind !== 'number' || typeof event.created_at !== 'number') {
-      return null;
-    }
-
-    // Reduce the content length to reduce system resource usage and improve UI experience.
-    if (event.content.length > this.profileLimit) {
-      event.content = event.content.substring(0, this.profileLimit);
-      event.contentCut = true;
-    }
-
-    if (event.tags && event.tags.length > this.profileTagsLimit) {
-      event.tags = event.tags.splice(0, this.profileTagsLimit);
-      event.tagsCut = true;
-    }
-
-    return event;
+    return profile;
   }
 }
