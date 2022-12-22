@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
+import { Utilities } from 'src/app/services/utilities.service';
 import { NostrProfile } from '../../services/interfaces';
 
 @Component({
@@ -12,11 +13,11 @@ export class ProfileNameComponent {
   profileName = '';
   tooltip = '';
 
-  constructor(private profiles: ProfileService) {}
+  constructor(private profiles: ProfileService, private utilities: Utilities) {}
 
   ngOnInit() {
-    this.profileName = this.publicKey;
-    
+    this.profileName = this.utilities.getNostrIdentifier(this.publicKey);
+
     const profile = this.profiles.profiles[this.publicKey] as NostrProfile;
 
     if (!profile || !profile.name) {
@@ -28,8 +29,8 @@ export class ProfileNameComponent {
       return;
     }
 
+    this.tooltip = this.profileName; // Only set tooltip if we replace the publicKey with it.
     this.profileName = profile.name;
-    this.tooltip = this.publicKey; // Only set tooltip if we replace the publicKey with it.
   }
 
   //   get class(): string {

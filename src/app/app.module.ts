@@ -44,9 +44,10 @@ import { ProfileComponent } from './profile/profile.component';
 import { IdentitiesComponent } from './identities/identities.component';
 import { ProfileImageComponent } from './shared/profile-image/profile-image.component';
 import { ProfileNameComponent } from './shared/profile-name/profile-name.component';
+import { Bech32Pipe } from './shared/bech32.pipe';
 
 @NgModule({
-  declarations: [AppComponent, ProfileImageComponent, ProfileNameComponent, IdentitiesComponent, ProfileComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe, HelpComponent, SettingsComponent],
+  declarations: [AppComponent, ProfileImageComponent, ProfileNameComponent, IdentitiesComponent, ProfileComponent, ConnectComponent, LogoutComponent, HomeComponent, AgoPipe, Bech32Pipe, HelpComponent, SettingsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

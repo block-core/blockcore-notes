@@ -8,3 +8,4 @@ export class AgoPipe implements PipeTransform {
     return date.fromNow();
   }
 }
+
