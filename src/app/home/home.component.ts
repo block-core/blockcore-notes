@@ -131,6 +131,12 @@ export class HomeComponent {
     return event;
   }
 
+  details = false;
+
+  toggleDetails() {
+    this.details = !this.details;
+  }
+
   fetchProfiles(relay: Relay, authors: string[]) {
     const filteredAuthors = authors.filter((a) => {
       return this.profiles.profiles[a] == null;

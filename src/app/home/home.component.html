@@ -65,11 +65,16 @@
         </div>
         <div class="content">
           {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
-          <br />
-          <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>
+          <div *ngIf="details">
+            <br />
+            <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>
+          </div>
         </div>
-        <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
-          <mat-icon class="action-button-icon">more_vert</mat-icon>
+        <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+          <mat-icon class="expand-button-icon">expand_more</mat-icon>
+        </button>
+        <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+          <mat-icon class="expand-button-icon">expand_less</mat-icon>
         </button>
       </div>
     </div>

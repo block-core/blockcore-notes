@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from './services/authentication.service';
 import { AppUpdateService } from './services/app-update.service';
 import { CheckForUpdateService } from './services/check-for-update.service';
+import { StorageService } from './services/storage.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent {
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
   authenticated = false;
 
-  constructor(public appState: ApplicationState, public authService: AuthenticationService, private router: Router, public appUpdateService: AppUpdateService, public appUpdateCheckService: CheckForUpdateService) {
+  constructor(public appState: ApplicationState, private storage: StorageService, public authService: AuthenticationService, private router: Router, public appUpdateService: AppUpdateService, public appUpdateCheckService: CheckForUpdateService) {
     appState.title = 'Blockcore Notes';
 
     this.authService.authInfo$.subscribe((auth) => {
@@ -26,5 +27,13 @@ export class AppComponent {
 
   goBack() {
     this.router.navigateByUrl('/');
+  }
+
+  async ngOnInit() {
+    // await this.storage.open();
+    // await this.storage.initialize();
+
+    // const testdata = await this.storage.get('123');
+    // console.log(testdata);
   }
 }
