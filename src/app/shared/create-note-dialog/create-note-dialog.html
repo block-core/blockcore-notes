@@ -1,8 +1,8 @@
 <h1 mat-dialog-title>Enter Your Note</h1>
-<div mat-dialog-content>
+<div mat-dialog-content class="mat-dialog-content">
   <mat-form-field appearance="fill" class="input-full-width" >
     <mat-label>Note</mat-label>
-    <input matInput type="text" [(ngModel)]="data.note" />
+    <input matInput type="text" autocomplete="off" [(ngModel)]="data.note" />
   </mat-form-field>
 </div>
 <div mat-dialog-actions class="mat-dialog-actions" align="end">

@@ -15,6 +15,14 @@
     </mat-expansion-panel>
   </mat-accordion>
 
+  <p class="search">
+    <mat-form-field appearance="fill" class="input-full-width">
+      <mat-label>Search in Identitis</mat-label>
+      <input matInput placeholder="name, display name, about or pubkey" type="search" (keyup.enter)="search()" autocomplete="off" [(ngModel)]="searchTerm">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </p>
+
   <div class="centered" style="width: 100%" *ngIf="loading">
     <br />
     <mat-spinner class="loading"></mat-spinner>
