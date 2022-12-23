@@ -17,7 +17,14 @@ export class AppComponent {
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
   authenticated = false;
 
-  constructor(public appState: ApplicationState, private storage: StorageService, public authService: AuthenticationService, private router: Router, public appUpdateService: AppUpdateService, public appUpdateCheckService: CheckForUpdateService) {
+  constructor(
+    public appState: ApplicationState,
+    private storage: StorageService,
+    public authService: AuthenticationService,
+    private router: Router,
+    public appUpdateService: AppUpdateService,
+    public appUpdateCheckService: CheckForUpdateService
+  ) {
     appState.title = 'Blockcore Notes';
 
     this.authService.authInfo$.subscribe((auth) => {
@@ -30,10 +37,15 @@ export class AppComponent {
   }
 
   async ngOnInit() {
-    // await this.storage.open();
-    // await this.storage.initialize();
+    await this.storage.open();
+    await this.storage.initialize();
 
     // const testdata = await this.storage.get('123');
+    // console.log(testdata);
+
+    // await this.storage.putProfile('123', { about: 'Hi', name: 'Name', picture: '' });
+
+    // const testdata = await this.storage.get('123', 'profile');
     // console.log(testdata);
   }
 }

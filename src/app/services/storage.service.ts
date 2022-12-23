@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Level } from 'level';
-import { NostrEvent } from './interfaces';
+import { NostrEvent, NostrProfile } from './interfaces';
 import { sleep } from './utilities.service';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class StorageService {
   sequence = 0;
 
   constructor() {
-    this.db = new Level<string, NostrEvent | any>('./blockcore-notes', { keyEncoding: 'utf8', valueEncoding: 'json' });
+    this.db = new Level<string, NostrEvent | any>('blockcore-notes', { keyEncoding: 'utf8', valueEncoding: 'json' });
   }
 
   async initialize() {
@@ -25,6 +25,12 @@ export class StorageService {
     //   this.sequence = 0;
     // }
     // console.log('Current sequence: ', this.sequence);
+  }
+
+  /** Profiles are upserts, we replace the existing profile and only keep latest. */
+  async putProfile(id: string, document: NostrProfile | any) {
+    const table = this.db.sublevel<string, NostrProfile>('profile', { keyEncoding: 'utf8', valueEncoding: 'json' });
+    await table.put(id, document);
   }
 
   async open() {
