@@ -38,7 +38,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AgoPipe } from './shared/ago.pipe';
-import { HelpComponent } from './help/help.component';
+import { AboutComponent } from './about/about.component';
 import { SettingsComponent } from './settings/settings.component';
 import { ProfileComponent } from './profile/profile.component';
 import { IdentitiesComponent } from './identities/identities.component';
@@ -63,7 +63,7 @@ import { UserComponent } from './user/user.component';
     HomeComponent,
     AgoPipe,
     Bech32Pipe,
-    HelpComponent,
+    AboutComponent,
     SettingsComponent,
     UserComponent
   ],

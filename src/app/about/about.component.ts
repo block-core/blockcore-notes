@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { ApplicationState } from '../services/applicationstate.service';
 
 @Component({
-  selector: 'app-help',
-  templateUrl: './help.component.html',
-  styleUrls: ['./help.component.css'],
+  selector: 'app-about',
+  templateUrl: './about.component.html',
+  styleUrls: ['./about.component.css'],
 })
-export class HelpComponent {
+export class AboutComponent {
   constructor(private appState: ApplicationState) {
     appState.showBackButton = true;
-    appState.title = 'Help';
+    appState.title = 'About';
   }
 }

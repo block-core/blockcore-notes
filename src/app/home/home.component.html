@@ -59,7 +59,7 @@
             <a [routerLink]="['/user', event.pubkey]"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></a>
           </div>
           <div class="date">
-            <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
+            <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span>
             <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
           </div>
         </div>
