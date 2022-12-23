@@ -5,96 +5,105 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent } from '../services/interfaces';
+import { NostrEvent, NostrProfileDocument } from '../services/interfaces';
+import { ProfileService } from '../services/profile.service';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-identities',
   templateUrl: './identities.component.html',
+  styleUrls: ['./identities.component.css'],
 })
 export class IdentitiesComponent {
   publicKey?: string | null;
+  loading = false;
 
-  constructor(public appState: ApplicationState, private validator: DataValidation, private utilities: Utilities, private router: Router) {
-    // this.appState.title = 'Blockcore Notes';
-    // this.appState.showBackButton = false;
+  constructor(public appState: ApplicationState, private storage: StorageService, private profile: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
+    this.appState.title = 'Identities';
+    this.appState.showBackButton = false;
   }
 
-  ngAfterViewInit() {
-    console.log('ngAfterViewInit');
+  async clearIdentities() {
+    await this.profile.wipe();
+    this.profiles = [];
+    await this.load();
   }
 
-  ngAfterContentInit() {
-    console.log('ngAfterContentInit');
-  }
+  // public trackByFn(index: number, item: NostrProfileDocument) {
+  //   return item.id;
+  // }
 
-  public trackByFn(index: number, item: NostrEvent) {
-    return item.id;
-  }
+  // events: NostrEvent[] = [];
 
-  events: NostrEvent[] = [];
+  // onConnected(relay: any) {
+  //   const hourAgo = moment().subtract(1, 'hours').unix();
+  //   const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
 
-  onConnected(relay: any) {
-    const hourAgo = moment().subtract(1, 'hours').unix();
-    const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
+  //   //const sub = relay.sub([{ ids: ['d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027'] }], {  });
+  //   this.sub = relay.sub([{ kinds: [0], since: fiveMinutesAgo }], {});
 
-    //const sub = relay.sub([{ ids: ['d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027'] }], {  });
-    this.sub = relay.sub([{ kinds: [0], since: fiveMinutesAgo }], {});
+  //   this.events = [];
 
-    this.events = [];
+  //   this.sub.on('event', (event: any) => {
+  //     // Validate the event:
+  //     const valid = this.validator.validateEvent(event);
 
-    this.sub.on('event', (event: any) => {
-      // Validate the event:
-      const valid = this.validator.validateEvent(event);
+  //     if (!valid) {
+  //       debugger;
+  //       console.log('INVALID EVENT!');
+  //       return;
+  //     }
 
-      if (!valid) {
-        debugger;
-        console.log('INVALID EVENT!');
-        return;
-      }
+  //     const parsed = this.validator.sanitizeEvent(event);
+  //     // console.log('we got the event we wanted:', parsed);
 
-      const parsed = this.validator.sanitizeEvent(event);
-      // console.log('we got the event we wanted:', parsed);
+  //     this.events.unshift(parsed);
 
-      this.events.unshift(parsed);
+  //     if (this.events.length > 100) {
+  //       this.events.length = 80;
+  //     }
+  //   });
+  // }
 
-      if (this.events.length > 100) {
-        this.events.length = 80;
-      }
-    });
-  }
-
-  relay: any;
-  sub: any;
+  // relay: any;
+  // sub: any;
 
   ngOnDestroy() {
-    if (this.sub) {
-      this.sub.unsub();
-    }
+    // if (this.sub) {
+    //   this.sub.unsub();
+    // }
+  }
+
+  profiles: NostrProfileDocument[] = [];
+
+  async load() {
+    this.loading = true;
+    // setTimeout(async () => {
+    this.profiles = await this.profile.list();
+    // });
+
+    this.loading = false;
   }
 
   async ngOnInit() {
-    if (this.relay) {
-      return;
-    }
+    await this.load();
 
-    // const relay = relayInit('wss://relay.nostr.info');
-    this.relay = relayInit('wss://relay.damus.io');
-
-    this.relay.on('connect', () => {
-      console.log(`connected to ${this.relay.url}`);
-      this.onConnected(this.relay);
-    });
-
-    this.relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${this.relay.url}`);
-    });
-
-    this.relay.on('notice', () => {
-      console.log(`NOTICE FROM ${this.relay.url}`);
-    });
-
-    this.relay.connect();
-
+    // if (this.relay) {
+    //   return;
+    // }
+    // // const relay = relayInit('wss://relay.nostr.info');
+    // this.relay = relayInit('wss://relay.damus.io');
+    // this.relay.on('connect', () => {
+    //   console.log(`connected to ${this.relay.url}`);
+    //   this.onConnected(this.relay);
+    // });
+    // this.relay.on('disconnect', () => {
+    //   console.log(`DISCONNECTED! ${this.relay.url}`);
+    // });
+    // this.relay.on('notice', () => {
+    //   console.log(`NOTICE FROM ${this.relay.url}`);
+    // });
+    // this.relay.connect();
     // sub.on('eose', () => {
     //   sub.unsub();
     // });

@@ -12,7 +12,6 @@ export class ProfileNameComponent {
 
   profileName = '';
   tooltip = '';
-  verified = false;
 
   constructor(private profiles: ProfileService, private utilities: Utilities) {}
 
@@ -23,10 +22,6 @@ export class ProfileNameComponent {
 
     if (!profile || !profile.name) {
       return;
-    }
-
-    if (profile.verified) {
-      this.verified = true;
     }
 
     // TODO: Just a basic protection of long urls, temporary.

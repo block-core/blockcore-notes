@@ -66,7 +66,7 @@ import { CheckForUpdateService } from './services/check-for-update.service';
     Bech32Pipe,
     AboutComponent,
     SettingsComponent,
-    UserComponent
+    UserComponent,
   ],
   imports: [
     BrowserModule,

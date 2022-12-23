@@ -184,13 +184,13 @@ export class UserComponent {
           const directoryPublicKey = content.names[displayName];
 
           if (event.pubkey === directoryPublicKey) {
-            profile.verified = true;
+            // profile.verified = true;
           } else {
-            profile.verified = false;
+            // profile.verified = false;
             console.warn('Nickname reuse:', url);
           }
         } else {
-          profile.verified = false;
+          // profile.verified = false;
         }
       } catch (err) {
         console.warn('This profile event was not parsed due to errors:', event);

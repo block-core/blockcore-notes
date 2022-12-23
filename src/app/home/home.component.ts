@@ -5,7 +5,7 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrProfile } from '../services/interfaces';
+import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 
@@ -16,7 +16,7 @@ import { SettingsService } from '../services/settings.service';
 export class HomeComponent {
   publicKey?: string | null;
 
-  constructor(public appState: ApplicationState, private cd: ChangeDetectorRef, public settings: SettingsService, public profiles: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
+  constructor(public appState: ApplicationState, private cd: ChangeDetectorRef, public settings: SettingsService, public profile: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
     this.appState.title = 'Blockcore Notes';
     this.appState.showBackButton = false;
     console.log('NG ON INIT FOR CTOR!!!');
@@ -139,7 +139,7 @@ export class HomeComponent {
 
   fetchProfiles(relay: Relay, authors: string[]) {
     const filteredAuthors = authors.filter((a) => {
-      return this.profiles.profiles[a] == null;
+      return this.profile.profiles[a] == null;
     });
 
     // console.log('authors:', authors);
@@ -164,9 +164,12 @@ export class HomeComponent {
       // console.log(test1);
 
       try {
-        const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfile);
+        const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
 
-        this.profiles.profiles[event.pubkey] = profile;
+        // Persist the profile.
+        await this.profile.putProfile(event.pubkey, profile);
+
+        this.profile.profiles[event.pubkey] = profile;
 
         const displayName = encodeURIComponent(profile.name);
 
@@ -182,13 +185,20 @@ export class HomeComponent {
           const directoryPublicKey = content.names[displayName];
 
           if (event.pubkey === directoryPublicKey) {
-            profile.verified = true;
+            if (!profile.verifications) {
+              profile.verifications = [];
+            }
+
+            profile.verifications.push('@nostr.directory');
+
+            // Update the profile with verification data.
+            await this.profile.putProfile(event.pubkey, profile);
           } else {
-            profile.verified = false;
+            // profile.verified = false;
             console.warn('Nickname reuse:', url);
           }
         } else {
-          profile.verified = false;
+          // profile.verified = false;
         }
       } catch (err) {
         console.warn('This profile event was not parsed due to errors:', event);

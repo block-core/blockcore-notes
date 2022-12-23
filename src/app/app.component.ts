@@ -40,6 +40,8 @@ export class AppComponent {
     await this.storage.open();
     await this.storage.initialize();
 
+    
+
     // const testdata = await this.storage.get('123');
     // console.log(testdata);
 

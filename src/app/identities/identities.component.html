@@ -1,15 +1,36 @@
-<mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
+<!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
 <div class="feed-page">
-  <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-    <div class="event-header">
-      <!-- <img ngSrc="hero.jpg" ngSrcset="100w, 200w, 300w" sizes="50vw"> -->
-      <div class="icon"><img src="assets/profile.jpg" /></div>
-      <div class="name">{{ event.pubkey }}</div>
-      <div class="date">{{ event.created_at | ago }}</div>
-    </div>
-    <div class="content">
-      {{ event.content }}
+  <p>These are all identities cached in Blockcore Notes. You can choose to follow and verify different identities here. You can also delete all identities to reduce storage usage.</p>
+
+  <mat-accordion class="options">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Options</mat-panel-title>
+        <mat-panel-description>Identities cached: {{ profiles.length }}</mat-panel-description>
+      </mat-expansion-panel-header>
+      <p>
+        <button mat-stroked-button (click)="clearIdentities()">Clear Identities Cache</button>
+      </p>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <div class="centered" style="width: 100%" *ngIf="loading">
+    <br />
+    <mat-spinner class="loading"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <div class="events" *ngFor="let profile of profiles">
+      <div class="event-header">
+        <!-- <img ngSrc="hero.jpg" ngSrcset="100w, 200w, 300w" sizes="50vw"> -->
+        <div class="icon"><img src="assets/profile.jpg" /></div>
+        <div class="name">{{ profile.pubkey }}</div>
+        <!-- <div class="date">{{ profile.created_at | ago }}</div> -->
+      </div>
+      <div class="content">
+        {{ profile.about }}
+      </div>
     </div>
   </div>
 </div>

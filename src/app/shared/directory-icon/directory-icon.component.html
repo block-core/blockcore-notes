@@ -1,1 +1,1 @@
-<mat-icon *ngIf="verified" class="directory-icon" matTooltip="nostr.directory">public</mat-icon>
+<mat-icon *ngFor="let verification of verifications" class="directory-icon" [matTooltip]="verification">public</mat-icon>
