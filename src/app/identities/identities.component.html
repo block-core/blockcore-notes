@@ -22,17 +22,62 @@
 
   <div *ngIf="!loading">
     <div class="events" *ngFor="let profile of profiles">
+      <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon class="action-button-icon">more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="categories">
+          <mat-icon>dialpad</mat-icon>
+          <span>Follow</span>
+        </button>
+        <!-- <button mat-menu-item disabled>
+          <mat-icon>voicemail</mat-icon>
+          <span>Check voice mail</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>notifications_off</mat-icon>
+          <span>Disable alerts</span>
+        </button> -->
+      </mat-menu>
+
+      <mat-menu #categories="matMenu">
+        <button mat-menu-item>Inner Circle</button>
+        <button mat-menu-item>Outer Circle</button>
+        <!-- <button mat-menu-item>Crustaceans</button>
+        <button mat-menu-item>Corals</button>
+        <button mat-menu-item>Arachnids</button>
+        <button mat-menu-item>Velvet worms</button>
+        <button mat-menu-item>Horseshoe crabs</button> -->
+      </mat-menu>
+
       <div class="event-header">
-        <!-- <img ngSrc="hero.jpg" ngSrcset="100w, 200w, 300w" sizes="50vw"> -->
-        <div class="icon"><img src="assets/profile.jpg" /></div>
-        <div class="name">{{ profile.pubkey }}</div>
-        <!-- <div class="date">{{ profile.created_at | ago }}</div> -->
+        <div class="icon">
+          <a [routerLink]="['/user', profile.pubkey]"><app-profile-image [publicKey]="profile.pubkey"></app-profile-image></a>
+        </div>
+        <div class="name">
+          <a [routerLink]="['/user', profile.pubkey]"><app-profile-name [publicKey]="profile.pubkey"></app-profile-name></a>
+        </div>
+        <div class="date">
+          <!-- <span class="event-date" [matTooltip]="profile.id!" matTooltipPosition="below">{{ profile.created_at | ago }}</span> -->
+          <app-directory-icon [publicKey]="profile.pubkey"></app-directory-icon>
+        </div>
       </div>
       <div class="content">
         {{ profile.about }}
       </div>
     </div>
   </div>
+
+  <!-- <div class="events" *ngFor="let profile of profiles">
+      <div class="event-header">
+        <div class="icon"><img src="assets/profile.jpg" /></div>
+        <div class="name">{{ profile.pubkey }}</div>
+      </div>
+      <div class="content">
+        {{ profile.about }}
+      </div>
+    </div>
+  </div> -->
 </div>
 
 <!-- <mat-list>
