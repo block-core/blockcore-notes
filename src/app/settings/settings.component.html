@@ -1,3 +1,7 @@
 <div class="page">
-  <h1 class="marginless">Settings</h1>
+  <!-- <h1 class="marginless">Settings</h1> -->
+
+  <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
+
+  <p *ngIf="wiped">All local data cache was cleared.</p>
 </div>
