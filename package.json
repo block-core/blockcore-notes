@@ -26,6 +26,7 @@
     "@fontsource/material-icons": "^4.5.4",
     "@noble/secp256k1": "^1.7.0",
     "@scure/base": "^1.1.1",
+    "level": "^8.0.0",
     "moment": "^2.29.4",
     "nostr-tools": "^1.0.0-beta2",
     "rxjs": "~7.5.0",

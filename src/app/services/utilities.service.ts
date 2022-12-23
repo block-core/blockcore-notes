@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import * as secp from '@noble/secp256k1';
 import { bech32 } from '@scure/base';
 
+export function sleep(durationInMillisecond: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, durationInMillisecond));
+}
+
 @Injectable({
   providedIn: 'root',
 })

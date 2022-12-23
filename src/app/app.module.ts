@@ -49,6 +49,7 @@ import { DirectoryIconComponent } from './shared/directory-icon/directory-icon.c
 import { AppUpdateService } from './services/app-update.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UserComponent } from './user/user.component';
+import { CheckForUpdateService } from './services/check-for-update.service';
 
 @NgModule({
   declarations: [
@@ -109,7 +110,7 @@ import { UserComponent } from './user/user.component';
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
-  providers: [AuthGuardService, AppUpdateService],
+  providers: [AuthGuardService, AppUpdateService, CheckForUpdateService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
