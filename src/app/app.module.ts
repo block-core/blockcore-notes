@@ -50,6 +50,7 @@ import { AppUpdateService } from './services/app-update.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UserComponent } from './user/user.component';
 import { CheckForUpdateService } from './services/check-for-update.service';
+import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { CheckForUpdateService } from './services/check-for-update.service';
     AboutComponent,
     SettingsComponent,
     UserComponent,
+    NoteDialog,
   ],
   imports: [
     BrowserModule,

@@ -6,6 +6,8 @@ import { AuthenticationService } from './services/authentication.service';
 import { AppUpdateService } from './services/app-update.service';
 import { CheckForUpdateService } from './services/check-for-update.service';
 import { StorageService } from './services/storage.service';
+import { MatDialog } from '@angular/material/dialog';
+import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +18,8 @@ export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
   authenticated = false;
+  note: any;
+
 
   constructor(
     public appState: ApplicationState,
@@ -23,7 +27,8 @@ export class AppComponent {
     public authService: AuthenticationService,
     private router: Router,
     public appUpdateService: AppUpdateService,
-    public appUpdateCheckService: CheckForUpdateService
+    public appUpdateCheckService: CheckForUpdateService,
+    public dialog: MatDialog
   ) {
     appState.title = 'Blockcore Notes';
 
@@ -49,5 +54,15 @@ export class AppComponent {
 
     // const testdata = await this.storage.get('123', 'profile');
     // console.log(testdata);
+  }
+
+  createNote(): void {
+    const dialogRef = this.dialog.open(NoteDialog, {
+      data: {name: this.note},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.note = result;
+    });
   }
 }
