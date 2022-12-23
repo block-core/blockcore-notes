@@ -207,6 +207,16 @@ app-root mat-sidenav-container {
     "icon date";
 }
 
+.event-header a {
+  color: white;
+  text-decoration: none;
+}
+
+.event-header a:hover {
+  color: silver;
+  text-decoration: underline;
+}
+
 .icon {
   grid-area: icon;
 }

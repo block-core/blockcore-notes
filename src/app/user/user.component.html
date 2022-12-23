@@ -1,7 +1,7 @@
 <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
 
 <mat-tab-group>
-  <mat-tab label="Feed">
+  <mat-tab label="Posts">
     <div class="feed-page">
       <mat-accordion class="options">
         <mat-expansion-panel>
@@ -53,10 +53,10 @@
 
         <div class="event-header">
           <div class="icon">
-            <a [routerLink]="['/user', event.pubkey]"><app-profile-image [publicKey]="event.pubkey"></app-profile-image></a>
+            <a [routerLink]="['user', event.pubkey]"><app-profile-image [publicKey]="event.pubkey"></app-profile-image></a>
           </div>
           <div class="name">
-            <a [routerLink]="['/user', event.pubkey]"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></a>
+            <a [routerLink]="['user', event.pubkey]"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></a>
           </div>
           <div class="date">
             <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
@@ -79,18 +79,9 @@
 
     <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
-  <mat-tab label="Channels">
+  <mat-tab label="Likes">
     <div class="page">
       <h2>To be implemented</h2>
-
-      <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
     </div>
   </mat-tab>
-  <mat-tab label="Notes">
-    <div class="page">
-      <h2>To be implemented</h2>
-
-      <p>Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.</p>
-    </div></mat-tab
-  >
 </mat-tab-group>

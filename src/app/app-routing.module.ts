@@ -9,6 +9,7 @@ import { NotesComponent } from './notes/notes.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuardService as AuthGuard } from './services/auth-guard.service';
 import { SettingsComponent } from './settings/settings.component';
+import { UserComponent } from './user/user.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,11 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'user/:id',
+    component: UserComponent,
     canActivate: [AuthGuard],
   },
   {

@@ -48,6 +48,7 @@ import { Bech32Pipe } from './shared/bech32.pipe';
 import { DirectoryIconComponent } from './shared/directory-icon/directory-icon.component';
 import { AppUpdateService } from './services/app-update.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     Bech32Pipe,
     HelpComponent,
     SettingsComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,
