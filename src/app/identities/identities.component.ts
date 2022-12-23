@@ -8,6 +8,7 @@ import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { StorageService } from '../services/storage.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-identities',
@@ -17,7 +18,7 @@ import { StorageService } from '../services/storage.service';
 export class IdentitiesComponent {
   publicKey?: string | null;
   loading = false;
-
+  searchTerm: any;
   constructor(public appState: ApplicationState, private storage: StorageService, private profile: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
     this.appState.title = 'Identities';
     this.appState.showBackButton = false;
@@ -107,5 +108,27 @@ export class IdentitiesComponent {
     // sub.on('eose', () => {
     //   sub.unsub();
     // });
+  }
+
+
+  // about
+  // display_name
+  // name
+  // pubkey
+  async search() {
+    const text: string = this.searchTerm;
+
+    if (text == 'undefined' || text == null || text == '') {
+      this.loading = true;
+      this.profiles = await this.profile.list();
+      this.loading = false;
+    }
+    else {
+      this.loading = true;
+      const allprofiles = await this.profile.list();
+      this.profiles = allprofiles.filter((item: any) => item.name === text || item.display_name === text || item.about === text || item.pubkey === text);
+      this.loading = false;
+    }
+
   }
 }
