@@ -63,7 +63,14 @@
             <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
           </div>
         </div>
-        <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+        <div class="content">
+          {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
+          <br />
+          <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>
+        </div>
+        <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon class="action-button-icon">more_vert</mat-icon>
+        </button>
       </div>
     </div>
 
