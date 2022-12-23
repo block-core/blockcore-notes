@@ -5,7 +5,7 @@
     <input matInput type="text" [(ngModel)]="data.note" />
   </mat-form-field>
 </div>
-<div mat-dialog-actions align="end">
-  <button mat-flat-button [mat-dialog-close]="data.note" color="primary" cdkFocusInitial>Send</button>
+<div mat-dialog-actions class="mat-dialog-actions" align="end">
   <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+  <button mat-flat-button [mat-dialog-close]="data.note" color="primary" cdkFocusInitial>Send</button>
 </div>
