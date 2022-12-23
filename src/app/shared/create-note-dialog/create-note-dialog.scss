@@ -10,7 +10,16 @@
   padding: 10px 24px 24px 24px;
 }
 
-.mat-mdc-form-field-bottom-align{
-  display: none !important;
+.picker {
+  display: block;
+  position: fixed;
+  z-index: 3;
 }
 
+.emoji {
+  cursor: pointer;
+}
+
+.emoji:hover {
+  color: #fff;
+}

@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
     "@angular/service-worker": "^15.0.0",
+    "@ctrl/ngx-emoji-mart": "^7.1.0",
     "@fontsource/material-icons": "^4.5.4",
     "@noble/secp256k1": "^1.7.0",
     "@scure/base": "^1.1.1",
