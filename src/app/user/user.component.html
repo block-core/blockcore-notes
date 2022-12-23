@@ -53,10 +53,10 @@
 
         <div class="event-header">
           <div class="icon">
-            <a [routerLink]="['user', event.pubkey]"><app-profile-image [publicKey]="event.pubkey"></app-profile-image></a>
+            <a [routerLink]="['/user', event.pubkey]"><app-profile-image [publicKey]="event.pubkey"></app-profile-image></a>
           </div>
           <div class="name">
-            <a [routerLink]="['user', event.pubkey]"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></a>
+            <a [routerLink]="['/user', event.pubkey]"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></a>
           </div>
           <div class="date">
             <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
