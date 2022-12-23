@@ -24,7 +24,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/404.html", "src/assets", "src/manifest.webmanifest"],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/styles.scss","node_modules/@ctrl/ngx-emoji-mart/picker.css"],
             "scripts": [],
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json"
@@ -87,5 +87,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

@@ -51,6 +51,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UserComponent } from './user/user.component';
 import { CheckForUpdateService } from './services/check-for-update.service';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,7 @@ import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
     MatChipsModule,
     MatPaginatorModule,
     MatSlideToggleModule,
-
+    PickerModule,
     FormsModule,
     ReactiveFormsModule,
     LayoutModule,
