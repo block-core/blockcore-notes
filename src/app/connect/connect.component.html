@@ -18,30 +18,39 @@
         never sign anything you did not intend.
       </p>
 
-      <h2>NOTICE</h2>
+      <mat-card class="warn">
+        <mat-card-content>
+          <h2>NOTICE</h2>
 
-      <p>
-        <strong>Warning about content:</strong> Nostr is a decentralized and distributed network of relays that relays data by users. That means there is no centralized service where filtering or censoring is occurring. You will likely be
-        exposed to content that will be disturbing and against your morality and world views.
-      </p>
+          <p>
+            <strong>Warning about content:</strong> Nostr is a decentralized and distributed network of relays that relays data by users. That means there is no centralized service where filtering or censoring is occurring. You will likely be
+            exposed to content that will be disturbing and against your morality and world views.
+          </p>
+    
+          <p>Blockcore has no involvement in the type of content being produced and shown to you in this app.</p>
+    
+          <p>You accept that all usage of Blockcore Notes, Blockcore infrastructure and software must be the result of peaceful voluntary human interactions.</p>
+    
+          <p>If you're young and still living with your parents, consider asking them for permission before you continue.</p>
+    
+          <p>To continue you must agree with our <a href="https://www.blockcore.net/policy" target="_blank">Privacy Policy and Terms & Conditions</a>.</p>
 
-      <p>Blockcore has no involvement in the type of content being produced and shown to you in this app.</p>
+          <mat-checkbox color="primary" [(ngModel)]="consent">I have read and agree to this notice</mat-checkbox>
+    
+        </mat-card-content>
+      </mat-card>
 
-      <p>You accept that all usage of Blockcore Notes, Blockcore infrastructure and software must be the result of peaceful voluntary human interactions.</p>
-
-      <p>If you're young and still living with your parents, consider asking them for permission before you continue.</p>
-
-      <p>By continuing you agree with our <a href="https://www.blockcore.net/policy" target="_blank">Privacy Policy and Terms & Conditions</a>.</p>
-
+    
       <br />
 
       <div *ngIf="!extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" disabled="disabled">Waiting for extension...</button></div>
+      <div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" [disabled]="!consent">Connect using extension</button></div>
+      <div *ngIf="!consent" class="dimmed space">You must agree with the notice above to enable buttons</div>
 
-      <div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary">Connect using extension</button></div>
-
+      <br>
       <p>Want to view the app first?</p>
 
-      <div><button (click)="anonymous()" mat-raised-button>Go straight in</button></div>
+      <div><button (click)="anonymous()" mat-raised-button [disabled]="!consent">Go straight in</button></div>
     </mat-card-content>
   </mat-card>
 </div>

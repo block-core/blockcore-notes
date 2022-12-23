@@ -273,3 +273,22 @@ app-root mat-sidenav-container {
 .options-slider {
   margin-right: 1em;
 }
+
+textarea,
+input,
+button,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.dimmed {
+  font-size: 0.9em;
+  color: gray;
+  // color: rgba(0, 0, 0, 0.87);
+}
+
+.space {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}

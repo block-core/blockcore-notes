@@ -13,6 +13,7 @@ import { Utilities } from '../services/utilities.service';
 export class ConnectComponent {
   extensionDiscovered = false;
   timeout: any;
+  consent = false;
 
   constructor(private appState: ApplicationState, private authService: AuthenticationService, private utilities: Utilities, private router: Router, private ngZone: NgZone) {}
 
