@@ -234,6 +234,18 @@ app-root mat-sidenav-container {
   overflow-wrap: break-word;
 }
 
+.action-button {
+  float: right;
+  margin-right: -0.4em;
+}
+
+.action-button-icon {
+  font-size: 18px;
+  // font-size: 16px;
+  // height: auto !important;
+  // width: auto !important;
+}
+
 .directory-icon {
   font-size: 10px;
   height: auto !important;
@@ -246,4 +258,8 @@ app-root mat-sidenav-container {
 
 .event-date {
   margin-right: 0.1em;
+}
+
+.options-slider {
+  margin-right: 1em;
 }

@@ -47,6 +47,7 @@ import { ProfileNameComponent } from './shared/profile-name/profile-name.compone
 import { Bech32Pipe } from './shared/bech32.pipe';
 import { DirectoryIconComponent } from './shared/directory-icon/directory-icon.component';
 import { AppUpdateService } from './services/app-update.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { AppUpdateService } from './services/app-update.service';
     MatProgressSpinnerModule,
     MatChipsModule,
     MatPaginatorModule,
+    MatSlideToggleModule,
 
     FormsModule,
     ReactiveFormsModule,

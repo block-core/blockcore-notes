@@ -10,20 +10,55 @@
             <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
           </mat-expansion-panel-header>
           <p>
-            <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Only </mat-checkbox>
+            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
+            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
+            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
+
+            <!-- <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Only </mat-checkbox>
             <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
             <mat-checkbox [(ngModel)]="settings.options.hideInvoice" color="primary" (ngModelChange)="optionsUpdated()"> Hide LN invoices </mat-checkbox>
-            <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox>
+            <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox> -->
           </p>
         </mat-expansion-panel>
       </mat-accordion>
 
       <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+        <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon class="action-button-icon">more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="categories">
+            <mat-icon>dialpad</mat-icon>
+            <span>Follow</span>
+          </button>
+          <!-- <button mat-menu-item disabled>
+            <mat-icon>voicemail</mat-icon>
+            <span>Check voice mail</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>notifications_off</mat-icon>
+            <span>Disable alerts</span>
+          </button> -->
+        </mat-menu>
+
+        <mat-menu #categories="matMenu">
+          <button mat-menu-item>Inner Circle</button>
+          <button mat-menu-item>Outer Circle</button>
+          <!-- <button mat-menu-item>Crustaceans</button>
+          <button mat-menu-item>Corals</button>
+          <button mat-menu-item>Arachnids</button>
+          <button mat-menu-item>Velvet worms</button>
+          <button mat-menu-item>Horseshoe crabs</button> -->
+        </mat-menu>
+
         <div class="event-header">
           <div class="icon">
             <app-profile-image [publicKey]="event.pubkey"></app-profile-image>
           </div>
-          <div class="name"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></div>
+          <div class="name">
+            <app-profile-name [publicKey]="event.pubkey"></app-profile-name>
+          </div>
+
           <div class="date">
             <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="above">{{ event.created_at | ago }}</span>
             <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
