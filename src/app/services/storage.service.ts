@@ -81,6 +81,8 @@ export class StorageService {
   }
 
   async get<T>(id: string, sublevel?: string): Promise<T | undefined> {
+    console.log('READING...');
+
     try {
       if (sublevel) {
         const entry = await this.#db.sublevel(sublevel).get<string, T>(id, { keyEncoding: 'utf8', valueEncoding: 'json' });
@@ -94,6 +96,7 @@ export class StorageService {
       if (err.code === 'LEVEL_NOT_FOUND') {
         return undefined;
       } else {
+        console.log('HERE?!?!?');
         throw err;
       }
     }

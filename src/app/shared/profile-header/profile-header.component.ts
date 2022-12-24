@@ -33,6 +33,10 @@ export class ProfileHeaderComponent {
       this.profile = await this.profiles.getProfile(this.pubkey);
     }
 
+    if (!this.profile) {
+      return;
+    }
+
     this.imagePath = this.profile.picture;
     this.tooltip = this.profile.about;
 

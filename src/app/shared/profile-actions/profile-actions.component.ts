@@ -9,23 +9,39 @@ import { NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 })
 export class ProfileActionsComponent {
   @Input() pubkey: string = '';
-  @Input() profile!: NostrProfileDocument;
+  @Input() profile?: NostrProfileDocument;
 
   constructor(private profileService: ProfileService, private utilities: Utilities) {}
 
   async follow(circle?: string) {
+    if (!this.profile) {
+      return;
+    }
+
     await this.profileService.follow(this.profile.pubkey, circle);
   }
 
   async unfollow() {
+    if (!this.profile) {
+      return;
+    }
+
     await this.profileService.unfollow(this.profile.pubkey);
   }
 
   async block() {
+    if (!this.profile) {
+      return;
+    }
+
     await this.profileService.block(this.profile.pubkey);
   }
 
   async unblock() {
+    if (!this.profile) {
+      return;
+    }
+
     await this.profileService.unblock(this.profile.pubkey);
   }
 

@@ -30,9 +30,29 @@ export class ProfileService {
 
   /** Will attempt to get the profile from local storage, if not available will attempt to get from relays. */
   async getProfile(pubkey: string) {
-    const profile = await this.table.get(pubkey);
+    const profile = await this.#get<NostrProfileDocument>(pubkey);
+
+    if (!profile) {
+      return;
+    }
+
     profile.pubkey = pubkey;
     return profile;
+  }
+
+  async #get<T>(id: string): Promise<T | undefined> {
+    try {
+      const entry = await this.table.get<string, T>(id, { keyEncoding: 'utf8', valueEncoding: 'json' });
+      return entry;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      if (err.code === 'LEVEL_NOT_FOUND') {
+        return undefined;
+      } else {
+        console.log('HERE?!?!?');
+        throw err;
+      }
+    }
   }
 
   private async filter(predicate: (value: NostrProfileDocument, key: string) => boolean): Promise<NostrProfileDocument[]> {
@@ -99,6 +119,11 @@ export class ProfileService {
 
   async block(pubkey: string) {
     const profile = await this.getProfile(pubkey);
+
+    if (!profile) {
+      return;
+    }
+
     profile.block = true;
     profile.follow = false;
     await this.putProfile(pubkey, profile);
@@ -106,6 +131,11 @@ export class ProfileService {
 
   async unblock(pubkey: string, follow?: boolean) {
     const profile = await this.getProfile(pubkey);
+
+    if (!profile) {
+      return;
+    }
+
     profile.block = false;
     profile.follow = follow;
     this.putProfile(pubkey, profile);
