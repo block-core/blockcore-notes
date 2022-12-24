@@ -9,11 +9,9 @@
   </div>
   <div class="name">
     <a [routerLink]="['/user', pubkey]">
-    
-        <span *ngIf="tooltip" [matTooltip]="tooltipName" matTooltipPosition="above">{{ profileName }}</span>
-        <span *ngIf="!tooltip" [matTooltip]="tooltipName">{{ profileName }}</span>
-    
-        <!-- <app-profile-name [publicKey]="pubkey"></app-profile-name> -->
+      <span [matTooltip]="tooltipName" matTooltipPosition="above">{{ profileName }}</span>
+      <!-- <span *ngIf="!tooltip" [matTooltip]="tooltipName">{{ profileName }}</span> -->
+      <!-- <app-profile-name [publicKey]="pubkey"></app-profile-name> -->
     </a>
   </div>
   <div class="date">

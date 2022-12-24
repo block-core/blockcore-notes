@@ -1,7 +1,13 @@
 <div class="page">
   <!-- <h1 class="marginless">Settings</h1> -->
 
-  <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
+  <p>
+    <button mat-flat-button color="warn" (click)="clearProfileCache()">Clear Public Profile Cache</button>
+  </p>
+  <p *ngIf="wipedNonFollow">All public profile cache data was cleared.</p>
 
+  <p>
+    <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
+  </p>
   <p *ngIf="wiped">All local data cache was cleared.</p>
 </div>

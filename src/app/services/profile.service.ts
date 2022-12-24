@@ -170,12 +170,12 @@ export class ProfileService {
     }
   }
 
-  /** Wipes all non-following profiles. */
+  /** Wipes all non-following profiles, except blocked profiles. */
   async wipeNonFollow() {
     const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
 
     for await (const [key, value] of iterator) {
-      if (!value.follow) {
+      if (!value.block && !value.follow) {
         await this.table.del(key);
       }
     }

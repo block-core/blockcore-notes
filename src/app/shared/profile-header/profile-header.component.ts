@@ -29,6 +29,8 @@ export class ProfileHeaderComponent {
   }
 
   async ngOnInit() {
+    this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
+
     if (!this.profile) {
       this.profile = await this.profiles.getProfile(this.pubkey);
     }
@@ -39,26 +41,7 @@ export class ProfileHeaderComponent {
 
     this.imagePath = this.profile.picture;
     this.tooltip = this.profile.about;
-
-    this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
-
-    // TODO: Just a basic protection of long urls, temporary.
-    if (this.profile.name.length > 255) {
-      return;
-    }
-
-    this.tooltipName = this.profileName; // Only set tooltip if we replace the publicKey with it.
+    this.tooltipName = this.profileName;
     this.profileName = this.profile.name;
-
-    // const profile = this.profiles.profiles[this.publicKey] as NostrProfile;
-
-    // if (!profile || !profile.picture) {
-    //   return;
-    // }
-
-    // // TODO: Just a basic protection of long urls, temporary.
-    // if (profile.picture.length > 255) {
-    //   return;
-    // }
   }
 }
