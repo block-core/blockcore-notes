@@ -15,18 +15,18 @@ export class ProfileImageComponent {
   constructor(private profiles: ProfileService) {}
 
   ngOnInit() {
-    const profile = this.profiles.profiles[this.publicKey] as NostrProfile;
+    // const profile = this.profiles.profiles[this.publicKey] as NostrProfile;
 
-    if (!profile || !profile.picture) {
-      return;
-    }
+    // if (!profile || !profile.picture) {
+    //   return;
+    // }
 
-    // TODO: Just a basic protection of long urls, temporary.
-    if (profile.picture.length > 255) {
-      return;
-    }
+    // // TODO: Just a basic protection of long urls, temporary.
+    // if (profile.picture.length > 255) {
+    //   return;
+    // }
 
-    this.imagePath = profile.picture;
-    this.tooltip = profile.about;
+    // this.imagePath = profile.picture;
+    // this.tooltip = profile.about;
   }
 }

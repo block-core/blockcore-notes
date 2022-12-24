@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
@@ -25,7 +25,8 @@ export class HomeComponent {
     public profile: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
@@ -98,11 +99,15 @@ export class HomeComponent {
       }
 
       // If not initial load, we'll grab the profile.
-      if (!this.initialLoad) {
-        this.fetchProfiles(relay, [event.pubkey]);
-      }
+      // if (!this.initialLoad) {
+      this.fetchProfiles(relay, [event.pubkey]);
+      // }
 
       this.events.unshift(event);
+
+      this.ngZone.run(() => {
+        this.cd.detectChanges();
+      });
 
       if (this.events.length > 100) {
         this.events.length = 80;
@@ -117,7 +122,7 @@ export class HomeComponent {
       });
 
       // Initial load completed, let's go fetch profiles for those initial events.
-      this.fetchProfiles(relay, pubKeys);
+      // this.fetchProfiles(relay, pubKeys);
 
       this.cd.detectChanges();
     });
@@ -150,18 +155,18 @@ export class HomeComponent {
   }
 
   fetchProfiles(relay: Relay, authors: string[]) {
-    const filteredAuthors = authors.filter((a) => {
-      return this.profile.profiles[a] == null;
-    });
+    // const filteredAuthors = authors.filter((a) => {
+    //   return this.profile.profiles[a] == null;
+    // });
 
     // console.log('authors:', authors);
     // console.log('filteredAuthors:', filteredAuthors);
 
-    if (filteredAuthors.length === 0) {
-      return;
-    }
+    // if (filteredAuthors.length === 0) {
+    //   return;
+    // }
 
-    const profileSub = relay.sub([{ kinds: [0], authors: filteredAuthors }], {});
+    const profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
 
     profileSub.on('event', async (originalEvent: NostrEvent) => {
       const event = this.processEvent(originalEvent);
@@ -181,10 +186,7 @@ export class HomeComponent {
         // Persist the profile.
         await this.profile.putProfile(event.pubkey, profile);
 
-        this.profile.profiles[event.pubkey] = profile;
-
         const displayName = encodeURIComponent(profile.name);
-
         const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
 
         const rawResponse = await fetch(url, {

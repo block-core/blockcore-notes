@@ -10,10 +10,6 @@ import { NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 export class ProfileHeaderComponent {
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
-  // @Input() profile: any = null;
-
-  // TODO: Add support for using a template for the
-  // @ViewChild() ul: HTMLElement;
 
   imagePath = '/assets/profile.jpg';
   tooltip = '';
@@ -22,11 +18,7 @@ export class ProfileHeaderComponent {
 
   constructor(private profiles: ProfileService, private utilities: Utilities) {}
 
-  // @ViewChild(PupComponent) pup!: PupComponent;
-
-  ngAfterViewInit() {
-    // console.log(this.pup.whoAmI()); // I am a pup component!
-  }
+  ngAfterViewInit() {}
 
   async ngOnInit() {
     this.profileName = this.utilities.getNostrIdentifier(this.pubkey);

@@ -33,21 +33,8 @@
       <div class="events" *ngFor="let event of events; trackBy: trackByFn">
         <app-profile-actions [pubkey]="event.pubkey"></app-profile-actions>
         <app-profile-header [pubkey]="event.pubkey"
-          ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon
+          ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
         ></app-profile-header>
-
-        <!-- <div class="event-header">
-          <div class="icon">
-            <a [routerLink]="['/user', event.pubkey]"><app-profile-image [publicKey]="event.pubkey"></app-profile-image></a>
-          </div>
-          <div class="name">
-            <a [routerLink]="['/user', event.pubkey]"><app-profile-name [publicKey]="event.pubkey"></app-profile-name></a>
-          </div>
-          <div class="date">
-            <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span>
-            <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
-          </div>
-        </div> -->
         <div class="content">
           {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
           <div *ngIf="details">

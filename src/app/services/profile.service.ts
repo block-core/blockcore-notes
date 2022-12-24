@@ -191,6 +191,4 @@ export class ProfileService {
 
     this.#changed();
   }
-
-  profiles: any = {};
 }

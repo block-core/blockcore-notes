@@ -140,18 +140,18 @@ export class UserComponent {
   }
 
   fetchProfiles(relay: Relay, authors: string[]) {
-    const filteredAuthors = authors.filter((a) => {
-      return this.profiles.profiles[a] == null;
-    });
+    // const filteredAuthors = authors.filter((a) => {
+    //   return this.profiles.profiles[a] == null;
+    // });
 
     // console.log('authors:', authors);
     // console.log('filteredAuthors:', filteredAuthors);
 
-    if (filteredAuthors.length === 0) {
-      return;
-    }
+    // if (filteredAuthors.length === 0) {
+    //   return;
+    // }
 
-    const profileSub = relay.sub([{ kinds: [0], authors: filteredAuthors }], {});
+    const profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
 
     profileSub.on('event', async (originalEvent: NostrEvent) => {
       const event = this.processEvent(originalEvent);
@@ -167,8 +167,6 @@ export class UserComponent {
 
       try {
         const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfile);
-
-        this.profiles.profiles[event.pubkey] = profile;
 
         const displayName = encodeURIComponent(profile.name);
 
