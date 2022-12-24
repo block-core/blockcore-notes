@@ -21,14 +21,15 @@ export class ProfileHeaderComponent {
   ngAfterViewInit() {}
 
   async ngOnInit() {
-    this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
-
     if (!this.profile) {
       this.profile = await this.profiles.getProfile(this.pubkey);
-    }
+      this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
 
-    if (!this.profile) {
-      return;
+      if (!this.profile) {
+        return;
+      }
+    } else {
+      this.profileName = this.utilities.getNostrIdentifier(this.profile.pubkey);
     }
 
     this.imagePath = this.profile.picture;
