@@ -8,6 +8,7 @@ import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-home',
@@ -16,10 +17,17 @@ import { SettingsService } from '../services/settings.service';
 export class HomeComponent {
   publicKey?: string | null;
 
-  constructor(public appState: ApplicationState, private cd: ChangeDetectorRef, public settings: SettingsService, public profile: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
-    this.appState.title = 'Blockcore Notes';
-    this.appState.showBackButton = false;
-    console.log('NG ON INIT FOR CTOR!!!');
+  constructor(
+    public appState: ApplicationState,
+    public data: DataService,
+    private cd: ChangeDetectorRef,
+    public settings: SettingsService,
+    public profile: ProfileService,
+    private validator: DataValidation,
+    private utilities: Utilities,
+    private router: Router
+  ) {
+    console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
 
   ngAfterViewInit() {
@@ -62,6 +70,10 @@ export class HomeComponent {
   sub: any;
   relay?: Relay;
   initialLoad = true;
+
+  async follow(pubkey: string, circle?: string) {
+    await this.profile.follow(pubkey, circle);
+  }
 
   onConnected(relay?: Relay) {
     if (!relay) {
@@ -217,6 +229,17 @@ export class HomeComponent {
   }
 
   async ngOnInit() {
+    // useReactiveContext // New construct in Angular 14 for subscription.
+    // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
+
+    this.appState.title = 'Blockcore Notes';
+    this.appState.showBackButton = false;
+    console.log('ngOnInit for home!!!');
+
+    this.data.pizzas$.subscribe((item) => {
+      console.log('PIZZA:', item);
+    });
+
     if (this.relay) {
       return;
     }

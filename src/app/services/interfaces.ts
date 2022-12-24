@@ -1,5 +1,16 @@
 import { Event } from 'nostr-tools';
 
+export interface Circle {
+  id: string;
+  name: string;
+}
+
+export interface Person {
+  id: string;
+  name: string;
+  pubkey: string;
+}
+
 export interface NostrDocument<T> {
   /** Reference to which relay we received this item from. */
   relay: '';
@@ -36,7 +47,15 @@ export interface NostrProfile {
 
 export interface NostrProfileDocument extends NostrProfile {
   pubkey: string; // Not stored in database, just used when retreiving.
-  
+
+  /** Indicates if the user is following this profile. If not, then the profile can be wiped during cache cleanup. */
+  follow?: boolean;
+
+  /** Indicates if a user is blocked and their content will not be shown. */
+  block?: boolean;
+
+  circle?: string;
+
   /** List of domains where the user has been verified, e.g. "@nostr.directory", "@domain.com" */
   verifications: string[];
 }

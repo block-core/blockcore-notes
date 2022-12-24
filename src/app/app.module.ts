@@ -52,6 +52,10 @@ import { UserComponent } from './user/user.component';
 import { CheckForUpdateService } from './services/check-for-update.service';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { CirclesComponent } from './circles/circles.component';
+import { PeopleComponent } from './people/people.component';
+import { ProfileHeaderComponent } from './shared/profile-header/profile-header.component';
+import { ProfileActionsComponent } from './shared/profile-actions/profile-actions.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +74,10 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
     SettingsComponent,
     UserComponent,
     NoteDialog,
+    CirclesComponent,
+    PeopleComponent,
+    ProfileHeaderComponent,
+    ProfileActionsComponent
   ],
   imports: [
     BrowserModule,

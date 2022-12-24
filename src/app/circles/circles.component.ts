@@ -11,21 +11,21 @@ import { StorageService } from '../services/storage.service';
 import { map } from 'rxjs';
 
 @Component({
-  selector: 'app-identities',
-  templateUrl: './identities.component.html',
-  styleUrls: ['./identities.component.css'],
+  selector: 'app-circles',
+  templateUrl: './circles.component.html',
+  styleUrls: ['./circles.component.css'],
 })
-export class IdentitiesComponent {
+export class CirclesComponent {
   publicKey?: string | null;
   loading = false;
   searchTerm: any;
   constructor(public appState: ApplicationState, private storage: StorageService, private profile: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
-    this.appState.title = 'Identities';
+    this.appState.title = 'Circles';
     this.appState.showBackButton = false;
   }
 
   async clearIdentities() {
-    await this.profile.wipeNonFollow();
+    await this.profile.wipe();
     this.profiles = [];
     await this.load();
   }
@@ -80,7 +80,7 @@ export class IdentitiesComponent {
   async load() {
     this.loading = true;
     // setTimeout(async () => {
-    this.profiles = await this.profile.publicList();
+    this.profiles = await this.profile.followList();
     // });
 
     this.loading = false;
@@ -119,11 +119,11 @@ export class IdentitiesComponent {
 
     if (text == 'undefined' || text == null || text == '') {
       this.loading = true;
-      this.profiles = await this.profile.publicList();
+      this.profiles = await this.profile.followList();
       this.loading = false;
     } else {
       this.loading = true;
-      const allprofiles = await this.profile.publicList();
+      const allprofiles = await this.profile.followList();
       this.profiles = allprofiles.filter((item: any) => item.name === text || item.display_name === text || item.about === text || item.pubkey === text);
       this.loading = false;
     }

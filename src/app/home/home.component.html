@@ -22,12 +22,22 @@
         </mat-expansion-panel>
       </mat-accordion>
 
+      <!-- {{ data.public$ }} -->
+
+      <li *ngFor="let pizza of data.pizzas$ | async; index as i">{{ i + 1 }}. {{ pizza.name }}</li>
+
+      <!-- START:
+      <div *ngIf="data.public$ | async as data">
+        <div class="events" *ngFor="let event of data">EVENT ... {{ event }}</div>
+        :STOP
+      </div> -->
+
       <div class="events" *ngFor="let event of events; trackBy: trackByFn">
         <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
           <mat-icon class="action-button-icon">more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item [matMenuTriggerFor]="categories">
+          <button mat-menu-item (click)="follow(event.pubkey)" [matMenuTriggerFor]="categories">
             <mat-icon>dialpad</mat-icon>
             <span>Follow</span>
           </button>
@@ -42,8 +52,8 @@
         </mat-menu>
 
         <mat-menu #categories="matMenu">
-          <button mat-menu-item>Inner Circle</button>
-          <button mat-menu-item>Outer Circle</button>
+          <button mat-menu-item (click)="follow(event.pubkey, '35a1139a-67d2-46d4-96fc-ec33bdd4e362')">Inner Circle</button>
+          <button mat-menu-item (click)="follow(event.pubkey, '718cc6aa-b38a-4cf0-84b5-00a39dcab95a')">Outer Circle</button>
           <!-- <button mat-menu-item>Crustaceans</button>
           <button mat-menu-item>Corals</button>
           <button mat-menu-item>Arachnids</button>
@@ -51,7 +61,11 @@
           <button mat-menu-item>Horseshoe crabs</button> -->
         </mat-menu>
 
-        <div class="event-header">
+        <app-profile-header [pubkey]="event.pubkey"
+          ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon
+        ></app-profile-header>
+
+        <!-- <div class="event-header">
           <div class="icon">
             <a [routerLink]="['/user', event.pubkey]"><app-profile-image [publicKey]="event.pubkey"></app-profile-image></a>
           </div>
@@ -62,7 +76,7 @@
             <span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span>
             <app-directory-icon [publicKey]="event.pubkey"></app-directory-icon>
           </div>
-        </div>
+        </div> -->
         <div class="content">
           {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
           <div *ngIf="details">

@@ -1,0 +1,24 @@
+<!-- <span class="material-icons network-status" [ngClass]="class">circle</span> -->
+
+<div class="event-header">
+  <div class="icon">
+    <a [routerLink]="['/user', pubkey]">
+      <img [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
+      <!-- <app-profile-image [publicKey]="event.pubkey"></app-profile-image> -->
+    </a>
+  </div>
+  <div class="name">
+    <a [routerLink]="['/user', pubkey]">
+    
+        <span *ngIf="tooltip" [matTooltip]="tooltipName" matTooltipPosition="above">{{ profileName }}</span>
+        <span *ngIf="!tooltip" [matTooltip]="tooltipName">{{ profileName }}</span>
+    
+        <!-- <app-profile-name [publicKey]="pubkey"></app-profile-name> -->
+    </a>
+  </div>
+  <div class="date">
+    <ng-content></ng-content>
+    <!-- <span class="event-date" [matTooltip]="profile.id!" matTooltipPosition="below">{{ profile.created_at | ago }}</span>
+      <app-directory-icon [publicKey]="profile.pubkey"></app-directory-icon> -->
+  </div>
+</div>

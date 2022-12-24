@@ -1,0 +1,41 @@
+<button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+  <mat-icon class="action-button-icon">more_vert</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="follow()" *ngIf="!profile.follow">
+    <mat-icon>add_circle</mat-icon>
+    <span>Follow</span>
+  </button>
+
+  <button mat-menu-item (click)="unfollow()" *ngIf="profile.follow">
+    <mat-icon>remove_circle</mat-icon>
+    <span>Unfollow</span>
+  </button>
+
+  <button mat-menu-item [matMenuTriggerFor]="categories">
+    <mat-icon>supervised_user_circle</mat-icon>
+    <span>Move to Circle</span>
+  </button>
+
+  <button mat-menu-item (click)="unblock()" *ngIf="profile.block == true">
+    <mat-icon>cancel</mat-icon>
+    <span>Unblock</span>
+  </button>
+
+  <button mat-menu-item (click)="block()" *ngIf="!profile.block">
+    <mat-icon>block</mat-icon>
+    <span>Block</span>
+  </button>
+
+</mat-menu>
+
+<mat-menu #categories="matMenu">
+  <button mat-menu-item>
+    <mat-icon>trip_origin</mat-icon>
+    <span>Inner Circle</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>trip_origin</mat-icon>
+    <span>Outer Circle</span>
+  </button>
+</mat-menu>

@@ -51,6 +51,11 @@
       </a> -->
       <!-- <mat-divider></mat-divider> -->
 
+      <a [routerLink]="['/people']" mat-menu-item (click)="drawer.toggle()">
+        <mat-icon>people</mat-icon>
+        <span>People</span>
+      </a>
+
       <a [routerLink]="['/identities']" mat-menu-item (click)="drawer.toggle()">
         <mat-icon>people</mat-icon>
         <span>Identities</span>

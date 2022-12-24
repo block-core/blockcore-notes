@@ -10,8 +10,8 @@ export function sleep(durationInMillisecond: number): Promise<void> {
   providedIn: 'root',
 })
 export class Utilities {
-  getNostrIdentifier(address: string) {
-    const key = this.hexToArray(address);
+  getNostrIdentifier(pubkey: string) {
+    const key = this.hexToArray(pubkey);
     const converted = this.convertToBech32(key, 'npub');
     return converted;
   }

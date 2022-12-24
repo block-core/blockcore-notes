@@ -5,29 +5,46 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { StorageService } from '../services/storage.service';
-import { map } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-identities',
-  templateUrl: './identities.component.html',
-  styleUrls: ['./identities.component.css'],
+  selector: 'app-people',
+  templateUrl: './people.component.html',
+  styleUrls: ['./people.component.css'],
 })
-export class IdentitiesComponent {
+export class PeopleComponent {
   publicKey?: string | null;
   loading = false;
+  showBlocked = false;
   searchTerm: any;
-  constructor(public appState: ApplicationState, private storage: StorageService, private profile: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
-    this.appState.title = 'Identities';
+  constructor(public appState: ApplicationState, private storage: StorageService, private profileService: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
+    this.appState.title = 'People';
     this.appState.showBackButton = false;
   }
 
-  async clearIdentities() {
-    await this.profile.wipeNonFollow();
+  async clearBlocked() {
+    await this.profileService.clearBlocked();
     this.profiles = [];
     await this.load();
+  }
+
+  optionsUpdated() {
+    // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
+    // Parse existing content.
+    // this.events = this.validator.filterEvents(this.events);
+    this.load();
+  }
+
+  block(profile: NostrProfileDocument) {
+    console.log('BLOCK PROFILE:', profile);
+    profile.follow = false;
+    profile.block = true;
+    this.profileService.putProfile(profile.pubkey, profile);
+
+    this.load();
   }
 
   // public trackByFn(index: number, item: NostrProfileDocument) {
@@ -70,24 +87,36 @@ export class IdentitiesComponent {
   // sub: any;
 
   ngOnDestroy() {
-    // if (this.sub) {
-    //   this.sub.unsub();
-    // }
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
   }
 
+  sub?: Subscription;
   profiles: NostrProfileDocument[] = [];
 
   async load() {
     this.loading = true;
-    // setTimeout(async () => {
-    this.profiles = await this.profile.publicList();
-    // });
+
+    if (this.showBlocked) {
+      this.profiles = await this.profileService.blockList();
+    } else {
+      this.profiles = await this.profileService.followList();
+    }
 
     this.loading = false;
   }
 
+  public trackByFn(index: number, item: NostrProfileDocument) {
+    return item.pubkey;
+  }
+
   async ngOnInit() {
-    await this.load();
+    // TODO: Until we changed to using observable (DataService) for all data,
+    // we have this basic observable whenever the profiles changes.
+    this.sub = this.profileService.profilesChanged$.subscribe(async () => {
+      await this.load();
+    });
 
     // if (this.relay) {
     //   return;
@@ -119,11 +148,11 @@ export class IdentitiesComponent {
 
     if (text == 'undefined' || text == null || text == '') {
       this.loading = true;
-      this.profiles = await this.profile.publicList();
+      this.profiles = await this.profileService.followList();
       this.loading = false;
     } else {
       this.loading = true;
-      const allprofiles = await this.profile.publicList();
+      const allprofiles = await this.profileService.followList();
       this.profiles = allprofiles.filter((item: any) => item.name === text || item.display_name === text || item.about === text || item.pubkey === text);
       this.loading = false;
     }

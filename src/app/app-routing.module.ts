@@ -10,13 +10,14 @@ import { ProfileComponent } from './profile/profile.component';
 import { AuthGuardService as AuthGuard } from './services/auth-guard.service';
 import { SettingsComponent } from './settings/settings.component';
 import { UserComponent } from './user/user.component';
+import { CirclesComponent } from './circles/circles.component';
+import { PeopleComponent } from './people/people.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
     canActivate: [AuthGuard],
-    pathMatch: 'full',
   },
   {
     path: 'connect',
@@ -30,6 +31,16 @@ const routes: Routes = [
   {
     path: 'identities',
     component: IdentitiesComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'circles',
+    component: CirclesComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'people',
+    component: PeopleComponent,
     canActivate: [AuthGuard],
   },
   {
