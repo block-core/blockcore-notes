@@ -41,7 +41,6 @@ import { AgoPipe } from './shared/ago.pipe';
 import { AboutComponent } from './about/about.component';
 import { SettingsComponent } from './settings/settings.component';
 import { ProfileComponent } from './profile/profile.component';
-import { IdentitiesComponent } from './identities/identities.component';
 import { ProfileImageComponent } from './shared/profile-image/profile-image.component';
 import { ProfileNameComponent } from './shared/profile-name/profile-name.component';
 import { Bech32Pipe } from './shared/bech32.pipe';
@@ -63,7 +62,6 @@ import { ProfileActionsComponent } from './shared/profile-actions/profile-action
     ProfileImageComponent,
     DirectoryIconComponent,
     ProfileNameComponent,
-    IdentitiesComponent,
     ProfileComponent,
     ConnectComponent,
     LogoutComponent,

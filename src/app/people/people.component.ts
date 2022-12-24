@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
@@ -19,8 +19,17 @@ export class PeopleComponent {
   publicKey?: string | null;
   loading = false;
   showBlocked = false;
+  showCached = false;
   searchTerm: any;
-  constructor(public appState: ApplicationState, private storage: StorageService, private profileService: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
+  constructor(
+    public appState: ApplicationState,
+    private cd: ChangeDetectorRef,
+    private storage: StorageService,
+    private profileService: ProfileService,
+    private validator: DataValidation,
+    private utilities: Utilities,
+    private router: Router
+  ) {
     this.appState.title = 'People';
     this.appState.showBackButton = false;
   }
@@ -31,60 +40,15 @@ export class PeopleComponent {
     await this.load();
   }
 
-  optionsUpdated() {
-    // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
-    // Parse existing content.
-    // this.events = this.validator.filterEvents(this.events);
-    this.load();
+  async optionsUpdated($event: any, type: any) {
+    if (type == 1) {
+      this.showCached = false;
+    } else {
+      this.showBlocked = false;
+    }
+
+    await this.load();
   }
-
-  block(profile: NostrProfileDocument) {
-    console.log('BLOCK PROFILE:', profile);
-    profile.follow = false;
-    profile.block = true;
-    this.profileService.putProfile(profile.pubkey, profile);
-
-    this.load();
-  }
-
-  // public trackByFn(index: number, item: NostrProfileDocument) {
-  //   return item.id;
-  // }
-
-  // events: NostrEvent[] = [];
-
-  // onConnected(relay: any) {
-  //   const hourAgo = moment().subtract(1, 'hours').unix();
-  //   const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
-
-  //   //const sub = relay.sub([{ ids: ['d7dd5eb3ab747e16f8d0212d53032ea2a7cadef53837e5a6c66d42849fcb9027'] }], {  });
-  //   this.sub = relay.sub([{ kinds: [0], since: fiveMinutesAgo }], {});
-
-  //   this.events = [];
-
-  //   this.sub.on('event', (event: any) => {
-  //     // Validate the event:
-  //     const valid = this.validator.validateEvent(event);
-
-  //     if (!valid) {
-  //       debugger;
-  //       console.log('INVALID EVENT!');
-  //       return;
-  //     }
-
-  //     const parsed = this.validator.sanitizeEvent(event);
-  //     // console.log('we got the event we wanted:', parsed);
-
-  //     this.events.unshift(parsed);
-
-  //     if (this.events.length > 100) {
-  //       this.events.length = 80;
-  //     }
-  //   });
-  // }
-
-  // relay: any;
-  // sub: any;
 
   ngOnDestroy() {
     if (this.sub) {
@@ -100,6 +64,8 @@ export class PeopleComponent {
 
     if (this.showBlocked) {
       this.profiles = await this.profileService.blockList();
+    } else if (this.showCached) {
+      this.profiles = await this.profileService.publicList();
     } else {
       this.profiles = await this.profileService.followList();
     }
@@ -117,44 +83,17 @@ export class PeopleComponent {
     this.sub = this.profileService.profilesChanged$.subscribe(async () => {
       await this.load();
     });
-
-    // if (this.relay) {
-    //   return;
-    // }
-    // // const relay = relayInit('wss://relay.nostr.info');
-    // this.relay = relayInit('wss://relay.damus.io');
-    // this.relay.on('connect', () => {
-    //   console.log(`connected to ${this.relay.url}`);
-    //   this.onConnected(this.relay);
-    // });
-    // this.relay.on('disconnect', () => {
-    //   console.log(`DISCONNECTED! ${this.relay.url}`);
-    // });
-    // this.relay.on('notice', () => {
-    //   console.log(`NOTICE FROM ${this.relay.url}`);
-    // });
-    // this.relay.connect();
-    // sub.on('eose', () => {
-    //   sub.unsub();
-    // });
   }
 
-  // about
-  // display_name
-  // name
-  // pubkey
   async search() {
     const text: string = this.searchTerm;
 
+    // First load the current list.
+    await this.load();
+
     if (text == 'undefined' || text == null || text == '') {
-      this.loading = true;
-      this.profiles = await this.profileService.followList();
-      this.loading = false;
     } else {
-      this.loading = true;
-      const allprofiles = await this.profileService.followList();
-      this.profiles = allprofiles.filter((item: any) => item.name === text || item.display_name === text || item.about === text || item.pubkey === text);
-      this.loading = false;
+      this.profiles = this.profiles.filter((item: NostrProfileDocument) => item.name?.indexOf(text) > -1 || item.pubkey?.indexOf(text) > -1 || item.about?.indexOf(text) > -1 || item.nip05?.indexOf(text) > -1);
     }
   }
 }

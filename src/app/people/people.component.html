@@ -18,7 +18,8 @@
         <mat-panel-description>Count: {{ profiles.length }}</mat-panel-description>
       </mat-expansion-panel-header>
       <p>
-        <mat-slide-toggle class="options-slider" [(ngModel)]="showBlocked" (ngModelChange)="optionsUpdated()">Show blocked</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" [(ngModel)]="showBlocked" (change)="optionsUpdated($event, 1)">Show blocked</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" [(ngModel)]="showCached" (change)="optionsUpdated($event, 2)">Show cached</mat-slide-toggle>
       </p>
     </mat-expansion-panel>
   </mat-accordion>

@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { ConnectComponent } from './connect/connect.component';
 import { AboutComponent } from './about/about.component';
 import { HomeComponent } from './home/home.component';
-import { IdentitiesComponent } from './identities/identities.component';
 import { LogoutComponent } from './logout/logout.component';
 import { NotesComponent } from './notes/notes.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -26,11 +25,6 @@ const routes: Routes = [
   {
     path: 'notes',
     component: NotesComponent,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'identities',
-    component: IdentitiesComponent,
     canActivate: [AuthGuard],
   },
   {
