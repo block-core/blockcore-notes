@@ -26,15 +26,14 @@
     <mat-icon>block</mat-icon>
     <span>Block</span>
   </button>
-
 </mat-menu>
 
 <mat-menu #categories="matMenu">
-  <button mat-menu-item>
+  <button mat-menu-item (click)="follow('35a1139a-67d2-46d4-96fc-ec33bdd4e362')">
     <mat-icon>trip_origin</mat-icon>
     <span>Inner Circle</span>
   </button>
-  <button mat-menu-item>
+  <button mat-menu-item (click)="follow('718cc6aa-b38a-4cf0-84b5-00a39dcab95a')">
     <mat-icon>trip_origin</mat-icon>
     <span>Outer Circle</span>
   </button>
