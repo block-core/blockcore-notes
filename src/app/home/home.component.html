@@ -86,9 +86,8 @@
       <span>&nbsp;Notes</span>
     </ng-template>
 
-    <div class="page">
-      <p>Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.</p>
-
+    <div class="feed-page">
+      <div *ngIf="notes.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.<br></div>
       <div class="events" *ngFor="let note of notes">
         <app-profile-actions [event]="note"></app-profile-actions>
         <app-profile-header [pubkey]="note.pubkey"
