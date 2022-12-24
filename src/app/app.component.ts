@@ -39,7 +39,7 @@ export class AppComponent {
     });
   }
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe('(max-width: 599px)').pipe(
     map((result) => result.matches),
     shareReplay()
   );
@@ -49,7 +49,7 @@ export class AppComponent {
   }
 
   toggleMenu() {
-    if (this.breakpointObserver.isMatched(Breakpoints.Handset)) {
+    if (this.breakpointObserver.isMatched('(max-width: 599px)')) {
       this.drawer.toggle();
     }
   }
