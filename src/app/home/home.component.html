@@ -24,8 +24,6 @@
 
       <!-- {{ data.public$ }} -->
 
-      <li *ngFor="let pizza of data.pizzas$ | async; index as i">{{ i + 1 }}. {{ pizza.name }}</li>
-
       <!-- START:
       <div *ngIf="data.public$ | async as data">
         <div class="events" *ngFor="let event of data">EVENT ... {{ event }}</div>

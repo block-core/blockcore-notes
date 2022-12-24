@@ -236,10 +236,6 @@ export class HomeComponent {
     this.appState.showBackButton = false;
     console.log('ngOnInit for home!!!');
 
-    this.data.pizzas$.subscribe((item) => {
-      console.log('PIZZA:', item);
-    });
-
     if (this.relay) {
       return;
     }
