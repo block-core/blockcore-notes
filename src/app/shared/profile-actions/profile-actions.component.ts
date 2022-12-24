@@ -1,7 +1,8 @@
 import { Component, Input, ViewChild } from '@angular/core';
+import { NotesService } from 'src/app/services/notes.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
-import { NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
   selector: 'app-profile-actions',
@@ -10,8 +11,30 @@ import { NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 export class ProfileActionsComponent {
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
+  @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  constructor(private profileService: ProfileService, private utilities: Utilities) {}
+  constructor(private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+
+  async saveNote() {
+    if (!this.event) {
+      return;
+    }
+
+    const note = this.event as NostrNoteDocument;
+    note.saved = Math.floor(Date.now() / 1000);
+
+    await this.notesService.putNote(note);
+  }
+
+  async removeNote() {
+    if (!this.event) {
+      return;
+    }
+
+    console.log('DELETE EVENT:', this.event);
+
+    await this.notesService.deleteNote(this.event.id);
+  }
 
   async follow(circle?: string) {
     if (!this.profile) {
@@ -46,6 +69,14 @@ export class ProfileActionsComponent {
   }
 
   async ngOnInit() {
+    if (!this.profile && !this.pubkey) {
+      return;
+    }
+
+    if (!this.pubkey) {
+      this.pubkey = this.profile!.pubkey;
+    }
+
     if (!this.profile) {
       this.profile = await this.profileService.getProfile(this.pubkey);
     }

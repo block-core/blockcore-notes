@@ -32,7 +32,7 @@ export class AppComponent {
     public dialog: MatDialog,
     private breakpointObserver: BreakpointObserver
   ) {
-    appState.title = 'Blockcore Notes';
+    // appState.title = 'Blockcore Notes';
 
     this.authService.authInfo$.subscribe((auth) => {
       this.authenticated = auth.authenticated();

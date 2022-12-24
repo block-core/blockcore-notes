@@ -36,6 +36,11 @@ export interface NostrEventDocument extends Event {
   tagsCut: boolean;
 }
 
+export interface NostrNoteDocument extends NostrEventDocument {
+  /** The timestamp when the note was saved. */
+  saved: number;
+}
+
 export interface NostrProfile {
   name: string;
   about: string;

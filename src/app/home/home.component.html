@@ -1,7 +1,12 @@
 <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
 
 <mat-tab-group>
-  <mat-tab label="Feed">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
+      <span>&nbsp;Feed</span>
+    </ng-template>
+
     <div class="feed-page">
       <mat-accordion class="options">
         <mat-expansion-panel>
@@ -31,7 +36,7 @@
       </div> -->
 
       <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-        <app-profile-actions [pubkey]="event.pubkey"></app-profile-actions>
+        <app-profile-actions [event]="event"></app-profile-actions>
         <app-profile-header [pubkey]="event.pubkey"
           ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
         ></app-profile-header>
@@ -63,18 +68,47 @@
 
     <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
-  <mat-tab label="Channels">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">forum</mat-icon>
+      <span>&nbsp;Channels</span>
+    </ng-template>
+
     <div class="page">
       <h2>To be implemented</h2>
 
       <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
     </div>
   </mat-tab>
-  <mat-tab label="Notes">
-    <div class="page">
-      <h2>To be implemented</h2>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">bookmarks</mat-icon>
+      <span>&nbsp;Notes</span>
+    </ng-template>
 
+    <div class="page">
       <p>Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.</p>
-    </div></mat-tab
+
+      <div class="events" *ngFor="let note of notes">
+        <app-profile-actions [event]="note"></app-profile-actions>
+        <app-profile-header [pubkey]="note.pubkey"
+          >Posted: <span class="event-date" [matTooltip]="note.id!" matTooltipPosition="below">{{ note.created_at | ago }}</span
+          >, Saved: <span class="event-date">{{ note.saved | ago }}</span> </app-profile-header>
+        <div class="content">
+          {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
+          <div *ngIf="details">
+            <br />
+            <span *ngFor="let tag of note.tags" class="dimmed">TAG: {{ tag }}</span>
+          </div>
+        </div>
+        <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+          <mat-icon class="expand-button-icon">expand_more</mat-icon>
+        </button>
+        <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+          <mat-icon class="expand-button-icon">expand_less</mat-icon>
+        </button>
+      </div>
+    </div>
+    </mat-tab
   >
 </mat-tab-group>

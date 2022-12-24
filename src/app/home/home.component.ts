@@ -5,10 +5,12 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { DataService } from '../services/data.service';
+import { NotesService } from '../services/notes.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +24,7 @@ export class HomeComponent {
     public data: DataService,
     private cd: ChangeDetectorRef,
     public settings: SettingsService,
+    private notesService: NotesService,
     public profile: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
@@ -64,6 +67,10 @@ export class HomeComponent {
   }
 
   public trackByFn(index: number, item: NostrEvent) {
+    return item.id;
+  }
+
+  public trackByNoteId(index: number, item: NostrNoteDocument) {
     return item.id;
   }
 
@@ -228,15 +235,33 @@ export class HomeComponent {
     if (this.sub) {
       this.sub.unsub();
     }
+
+    if (this.notesSub) {
+      this.notesSub.unsubscribe();
+    }
+  }
+
+  notesSub?: Subscription;
+
+  notes: NostrNoteDocument[] = [];
+
+  async loadNotes() {
+    this.notes = await this.notesService.list();
   }
 
   async ngOnInit() {
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
 
-    this.appState.title = 'Blockcore Notes';
+    this.appState.title = 'Explore';
     this.appState.showBackButton = false;
     console.log('ngOnInit for home!!!');
+
+    this.notesSub = this.notesService.notesChanged$.subscribe(async () => {
+      console.log('RELOADING NOTES!!!');
+      await this.loadNotes();
+      console.log('DONE NOTES!!!');
+    });
 
     if (this.relay) {
       return;

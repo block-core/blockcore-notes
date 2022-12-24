@@ -23,7 +23,7 @@
       </mat-accordion>
 
       <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-        <app-profile-actions [pubkey]="event.pubkey"></app-profile-actions>
+        <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
         <app-profile-header [pubkey]="event.pubkey"
           ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
         ></app-profile-header>

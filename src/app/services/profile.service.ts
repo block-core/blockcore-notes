@@ -151,7 +151,6 @@ export class ProfileService {
     this.#changed();
   }
 
-  /** Profiles are upserts, we replace the existing profile and only keep latest. */
   async deleteProfile(pubkey: string) {
     await this.table.del(pubkey);
 
