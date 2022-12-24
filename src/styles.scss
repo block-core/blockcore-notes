@@ -77,17 +77,10 @@ $blockcore-notes-theme: mat.define-dark-theme(
 html,
 body {
   height: 100%;
-
   padding: 0;
   margin: 0;
-  height: 100%;
-  overflow: overlay !important;
-  // overflow: hidden;
 }
 body {
-  // margin: 0;
-  // padding: 0;
-  // overflow: hidden;
   font-size: 18px;
   background-color: #212121;
   color: white;
@@ -120,19 +113,10 @@ a:hover {
 }
 
 .mat-sidenav-content {
-  /* This puts the scrollbar inside the content */
-  overflow: overlay !important;
+  /* Disable scrolling on the content, we want it specific on child element */
+  overflow: hidden !important;
 }
 
-.mat-drawer-content {
-  position: relative;
-  z-index: 1;
-  display: block;
-  height: calc(100% - 100px);
-  overflow: auto;
-}
-
-/* TODO: The toolbar becomes a few pixel smaller with this setup.. debug why. */
 app-root {
   height: 100%;
   display: flex;
@@ -143,17 +127,35 @@ app-root mat-toolbar {
   flex-grow: 1;
 }
 
-app-root mat-sidenav-container {
-  flex-grow: 2;
-  flex-basis: auto;
-  height: 100%;
+.mat-drawer-inner-container {
+  overflow: overlay !important;
 }
 
-// .sidenav-container {
-//   // overflow: auto overlay;
-//   // height: 100%;
-//   overflow: hidden !important;
-// }
+/* The container for main content. */
+mat-sidenav-content {
+  height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between;
+}
+
+/* Top element in main content, make it always appear on-top. */
+mat-sidenav-content mat-toolbar {
+  flex: 0 1 68px !important; /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+}
+
+/* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+@media only screen and (max-width: 599px) {
+  mat-sidenav-content mat-toolbar {
+    flex: 0 1 58px !important;
+  }
+}
+
+/* Container for the actual content, which is our scrolling container. */
+.scrolling-content {
+  overflow: overlay !important;
+  height: 100%;
+}
 
 .sidenav-left {
 }

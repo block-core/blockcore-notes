@@ -8,6 +8,8 @@ import { CheckForUpdateService } from './services/check-for-update.service';
 import { StorageService } from './services/storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
+import { Observable, map, shareReplay } from 'rxjs';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +22,6 @@ export class AppComponent {
   authenticated = false;
   note: any;
 
-
   constructor(
     public appState: ApplicationState,
     private storage: StorageService,
@@ -28,7 +29,8 @@ export class AppComponent {
     private router: Router,
     public appUpdateService: AppUpdateService,
     public appUpdateCheckService: CheckForUpdateService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
   ) {
     appState.title = 'Blockcore Notes';
 
@@ -37,15 +39,24 @@ export class AppComponent {
     });
   }
 
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+    map((result) => result.matches),
+    shareReplay()
+  );
+
   goBack() {
     this.router.navigateByUrl('/');
+  }
+
+  toggleMenu() {
+    if (this.breakpointObserver.isMatched(Breakpoints.Handset)) {
+      this.drawer.toggle();
+    }
   }
 
   async ngOnInit() {
     await this.storage.open();
     await this.storage.initialize();
-
-    
 
     // const testdata = await this.storage.get('123');
     // console.log(testdata);
@@ -58,10 +69,10 @@ export class AppComponent {
 
   createNote(): void {
     const dialogRef = this.dialog.open(NoteDialog, {
-      data: {name: this.note},
+      data: { name: this.note },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       this.note = result;
     });
   }
