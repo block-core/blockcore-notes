@@ -290,7 +290,7 @@ export class FeedPrivateComponent {
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
 
-    this.appState.title = 'Explore';
+    this.appState.title = '';
     this.appState.showBackButton = false;
     this.appState.actions = [];
 

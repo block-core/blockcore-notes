@@ -1,8 +1,8 @@
 <mat-tab-group>
   <mat-tab>
     <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
-      <span *ngIf="(isHandset$ | async) === false">&nbsp;My Feed</span>
+      <mat-icon class="example-tab-icon">home</mat-icon>
+      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Home</span>
     </ng-template>
     <ng-template matTabContent>
       <app-feed-public></app-feed-public>
@@ -12,7 +12,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
-      <span *ngIf="(isHandset$ | async) === false">&nbsp;Public Feed</span>
+      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Feed</span>
     </ng-template>
     <ng-template matTabContent>
       <app-feed-public></app-feed-public>
@@ -22,7 +22,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">forum</mat-icon>
-      <span *ngIf="(isHandset$ | async) === false">&nbsp;Channels</span>
+      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Chats</span>
     </ng-template>
 
     <div class="page">
@@ -35,7 +35,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">bookmarks</mat-icon>
-      <span *ngIf="(isHandset$ | async) === false">&nbsp;Notes</span>
+      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Saved</span>
     </ng-template>
     <ng-template matTabContent>
       <app-notes></app-notes>
