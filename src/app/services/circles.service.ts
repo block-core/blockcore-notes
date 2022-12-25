@@ -26,7 +26,9 @@ export class CirclesService {
 
   async #filter(predicate: (value: Circle, key: string) => boolean): Promise<Circle[]> {
     const iterator = this.table.iterator<string, Circle>({ keyEncoding: 'utf8', valueEncoding: 'json' });
-    const items = [];
+
+    // Add default that cannot be removed. It is where people go when group is deleted or when none is picked or could be found (matched).
+    const items = [{ id: '', name: 'Following', color: '#e91e63' }];
 
     for await (const [key, value] of iterator) {
       if (predicate(value, key)) {
@@ -48,6 +50,10 @@ export class CirclesService {
 
     // Remove the id from the document before we persist.
     delete document.id;
+
+    document.created = Math.floor(Date.now() / 1000);
+
+    console.log(document);
 
     await this.table.put(id, document);
 

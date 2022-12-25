@@ -3,34 +3,15 @@
 <div class="feed-page">
   <p>Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
 
-  <div class="circles" *ngFor="let circle of circles">
-    {{circle.id}} | {{circle.name}} | {{circle.color}}
+  <div class="circle-container" *ngFor="let circle of circles">
+    <div class="circle-item"><mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon></div>
+    <div class="circle-item">
+      {{ circle.name }}<br /><span class="dimmed">Created: {{ circle.created | ago }}</span>
+    </div>
+    <div class="circle-item">
+      <button (click)="deleteCircle(circle.id)" *ngIf="circle.id" class="circle-button" mat-icon-button>
+        <mat-icon class="circle-button-icon">delete</mat-icon>
+      </button>
+    </div>
   </div>
-
-  <!-- <mat-accordion class="options">
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Options</mat-panel-title>
-        <mat-panel-description>Identities cached: {{ profiles.length }}</mat-panel-description>
-      </mat-expansion-panel-header>
-      <p>
-        <button mat-stroked-button (click)="clearIdentities()">Clear Identities Cache</button>
-      </p>
-    </mat-expansion-panel>
-  </mat-accordion> -->
-
-  <!-- <p class="search">
-    <mat-form-field appearance="fill" class="input-full-width">
-      <mat-label>Search in Identitis</mat-label>
-      <input matInput placeholder="name, display name, about or pubkey" type="search" (keyup.enter)="search()" autocomplete="off" [(ngModel)]="searchTerm" />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-  </p>
-
-  <div class="centered" style="width: 100%" *ngIf="loading">
-    <br />
-    <mat-spinner class="loading"></mat-spinner>
-  </div>
-
-  <div *ngIf="!loading"></div> -->
 </div>

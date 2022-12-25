@@ -13,3 +13,44 @@
   background-color: #424242;
   border-radius: 10px;
 }
+
+.circle-button {
+
+}
+
+.circle-button-icon {
+}
+
+.circle-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  column-gap: 1em;
+
+  margin-top: 1em;
+  padding: 1em;
+  margin-bottom: 1em;
+  background-color: #424242;
+  border-radius: 10px;
+}
+
+.circle-item:nth-child(1) {
+  order: 0;
+  flex: 0 1 auto;
+  align-self: auto;
+  }
+
+.circle-item:nth-child(2) {
+  order: 0;
+  flex: 1 1 auto;
+  align-self: auto;
+  }
+
+.circle-item:nth-child(3) {
+  order: 0;
+  flex: 0 1 auto;
+  align-self: auto;
+  }

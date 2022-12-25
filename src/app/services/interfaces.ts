@@ -4,6 +4,8 @@ export interface Circle {
   id: string;
   name: string;
   color: string;
+  created?: number;
+  modified?: number;
 }
 
 export interface Action {
@@ -60,8 +62,11 @@ export interface NostrProfile {
 export interface NostrProfileDocument extends NostrProfile {
   pubkey: string; // Not stored in database, just used when retreiving.
 
-  /** The timestamp when the profile was saved. */
-  saved: number;
+  /** The timestamp when the profile was created. Internal property, not from event. */
+  created: number;
+
+  /** The timestamp when the profile was modified. Internal property, not from event. */
+  modified?: number;
 
   /** Indicates if the user is following this profile. If not, then the profile can be wiped during cache cleanup. */
   follow?: boolean;

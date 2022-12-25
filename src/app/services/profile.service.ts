@@ -95,12 +95,12 @@ export class ProfileService {
         pubkey: pubkey,
         follow: follow,
         circle: circle,
-        saved: Math.floor(Date.now() / 1000),
+        created: Math.floor(Date.now() / 1000),
       };
     } else {
       profile.follow = follow;
       profile.circle = circle;
-      profile.saved = Math.floor(Date.now() / 1000);
+      profile.modified = Math.floor(Date.now() / 1000);
     }
 
     // If user choose to follow, make sure there are no block.

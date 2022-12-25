@@ -90,17 +90,27 @@ export class CirclesComponent {
     this.loading = false;
   }
 
+  async deleteCircle(id: string) {
+    await this.circlesService.deleteCircle(id);
+    await this.load();
+  }
+
   createCircle(): void {
     const dialogRef = this.dialog.open(CircleDialog, {
       data: { name: '' },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      debugger;
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (!result) {
+        return;
+      }
+
       this.circlesService.putCircle({
         id: uuidv4(),
         ...result,
       });
+
+      await this.load();
     });
   }
 
