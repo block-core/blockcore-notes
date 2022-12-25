@@ -12,6 +12,8 @@ import { DataService } from '../services/data.service';
 import { NotesService } from '../services/notes.service';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { MatDialog } from '@angular/material/dialog';
+import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +27,7 @@ export class HomeComponent {
     public data: DataService,
     private cd: ChangeDetectorRef,
     public settings: SettingsService,
-
+    public dialog: MatDialog,
     public profile: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
@@ -277,6 +279,18 @@ export class HomeComponent {
     shareReplay()
   );
 
+  note: any;
+
+  createNote(): void {
+    const dialogRef = this.dialog.open(NoteDialog, {
+      data: { name: this.note },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.note = result;
+    });
+  }
+
   async ngOnInit() {
     this.settings.options.privateFeed = true;
 
@@ -285,7 +299,15 @@ export class HomeComponent {
 
     this.appState.title = '';
     this.appState.showBackButton = false;
-    this.appState.actions = [];
+    this.appState.actions = [
+      {
+        icon: 'note_add',
+        tooltip: 'Create Note',
+        click: () => {
+          this.createNote();
+        },
+      },
+    ];
 
     if (this.relay) {
       return;

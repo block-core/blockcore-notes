@@ -21,7 +21,7 @@ export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
   authenticated = false;
-  note: any;
+  
 
   constructor(
     public appState: ApplicationState,
@@ -67,15 +67,5 @@ export class AppComponent {
 
     // const testdata = await this.storage.get('123', 'profile');
     // console.log(testdata);
-  }
-
-  createNote(): void {
-    const dialogRef = this.dialog.open(NoteDialog, {
-      data: { name: this.note },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.note = result;
-    });
   }
 }

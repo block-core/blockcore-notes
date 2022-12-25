@@ -291,8 +291,6 @@ export class FeedPrivateComponent {
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
 
     this.appState.title = '';
-    this.appState.showBackButton = false;
-    this.appState.actions = [];
 
     this.notesSub = this.notesService.notesChanged$.subscribe(async () => {
       console.log('RELOADING NOTES!!!');
