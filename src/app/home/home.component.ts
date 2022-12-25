@@ -10,7 +10,8 @@ import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { DataService } from '../services/data.service';
 import { NotesService } from '../services/notes.service';
-import { Subscription } from 'rxjs';
+import { map, Observable, shareReplay, Subscription } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-home',
@@ -29,6 +30,7 @@ export class HomeComponent {
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router,
+    private breakpointObserver: BreakpointObserver,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
@@ -249,7 +251,42 @@ export class HomeComponent {
     this.notes = await this.notesService.list();
   }
 
+  feedChanged($event: any, type: string) {
+    if (type === 'public') {
+      // If user choose public and set the value to values, we'll turn on the private.
+      if (!this.settings.options.publicFeed) {
+        this.settings.options.privateFeed = true;
+      } else {
+        this.settings.options.privateFeed = false;
+      }
+    } else {
+      // If user choose private and set the value to values, we'll turn on the public.
+      if (!this.settings.options.privateFeed) {
+        this.settings.options.publicFeed = true;
+      } else {
+        this.settings.options.publicFeed = false;
+      }
+    }
+  }
+
+  // async optionsUpdated($event: any, type: any) {
+  //   if (type == 1) {
+  //     this.showCached = false;
+  //   } else {
+  //     this.showBlocked = false;
+  //   }
+
+  //   await this.load();
+  // }
+
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe('(max-width: 599px)').pipe(
+    map((result) => result.matches),
+    shareReplay()
+  );
+
   async ngOnInit() {
+    this.settings.options.privateFeed = true;
+
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
 

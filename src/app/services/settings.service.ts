@@ -4,6 +4,8 @@ export interface Options {
   hideSpam?: boolean;
   hideInvoice?: boolean;
   paused?: boolean;
+  privateFeed?: boolean;
+  publicFeed?: boolean;
 }
 
 @Injectable({

@@ -4,7 +4,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
-      <span>&nbsp;Feed</span>
+      <span *ngIf="(isHandset$ | async) === false">&nbsp;Feed</span>
     </ng-template>
 
     <div class="feed-page">
@@ -15,6 +15,9 @@
             <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
           </mat-expansion-panel-header>
           <p>
+            <mat-slide-toggle class="options-slider"  (change)="feedChanged($event, 'private')" [(ngModel)]="settings.options.privateFeed">My feed</mat-slide-toggle>
+            <mat-slide-toggle class="options-slider"  (change)="feedChanged($event, 'public')" [(ngModel)]="settings.options.publicFeed">Public feed</mat-slide-toggle>
+            <br><br>
             <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
             <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
             <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
@@ -71,7 +74,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">forum</mat-icon>
-      <span>&nbsp;Channels</span>
+      <span *ngIf="(isHandset$ | async) === false">&nbsp;Channels</span>
     </ng-template>
 
     <div class="page">
@@ -83,7 +86,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">bookmarks</mat-icon>
-      <span>&nbsp;Notes</span>
+      <span *ngIf="(isHandset$ | async) === false">&nbsp;Notes</span>
     </ng-template>
 
     <div class="feed-page">
