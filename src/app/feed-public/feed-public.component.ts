@@ -237,6 +237,12 @@ export class FeedPublicComponent {
     if (this.sub) {
       this.sub.unsub();
     }
+
+    if (this.relay) {
+      this.relay.close();
+    }
+
+    console.log('PUBLIC FEED DESTROYED!');
   }
 
   feedChanged($event: any, type: string) {

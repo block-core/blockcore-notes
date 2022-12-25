@@ -1,4 +1,3 @@
-
 <p align="center">
   <p align="center">
     <img src="src/assets/icons/icon-128x128.png" height="100" alt="Blockcore" />
@@ -61,5 +60,10 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 Thoughts and ideas:
 
 - Validate the content of certain limit and don't render at all if content is too long, or at least cut the content and only render X length. Then allow users to manually retrieve
-that exact event upon request.
+  that exact event upon request.
 
+## Security
+
+There are many ways a web app can be exploited when it allow user contributed content. Any and all measurements to avoid exploits should be done, like sanitizing the input.
+
+[XSS Filter Evasion Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html)

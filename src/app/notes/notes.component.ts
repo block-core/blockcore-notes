@@ -24,6 +24,8 @@ export class NotesComponent {
     if (this.notesSub) {
       this.notesSub.unsubscribe();
     }
+
+    console.log('NOTES DESTROYED!!');
   }
 
   ngOnInit() {
