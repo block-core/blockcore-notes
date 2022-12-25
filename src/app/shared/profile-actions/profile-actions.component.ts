@@ -37,6 +37,8 @@ export class ProfileActionsComponent {
   }
 
   async follow(circle?: string) {
+    console.log('FOLLOW:', this.profile);
+
     if (!this.profile) {
       return;
     }
@@ -69,39 +71,13 @@ export class ProfileActionsComponent {
   }
 
   async ngOnInit() {
-    if (!this.profile && !this.pubkey) {
-      return;
-    }
-
-    if (!this.pubkey) {
-      this.pubkey = this.profile!.pubkey;
-    }
-
-    if (!this.profile) {
+    if (this.event) {
+      this.pubkey = this.event.pubkey;
+      this.profile = await this.profileService.getProfile(this.pubkey);
+    } else if (this.profile) {
+      this.pubkey = this.profile.pubkey;
+    } else {
       this.profile = await this.profileService.getProfile(this.pubkey);
     }
-
-    // this.imagePath = this.profile.picture;
-    // this.tooltip = this.profile.about;
-    // this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
-
-    // // TODO: Just a basic protection of long urls, temporary.
-    // if (this.profile.name.length > 255) {
-    //   return;
-    // }
-
-    // this.tooltipName = this.profileName; // Only set tooltip if we replace the publicKey with it.
-    // this.profileName = this.profile.name;
-
-    // const profile = this.profiles.profiles[this.publicKey] as NostrProfile;
-
-    // if (!profile || !profile.picture) {
-    //   return;
-    // }
-
-    // // TODO: Just a basic protection of long urls, temporary.
-    // if (profile.picture.length > 255) {
-    //   return;
-    // }
   }
 }
