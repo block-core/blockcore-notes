@@ -7,6 +7,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CirclesService {
+  static DEFAULT: Circle = { id: '', name: 'Following', color: '#e91e63' };
+
   private table;
 
   // Just a basic observable that triggers whenever any profile has changed.
@@ -28,7 +30,7 @@ export class CirclesService {
     const iterator = this.table.iterator<string, Circle>({ keyEncoding: 'utf8', valueEncoding: 'json' });
 
     // Add default that cannot be removed. It is where people go when group is deleted or when none is picked or could be found (matched).
-    const items = [{ id: '', name: 'Following', color: '#e91e63' }];
+    const items = [CirclesService.DEFAULT];
 
     for await (const [key, value] of iterator) {
       if (predicate(value, key)) {
@@ -42,6 +44,37 @@ export class CirclesService {
 
   async list() {
     return this.#filter((value, key) => true);
+  }
+
+  async #get<T>(id: string): Promise<T | undefined> {
+    try {
+      const entry = await this.table.get<string, T>(id, { keyEncoding: 'utf8', valueEncoding: 'json' });
+      return entry;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      if (err.code === 'LEVEL_NOT_FOUND') {
+        return undefined;
+      } else {
+        console.log('HERE?!?!?');
+        throw err;
+      }
+    }
+  }
+
+  async getCircle(id?: string) {
+    if (!id) {
+      return CirclesService.DEFAULT;
+    }
+
+    const circle = await this.#get<Circle>(id);
+
+    if (!circle) {
+      return CirclesService.DEFAULT;
+    }
+
+    circle.id = id;
+
+    return circle;
   }
 
   /** Circles are upserts, we replace the existing circles and only keep latest. */

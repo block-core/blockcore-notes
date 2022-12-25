@@ -213,7 +213,8 @@ mat-sidenav-content mat-toolbar {
   display: grid;
   grid-template-columns: 48px 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 0px 0.4em;
+  gap: 0 1em;
+  // column-gap: 1em;
   grid-template-areas:
     "icon name"
     "icon date";
@@ -229,23 +230,23 @@ mat-sidenav-content mat-toolbar {
   text-decoration: underline;
 }
 
-.icon {
+.event-header .icon {
   grid-area: icon;
 }
 
-.icon img {
+.event-header .icon img {
   width: 48px;
   height: 48px;
   border-radius: 50%;
 }
 
-.name {
+.event-header .name {
   grid-area: name;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.date {
+.event-header .date {
   grid-area: date;
   color: rgba(206, 206, 206, 0.618);
   font-size: 0.8em;

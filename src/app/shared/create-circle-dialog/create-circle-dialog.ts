@@ -21,5 +21,4 @@ export class CircleDialog {
     this.data.color = '#673ab7';
     this.dialogRef.close();
   }
-
 }

@@ -3,7 +3,8 @@
 <div class="event-header">
   <div class="icon">
     <a [routerLink]="['/user', pubkey]">
-      <img [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
+      <img *ngIf="profile?.follow" class="profile-image-follow" [matTooltip]="tooltip" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath"  />
+      <img *ngIf="!profile?.follow" class="profile-image" matTooltipPosition="above" [src]="imagePath"  />
       <!-- <app-profile-image [publicKey]="event.pubkey"></app-profile-image> -->
     </a>
   </div>

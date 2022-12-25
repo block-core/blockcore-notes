@@ -1,11 +1,13 @@
 import { Component, Input, ViewChild } from '@angular/core';
+import { CirclesService } from 'src/app/services/circles.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
-import { NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
   selector: 'app-profile-header',
   templateUrl: './profile-header.component.html',
+  styleUrls: ['./profile-header.component.css'],
 })
 export class ProfileHeaderComponent {
   @Input() pubkey: string = '';
@@ -15,8 +17,9 @@ export class ProfileHeaderComponent {
   tooltip = '';
   tooltipName = '';
   profileName = '';
+  circle?: Circle;
 
-  constructor(private profiles: ProfileService, private utilities: Utilities) {}
+  constructor(private profiles: ProfileService, private circleService: CirclesService, private utilities: Utilities) {}
 
   ngAfterViewInit() {}
 
@@ -36,5 +39,7 @@ export class ProfileHeaderComponent {
     this.tooltip = this.profile.about;
     this.tooltipName = this.profileName;
     this.profileName = this.profile.name;
+
+    this.circle = await this.circleService.getCircle(this.profile.circle);
   }
 }

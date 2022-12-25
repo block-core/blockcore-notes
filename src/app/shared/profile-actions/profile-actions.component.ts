@@ -1,8 +1,10 @@
 import { Component, Input, ViewChild } from '@angular/core';
+import { CirclesService } from 'src/app/services/circles.service';
 import { NotesService } from 'src/app/services/notes.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
-import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile-actions',
@@ -13,7 +15,9 @@ export class ProfileActionsComponent {
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  constructor(private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  circles: Circle[] = [];
+
+  constructor(private circlesService: CirclesService, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
@@ -70,7 +74,23 @@ export class ProfileActionsComponent {
     await this.profileService.unblock(this.profile.pubkey);
   }
 
+  ngOnDestroy() {
+    if (this.circlesSub) {
+      this.circlesSub.unsubscribe();
+    }
+
+    console.log('ON DESTROY ACTION!');
+  }
+
+  private circlesSub?: Subscription;
+
+  async loadCircles() {
+    this.circles = await this.circlesService.list();
+  }
+
   async ngOnInit() {
+    console.log('ON INIT ACTION!');
+
     if (this.event) {
       this.pubkey = this.event.pubkey;
       this.profile = await this.profileService.getProfile(this.pubkey);
@@ -79,5 +99,9 @@ export class ProfileActionsComponent {
     } else {
       this.profile = await this.profileService.getProfile(this.pubkey);
     }
+
+    this.circlesSub = this.circlesService.notesChanged$.subscribe(() => {
+      this.loadCircles();
+    });
   }
 }
