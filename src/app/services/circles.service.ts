@@ -21,7 +21,7 @@ export class CirclesService {
   }
 
   constructor(private storage: StorageService) {
-    this.table = this.storage.table<Circle>('notes');
+    this.table = this.storage.table<Circle>('circles');
   }
 
   async #filter(predicate: (value: Circle, key: string) => boolean): Promise<Circle[]> {

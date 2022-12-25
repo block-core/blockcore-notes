@@ -3,7 +3,9 @@
 <div class="feed-page">
   <p>Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
 
-  
+  <div class="circles" *ngFor="let circle of circles">
+    {{circle.id}} | {{circle.name}} | {{circle.color}}
+  </div>
 
   <!-- <mat-accordion class="options">
     <mat-expansion-panel>

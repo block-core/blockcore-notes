@@ -12,6 +12,7 @@ import { map } from 'rxjs';
 import { CirclesService } from '../services/circles.service';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-circles',
@@ -95,7 +96,11 @@ export class CirclesComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // this.note = result;
+      debugger;
+      this.circlesService.putCircle({
+        id: uuidv4(),
+        ...result,
+      });
     });
   }
 
