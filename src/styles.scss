@@ -141,13 +141,15 @@ mat-sidenav-content {
 
 /* Top element in main content, make it always appear on-top. */
 mat-sidenav-content mat-toolbar {
-  flex: 0 1 68px !important; /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+  flex: 0 1 auto !important; /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+  height: 69px !important;
 }
 
 /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
 @media only screen and (max-width: 599px) {
   mat-sidenav-content mat-toolbar {
-    flex: 0 1 58px !important;
+    flex: 0 1 auto !important;
+    height: 60px !important;
   }
 }
 

@@ -1,0 +1,25 @@
+.input-full-width {
+  width: 100% !important;
+}
+
+.mat-dialog-content {
+  padding: 20px 24px 0px 24px !important;
+}
+
+.mat-dialog-actions {
+  padding: 10px 24px 24px 24px;
+}
+
+.picker {
+  display: block;
+  position: fixed;
+  z-index: 3;
+}
+
+.emoji {
+  cursor: pointer;
+}
+
+.emoji:hover {
+  color: #fff;
+}

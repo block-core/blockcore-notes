@@ -135,8 +135,12 @@
 
       <!-- <app-language-selector></app-language-selector> -->
 
+      <button *ngFor="let action of appState.actions" (click)="action.click()" mat-icon-button [matTooltip]="action.tooltip">
+        <mat-icon>{{ action.icon }}</mat-icon>
+      </button>
+
       <button mat-icon-button matTooltip="Create new note" (click)="createNote()">
-        <mat-icon>add</mat-icon>
+        <mat-icon>post_add</mat-icon>
       </button>
 
       <button mat-icon-button (click)="draweraccount.toggle()">

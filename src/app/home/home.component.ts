@@ -255,7 +255,7 @@ export class HomeComponent {
 
     this.appState.title = 'Explore';
     this.appState.showBackButton = false;
-    console.log('ngOnInit for home!!!');
+    this.appState.actions = [];
 
     this.notesSub = this.notesService.notesChanged$.subscribe(async () => {
       console.log('RELOADING NOTES!!!');

@@ -3,6 +3,13 @@ import { Event } from 'nostr-tools';
 export interface Circle {
   id: string;
   name: string;
+  color: string;
+}
+
+export interface Action {
+  tooltip: string;
+  icon: string;
+  click: any;
 }
 
 export interface Person {

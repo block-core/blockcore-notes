@@ -12,8 +12,7 @@ export class SettingsComponent {
   wipedNonFollow = false;
 
   constructor(private appState: ApplicationState, private storage: StorageService, private profileService: ProfileService) {
-    appState.showBackButton = true;
-    appState.title = 'Settings';
+
   }
 
   async clearProfileCache() {
@@ -24,5 +23,11 @@ export class SettingsComponent {
   async clearDatabase() {
     await this.storage.wipe();
     this.wiped = true;
+  }
+
+  ngOnInit() {
+    this.appState.title = 'Settings';
+    this.appState.showBackButton = true;
+    this.appState.actions = [];
   }
 }

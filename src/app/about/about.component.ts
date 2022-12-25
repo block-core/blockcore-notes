@@ -7,8 +7,11 @@ import { ApplicationState } from '../services/applicationstate.service';
   styleUrls: ['./about.component.css'],
 })
 export class AboutComponent {
-  constructor(private appState: ApplicationState) {
-    appState.showBackButton = true;
-    appState.title = 'About';
+  constructor(private appState: ApplicationState) {}
+
+  ngOnInit() {
+    this.appState.showBackButton = true;
+    this.appState.title = 'About';
+    this.appState.actions = [];
   }
 }

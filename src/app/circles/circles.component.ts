@@ -5,10 +5,13 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrProfileDocument } from '../services/interfaces';
+import { Circle, NostrEvent, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { StorageService } from '../services/storage.service';
 import { map } from 'rxjs';
+import { CirclesService } from '../services/circles.service';
+import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-circles',
@@ -19,16 +22,16 @@ export class CirclesComponent {
   publicKey?: string | null;
   loading = false;
   searchTerm: any;
-  constructor(public appState: ApplicationState, private storage: StorageService, private profile: ProfileService, private validator: DataValidation, private utilities: Utilities, private router: Router) {
-    this.appState.title = 'Circles';
-    this.appState.showBackButton = false;
-  }
-
-  async clearIdentities() {
-    await this.profile.wipe();
-    this.profiles = [];
-    await this.load();
-  }
+  constructor(
+    public appState: ApplicationState,
+    private circlesService: CirclesService,
+    private storage: StorageService,
+    private profile: ProfileService,
+    public dialog: MatDialog,
+    private validator: DataValidation,
+    private utilities: Utilities,
+    private router: Router
+  ) {}
 
   // public trackByFn(index: number, item: NostrProfileDocument) {
   //   return item.id;
@@ -75,18 +78,40 @@ export class CirclesComponent {
     // }
   }
 
-  profiles: NostrProfileDocument[] = [];
+  circles: Circle[] = [];
 
   async load() {
     this.loading = true;
     // setTimeout(async () => {
-    this.profiles = await this.profile.followList();
+    this.circles = await this.circlesService.list();
     // });
 
     this.loading = false;
   }
 
+  createCircle(): void {
+    const dialogRef = this.dialog.open(CircleDialog, {
+      data: { name: '' },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // this.note = result;
+    });
+  }
+
   async ngOnInit() {
+    this.appState.title = 'Circles';
+    this.appState.showBackButton = true;
+    this.appState.actions = [
+      {
+        icon: 'add_circle',
+        tooltip: 'Create Circle',
+        click: () => {
+          this.createCircle();
+        },
+      },
+    ];
+
     await this.load();
 
     // if (this.relay) {
@@ -114,18 +139,18 @@ export class CirclesComponent {
   // display_name
   // name
   // pubkey
-  async search() {
-    const text: string = this.searchTerm;
+  // async search() {
+  //   const text: string = this.searchTerm;
 
-    if (text == 'undefined' || text == null || text == '') {
-      this.loading = true;
-      this.profiles = await this.profile.followList();
-      this.loading = false;
-    } else {
-      this.loading = true;
-      const allprofiles = await this.profile.followList();
-      this.profiles = allprofiles.filter((item: any) => item.name === text || item.display_name === text || item.about === text || item.pubkey === text);
-      this.loading = false;
-    }
-  }
+  //   if (text == 'undefined' || text == null || text == '') {
+  //     this.loading = true;
+  //     this.profiles = await this.profile.followList();
+  //     this.loading = false;
+  //   } else {
+  //     this.loading = true;
+  //     const allprofiles = await this.profile.followList();
+  //     this.profiles = allprofiles.filter((item: any) => item.name === text || item.display_name === text || item.about === text || item.pubkey === text);
+  //     this.loading = false;
+  //   }
+  // }
 }

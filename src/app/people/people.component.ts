@@ -9,6 +9,9 @@ import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/inte
 import { ProfileService } from '../services/profile.service';
 import { StorageService } from '../services/storage.service';
 import { map, Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
+import { FollowDialog } from '../shared/create-follow-dialog/create-follow-dialog';
 
 @Component({
   selector: 'app-people',
@@ -24,15 +27,13 @@ export class PeopleComponent {
   constructor(
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
+    public dialog: MatDialog,
     private storage: StorageService,
     private profileService: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router
-  ) {
-    this.appState.title = 'People';
-    this.appState.showBackButton = false;
-  }
+  ) {}
 
   async clearBlocked() {
     await this.profileService.clearBlocked();
@@ -78,6 +79,18 @@ export class PeopleComponent {
   }
 
   async ngOnInit() {
+    this.appState.title = 'People';
+    this.appState.showBackButton = true;
+    this.appState.actions = [
+      {
+        icon: 'person_add',
+        tooltip: 'Add a person',
+        click: () => {
+          this.createFollow();
+        },
+      },
+    ];
+
     // TODO: Until we changed to using observable (DataService) for all data,
     // we have this basic observable whenever the profiles changes.
     this.sub = this.profileService.profilesChanged$.subscribe(async () => {
@@ -95,5 +108,15 @@ export class PeopleComponent {
     } else {
       this.profiles = this.profiles.filter((item: NostrProfileDocument) => item.name?.indexOf(text) > -1 || item.pubkey?.indexOf(text) > -1 || item.about?.indexOf(text) > -1 || item.nip05?.indexOf(text) > -1);
     }
+  }
+
+  createFollow(): void {
+    const dialogRef = this.dialog.open(FollowDialog, {
+      data: { name: '' },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // this.note = result;
+    });
   }
 }

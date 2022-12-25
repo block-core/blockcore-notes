@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 import { Observable, map, shareReplay } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ export class AppComponent {
     public appUpdateService: AppUpdateService,
     public appUpdateCheckService: CheckForUpdateService,
     public dialog: MatDialog,
+    private location: Location,
     private breakpointObserver: BreakpointObserver
   ) {
     // appState.title = 'Blockcore Notes';
@@ -45,7 +47,7 @@ export class AppComponent {
   );
 
   goBack() {
-    this.router.navigateByUrl('/');
+    this.location.back();
   }
 
   toggleMenu() {

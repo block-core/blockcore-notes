@@ -55,6 +55,8 @@ import { CirclesComponent } from './circles/circles.component';
 import { PeopleComponent } from './people/people.component';
 import { ProfileHeaderComponent } from './shared/profile-header/profile-header.component';
 import { ProfileActionsComponent } from './shared/profile-actions/profile-actions.component';
+import { CircleDialog } from './shared/create-circle-dialog/create-circle-dialog';
+import { FollowDialog } from './shared/create-follow-dialog/create-follow-dialog';
 
 @NgModule({
   declarations: [
@@ -69,9 +71,11 @@ import { ProfileActionsComponent } from './shared/profile-actions/profile-action
     AgoPipe,
     Bech32Pipe,
     AboutComponent,
+    FollowDialog,
     SettingsComponent,
     UserComponent,
     NoteDialog,
+    CircleDialog,
     CirclesComponent,
     PeopleComponent,
     ProfileHeaderComponent,
