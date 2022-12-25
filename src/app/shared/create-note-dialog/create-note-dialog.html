@@ -3,7 +3,7 @@
   <mat-form-field appearance="fill" class="input-full-width" >
     <mat-icon class="emoji" matPrefix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;">sentiment_satisfied</mat-icon>
     <mat-label>Note</mat-label>
-    <input matInput type="text" autocomplete="off" [(ngModel)]="data.note" />
+    <textarea  matInput type="text" autocomplete="off" [(ngModel)]="data.note" rows="2"></textarea>
   </mat-form-field>
 <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
 

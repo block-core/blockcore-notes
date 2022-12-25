@@ -30,6 +30,7 @@
     "joi": "^17.7.0",
     "level": "^8.0.0",
     "moment": "^2.29.4",
+    "ngx-colors": "^3.1.4",
     "nostr-tools": "^1.0.0-beta2",
     "rxjs": "~7.5.0",
     "sanitize-html": "^2.8.1",

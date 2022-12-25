@@ -13,7 +13,7 @@ export interface NoteDialogData {
 })
 export class NoteDialog {
   constructor(public dialogRef: MatDialogRef<NoteDialog>, @Inject(MAT_DIALOG_DATA) public data: NoteDialogData) {
-    this.dialogRef.updateSize('80%');
+    this.dialogRef.updateSize('70%');
     this.dialogRef.updatePosition({ top: '50px'});
 
     this.data.note = '';

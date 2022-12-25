@@ -1,14 +1,22 @@
-<h1 mat-dialog-title>Enter Circle Name (NOT WORKING)</h1>
+<h1 mat-dialog-title>Create Circle (NOT WORKING)</h1>
 <div mat-dialog-content class="mat-dialog-content">
-  <mat-form-field appearance="fill" class="input-full-width" >
-    <mat-icon class="emoji" matPrefix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;">sentiment_satisfied</mat-icon>
-    <mat-label>Note</mat-label>
-    <input matInput type="text" autocomplete="off" [(ngModel)]="data.note" />
+
+  <mat-form-field appearance="fill" class="input-full-width">
+    <mat-icon class="circle" matPrefix>supervised_user_circle</mat-icon>
+    <mat-label>Circle Name</mat-label>
+    <input matInput type="text" autocomplete="off" [(ngModel)]="data.name" />
   </mat-form-field>
-<emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+
+  <mat-form-field appearance="fill" class="input-full-width">
+    <div matPrefix ngx-colors-trigger class="color" [style.background]="data.color" [(ngModel)]="data.color">
+    </div>
+    <mat-label>Color</mat-label>
+    <input matInput [(ngModel)]="data.color" autocomplete="off">
+  </mat-form-field>
 
 </div>
+
 <div mat-dialog-actions class="mat-dialog-actions" align="end">
   <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-  <button mat-flat-button [mat-dialog-close]="data.note" color="primary" cdkFocusInitial>Send</button>
+  <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Save</button>
 </div>

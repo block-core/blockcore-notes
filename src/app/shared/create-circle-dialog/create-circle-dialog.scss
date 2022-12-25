@@ -10,16 +10,19 @@
   padding: 10px 24px 24px 24px;
 }
 
-.picker {
-  display: block;
-  position: fixed;
-  z-index: 3;
-}
-
-.emoji {
+.circle {
   cursor: pointer;
 }
 
-.emoji:hover {
+.circle:hover {
   color: #fff;
+}
+
+.color {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #FFF;
+  margin: 12px;
+  border-radius: 50%;
+
 }
