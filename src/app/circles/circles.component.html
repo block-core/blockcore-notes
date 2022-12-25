@@ -6,7 +6,7 @@
   <div class="circle-container" *ngFor="let circle of circles">
     <div class="circle-item"><mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon></div>
     <div class="circle-item">
-      {{ circle.name }}<br /><span class="dimmed">Created: {{ circle.created | ago }}</span>
+      {{ circle.name }}<br /><span *ngIf="circle.created" class="dimmed">Created: {{ circle.created | ago }}</span>
     </div>
     <div class="circle-item">
       <button (click)="deleteCircle(circle.id)" *ngIf="circle.id" class="circle-button" mat-icon-button>
