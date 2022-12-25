@@ -57,6 +57,9 @@ import { ProfileHeaderComponent } from './shared/profile-header/profile-header.c
 import { ProfileActionsComponent } from './shared/profile-actions/profile-actions.component';
 import { CircleDialog } from './shared/create-circle-dialog/create-circle-dialog';
 import { FollowDialog } from './shared/create-follow-dialog/create-follow-dialog';
+import { FeedPrivateComponent } from './feed-private/feed-private.component';
+import { FeedPublicComponent } from './feed-public/feed-public.component';
+import { NotesComponent } from './notes/notes.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +82,10 @@ import { FollowDialog } from './shared/create-follow-dialog/create-follow-dialog
     CirclesComponent,
     PeopleComponent,
     ProfileHeaderComponent,
-    ProfileActionsComponent
+    ProfileActionsComponent,
+    FeedPrivateComponent,
+    FeedPublicComponent,
+    NotesComponent,
   ],
   imports: [
     BrowserModule,

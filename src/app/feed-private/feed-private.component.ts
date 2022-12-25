@@ -14,10 +14,10 @@ import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
+  selector: 'app-feed-private',
+  templateUrl: './feed-private.component.html',
 })
-export class HomeComponent {
+export class FeedPrivateComponent {
   publicKey?: string | null;
 
   constructor(
@@ -25,7 +25,7 @@ export class HomeComponent {
     public data: DataService,
     private cd: ChangeDetectorRef,
     public settings: SettingsService,
-
+    private notesService: NotesService,
     public profile: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
@@ -237,6 +237,18 @@ export class HomeComponent {
     if (this.sub) {
       this.sub.unsub();
     }
+
+    if (this.notesSub) {
+      this.notesSub.unsubscribe();
+    }
+  }
+
+  notesSub?: Subscription;
+
+  notes: NostrNoteDocument[] = [];
+
+  async loadNotes() {
+    this.notes = await this.notesService.list();
   }
 
   feedChanged($event: any, type: string) {
@@ -281,6 +293,12 @@ export class HomeComponent {
     this.appState.title = 'Explore';
     this.appState.showBackButton = false;
     this.appState.actions = [];
+
+    this.notesSub = this.notesService.notesChanged$.subscribe(async () => {
+      console.log('RELOADING NOTES!!!');
+      await this.loadNotes();
+      console.log('DONE NOTES!!!');
+    });
 
     if (this.relay) {
       return;

@@ -1,76 +1,24 @@
-<mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
-
 <mat-tab-group>
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
-      <span *ngIf="(isHandset$ | async) === false">&nbsp;Feed</span>
+      <span *ngIf="(isHandset$ | async) === false">&nbsp;My Feed</span>
     </ng-template>
-
-    <div class="feed-page">
-      <mat-accordion class="options">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Options</mat-panel-title>
-            <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
-          </mat-expansion-panel-header>
-          <p>
-            <mat-slide-toggle class="options-slider"  (change)="feedChanged($event, 'private')" [(ngModel)]="settings.options.privateFeed">My feed</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider"  (change)="feedChanged($event, 'public')" [(ngModel)]="settings.options.publicFeed">Public feed</mat-slide-toggle>
-            <br><br>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
-
-            <!-- <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Only </mat-checkbox>
-            <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
-            <mat-checkbox [(ngModel)]="settings.options.hideInvoice" color="primary" (ngModelChange)="optionsUpdated()"> Hide LN invoices </mat-checkbox>
-            <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox> -->
-          </p>
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <!-- {{ data.public$ }} -->
-
-      <!-- START:
-      <div *ngIf="data.public$ | async as data">
-        <div class="events" *ngFor="let event of data">EVENT ... {{ event }}</div>
-        :STOP
-      </div> -->
-
-      <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-        <app-profile-actions [event]="event"></app-profile-actions>
-        <app-profile-header [pubkey]="event.pubkey"
-          ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-        ></app-profile-header>
-        <div class="content">
-          {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
-          <div *ngIf="details">
-            <br />
-            <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>
-          </div>
-        </div>
-        <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-          <mat-icon class="expand-button-icon">expand_more</mat-icon>
-        </button>
-        <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-          <mat-icon class="expand-button-icon">expand_less</mat-icon>
-        </button>
-      </div>
-    </div>
-
-    <!-- <mat-list>
-      <div mat-subheader>Latest 100 Events</div>
-      <mat-list-item *ngFor="let event of events; trackBy: trackByFn">
-        <mat-icon matListItemIcon>text_snippet</mat-icon> -->
-    <!-- <div matListItemTitle>{{ event.pubkey }} - {{ event.kind }}-{{ event.id }}</div> -->
-    <!-- <div matListItemTitle>{{ event.content }}</div>
-        <div matListItemLine>{{ event.created_at | ago }}</div>
-      </mat-list-item>
-    </mat-list> -->
-
-    <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
+    <ng-template matTabContent>
+      <app-feed-public></app-feed-public>
+    </ng-template>
   </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
+      <span *ngIf="(isHandset$ | async) === false">&nbsp;Public Feed</span>
+    </ng-template>
+    <ng-template matTabContent>
+      <app-feed-public></app-feed-public>
+    </ng-template>
+  </mat-tab>
+
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">forum</mat-icon>
@@ -83,34 +31,14 @@
       <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
     </div>
   </mat-tab>
+
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">bookmarks</mat-icon>
       <span *ngIf="(isHandset$ | async) === false">&nbsp;Notes</span>
     </ng-template>
-
-    <div class="feed-page">
-      <div *ngIf="notes.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.<br></div>
-      <div class="events" *ngFor="let note of notes">
-        <app-profile-actions [event]="note"></app-profile-actions>
-        <app-profile-header [pubkey]="note.pubkey"
-          >Posted: <span class="event-date" [matTooltip]="note.id!" matTooltipPosition="below">{{ note.created_at | ago }}</span
-          >, Saved: <span class="event-date">{{ note.saved | ago }}</span> </app-profile-header>
-        <div class="content">
-          {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
-          <div *ngIf="details">
-            <br />
-            <span *ngFor="let tag of note.tags" class="dimmed">TAG: {{ tag }}</span>
-          </div>
-        </div>
-        <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-          <mat-icon class="expand-button-icon">expand_more</mat-icon>
-        </button>
-        <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-          <mat-icon class="expand-button-icon">expand_less</mat-icon>
-        </button>
-      </div>
-    </div>
-    </mat-tab
-  >
+    <ng-template matTabContent>
+      <app-notes></app-notes>
+    </ng-template>
+  </mat-tab>
 </mat-tab-group>

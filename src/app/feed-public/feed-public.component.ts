@@ -14,10 +14,10 @@ import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
+  selector: 'app-feed-public',
+  templateUrl: './feed-public.component.html',
 })
-export class HomeComponent {
+export class FeedPublicComponent {
   publicKey?: string | null;
 
   constructor(
@@ -25,7 +25,7 @@ export class HomeComponent {
     public data: DataService,
     private cd: ChangeDetectorRef,
     public settings: SettingsService,
-
+    private notesService: NotesService,
     public profile: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,

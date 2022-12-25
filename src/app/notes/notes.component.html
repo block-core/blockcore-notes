@@ -1,5 +1,25 @@
-Notes!
+<mat-progress-bar *ngIf="!notes" mode="indeterminate"></mat-progress-bar>
 
-asd
-fas
-<dfn><aside>fd</aside></dfn>
+<div class="feed-page">
+  <div *ngIf="notes.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.<br /></div>
+  <div class="events" *ngFor="let note of notes">
+    <app-profile-actions [event]="note"></app-profile-actions>
+    <app-profile-header [pubkey]="note.pubkey"
+      >Posted: <span class="event-date" [matTooltip]="note.id!" matTooltipPosition="below">{{ note.created_at | ago }}</span
+      >, Saved: <span class="event-date">{{ note.saved | ago }}</span>
+    </app-profile-header>
+    <div class="content">
+      {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
+      <div *ngIf="details">
+        <br />
+        <span *ngFor="let tag of note.tags" class="dimmed">TAG: {{ tag }}</span>
+      </div>
+    </div>
+    <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+      <mat-icon class="expand-button-icon">expand_more</mat-icon>
+    </button>
+    <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+      <mat-icon class="expand-button-icon">expand_less</mat-icon>
+    </button>
+  </div>
+</div>
