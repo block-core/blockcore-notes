@@ -40,7 +40,7 @@
 
     <div class="events" *ngFor="let profile of profiles; trackBy: trackByFn">
       <app-profile-actions [profile]="profile"></app-profile-actions>
-      <app-profile-header [profile]="profile"><app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-profile-header>
+      <app-profile-header [profile]="profile">Started following {{ profile.saved | ago }} <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-profile-header>
       <div class="content">
         {{ profile.about }}
       </div>

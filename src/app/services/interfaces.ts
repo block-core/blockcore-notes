@@ -60,6 +60,9 @@ export interface NostrProfile {
 export interface NostrProfileDocument extends NostrProfile {
   pubkey: string; // Not stored in database, just used when retreiving.
 
+  /** The timestamp when the profile was saved. */
+  saved: number;
+
   /** Indicates if the user is following this profile. If not, then the profile can be wiped during cache cleanup. */
   follow?: boolean;
 
