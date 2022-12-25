@@ -1,9 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-
-export interface CircleDialogData {
-  note: string;
-}
+import { Circle } from 'src/app/services/interfaces';
 
 @Component({
   selector: 'create-circle-dialog',
@@ -11,21 +8,18 @@ export interface CircleDialogData {
   styleUrls: ['create-circle-dialog.scss'],
 })
 export class CircleDialog {
-  constructor(public dialogRef: MatDialogRef<CircleDialog>, @Inject(MAT_DIALOG_DATA) public data: CircleDialogData) {
-    this.dialogRef.updateSize('80%');
+  constructor(public dialogRef: MatDialogRef<CircleDialog>, @Inject(MAT_DIALOG_DATA) public data: Circle) {
+    this.dialogRef.updateSize('50%');
     this.dialogRef.updatePosition({ top: '50px' });
 
-    this.data.note = '';
+    this.data.name = '';
+    this.data.color = '#673ab7';
   }
 
   onNoClick(): void {
-    this.data.note = '';
+    this.data.name = '';
+    this.data.color = '#673ab7';
     this.dialogRef.close();
   }
 
-  public isEmojiPickerVisible: boolean | undefined;
-  public addEmoji(event: { emoji: { native: any } }) {
-    this.data.note = `${this.data.note}${event.emoji.native}`;
-    this.isEmojiPickerVisible = false;
-  }
 }

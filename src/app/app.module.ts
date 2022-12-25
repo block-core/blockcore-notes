@@ -60,6 +60,7 @@ import { FollowDialog } from './shared/create-follow-dialog/create-follow-dialog
 import { FeedPrivateComponent } from './feed-private/feed-private.component';
 import { FeedPublicComponent } from './feed-public/feed-public.component';
 import { NotesComponent } from './notes/notes.component';
+import { NgxColorsModule } from 'ngx-colors';
 
 @NgModule({
   declarations: [
@@ -121,7 +122,7 @@ import { NotesComponent } from './notes/notes.component';
     MatSnackBarModule,
     MatProgressBarModule,
     MatDialogModule,
-
+    NgxColorsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
