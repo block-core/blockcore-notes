@@ -52,24 +52,6 @@ export class HomeComponent {
     this.events = this.validator.filterEvents(this.events);
   }
 
-  activeOptions() {
-    let options = '';
-
-    if (this.settings.options.hideSpam) {
-      options += ' Spam: Filtered';
-    } else {
-      options += ' Spam: Allowed';
-    }
-
-    if (this.settings.options.hideInvoice) {
-      options += ' Invoices: Hidden';
-    } else {
-      options += ' Invoices: Displayed';
-    }
-
-    return options;
-  }
-
   public trackByFn(index: number, item: NostrEvent) {
     return item.id;
   }
@@ -82,82 +64,6 @@ export class HomeComponent {
   sub: any;
   relay?: Relay;
   initialLoad = true;
-
-  async follow(pubkey: string, circle?: string) {
-    await this.profile.follow(pubkey, circle);
-  }
-
-  onConnected(relay?: Relay) {
-    if (!relay) {
-      return;
-    }
-
-    const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
-
-    this.sub = relay.sub([{ kinds: [1], since: fiveMinutesAgo }], {});
-
-    this.events = [];
-
-    this.sub.on('event', (originalEvent: any) => {
-      if (this.settings.options.paused) {
-        return;
-      }
-
-      const event = this.processEvent(originalEvent);
-
-      if (!event) {
-        return;
-      }
-
-      // If not initial load, we'll grab the profile.
-      // if (!this.initialLoad) {
-      this.fetchProfiles(relay, [event.pubkey]);
-      // }
-
-      this.events.unshift(event);
-
-      this.ngZone.run(() => {
-        this.cd.detectChanges();
-      });
-
-      if (this.events.length > 100) {
-        this.events.length = 80;
-      }
-    });
-
-    this.sub.on('eose', () => {
-      this.initialLoad = false;
-
-      const pubKeys = this.events.map((e) => {
-        return e.pubkey;
-      });
-
-      // Initial load completed, let's go fetch profiles for those initial events.
-      // this.fetchProfiles(relay, pubKeys);
-
-      this.cd.detectChanges();
-    });
-  }
-
-  processEvent(originalEvent: NostrEvent): NostrEvent | null {
-    // Validate the event:
-    let event = this.validator.validateEvent(originalEvent);
-
-    if (!event) {
-      debugger;
-      console.log('INVALID EVENT!');
-      return null;
-    }
-
-    event = this.validator.sanitizeEvent(event);
-    event = this.validator.filterEvent(event);
-
-    if (!event) {
-      return null;
-    }
-
-    return event;
-  }
 
   details = false;
 
@@ -177,62 +83,62 @@ export class HomeComponent {
     //   return;
     // }
 
-    const profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
+    // const profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
 
-    profileSub.on('event', async (originalEvent: NostrEvent) => {
-      const event = this.processEvent(originalEvent);
+    // profileSub.on('event', async (originalEvent: NostrEvent) => {
+    //   const event = this.processEvent(originalEvent);
 
-      if (!event) {
-        return;
-      }
+    //   if (!event) {
+    //     return;
+    //   }
 
-      // const parsed = this.validator.sanitizeProfile(event);
-      // const test1 = JSON.parse('{"name":"stat","picture":"https://i.imgur.com/s1scsdH_d.webp?maxwidth=640&amp;shape=thumb&amp;fidelity=medium","about":"senior software engineer at amazon\\n\\n#bitcoin","nip05":"stat@no.str.cr"}');
-      // console.log('WHAT IS WRONG WITH THIS??');
-      // console.log(test1);
+    //   // const parsed = this.validator.sanitizeProfile(event);
+    //   // const test1 = JSON.parse('{"name":"stat","picture":"https://i.imgur.com/s1scsdH_d.webp?maxwidth=640&amp;shape=thumb&amp;fidelity=medium","about":"senior software engineer at amazon\\n\\n#bitcoin","nip05":"stat@no.str.cr"}');
+    //   // console.log('WHAT IS WRONG WITH THIS??');
+    //   // console.log(test1);
 
-      try {
-        const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
+    //   try {
+    //     const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
 
-        // Persist the profile.
-        await this.profile.putProfile(event.pubkey, profile);
+    //     // Persist the profile.
+    //     await this.profile.putProfile(event.pubkey, profile);
 
-        const displayName = encodeURIComponent(profile.name);
-        const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
+    //     const displayName = encodeURIComponent(profile.name);
+    //     const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
 
-        const rawResponse = await fetch(url, {
-          method: 'GET',
-          mode: 'cors',
-        });
+    //     const rawResponse = await fetch(url, {
+    //       method: 'GET',
+    //       mode: 'cors',
+    //     });
 
-        if (rawResponse.status === 200) {
-          const content = await rawResponse.json();
-          const directoryPublicKey = content.names[displayName];
+    //     if (rawResponse.status === 200) {
+    //       const content = await rawResponse.json();
+    //       const directoryPublicKey = content.names[displayName];
 
-          if (event.pubkey === directoryPublicKey) {
-            if (!profile.verifications) {
-              profile.verifications = [];
-            }
+    //       if (event.pubkey === directoryPublicKey) {
+    //         if (!profile.verifications) {
+    //           profile.verifications = [];
+    //         }
 
-            profile.verifications.push('@nostr.directory');
+    //         profile.verifications.push('@nostr.directory');
 
-            // Update the profile with verification data.
-            await this.profile.putProfile(event.pubkey, profile);
-          } else {
-            // profile.verified = false;
-            console.warn('Nickname reuse:', url);
-          }
-        } else {
-          // profile.verified = false;
-        }
-      } catch (err) {
-        console.warn('This profile event was not parsed due to errors:', event);
-      }
-    });
+    //         // Update the profile with verification data.
+    //         await this.profile.putProfile(event.pubkey, profile);
+    //       } else {
+    //         // profile.verified = false;
+    //         console.warn('Nickname reuse:', url);
+    //       }
+    //     } else {
+    //       // profile.verified = false;
+    //     }
+    //   } catch (err) {
+    //     console.warn('This profile event was not parsed due to errors:', event);
+    //   }
+    // });
 
-    profileSub.on('eose', () => {
-      profileSub.unsub();
-    });
+    // profileSub.on('eose', () => {
+    //   profileSub.unsub();
+    // });
   }
 
   ngOnDestroy() {
@@ -308,27 +214,5 @@ export class HomeComponent {
         },
       },
     ];
-
-    if (this.relay) {
-      return;
-    }
-
-    // const relay = relayInit('wss://relay.nostr.info');
-    this.relay = relayInit('wss://relay.damus.io');
-
-    this.relay.on('connect', () => {
-      console.log(`connected to ${this.relay?.url}`);
-      this.onConnected(this.relay);
-    });
-
-    this.relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${this.relay?.url}`);
-    });
-
-    this.relay.on('notice', () => {
-      console.log(`NOTICE FROM ${this.relay?.url}`);
-    });
-
-    this.relay.connect();
   }
 }

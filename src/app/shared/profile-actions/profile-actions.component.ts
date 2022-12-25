@@ -75,11 +75,10 @@ export class ProfileActionsComponent {
   }
 
   ngOnDestroy() {
+    // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.
     if (this.circlesSub) {
       this.circlesSub.unsubscribe();
     }
-
-    console.log('ON DESTROY ACTION!');
   }
 
   private circlesSub?: Subscription;
@@ -89,7 +88,7 @@ export class ProfileActionsComponent {
   }
 
   async ngOnInit() {
-    console.log('ON INIT ACTION!');
+    // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.
 
     if (this.event) {
       this.pubkey = this.event.pubkey;

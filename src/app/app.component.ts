@@ -11,6 +11,7 @@ import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 import { Observable, map, shareReplay } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Location } from '@angular/common';
+import { FeedService } from './services/feed.service';
 
 @Component({
   selector: 'app-root',
@@ -32,7 +33,8 @@ export class AppComponent {
     public appUpdateCheckService: CheckForUpdateService,
     public dialog: MatDialog,
     private location: Location,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private feedService: FeedService
   ) {
     // appState.title = 'Blockcore Notes';
 
@@ -59,6 +61,8 @@ export class AppComponent {
   async ngOnInit() {
     await this.storage.open();
     await this.storage.initialize();
+
+    await this.feedService.initialize();
 
     // const testdata = await this.storage.get('123');
     // console.log(testdata);

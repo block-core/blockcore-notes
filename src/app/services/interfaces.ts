@@ -1,4 +1,4 @@
-import { Event } from 'nostr-tools';
+import { Event, Sub } from 'nostr-tools';
 
 export interface Circle {
   id: string;
@@ -57,6 +57,10 @@ export interface NostrProfile {
 
   /** https://github.com/nostr-protocol/nips/blob/master/05.md */
   nip05: string;
+}
+
+export interface NostrSubscription extends Sub {
+  loading: boolean;
 }
 
 export interface NostrProfileDocument extends NostrProfile {

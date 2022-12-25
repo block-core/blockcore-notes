@@ -9,6 +9,19 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class ProfileService {
   private table;
 
+  /** TODO: Destroy this array when there are zero subscribers left. */
+  profiles: NostrProfileDocument[] = [];
+
+  #profilesChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.profiles);
+
+  get profiles$(): Observable<NostrProfileDocument[]> {
+    return this.#profilesChanged.asObservable();
+  }
+
+  #updated() {
+    this.#profilesChanged.next(this.profiles);
+  }
+
   // private keys: Map<string, string> = new Map<string, string>();
 
   // profilesSubject: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>([]);
@@ -53,6 +66,12 @@ export class ProfileService {
         throw err;
       }
     }
+  }
+
+  /** Populate the observable with profiles which we are following. */
+  async populate() {
+    this.profiles = await this.followList();
+    this.#updated();
   }
 
   private async filter(predicate: (value: NostrProfileDocument, key: string) => boolean): Promise<NostrProfileDocument[]> {
