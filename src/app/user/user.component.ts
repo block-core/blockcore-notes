@@ -19,7 +19,17 @@ export class UserComponent {
   pubkey?: string | null;
   profile?: NostrProfileDocument;
 
-  userEvents$ = this.feedService.events$.pipe(
+  userEvents$ = this.feedService.rootEvents$.pipe(
+    map((data) => {
+      if (!this.pubkey) {
+        return;
+      }
+
+      return data.filter((n) => n.pubkey == this.pubkey);
+    })
+  );
+
+  replyEvents$ = this.feedService.events$.pipe(
     map((data) => {
       if (!this.pubkey) {
         return;

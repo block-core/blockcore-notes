@@ -26,6 +26,10 @@ export class FeedService {
 
   #threadedEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
+  #rootEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+
+  #replyEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+
   sortSubject = new BehaviorSubject<'asc' | 'desc'>('asc');
   sort$ = this.sortSubject.asObservable();
   sortOrder: 'asc' | 'desc' = 'asc';
@@ -50,6 +54,67 @@ export class FeedService {
   // get events$(): Observable<NostrEventDocument[]> {
   //   return this.#eventsChanged.asObservable();
   // }
+
+  /** Posts that does not have any e tags and is not filtered on blocks or mutes, returns everyone. */
+  get rootEvents$(): Observable<NostrEventDocument[]> {
+    return (
+      this.#rootEventsChanged
+        .asObservable()
+        .pipe(
+          map((data) => {
+            // if (this.settings.options.flatfeed) {
+            //   return data;
+            //   // return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+            // } else {
+
+            const filtered = data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+
+            console.log(filtered);
+
+            return filtered;
+            // }
+          })
+        ) // If there is any 'e' tags then skip.
+        // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+        .pipe(
+          map((data) => {
+            data.sort((a, b) => {
+              // if (this.settings.options.ascending) {
+              return a.created_at > b.created_at ? -1 : 1;
+              // } else {
+              //   return a.created_at > b.created_at ? -1 : 1;
+              // }
+            });
+
+            return data;
+          })
+        )
+    );
+  }
+
+  get replyEvents$(): Observable<NostrEventDocument[]> {
+    return this.#replyEventsChanged
+      .asObservable()
+      .pipe(
+        map((data) => {
+          return data.filter((events) => events.tags.find((t) => t[0] === 'e'));
+        })
+      ) // If there is any 'e' tags then skip.
+      // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+      .pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            if (this.settings.options.ascending) {
+              return a.created_at < b.created_at ? -1 : 1;
+            } else {
+              return a.created_at > b.created_at ? -1 : 1;
+            }
+          });
+
+          return data;
+        })
+      );
+  }
 
   get threadedEvents$(): Observable<NostrEventDocument[]> {
     return this.#threadedEventsChanged
@@ -119,6 +184,8 @@ export class FeedService {
     this.#eventsChanged.next(this.events);
     this.#filteredEventsChanged.next(this.events);
     this.#threadedEventsChanged.next(this.events);
+    this.#rootEventsChanged.next(this.events);
+    this.#replyEventsChanged.next(this.events);
   }
 
   async #persist(event: NostrEventDocument) {
