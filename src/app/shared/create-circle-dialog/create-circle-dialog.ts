@@ -1,5 +1,7 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ApplicationState } from 'src/app/services/applicationstate.service';
 import { Circle } from 'src/app/services/interfaces';
 
 @Component({
@@ -8,10 +10,7 @@ import { Circle } from 'src/app/services/interfaces';
   styleUrls: ['create-circle-dialog.scss'],
 })
 export class CircleDialog {
-  constructor(public dialogRef: MatDialogRef<CircleDialog>, @Inject(MAT_DIALOG_DATA) public data: Circle) {
-    this.dialogRef.updateSize('50%');
-    this.dialogRef.updatePosition({ top: '50px' });
-
+  constructor(private appState: ApplicationState, public dialogRef: MatDialogRef<CircleDialog>, @Inject(MAT_DIALOG_DATA) public data: Circle) {
     this.data.name = '';
     this.data.color = '#673ab7';
   }

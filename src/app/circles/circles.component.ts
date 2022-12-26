@@ -98,6 +98,8 @@ export class CirclesComponent {
   createCircle(): void {
     const dialogRef = this.dialog.open(CircleDialog, {
       data: { name: '' },
+      maxWidth: '100vw',
+      panelClass: 'full-width-dialog',
     });
 
     dialogRef.afterClosed().subscribe(async (result) => {

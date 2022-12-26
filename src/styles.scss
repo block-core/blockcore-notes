@@ -327,3 +327,11 @@ select {
   margin-top: 0.4em;
   margin-bottom: 0.4em;
 }
+
+@media only screen and (max-width: 599px) {
+  .full-width-dialog {
+    max-width: 100vw !important;
+    height: 100%;
+    width: 100%;
+  }
+}

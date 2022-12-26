@@ -12,9 +12,6 @@ export interface FollowDialogData {
 })
 export class FollowDialog {
   constructor(public dialogRef: MatDialogRef<FollowDialogData>, @Inject(MAT_DIALOG_DATA) public data: FollowDialogData) {
-    this.dialogRef.updateSize('70%');
-    this.dialogRef.updatePosition({ top: '50px' });
-
     this.data.note = '';
   }
 

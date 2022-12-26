@@ -117,6 +117,8 @@ export class PeopleComponent {
   createFollow(): void {
     const dialogRef = this.dialog.open(FollowDialog, {
       data: { name: '' },
+      maxWidth: '100vw',
+      panelClass: 'full-width-dialog',
     });
 
     dialogRef.afterClosed().subscribe(async (result: string) => {
