@@ -81,6 +81,9 @@ export interface NostrProfileDocument extends NostrProfile {
   /** Indicates if a user is blocked and their content will not be shown. */
   block?: boolean;
 
+  /** Indicates if a user is muted and not displayed in the home feed and notification is shown on replies. */
+  muted?: boolean;
+
   circle?: string;
 
   /** List of domains where the user has been verified, e.g. "@nostr.directory", "@domain.com" */

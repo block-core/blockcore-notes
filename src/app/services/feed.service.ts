@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Observable, of, BehaviorSubject, map } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
 import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from './storage.service';
@@ -22,6 +22,8 @@ export class FeedService {
 
   #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
 
+  #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+
   subs: Sub[] = [];
   relays: Relay[] = [];
 
@@ -29,8 +31,14 @@ export class FeedService {
     return this.#eventsChanged.asObservable();
   }
 
+  get filteredEvents$(): Observable<NostrEventDocument[]> {
+    return this.#filteredEventsChanged.asObservable()
+    .pipe(map(data => data.filter(events => !this.profileService.blockedPublickKeys().includes(events.pubkey)) ));
+  }
+
   #updated() {
     this.#eventsChanged.next(this.events);
+    this.#filteredEventsChanged.next(this.events);
   }
 
   async #persist(event: NostrEventDocument) {

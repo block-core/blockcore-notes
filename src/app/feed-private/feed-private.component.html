@@ -1,4 +1,4 @@
-<span *ngIf="feedService.events$ | async as events">
+<span *ngIf="feedService.filteredEvents$ | async as events">
   <mat-progress-bar *ngIf="events == null" mode="indeterminate"></mat-progress-bar>
 
   <div class="page loading-container" *ngIf="!profileService.initialized">

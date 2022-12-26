@@ -30,6 +30,14 @@ export class ProfileService {
     this.#profilesChanged.next(this.profiles);
   }
 
+  mutedPublicKeys() {
+    return this.profiles.filter((p) => p.muted).map(p => p.pubkey);
+  }
+
+  blockedPublickKeys() {
+    return this.profiles.filter((p) => p.block).map(p => p.pubkey);
+  }
+
   // private keys: Map<string, string> = new Map<string, string>();
 
   // profilesSubject: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>([]);
