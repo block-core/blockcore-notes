@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
-import { Observable, of, BehaviorSubject, map } from 'rxjs';
+import { Observable, of, BehaviorSubject, map, combineLatest } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
 import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from './storage.service';
@@ -24,16 +24,47 @@ export class FeedService {
 
   #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
+  sortSubject = new BehaviorSubject<'asc' | 'desc'>('asc');
+  sort$ = this.sortSubject.asObservable();
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   subs: Sub[] = [];
   relays: Relay[] = [];
 
-  get events$(): Observable<NostrEventDocument[]> {
-    return this.#eventsChanged.asObservable();
-  }
+  events$ = this.#eventsChanged.asObservable();
+
+  // get events$(): Observable<NostrEventDocument[]> {
+  //   return this.#eventsChanged.asObservable();
+  // }
 
   get filteredEvents$(): Observable<NostrEventDocument[]> {
-    return this.#filteredEventsChanged.asObservable()
-    .pipe(map(data => data.filter(events => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey)) ));
+    // combineLatest([this.sort$, this.events$])
+    // combineLatest([this.sort$, this.events$])
+    //   .pipe(map((sortOrder, data) => data.filter((sortOrder, events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+    //   .pipe(
+    //     map(([sortOrder, data]) => {
+    //       this.sortOrder = sortOrder;
+
+    //       if (sortOrder === 'asc') {
+    //         return data;
+    //       } else {
+    //         return data.reverse();
+    //       }
+    //     })
+    //   );
+
+    return this.#filteredEventsChanged
+      .asObservable()
+      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+      .pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            return a.created_at > b.created_at ? -1 : 1;
+          });
+
+          return data;
+        })
+      );
   }
 
   #updated() {
@@ -50,9 +81,15 @@ export class FeedService {
 
     await this.#table.put(id, event);
 
-    // Add in the top or bottom, for now at the top.
-    this.events.unshift(event);
-    // this.events.push(event);
+    // Add in the top or bottom, for now at the top. If it already exists, should we update and alert or perhaps we should simply
+    // ignore? Maybe it was saved with additional metadata, so for now we'll call the update subject.
+    const eventIndex = this.events.findIndex((e) => e.id == event.id);
+
+    if (eventIndex > -1) {
+      this.events[eventIndex] = event;
+    } else {
+      this.events.unshift(event);
+    }
 
     this.#updated();
   }
