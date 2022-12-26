@@ -13,7 +13,7 @@ export class ProfileHeaderComponent {
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
 
-  imagePath = '/assets/profile.jpg';
+  imagePath = '/assets/profile.png';
   tooltip = '';
   tooltipName = '';
   profileName = '';
@@ -35,7 +35,10 @@ export class ProfileHeaderComponent {
       this.profileName = this.utilities.getNostrIdentifier(this.profile.pubkey);
     }
 
-    this.imagePath = this.profile.picture;
+    if (this.profile.picture) {
+      this.imagePath = this.profile.picture;
+    }
+
     this.tooltip = this.profile.about;
     this.tooltipName = this.profileName;
     this.profileName = this.profile.name;

@@ -9,7 +9,7 @@ import { NostrProfile } from '../../services/interfaces';
 export class ProfileImageComponent {
   @Input() publicKey: string = '';
 
-  imagePath = '/assets/profile.jpg';
+  imagePath = '/assets/profile.png';
   tooltip = '';
 
   constructor(private profiles: ProfileService) {}
