@@ -1,36 +1,42 @@
-<mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
-
 <mat-tab-group>
-  <mat-tab label="Posts">
-    <div class="feed-page">
-      <mat-accordion class="options">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Options</mat-panel-title>
-            <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
-          </mat-expansion-panel-header>
-          <p>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
+  <mat-tab label="Notes">
+    <span *ngIf="userEvents$ | async as events">
+      <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
-            <!-- <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Only </mat-checkbox>
-            <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>
-            <mat-checkbox [(ngModel)]="settings.options.hideInvoice" color="primary" (ngModelChange)="optionsUpdated()"> Hide LN invoices </mat-checkbox>
-            <mat-checkbox [(ngModel)]="settings.options.paused" color="primary" (ngModelChange)="optionsUpdated()"> Paused feed </mat-checkbox> -->
-          </p>
-        </mat-expansion-panel>
-      </mat-accordion>
-
-      <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-        <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
-        <app-profile-header [pubkey]="event.pubkey"
-          ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-        ></app-profile-header>
-
-        <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+      <div class="page" *ngIf="events.length === 0">
+        <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
+        <p>
+          <em>(Options to load older notes will come in the future)</em>
+          <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
+        </p>
       </div>
-    </div>
+
+      <div class="feed-page">
+        <!-- <mat-accordion class="options">
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Options</mat-panel-title>
+              <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
+            </mat-expansion-panel-header>
+            <p>
+              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
+              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
+              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
+  
+            </p>
+          </mat-expansion-panel>
+        </mat-accordion> -->
+
+        <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+          <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+          <app-profile-header [pubkey]="event.pubkey"
+            ><span class="event-date" [matTooltip]="event.id!" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+          ></app-profile-header>
+
+          <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+        </div>
+      </div>
+    </span>
 
     <!-- <mat-list>
       <div mat-subheader>Latest 100 Events</div>
@@ -44,6 +50,7 @@
 
     <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
+  <mat-tab label="Replies"> </mat-tab>
   <mat-tab label="Likes">
     <div class="page">
       <h2>To be implemented</h2>

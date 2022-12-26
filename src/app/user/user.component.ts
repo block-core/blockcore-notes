@@ -5,22 +5,36 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrProfile } from '../services/interfaces';
+import { NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
+import { FeedService } from '../services/feed.service';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
 })
 export class UserComponent {
-  publicKey?: string | null;
+  pubkey?: string | null;
+  profile?: NostrProfileDocument;
+
+  userEvents$ = this.feedService.events$.pipe(
+    map((data) => {
+      if (!this.pubkey) {
+        return;
+      }
+
+      return data.filter((n) => n.pubkey == this.pubkey);
+    })
+  );
 
   constructor(
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
     public settings: SettingsService,
+    public feedService: FeedService,
     public profiles: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
@@ -32,15 +46,28 @@ export class UserComponent {
 
     this.activatedRoute.paramMap.subscribe(async (params) => {
       const pubkey: any = params.get('id');
-      this.publicKey = pubkey;
-      this.load();
+
+      if (!pubkey) {
+        return;
+      }
+
+      this.pubkey = pubkey;
+      this.profile = await this.profiles.getProfile(pubkey);
+      // this.load();
     });
+  }
+
+  ngOnInit() {
+    // if (this.pubkey) {
+    // console.log('PIPING EVENTS...');
+    // this.userEvents$ =
+    // }
   }
 
   optionsUpdated() {
     // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
     // Parse existing content.
-    this.events = this.validator.filterEvents(this.events);
+    // this.events = this.validator.filterEvents(this.events);
   }
 
   activeOptions() {
@@ -65,168 +92,12 @@ export class UserComponent {
     return item.id;
   }
 
-  events: NostrEvent[] = [];
   sub: any;
-  relay?: Relay;
   initialLoad = true;
-
-  onConnected(relay?: Relay) {
-    if (!relay) {
-      return;
-    }
-
-    const lastDay = moment().subtract(1, 'days').unix();
-    // const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
-
-    this.sub = relay.sub([{ kinds: [1], since: lastDay, authors: [this.publicKey!] }], {});
-
-    this.events = [];
-
-    this.sub.on('event', (originalEvent: any) => {
-      if (this.settings.options.paused) {
-        return;
-      }
-
-      const event = this.processEvent(originalEvent);
-
-      if (!event) {
-        return;
-      }
-
-      // If not initial load, we'll grab the profile.
-      if (!this.initialLoad) {
-        this.fetchProfiles(relay, [event.pubkey]);
-      }
-
-      this.events.unshift(event);
-
-      if (this.events.length > 100) {
-        this.events.length = 80;
-      }
-    });
-
-    this.sub.on('eose', () => {
-      this.initialLoad = false;
-
-      const pubKeys = this.events.map((e) => {
-        return e.pubkey;
-      });
-
-      // Initial load completed, let's go fetch profiles for those initial events.
-      this.fetchProfiles(relay, pubKeys);
-
-      this.cd.detectChanges();
-    });
-  }
-
-  processEvent(originalEvent: NostrEvent): NostrEvent | null {
-    // Validate the event:
-    let event = this.validator.validateEvent(originalEvent);
-
-    if (!event) {
-      debugger;
-      console.log('INVALID EVENT!');
-      return null;
-    }
-
-    event = this.validator.sanitizeEvent(event);
-    event = this.validator.filterEvent(event);
-
-    if (!event) {
-      return null;
-    }
-
-    return event;
-  }
-
-  fetchProfiles(relay: Relay, authors: string[]) {
-    // const filteredAuthors = authors.filter((a) => {
-    //   return this.profiles.profiles[a] == null;
-    // });
-
-    // console.log('authors:', authors);
-    // console.log('filteredAuthors:', filteredAuthors);
-
-    // if (filteredAuthors.length === 0) {
-    //   return;
-    // }
-
-    const profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
-
-    profileSub.on('event', async (originalEvent: NostrEvent) => {
-      const event = this.processEvent(originalEvent);
-
-      if (!event) {
-        return;
-      }
-
-      // const parsed = this.validator.sanitizeProfile(event);
-      // const test1 = JSON.parse('{"name":"stat","picture":"https://i.imgur.com/s1scsdH_d.webp?maxwidth=640&amp;shape=thumb&amp;fidelity=medium","about":"senior software engineer at amazon\\n\\n#bitcoin","nip05":"stat@no.str.cr"}');
-      // console.log('WHAT IS WRONG WITH THIS??');
-      // console.log(test1);
-
-      try {
-        const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfile);
-
-        const displayName = encodeURIComponent(profile.name);
-
-        const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
-
-        const rawResponse = await fetch(url, {
-          method: 'GET',
-          mode: 'cors',
-        });
-
-        if (rawResponse.status === 200) {
-          const content = await rawResponse.json();
-          const directoryPublicKey = content.names[displayName];
-
-          if (event.pubkey === directoryPublicKey) {
-            // profile.verified = true;
-          } else {
-            // profile.verified = false;
-            console.warn('Nickname reuse:', url);
-          }
-        } else {
-          // profile.verified = false;
-        }
-      } catch (err) {
-        console.warn('This profile event was not parsed due to errors:', event);
-      }
-    });
-
-    profileSub.on('eose', () => {
-      profileSub.unsub();
-    });
-  }
 
   ngOnDestroy() {
     if (this.sub) {
       this.sub.unsub();
     }
-  }
-
-  load() {
-    if (this.relay) {
-      return;
-    }
-
-    // const relay = relayInit('wss://relay.nostr.info');
-    this.relay = relayInit('wss://relay.damus.io');
-
-    this.relay.on('connect', () => {
-      console.log(`connected to ${this.relay?.url}`);
-      this.onConnected(this.relay);
-    });
-
-    this.relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${this.relay?.url}`);
-    });
-
-    this.relay.on('notice', () => {
-      console.log(`NOTICE FROM ${this.relay?.url}`);
-    });
-
-    this.relay.connect();
   }
 }
