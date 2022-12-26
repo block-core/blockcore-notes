@@ -12,5 +12,17 @@
 }
 
 .help {
-    padding-left: 10em;
+  padding-left: 10em;
+}
+
+@media only screen and (max-width: 599px) {
+  .help {
+    font-size: 0.8em;
+    padding-left: 8em;
+  }
+
+  .logo {
+    max-width: 64px;
+    margin-left: -6em;
+  }
 }
