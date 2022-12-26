@@ -33,6 +33,7 @@ export class ProfileHeaderComponent {
         return;
       }
     } else {
+      this.pubkey = this.profile.pubkey;
       this.profileName = this.utilities.getNostrIdentifier(this.profile.pubkey);
     }
 
