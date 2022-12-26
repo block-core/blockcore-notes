@@ -59,9 +59,18 @@ export class AuthenticationService {
   }
 
   async getAuthInfo() {
-    const publicKey = localStorage.getItem('blockcore:notes:nostr:pubkey');
+    let publicKey = localStorage.getItem('blockcore:notes:nostr:pubkey');
 
     if (publicKey) {
+      try {
+        this.utilities.getNostrIdentifier(publicKey);
+      } catch (err) {
+        // If we cannot parse the public key, reset the storage.
+        publicKey = '';
+        localStorage.setItem('blockcore:notes:nostr:pubkey', '');
+        return AuthenticationService.UNKNOWN_USER;
+      }
+
       const user = this.createUser(publicKey);
       this.authInfo$.next(user);
       return user;
