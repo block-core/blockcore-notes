@@ -275,7 +275,8 @@ export class FeedService {
       console.log('Profiles changed:', profiles);
     });
 
-    this.openConnection('wss://relay.damus.io');
+    // this.openConnection('wss://relay.damus.io');
+    this.openConnection('wss://nostr-pub.wellorder.net');
   }
 
   openConnection(server: string) {
@@ -290,8 +291,6 @@ export class FeedService {
       }
 
       const backInTime = moment().subtract(120, 'minutes').unix();
-
-      console.log('1111111111111111111111111 - SHOULD NOT HAPPEN');
 
       // Start subscribing to our people feeds.
       const sub = relay.sub([{ kinds: [1], since: backInTime, authors: authors }], {}) as NostrSubscription;
@@ -318,7 +317,7 @@ export class FeedService {
     });
   }
 
-  connect(server: string = 'wss://relay.damus.io', onConnected: any) {
+  connect(server: string, onConnected: any) {
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit(server);
 
