@@ -81,6 +81,11 @@
       ></app-profile-header>
       <div class="content">
         {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
+
+        <mat-chip-set class="hashtags">
+          <mat-chip *ngFor="let tag of hashtags(event.tags)">#{{ tag }}</mat-chip>
+        </mat-chip-set>
+
         <div *ngIf="details">
           <br />
           <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>

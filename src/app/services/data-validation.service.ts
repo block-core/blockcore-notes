@@ -88,6 +88,8 @@ export class DataValidation {
       event.contentCut = true;
     }
 
+    // TODO: Do we need more validation for tags? Probably limited length?
+    // Tag content is currently not sanitized, does it need to be? Probably does since hashtags will be linkable?
     if (event.tags && event.tags.length > this.tagsLimit) {
       event.tags = event.tags.splice(0, this.tagsLimit);
       event.tagsCut = true;

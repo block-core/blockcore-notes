@@ -95,6 +95,16 @@ export class FeedPrivateComponent {
     // this.events = this.validator.filterEvents(this.events);
   }
 
+  hashtags(tags: any[]) {
+    const hashtags = tags.map((row) => {
+      if (row[0] === 't') {
+        return row[1];
+      }
+    });
+
+    return hashtags;
+  }
+
   activeOptions() {
     let options = '';
 
@@ -309,7 +319,7 @@ export class FeedPrivateComponent {
       await this.profileService.follow(pubKeys[i].pubkeyhex, undefined, pubKeys[i] as any);
     }
 
-    await this.feedService.downloadRecent(pubKeys.map(p => p.pubkeyhex));
+    await this.feedService.downloadRecent(pubKeys.map((p) => p.pubkeyhex));
 
     // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
     this.cd.detectChanges();
