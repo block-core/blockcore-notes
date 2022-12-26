@@ -41,7 +41,9 @@ export class ProfileHeaderComponent {
 
     this.tooltip = this.profile.about;
     this.tooltipName = this.profileName;
-    this.profileName = this.profile.name;
+
+    // If the user has name in their profile, show that and not pubkey.
+    this.profileName = this.profile.name || this.profileName;
 
     this.circle = await this.circleService.getCircle(this.profile.circle);
   }
