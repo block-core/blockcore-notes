@@ -104,6 +104,7 @@ export class FeedService {
   }
 
   async downloadRecent(pubkeys: string[]) {
+    console.log('DOWNLOAD RECENT FOR:', pubkeys);
     const relay = this.relays[0];
 
     const backInTime = moment().subtract(120, 'minutes').unix();
@@ -289,6 +290,8 @@ export class FeedService {
       }
 
       const backInTime = moment().subtract(120, 'minutes').unix();
+
+      console.log('1111111111111111111111111 - SHOULD NOT HAPPEN');
 
       // Start subscribing to our people feeds.
       const sub = relay.sub([{ kinds: [1], since: backInTime, authors: authors }], {}) as NostrSubscription;

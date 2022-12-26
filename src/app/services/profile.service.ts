@@ -117,7 +117,7 @@ export class ProfileService {
     return this.filter((value, key) => value.block == true);
   }
 
-  async #setFollow(pubkey: string, circle?: string, follow?: boolean, name?: string, about?: string, picture?: string, verifications?: string[]) {
+  async #setFollow(pubkey: string, circle?: string, follow?: boolean, existingProfile?: NostrProfileDocument) {
     let profile = await this.getProfile(pubkey);
 
     const now = Math.floor(Date.now() / 1000);
@@ -126,11 +126,11 @@ export class ProfileService {
     if (!profile) {
       // Does not already exists, let us retrieve the profile async.
       profile = {
-        name: name ? name : '',
-        about: about ? about : '',
-        picture: picture ? picture : '',
-        nip05: '',
-        verifications: verifications ? verifications : [],
+        name: existingProfile ? existingProfile.name : '',
+        about: existingProfile ? existingProfile.about : '',
+        picture: existingProfile ? existingProfile.picture : '',
+        nip05: existingProfile ? existingProfile.nip05 : '',
+        verifications: existingProfile ? existingProfile.verifications : [],
         pubkey: pubkey,
         follow: follow,
         circle: circle,
@@ -149,15 +149,21 @@ export class ProfileService {
       profile.followed = now;
     }
 
+    console.log('PUT PROFILE:', profile);
+
     // Put profile since we already got it in the beginning.
     await this.putProfile(pubkey, profile);
 
+    console.log('DOWNLOAD PROFILE CALL 1');
+
     // Always refresh the profile when adding a follow on a user.
     await this.downloadProfile(pubkey);
+
+    console.log('DOWNLOAD PROFILE CALL 2');
   }
 
-  async follow(pubkey: string, circle?: string) {
-    return this.#setFollow(pubkey, circle, true);
+  async follow(pubkey: string, circle?: string, existingProfile?: NostrProfileDocument) {
+    return this.#setFollow(pubkey, circle, true, existingProfile);
   }
 
   async unfollow(pubkey: string) {

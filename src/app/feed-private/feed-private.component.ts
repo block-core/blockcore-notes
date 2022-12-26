@@ -298,17 +298,18 @@ export class FeedPrivateComponent {
   );
 
   async follow() {
-    const pubKeys = this.defaults.filter((p) => p.checked).map((p) => p.pubkeyhex);
+    const pubKeys = this.defaults.filter((p) => p.checked);
 
     if (pubKeys.length === 0) {
       return;
     }
 
     for (let i = 0; i < pubKeys.length; i++) {
-      await this.profileService.follow(pubKeys[i]);
+      console.log('LOOP KEY:', pubKeys[i]);
+      await this.profileService.follow(pubKeys[i].pubkeyhex, undefined, pubKeys[i] as any);
     }
 
-    await this.feedService.downloadRecent(pubKeys);
+    await this.feedService.downloadRecent(pubKeys.map(p => p.pubkeyhex));
 
     // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
     this.cd.detectChanges();
