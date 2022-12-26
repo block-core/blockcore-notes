@@ -96,6 +96,22 @@ export class ProfileActionsComponent {
     await this.profileService.unfollow(this.profile.pubkey);
   }
 
+  async mute() {
+    if (!this.profile) {
+      return;
+    }
+
+    await this.profileService.mute(this.profile.pubkey);
+  }
+
+  async unmute() {
+    if (!this.profile) {
+      return;
+    }
+
+    await this.profileService.unmute(this.profile.pubkey);
+  }
+
   async block() {
     if (!this.profile) {
       return;

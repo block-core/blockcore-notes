@@ -31,11 +31,11 @@ export class ProfileService {
   }
 
   mutedPublicKeys() {
-    return this.profiles.filter((p) => p.muted).map(p => p.pubkey);
+    return this.profiles.filter((p) => p.mute).map((p) => p.pubkey);
   }
 
   blockedPublickKeys() {
-    return this.profiles.filter((p) => p.block).map(p => p.pubkey);
+    return this.profiles.filter((p) => p.block).map((p) => p.pubkey);
   }
 
   // private keys: Map<string, string> = new Map<string, string>();
@@ -201,6 +201,34 @@ export class ProfileService {
 
     profile.block = false;
     profile.follow = follow;
+
+    // Put it since we got it in the beginning.
+    this.putProfile(pubkey, profile);
+  }
+
+  // TODO: Avoid duplicate code and use the update predicate!
+  async mute(pubkey: string) {
+    const profile = await this.getProfile(pubkey);
+
+    if (!profile) {
+      return;
+    }
+
+    profile.mute = true;
+
+    // Put it since we got it in the beginning.
+    await this.putProfile(pubkey, profile);
+  }
+
+  // TODO: Avoid duplicate code and use the update predicate!
+  async unmute(pubkey: string, follow?: boolean) {
+    const profile = await this.getProfile(pubkey);
+
+    if (!profile) {
+      return;
+    }
+
+    profile.mute = false;
 
     // Put it since we got it in the beginning.
     this.putProfile(pubkey, profile);

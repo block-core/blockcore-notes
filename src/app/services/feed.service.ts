@@ -33,7 +33,7 @@ export class FeedService {
 
   get filteredEvents$(): Observable<NostrEventDocument[]> {
     return this.#filteredEventsChanged.asObservable()
-    .pipe(map(data => data.filter(events => !this.profileService.blockedPublickKeys().includes(events.pubkey)) ));
+    .pipe(map(data => data.filter(events => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey)) ));
   }
 
   #updated() {

@@ -82,7 +82,7 @@ export interface NostrProfileDocument extends NostrProfile {
   block?: boolean;
 
   /** Indicates if a user is muted and not displayed in the home feed and notification is shown on replies. */
-  muted?: boolean;
+  mute?: boolean;
 
   circle?: string;
 

@@ -32,6 +32,16 @@
     <span>Copy</span>
   </button>
 
+  <button mat-menu-item (click)="unmute()" *ngIf="profile?.mute == true">
+    <mat-icon>do_not_disturb_off</mat-icon>
+    <span>Unmute</span>
+  </button>
+
+  <button mat-menu-item (click)="mute()" *ngIf="!profile?.mute">
+    <mat-icon>do_not_disturb_on</mat-icon>
+    <span>Mute</span>
+  </button>
+
   <button mat-menu-item (click)="unblock()" *ngIf="profile?.block == true">
     <mat-icon>cancel</mat-icon>
     <span>Unblock</span>
