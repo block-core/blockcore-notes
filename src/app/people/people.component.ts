@@ -12,6 +12,8 @@ import { map, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { FollowDialog } from '../shared/create-follow-dialog/create-follow-dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FeedService } from '../services/feed.service';
 
 @Component({
   selector: 'app-people',
@@ -29,10 +31,12 @@ export class PeopleComponent {
     private cd: ChangeDetectorRef,
     public dialog: MatDialog,
     private storage: StorageService,
+    private feedService: FeedService,
     private profileService: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   // async clearBlocked() {
@@ -115,8 +119,27 @@ export class PeopleComponent {
       data: { name: '' },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      // this.note = result;
+    dialogRef.afterClosed().subscribe(async (result: string) => {
+      if (!result) {
+        return;
+      }
+
+      if (result.startsWith('nsec')) {
+        let sb = this.snackBar.open('This is a private key, not a public key.', 'Hide', {
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+        });
+        return;
+      }
+
+      let pubkey = result;
+
+      if (pubkey.startsWith('npub')) {
+        pubkey = this.utilities.arrayToHex(this.utilities.convertFromBech32(pubkey));
+      }
+
+      await this.profileService.follow(pubkey);
+      await this.feedService.downloadRecent([pubkey]);
     });
   }
 }

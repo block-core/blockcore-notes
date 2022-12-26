@@ -16,6 +16,12 @@ export class Utilities {
     return converted;
   }
 
+  getHexIdentifier(pubkey: string) {
+    const key = this.hexToArray(pubkey);
+    const converted = this.convertToBech32(key, 'npub');
+    return converted;
+  }
+
   private convertToBech32(key: Uint8Array, prefix: string) {
     const words = bech32.toWords(key);
     const value = bech32.encode(prefix, words);
@@ -25,6 +31,17 @@ export class Utilities {
 
   private hexToArray(value: string) {
     return secp.utils.hexToBytes(value);
+  }
+
+  arrayToHex(value: Uint8Array) {
+    return secp.utils.bytesToHex(value);
+  }
+
+  convertFromBech32(address: string) {
+    const decoded = bech32.decode(address);
+    const key = bech32.fromWords(decoded.words);
+
+    return key;
   }
 
   keyToHex(publicKey: Uint8Array) {
