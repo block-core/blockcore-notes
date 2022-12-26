@@ -298,15 +298,20 @@ export class FeedPrivateComponent {
   );
 
   async follow() {
-    const pubKeys = this.defaults.filter((p) => p.checked);
+    const pubKeys = this.defaults.filter((p) => p.checked).map((p) => p.pubkeyhex);
 
     if (pubKeys.length === 0) {
       return;
     }
 
     for (let i = 0; i < pubKeys.length; i++) {
-      await this.profileService.follow(pubKeys[i].pubkeyhex);
+      await this.profileService.follow(pubKeys[i]);
     }
+
+    await this.feedService.downloadRecent(pubKeys);
+
+    // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
+    this.cd.detectChanges();
   }
 
   async ngOnInit() {

@@ -53,6 +53,10 @@ export class ProfileService {
     this.#profileRequested.next(pubkey);
   }
 
+  async downloadRecent(pubkey: string) {
+    this.#profileRequested.next(pubkey);
+  }
+
   /** Will attempt to get the profile from local storage, if not available will attempt to get from relays. */
   async getProfile(pubkey: string) {
     const profile = await this.#get<NostrProfileDocument>(pubkey);
@@ -93,7 +97,7 @@ export class ProfileService {
 
     for await (const [key, value] of iterator) {
       if (predicate(value, key)) {
-        value.pubkey = key;
+        // value.pubkey = key;
         items.push(value);
       }
     }
@@ -191,15 +195,35 @@ export class ProfileService {
   /** Profiles are upserts, we replace the existing profile and only keep latest. */
   async putProfile(pubkey: string, document: NostrProfileDocument | any) {
     // Remove the pubkey from the document before we persist.
-    delete document.pubkey;
+    // delete document.pubkey;
 
     await this.table.put(pubkey, document);
+
+    const index = this.#profileIndex(pubkey);
+
+    if (index == -1) {
+      this.profiles.push(document);
+    } else {
+      this.profiles[index] = document;
+    }
 
     this.#changed();
   }
 
+  #profileIndex(pubkey: string) {
+    return this.profiles.findIndex((p) => p.pubkey == pubkey);
+  }
+
+  #profileRemove(index: number) {
+    this.profiles.splice(index, 1);
+  }
+
   async deleteProfile(pubkey: string) {
     await this.table.del(pubkey);
+
+    // This shouldn't possibly be -1 for delete?
+    const index = this.#profileIndex(pubkey);
+    this.#profileRemove(index);
 
     this.#changed();
   }
@@ -258,6 +282,9 @@ export class ProfileService {
     for await (const [key, value] of iterator) {
       if (!value.block && !value.follow) {
         await this.table.del(key);
+
+        const index = this.#profileIndex(key);
+        this.#profileRemove(index);
       }
     }
 
@@ -269,6 +296,8 @@ export class ProfileService {
     for await (const [key, value] of this.table.iterator({})) {
       await this.table.del(key);
     }
+
+    this.profiles = [];
 
     this.#changed();
   }

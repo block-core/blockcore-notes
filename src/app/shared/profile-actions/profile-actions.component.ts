@@ -7,6 +7,7 @@ import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfi
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
+import { FeedService } from 'src/app/services/feed.service';
 
 @Component({
   selector: 'app-profile-actions',
@@ -19,7 +20,7 @@ export class ProfileActionsComponent {
 
   circles: Circle[] = [];
 
-  constructor(private circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  constructor(private feedService: FeedService, private circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
@@ -50,6 +51,7 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.follow(this.profile.pubkey, circle);
+    await this.feedService.downloadRecent([this.profile.pubkey]);
   }
 
   getNpub(hex: string) {

@@ -6,6 +6,11 @@
     <mat-spinner class="loading"></mat-spinner>
   </div>
 
+  <div class="page loading-container" *ngIf="profileService.initialized && events.length === 0 && profileService.profiles.length > 0">
+    Updating the user profiles and getting their recent notes... wait a few seconds.<br /><br /><br />
+    <mat-spinner class="loading"></mat-spinner>
+  </div>
+
   <div class="page" *ngIf="profileService.initialized && profileService.profiles.length === 0">
     <h1 class="marginless">Hi, having fun yet?</h1>
     <p>Here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>

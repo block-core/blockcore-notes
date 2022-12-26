@@ -103,6 +103,35 @@ export class FeedService {
     }, 5000);
   }
 
+  async downloadRecent(pubkeys: string[]) {
+    const relay = this.relays[0];
+
+    const backInTime = moment().subtract(120, 'minutes').unix();
+
+    // Start subscribing to our people feeds.
+    const sub = relay.sub([{ kinds: [1], since: backInTime, authors: pubkeys }], {}) as NostrSubscription;
+
+    sub.loading = true;
+
+    // Keep all subscriptions around so we can close them when needed.
+    this.subs.push(sub);
+
+    sub.on('event', (originalEvent: any) => {
+      const event = this.eventService.processEvent(originalEvent);
+
+      if (!event) {
+        return;
+      }
+
+      this.#persist(event);
+    });
+
+    sub.on('eose', () => {
+      console.log('Initial load of people feed completed.');
+      sub.loading = false;
+    });
+  }
+
   async downloadProfile(pubkey: string) {
     console.log('ADD DOWNLOAD PROFILE:', pubkey);
     if (!pubkey) {
@@ -245,7 +274,11 @@ export class FeedService {
       console.log('Profiles changed:', profiles);
     });
 
-    this.connect('wss://relay.damus.io', (relay: Relay) => {
+    this.openConnection('wss://relay.damus.io');
+  }
+
+  openConnection(server: string) {
+    this.connect(server, (relay: Relay) => {
       console.log('Connected to:', relay);
 
       const authors = this.profileService.profiles.map((p) => p.pubkey);
@@ -272,34 +305,12 @@ export class FeedService {
           return;
         }
 
-        // If not initial load, we'll grab the profile.
-        // if (!this.initialLoad) {
-        // this.fetchProfiles(relay, [event.pubkey]);
-        // }
-
         this.#persist(event);
-
-        // this.ngZone.run(() => {
-        //   this.cd.detectChanges();
-        // });
-
-        // if (this.events.length > 100) {
-        //   this.events.length = 80;
-        // }
       });
 
       sub.on('eose', () => {
         console.log('Initial load of people feed completed.');
         sub.loading = false;
-
-        // const pubKeys = this.events.map((e) => {
-        //   return e.pubkey;
-        // });
-
-        // Initial load completed, let's go fetch profiles for those initial events.
-        // this.fetchProfiles(relay, pubKeys);
-
-        // this.cd.detectChanges();
       });
     });
   }
