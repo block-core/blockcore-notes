@@ -198,6 +198,11 @@ mat-sidenav-content mat-toolbar {
   border-radius: 10px;
 }
 
+.events:hover {
+  background-color: #535353;
+  cursor: pointer;
+}
+
 .items {
   margin-top: 1em;
   padding: 1em;

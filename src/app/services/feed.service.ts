@@ -62,28 +62,15 @@ export class FeedService {
         .asObservable()
         .pipe(
           map((data) => {
-            // if (this.settings.options.flatfeed) {
-            //   return data;
-            //   // return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
-            // } else {
-
             const filtered = data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
-
-            console.log(filtered);
-
             return filtered;
-            // }
           })
         ) // If there is any 'e' tags then skip.
         // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
         .pipe(
           map((data) => {
             data.sort((a, b) => {
-              // if (this.settings.options.ascending) {
               return a.created_at > b.created_at ? -1 : 1;
-              // } else {
-              //   return a.created_at > b.created_at ? -1 : 1;
-              // }
             });
 
             return data;
@@ -93,27 +80,29 @@ export class FeedService {
   }
 
   get replyEvents$(): Observable<NostrEventDocument[]> {
-    return this.#replyEventsChanged
-      .asObservable()
-      .pipe(
-        map((data) => {
-          return data.filter((events) => events.tags.find((t) => t[0] === 'e'));
-        })
-      ) // If there is any 'e' tags then skip.
-      // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
-      .pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            if (this.settings.options.ascending) {
-              return a.created_at < b.created_at ? -1 : 1;
-            } else {
-              return a.created_at > b.created_at ? -1 : 1;
-            }
-          });
+    return (
+      this.#replyEventsChanged
+        .asObservable()
+        .pipe(
+          map((data) => {
+            return data.filter((events) => events.tags.find((t) => t[0] === 'e'));
+          })
+        ) // If there is any 'e' tags then skip.
+        // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+        .pipe(
+          map((data) => {
+            data.sort((a, b) => {
+              if (this.settings.options.ascending) {
+                return a.created_at < b.created_at ? -1 : 1;
+              } else {
+                return a.created_at > b.created_at ? -1 : 1;
+              }
+            });
 
-          return data;
-        })
-      );
+            return data;
+          })
+        )
+    );
   }
 
   get threadedEvents$(): Observable<NostrEventDocument[]> {
