@@ -24,6 +24,8 @@ export class FeedService {
 
   #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
+  #threadedEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+
   sortSubject = new BehaviorSubject<'asc' | 'desc'>('asc');
   sort$ = this.sortSubject.asObservable();
   sortOrder: 'asc' | 'desc' = 'asc';
@@ -36,6 +38,35 @@ export class FeedService {
   // get events$(): Observable<NostrEventDocument[]> {
   //   return this.#eventsChanged.asObservable();
   // }
+
+  get threadedEvents$(): Observable<NostrEventDocument[]> {
+    return this.#threadedEventsChanged
+      .asObservable()
+      .pipe(
+        map((data) => {
+          if (this.settings.options.flatfeed) {
+            return data;
+            // return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+          } else {
+            return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+          }
+        })
+      ) // If there is any 'e' tags then skip.
+      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+      .pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            if (this.settings.options.ascending) {
+              return a.created_at < b.created_at ? -1 : 1;
+            } else {
+              return a.created_at > b.created_at ? -1 : 1;
+            }
+          });
+
+          return data;
+        })
+      );
+  }
 
   get filteredEvents$(): Observable<NostrEventDocument[]> {
     // combineLatest([this.sort$, this.events$])
@@ -67,9 +98,15 @@ export class FeedService {
       );
   }
 
+  constructor(private settings: SettingsService, private eventService: EventService, private validator: DataValidation, private storage: StorageService, private profileService: ProfileService, private circlesService: CirclesService) {
+    console.log('FEED SERVICE CONSTRUCTOR!');
+    this.#table = this.storage.table<NostrEventDocument>('events');
+  }
+
   #updated() {
     this.#eventsChanged.next(this.events);
     this.#filteredEventsChanged.next(this.events);
+    this.#threadedEventsChanged.next(this.events);
   }
 
   async #persist(event: NostrEventDocument) {
@@ -132,11 +169,6 @@ export class FeedService {
         return false;
       }
     });
-  }
-
-  constructor(private eventService: EventService, private validator: DataValidation, private storage: StorageService, private profileService: ProfileService, private circlesService: CirclesService) {
-    console.log('FEED SERVICE CONSTRUCTOR!');
-    this.#table = this.storage.table<NostrEventDocument>('events');
   }
 
   scheduleProfileDownload() {

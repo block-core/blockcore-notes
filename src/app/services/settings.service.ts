@@ -6,6 +6,8 @@ export interface Options {
   paused?: boolean;
   privateFeed?: boolean;
   publicFeed?: boolean;
+  flatfeed?: boolean;
+  ascending?: boolean;
 }
 
 @Injectable({
