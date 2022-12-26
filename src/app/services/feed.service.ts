@@ -33,7 +33,19 @@ export class FeedService {
   subs: Sub[] = [];
   relays: Relay[] = [];
 
-  events$ = this.#eventsChanged.asObservable();
+  // events$ = this.#eventsChanged.asObservable();
+
+  get events$(): Observable<NostrEventDocument[]> {
+    return this.#eventsChanged.asObservable().pipe(
+      map((data) => {
+        data.sort((a, b) => {
+          return a.created_at > b.created_at ? -1 : 1;
+        });
+
+        return data;
+      })
+    );
+  }
 
   // get events$(): Observable<NostrEventDocument[]> {
   //   return this.#eventsChanged.asObservable();
