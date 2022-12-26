@@ -35,11 +35,11 @@ export class PeopleComponent {
     private router: Router
   ) {}
 
-  async clearBlocked() {
-    await this.profileService.clearBlocked();
-    this.profiles = [];
-    await this.load();
-  }
+  // async clearBlocked() {
+  //   await this.profileService.clearBlocked();
+  //   this.profiles = [];
+  //   await this.load();
+  // }
 
   async optionsUpdated($event: any, type: any) {
     if (type == 1) {

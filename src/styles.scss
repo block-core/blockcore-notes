@@ -257,6 +257,14 @@ mat-sidenav-content mat-toolbar {
   overflow-wrap: break-word;
 }
 
+.wrap {
+  overflow-wrap: break-word !important;
+}
+
+.more {
+  text-overflow: ellipsis !important;
+}
+
 .action-button {
   float: right;
   margin-top: -0.4em;

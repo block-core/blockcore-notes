@@ -22,7 +22,6 @@ export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
   authenticated = false;
-  
 
   constructor(
     public appState: ApplicationState,
@@ -61,8 +60,9 @@ export class AppComponent {
   async ngOnInit() {
     await this.storage.open();
     await this.storage.initialize();
-
     await this.feedService.initialize();
+
+    console.log('PROFILE SHOULD BE LOADED BY NOW!!');
 
     // const testdata = await this.storage.get('123');
     // console.log(testdata);

@@ -193,7 +193,7 @@ export class FeedPublicComponent {
         const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
 
         // Persist the profile.
-        await this.profile.putProfile(event.pubkey, profile);
+        await this.profile.updateProfile(event.pubkey, profile);
 
         const displayName = encodeURIComponent(profile.name);
         const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
@@ -215,7 +215,7 @@ export class FeedPublicComponent {
             profile.verifications.push('@nostr.directory');
 
             // Update the profile with verification data.
-            await this.profile.putProfile(event.pubkey, profile);
+            await this.profile.updateProfile(event.pubkey, profile);
           } else {
             // profile.verified = false;
             console.warn('Nickname reuse:', url);

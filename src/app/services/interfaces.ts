@@ -72,6 +72,9 @@ export interface NostrProfileDocument extends NostrProfile {
   /** The timestamp when the profile was modified. Internal property, not from event. */
   modified?: number;
 
+  /** Timestamp when user started following. */
+  followed?: number;
+
   /** Indicates if the user is following this profile. If not, then the profile can be wiped during cache cleanup. */
   follow?: boolean;
 

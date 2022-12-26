@@ -1,7 +1,58 @@
 <span *ngIf="feedService.events$ | async as events">
-  <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar>
+  <mat-progress-bar *ngIf="events == null" mode="indeterminate"></mat-progress-bar>
 
-  <div class="feed-page">
+  <div class="page loading-container" *ngIf="!profileService.initialized">
+    We'll be right ready for you... wait a second or two.<br /><br /><br />
+    <mat-spinner class="loading"></mat-spinner>
+  </div>
+
+  <div class="page" *ngIf="profileService.initialized && profileService.profiles.length === 0">
+    <h1 class="marginless">Hi, having fun yet?</h1>
+    <p>Here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>
+
+    <mat-grid-list gutterSize="1em" [cols]="(isHandset$ | async) ? '1' : '2'" rowHeight="180px">
+      <mat-grid-tile *ngFor="let profile of defaults">
+        <!-- <img [src]="profile.picture">&nbsp;
+        {{ profile.name }}<br>
+        {{ profile.pubkey }}<br><br>
+        <button mat-raised-button color="primary">Follow</button> -->
+
+        <mat-card class="default-card">
+          <mat-card-header>
+            <img mat-card-avatar [src]="profile.picture" />
+            <mat-card-title>{{ profile.name }}</mat-card-title>
+            <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="more dimmed">{{ profile.pubkey }}22</p>
+            <mat-slide-toggle class="example-margin" color="primary" [(ngModel)]="profile.checked">Follow {{ profile.name }}</mat-slide-toggle>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button>
+
+    <!-- <div *ngFor="let profile of defaults">
+      <mat-card class="default-card">
+        <mat-card-header>
+          <img mat-card-avatar [src]="profile.picture" />
+          <mat-card-title>{{ profile.name }}</mat-card-title>
+          <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="wrap">
+            {{ profile.pubkey }}
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary">Follow</button>
+        </mat-card-actions>
+      </mat-card>
+    </div> -->
+  </div>
+
+  <div class="feed-page" *ngIf="events.length > 0">
     <mat-accordion class="options">
       <mat-expansion-panel>
         <mat-expansion-panel-header>

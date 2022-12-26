@@ -9,6 +9,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class ProfileService {
   private table;
 
+  initialized = false;
+
   /** TODO: Destroy this array when there are zero subscribers left. */
   profiles: NostrProfileDocument[] = [];
 
@@ -16,6 +18,12 @@ export class ProfileService {
 
   get profiles$(): Observable<NostrProfileDocument[]> {
     return this.#profilesChanged.asObservable();
+  }
+
+  #profileRequested: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  get profileRequested$(): Observable<string> {
+    return this.#profileRequested.asObservable();
   }
 
   #updated() {
@@ -39,6 +47,10 @@ export class ProfileService {
 
   constructor(private storage: StorageService) {
     this.table = this.storage.table<NostrProfileDocument>('profile');
+  }
+
+  async downloadProfile(pubkey: string) {
+    this.#profileRequested.next(pubkey);
   }
 
   /** Will attempt to get the profile from local storage, if not available will attempt to get from relays. */
@@ -71,6 +83,7 @@ export class ProfileService {
   /** Populate the observable with profiles which we are following. */
   async populate() {
     this.profiles = await this.followList();
+    this.initialized = true;
     this.#updated();
   }
 
@@ -100,34 +113,43 @@ export class ProfileService {
     return this.filter((value, key) => value.block == true);
   }
 
-  async #setFollow(pubkey: string, circle?: string, follow?: boolean) {
+  async #setFollow(pubkey: string, circle?: string, follow?: boolean, name?: string, about?: string, picture?: string, verifications?: string[]) {
     let profile = await this.getProfile(pubkey);
+
+    const now = Math.floor(Date.now() / 1000);
 
     // This normally should not happen, but we should attempt to retrieve this profile.
     if (!profile) {
+      // Does not already exists, let us retrieve the profile async.
       profile = {
-        name: '',
-        about: '',
-        picture: '',
+        name: name ? name : '',
+        about: about ? about : '',
+        picture: picture ? picture : '',
         nip05: '',
-        verifications: [],
+        verifications: verifications ? verifications : [],
         pubkey: pubkey,
         follow: follow,
         circle: circle,
-        created: Math.floor(Date.now() / 1000),
+        created: now,
       };
     } else {
       profile.follow = follow;
       profile.circle = circle;
-      profile.modified = Math.floor(Date.now() / 1000);
     }
+
+    profile.modified = now;
 
     // If user choose to follow, make sure there are no block.
     if (follow) {
       profile.block = undefined;
+      profile.followed = now;
     }
 
+    // Put profile since we already got it in the beginning.
     await this.putProfile(pubkey, profile);
+
+    // Always refresh the profile when adding a follow on a user.
+    await this.downloadProfile(pubkey);
   }
 
   async follow(pubkey: string, circle?: string) {
@@ -147,6 +169,8 @@ export class ProfileService {
 
     profile.block = true;
     profile.follow = false;
+
+    // Put it since we got it in the beginning.
     await this.putProfile(pubkey, profile);
   }
 
@@ -159,6 +183,8 @@ export class ProfileService {
 
     profile.block = false;
     profile.follow = follow;
+
+    // Put it since we got it in the beginning.
     this.putProfile(pubkey, profile);
   }
 
@@ -178,17 +204,52 @@ export class ProfileService {
     this.#changed();
   }
 
-  /** Wipes all non-following profiles. */
-  async clearBlocked() {
-    const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+  /** Update the profile if it already exists, ensuring we don't loose follow and block states. */
+  async updateProfile(pubkey: string, document: NostrProfileDocument | any) {
+    let profile = await this.getProfile(pubkey);
 
-    for await (const [key, value] of iterator) {
-      if (value.block) {
-        value.block = undefined;
-        await this.putProfile(key, value);
-      }
+    const now = Math.floor(Date.now() / 1000);
+
+    if (!profile) {
+      profile = document;
+    } else {
+      profile.name = document.name;
+      profile.about = document.about;
+      profile.nip05 = document.nip05;
+      profile.picture = document.picture;
     }
+
+    profile!.modified = now;
+
+    await this.putProfile(pubkey, profile);
   }
+
+  async updateProfileValue(pubkey: string, predicate: (value: NostrProfileDocument, key: string) => NostrProfileDocument): Promise<void> {
+    let profile = await this.getProfile(pubkey);
+
+    if (!profile) {
+      return undefined;
+    }
+
+    profile.modified = Math.floor(Date.now() / 1000);
+
+    // Update the profile
+    profile = predicate(profile, profile.pubkey);
+
+    // We already updated latest, do a put and not update.
+    await this.putProfile(pubkey, profile);
+  }
+
+  /** Wipes all non-following profiles. */
+  // async clearBlocked() {
+  //   const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+
+  //   for await (const [key, value] of iterator) {
+  //     if (value.block) {
+  //       await this.table.del(key);
+  //     }
+  //   }
+  // }
 
   /** Wipes all non-following profiles, except blocked profiles. */
   async wipeNonFollow() {
