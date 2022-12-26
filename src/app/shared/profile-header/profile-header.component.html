@@ -8,7 +8,7 @@
       <!-- <app-profile-image [publicKey]="event.pubkey"></app-profile-image> -->
     </a>
   </div>
-  <div class="name">
+  <div class="name clickable">
     <a [routerLink]="['/user', pubkey]">
       <span [class.muted]="muted" [matTooltip]="tooltipName" matTooltipPosition="above">{{ profileName }}</span>
       <!-- <span *ngIf="!tooltip" [matTooltip]="tooltipName">{{ profileName }}</span> -->

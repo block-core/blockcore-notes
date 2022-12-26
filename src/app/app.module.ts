@@ -61,6 +61,7 @@ import { FeedPrivateComponent } from './feed-private/feed-private.component';
 import { FeedPublicComponent } from './feed-public/feed-public.component';
 import { NotesComponent } from './notes/notes.component';
 import { NgxColorsModule } from 'ngx-colors';
+import { NoteComponent } from './note/note.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { NgxColorsModule } from 'ngx-colors';
     FeedPrivateComponent,
     FeedPublicComponent,
     NotesComponent,
+    NoteComponent
   ],
   imports: [
     BrowserModule,

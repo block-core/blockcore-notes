@@ -276,6 +276,47 @@ export class FeedService {
     });
   }
 
+  // TODO: Temporary container for thread events. The downloadThread should probably return an Observable that should
+  // vanish when the user is finished watched it.
+  thread: NostrEvent[] = [];
+
+  // threadQueue: string[];
+
+  downloadThread(id: string) {
+    const relay = this.relays[0];
+
+    const backInTime = moment().subtract(120, 'minutes').unix();
+
+    const sub = relay.sub([{ ['#e']: [id] }], {}) as NostrSubscription;
+
+    sub.loading = true;
+
+    // Keep all subscriptions around so we can close them when needed.
+    this.subs.push(sub);
+
+    sub.on('event', (originalEvent: any) => {
+      const event = this.eventService.processEvent(originalEvent);
+
+      if (!event) {
+        return;
+      }
+
+      const eventIndex = this.thread.findIndex((e) => e.id == event.id);
+
+      if (eventIndex > -1) {
+        this.thread[eventIndex] = event;
+      } else {
+        this.thread.unshift(event);
+      }
+    });
+
+    sub.on('eose', () => {
+      console.log('Initial load of people feed completed.');
+      sub.loading = false;
+      sub.unsub();
+    });
+  }
+
   async downloadProfile(pubkey: string) {
     console.log('ADD DOWNLOAD PROFILE:', pubkey);
     if (!pubkey) {

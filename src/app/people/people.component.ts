@@ -102,6 +102,20 @@ export class PeopleComponent {
     });
   }
 
+  openProfile($event: any, event: NostrProfileDocument) {
+    const paths = $event.composedPath();
+
+    if (!paths || paths.length == 0) {
+      return;
+    }
+
+    if (paths[0].className.indexOf('clickable') == -1) {
+      return;
+    }
+
+    this.router.navigate(['/user', event.pubkey]);
+  }
+
   async search() {
     const text: string = this.searchTerm;
 

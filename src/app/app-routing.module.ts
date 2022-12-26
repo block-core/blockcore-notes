@@ -11,6 +11,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { UserComponent } from './user/user.component';
 import { CirclesComponent } from './circles/circles.component';
 import { PeopleComponent } from './people/people.component';
+import { NoteComponent } from './note/note.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,11 @@ const routes: Routes = [
   {
     path: 'user/:id',
     component: UserComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'note/:id',
+    component: NoteComponent,
     canActivate: [AuthGuard],
   },
   {

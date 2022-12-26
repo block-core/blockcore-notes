@@ -1,4 +1,5 @@
-<span *ngIf="feedService.threadedEvents$ | async as events">
+<span *ngIf="feedService.filteredEvents$ | async as events">
+  
   <mat-progress-bar *ngIf="events == null" mode="indeterminate"></mat-progress-bar>
 
   <div class="page loading-container" *ngIf="!profileService.initialized">
@@ -37,24 +38,6 @@
     </mat-grid-list>
 
     <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button>
-
-    <!-- <div *ngFor="let profile of defaults">
-      <mat-card class="default-card">
-        <mat-card-header>
-          <img mat-card-avatar [src]="profile.picture" />
-          <mat-card-title>{{ profile.name }}</mat-card-title>
-          <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="wrap">
-            {{ profile.pubkey }}
-          </p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary">Follow</button>
-        </mat-card-actions>
-      </mat-card>
-    </div> -->
   </div>
 
   <div class="feed-page" *ngIf="events.length > 0">

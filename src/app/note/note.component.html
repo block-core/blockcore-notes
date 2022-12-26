@@ -1,0 +1,47 @@
+<!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
+
+<div class="feed-page">
+  <div class="original-post events noclick" *ngIf="event">
+    <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+    <app-profile-header [pubkey]="event.pubkey"
+      ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+    ></app-profile-header>
+    <div class="content">
+      {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
+      <div class="dimmed">{{ rootLikes() }} likes&nbsp;&nbsp;{{ rootReplies() }} replies</div>
+    </div>
+  </div>
+</div>
+<mat-divider></mat-divider>
+
+<div class="page" *ngIf="feedService.thread.length === 0">
+  <h3 class="marginless">Loading thread... this can take some seconds.</h3>
+</div>
+
+<div class="feed-page" *ngIf="feedService.thread.length > 0">
+  <!-- <mat-accordion class="options">
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Options</mat-panel-title>
+              <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
+            </mat-expansion-panel-header>
+            <p>
+              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
+              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
+              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
+  
+            </p>
+          </mat-expansion-panel>
+        </mat-accordion> -->
+
+  <div class="events" *ngFor="let event of filteredThread(); trackBy: trackByFn">
+    <span *ngIf="event.kind != 7">
+      <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+      <app-profile-header [pubkey]="event.pubkey"
+        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+      ></app-profile-header>
+
+      <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+    </span>
+  </div>
+</div>
