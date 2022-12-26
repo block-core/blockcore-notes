@@ -40,9 +40,8 @@ export class UserComponent {
     private utilities: Utilities,
     private router: Router
   ) {
-    this.appState.title = 'Blockcore Notes';
+    // this.appState.title = 'Blockcore Notes';
     this.appState.showBackButton = true;
-    console.log('NG ON INIT FOR CTOR!!!');
 
     this.activatedRoute.paramMap.subscribe(async (params) => {
       const pubkey: any = params.get('id');
@@ -53,6 +52,11 @@ export class UserComponent {
 
       this.pubkey = pubkey;
       this.profile = await this.profiles.getProfile(pubkey);
+
+      if (this.profile) {
+        this.appState.title = `@${this.profile.name}`;
+      }
+
       // this.load();
     });
   }
