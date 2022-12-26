@@ -27,6 +27,11 @@
     <span>Move to Circle</span>
   </button>
 
+  <button mat-menu-item [matMenuTriggerFor]="copyMenu">
+    <mat-icon>copy_all</mat-icon>
+    <span>Copy</span>
+  </button>
+
   <button mat-menu-item (click)="unblock()" *ngIf="profile?.block == true">
     <mat-icon>cancel</mat-icon>
     <span>Unblock</span>
@@ -39,8 +44,31 @@
 </mat-menu>
 
 <mat-menu #categories="matMenu">
-  <button *ngFor="let circle of circles" mat-menu-item (click)="follow(circle.id)">
+  <button *ngFor="let circle of circles" mat-menu-item (click)="copy(getNpub(profile!.pubkey))">
     <mat-icon [style.color]="circle.color">trip_origin</mat-icon>
     <span>{{ circle.name }}</span>
+  </button>
+</mat-menu>
+
+<mat-menu #copyMenu="matMenu">
+  <button mat-menu-item (click)="copy(getNpub(profile!.pubkey))">
+    <mat-icon>content_copy</mat-icon>
+    <span>Public Key (npub)</span>
+  </button>
+  <button mat-menu-item (click)="copy(profile!.pubkey)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Public Key (hex)</span>
+  </button>
+  <button mat-menu-item (click)="copyProfile()">
+    <mat-icon>content_copy</mat-icon>
+    <span>Public Profile</span>
+  </button>
+  <button mat-menu-item (click)="copy(event!.id)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Note ID</span>
+  </button>
+  <button mat-menu-item (click)="copyEvent()">
+    <mat-icon>content_copy</mat-icon>
+    <span>Note</span>
   </button>
 </mat-menu>

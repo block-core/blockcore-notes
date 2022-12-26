@@ -5,6 +5,8 @@ import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { copyToClipboard } from '../utilities';
 
 @Component({
   selector: 'app-profile-actions',
@@ -17,7 +19,7 @@ export class ProfileActionsComponent {
 
   circles: Circle[] = [];
 
-  constructor(private circlesService: CirclesService, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  constructor(private circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
@@ -48,6 +50,28 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.follow(this.profile.pubkey, circle);
+  }
+
+  getNpub(hex: string) {
+    return this.utilities.getNostrIdentifier(hex);
+  }
+
+  copyEvent() {
+    this.copy(JSON.stringify(this.event));
+  }
+
+  copyProfile() {
+    this.copy(JSON.stringify(this.profile));
+  }
+
+  copy(text: string) {
+    copyToClipboard(text);
+
+    this.snackBar.open('Copied to clipboard', 'Hide', {
+      duration: 2500,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
 
   async unfollow() {
