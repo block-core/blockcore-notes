@@ -44,7 +44,7 @@
 </mat-menu>
 
 <mat-menu #categories="matMenu">
-  <button *ngFor="let circle of circles" mat-menu-item (click)="copy(getNpub(profile!.pubkey))">
+  <button *ngFor="let circle of circles" mat-menu-item (click)="follow(circle.id)">
     <mat-icon [style.color]="circle.color">trip_origin</mat-icon>
     <span>{{ circle.name }}</span>
   </button>
