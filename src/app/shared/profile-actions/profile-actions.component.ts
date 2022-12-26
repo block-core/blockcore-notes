@@ -63,7 +63,19 @@ export class ProfileActionsComponent {
   }
 
   copyProfile() {
-    this.copy(JSON.stringify(this.profile));
+    if (!this.profile) {
+      return;
+    }
+
+    // We only want to copy the public profile properties and nothing else.
+    const profile: NostrProfile = {
+      name: this.profile.name,
+      about: this.profile.about,
+      nip05: this.profile.nip05,
+      picture: this.profile.picture,
+    };
+
+    this.copy(JSON.stringify(profile));
   }
 
   copy(text: string) {
