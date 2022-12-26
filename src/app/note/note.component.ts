@@ -91,8 +91,29 @@ export class NoteComponent {
     });
   }
 
+  // TODO: Nasty code, just fix it, quick hack before bed.
   rootLikes() {
-    const eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
+    let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
+
+    eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
+      const eTag = e.tags.find((p) => p[0] === 'e');
+      const eTagValue = eTag![1];
+      return eTagValue != '-';
+    });
+
+    return eventsWithSingleeTag.length;
+  }
+
+  // TODO: Nasty code, just fix it, quick hack before bed.
+  rootDislikes() {
+    let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
+
+    eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
+      const eTag = e.tags.find((p) => p[0] === 'e');
+      const eTagValue = eTag![1];
+      return eTagValue == '-';
+    });
+
     return eventsWithSingleeTag.length;
   }
 

@@ -8,7 +8,7 @@
     ></app-profile-header>
     <div class="content">
       {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
-      <div class="dimmed">{{ rootLikes() }} likes&nbsp;&nbsp;{{ rootReplies() }} replies</div>
+      <div class="dimmed">{{ rootLikes() }} likes&nbsp;&nbsp;{{ rootDislikes() }} dislikes&nbsp;&nbsp;{{ rootReplies() }} replies</div>
     </div>
   </div>
 </div>
