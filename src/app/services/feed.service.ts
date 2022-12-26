@@ -173,10 +173,8 @@ export class FeedService {
 
   scheduleProfileDownload() {
     setTimeout(() => {
-      console.log('scheduleProfileDownload:setTimeout');
       this.processProfilesQueue();
       this.scheduleProfileDownload();
-      console.log('Schedule Again!');
     }, 5000);
   }
 
@@ -231,7 +229,7 @@ export class FeedService {
   profileQueue: string[] = [];
 
   processProfilesQueue() {
-    console.log('processProfilesQueue', this.isFetching);
+    // console.log('processProfilesQueue', this.isFetching);
 
     // If currently fetching, just skip until next interval.
     if (this.isFetching) {
