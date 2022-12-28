@@ -1,18 +1,93 @@
-<div class="page">
-  <!-- <h1 class="marginless">Settings</h1> -->
+<mat-tab-group>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">dns</mat-icon>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Relays</span>
+    </ng-template>
+    <ng-template matTabContent>
+      <mat-list *ngFor="let relay of relayService.relays">
+        <div mat-subheader>Relay ({{ relay.status }}): {{ relay.url }}</div>
+        <mat-list-item *ngIf="relay.nip11">
+          <mat-icon matListItemIcon>dns</mat-icon>
+          <div matListItemTitle>{{ relay.nip11.name }}</div>
+          <div matListItemLine>{{ relay.nip11.description }}</div>
+        </mat-list-item>
+        <mat-list-item *ngIf="relay.nip11">
+          <mat-icon matListItemIcon>fingerprint</mat-icon>
+          <div matListItemTitle>{{ relay.nip11.pubkey }}</div>
+          <!-- <div matListItemLine>
+            <span *ngIf="relay.nip11">{{ relay.nip11.name }}, {{ relay.nip11.description }}, </span>
+          </div>
+          <div matListItemLine>
+            <span *ngIf="relay.nip11"><br />{{ relay.nip11.supported_nips }}<br />{{ relay.nip11.software }}<br />{{ relay.nip11.version }}, </span>
+          </div> -->
+        </mat-list-item>
+        <mat-list-item *ngIf="relay.nip11">
+          <mat-icon matListItemIcon>privacy_tip</mat-icon>
+          <div matListItemTitle>NIPs: {{ relay.nip11.supported_nips }}</div>
+          <div matListItemLine>{{ relay.nip11.software }} ({{ relay.nip11.version }})</div>
+        </mat-list-item>
+        <!-- <mat-list-item>
+          <mat-icon matListItemIcon>dns</mat-icon>
+          <div matListItemTitle>({{ relay.status }}) {{ relay.url }}</div>
+          <div matListItemLine>
+            <span *ngIf="relay.nip11">{{ relay.nip11.name }}, {{ relay.nip11.description }}, </span>
+          </div>
+          <div matListItemLine>
+            <span *ngIf="relay.nip11">{{ relay.nip11.pubkey }}<br />{{ relay.nip11.supported_nips }}<br />{{ relay.nip11.software }}<br />{{ relay.nip11.version }}, </span>
+          </div>
+        </mat-list-item> -->
+        <mat-divider></mat-divider>
+      </mat-list>
+    </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">settings_applications</mat-icon>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Options</span>
+    </ng-template>
+    <ng-template matTabContent>
+      <div class="page">Language/Theme - Coming soon.</div>
+    </ng-template>
+  </mat-tab>
 
-  <p>
-    <button mat-flat-button color="warn" (click)="clearProfileCache()">Clear Public Profile Cache</button>
-  </p>
-  <p *ngIf="wipedNonFollow">All public profile cache data was cleared.</p>
+  <!-- <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">forum</mat-icon>
+      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Chats</span>
+    </ng-template>
 
-  <p>
-    <button mat-flat-button color="warn" (click)="clearNotesCache()">Clear Notes Cache</button>
-  </p>
-  <p *ngIf="wipedNotes">All cached notes data was cleared.</p>
+    <div class="page">
+      <h2>To be implemented</h2>
 
-  <p>
-    <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
-  </p>
-  <p *ngIf="wiped">All local data cache was cleared.</p>
-</div>
+      <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
+    </div>
+  </mat-tab> -->
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">inventory_2</mat-icon>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Data</span>
+    </ng-template>
+    <ng-template matTabContent>
+      <div class="page">
+        <!-- <h1 class="marginless">Settings</h1> -->
+
+        <p>
+          <button mat-flat-button color="warn" (click)="clearProfileCache()">Clear Public Profile Cache</button>
+        </p>
+        <p *ngIf="wipedNonFollow">All public profile cache data was cleared.</p>
+
+        <p>
+          <button mat-flat-button color="warn" (click)="clearNotesCache()">Clear Notes Cache</button>
+        </p>
+        <p *ngIf="wipedNotes">All cached notes data was cleared.</p>
+
+        <p>
+          <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
+        </p>
+        <p *ngIf="wiped">All local data cache was cleared.</p>
+      </div>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

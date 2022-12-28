@@ -12,6 +12,7 @@ import { DataService } from '../services/data.service';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { FeedService } from '../services/feed.service';
+import { OptionsService } from '../services/options.service';
 
 interface DefaultProfile {
   pubkey: string;
@@ -69,7 +70,7 @@ export class FeedPrivateComponent {
     public appState: ApplicationState,
     public data: DataService,
     private cd: ChangeDetectorRef,
-    public settings: SettingsService,
+    public options: OptionsService,
     public profileService: ProfileService,
     public feedService: FeedService,
     private validator: DataValidation,
@@ -278,17 +279,17 @@ export class FeedPrivateComponent {
   feedChanged($event: any, type: string) {
     if (type === 'public') {
       // If user choose public and set the value to values, we'll turn on the private.
-      if (!this.settings.options.publicFeed) {
-        this.settings.options.privateFeed = true;
+      if (!this.options.options.publicFeed) {
+        this.options.options.privateFeed = true;
       } else {
-        this.settings.options.privateFeed = false;
+        this.options.options.privateFeed = false;
       }
     } else {
       // If user choose private and set the value to values, we'll turn on the public.
-      if (!this.settings.options.privateFeed) {
-        this.settings.options.publicFeed = true;
+      if (!this.options.options.privateFeed) {
+        this.options.options.publicFeed = true;
       } else {
-        this.settings.options.publicFeed = false;
+        this.options.options.publicFeed = false;
       }
     }
   }
@@ -327,7 +328,7 @@ export class FeedPrivateComponent {
   }
 
   async ngOnInit() {
-    this.settings.options.privateFeed = true;
+    this.options.options.privateFeed = true;
 
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc

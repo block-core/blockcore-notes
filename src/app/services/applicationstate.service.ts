@@ -12,6 +12,11 @@ export class ApplicationState {
       map((result) => result.matches),
       shareReplay()
     );
+
+    this.displayLabels$ = this.breakpointObserver.observe('(max-width: 720px)').pipe(
+      map((result) => result.matches),
+      shareReplay()
+    );
   }
 
   title = 'Blockcore Notes';
@@ -23,4 +28,6 @@ export class ApplicationState {
   actions: Action[] = [];
 
   isSmallScreen$: Observable<boolean>;
+
+  displayLabels$: Observable<boolean>;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription } from './interfaces';
+import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription, NostrRelay } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
 import { Observable, of, BehaviorSubject, map, combineLatest } from 'rxjs';
@@ -12,12 +12,11 @@ import * as moment from 'moment';
 import { EventService } from './event.service';
 import { DataValidation } from './data-validation.service';
 import { OptionsService } from './options.service';
-import { RelayService } from './relay.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FeedService {
+export class RelayService {
   #table;
 
   events: NostrEventDocument[] = [];
@@ -37,7 +36,7 @@ export class FeedService {
   sortOrder: 'asc' | 'desc' = 'asc';
 
   subs: Sub[] = [];
-  // relays: Relay[] = [];
+  relays: NostrRelay[] = [];
 
   // events$ = this.#eventsChanged.asObservable();
 
@@ -166,9 +165,51 @@ export class FeedService {
       );
   }
 
-  constructor(private options: OptionsService, private relayService: RelayService, private eventService: EventService, private validator: DataValidation, private storage: StorageService, private profileService: ProfileService, private circlesService: CirclesService) {
+  constructor(private options: OptionsService, private eventService: EventService, private validator: DataValidation, private storage: StorageService, private profileService: ProfileService, private circlesService: CirclesService) {
     console.log('FEED SERVICE CONSTRUCTOR!');
     this.#table = this.storage.table<NostrEventDocument>('events');
+  }
+
+  async addRelay(relay: Relay) {
+    this.relays.push(relay as NostrRelay);
+    const r = relay as NostrRelay;
+
+    try {
+      const url = new URL(relay.url);
+      const infoUrl = `https://${url.hostname}`;
+
+      const rawResponse = await fetch(infoUrl, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          Accept: 'application/nostr+json',
+        },
+      });
+
+      if (rawResponse.status === 200) {
+        const content = await rawResponse.json();
+
+        r.nip11 = content;
+        console.log(content);
+
+        // const directoryPublicKey = content.names[displayName];
+
+        // if (event.pubkey === directoryPublicKey) {
+        //   if (!profile.verifications) {
+        //     profile.verifications = [];
+        //   }
+
+        //   profile.verifications.push('@nostr.directory');
+
+        //   // Update the profile with verification data.
+        //   await this.profile.updateProfile(event.pubkey, profile);
+      } else {
+        // profile.verified = false;
+        // console.warn('Nickname reuse:', url);
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
   #updated() {
@@ -250,7 +291,7 @@ export class FeedService {
 
   async downloadRecent(pubkeys: string[]) {
     console.log('DOWNLOAD RECENT FOR:', pubkeys);
-    const relay = this.relayService.relays[0];
+    const relay = this.relays[0];
 
     const backInTime = moment().subtract(12, 'hours').unix();
 
@@ -285,7 +326,7 @@ export class FeedService {
   // threadQueue: string[];
 
   downloadThread(id: string) {
-    const relay = this.relayService.relays[0];
+    const relay = this.relays[0];
 
     const backInTime = moment().subtract(12, 'hours').unix();
 
@@ -350,7 +391,7 @@ export class FeedService {
     // Grab all queued up profiles and ask for them, or should we have a maximum item?
     // For now, let us grab 10 and process those until next interval.
     const pubkeys = this.profileQueue.splice(0, 10);
-    this.fetchProfiles(this.relayService.relays[0], pubkeys);
+    this.fetchProfiles(this.relays[0], pubkeys);
   }
 
   isFetching = false;
@@ -433,98 +474,98 @@ export class FeedService {
     });
   }
 
-  async initialize() {
-    // Whenever the profile service needs to get a profile from the network, this event is triggered.
-    this.profileService.profileRequested$.subscribe(async (pubkey) => {
-      if (!pubkey) {
-        return;
-      }
+  // async initialize() {
+  //   // Whenever the profile service needs to get a profile from the network, this event is triggered.
+  //   this.profileService.profileRequested$.subscribe(async (pubkey) => {
+  //     if (!pubkey) {
+  //       return;
+  //     }
 
-      await this.downloadProfile(pubkey);
-    });
+  //     await this.downloadProfile(pubkey);
+  //   });
 
-    // TODO: Use rxjs to trigger the queue to process and then complete, don't do this setInterval.
-    this.scheduleProfileDownload();
+  //   // TODO: Use rxjs to trigger the queue to process and then complete, don't do this setInterval.
+  //   this.scheduleProfileDownload();
 
-    // Populate the profile observable.
-    await this.profileService.populate();
+  //   // Populate the profile observable.
+  //   await this.profileService.populate();
 
-    // Load all persisted events. This will of course be too many as user get more and more... so
-    // this must be changed into a filter ASAP. Two filters are needed: "Current View" which allows scrolling back in time,
-    // and an initial load which should likely just return top 100?
-    this.events = await this.followEvents(50);
+  //   // Load all persisted events. This will of course be too many as user get more and more... so
+  //   // this must be changed into a filter ASAP. Two filters are needed: "Current View" which allows scrolling back in time,
+  //   // and an initial load which should likely just return top 100?
+  //   this.events = await this.followEvents(50);
 
-    this.#updated();
+  //   this.#updated();
 
-    // Every time profiles are updated, we must change our profile subscription.
-    this.profileService.profiles$.subscribe((profiles) => {
-      console.log('Profiles changed:', profiles);
-    });
+  //   // Every time profiles are updated, we must change our profile subscription.
+  //   this.profileService.profiles$.subscribe((profiles) => {
+  //     console.log('Profiles changed:', profiles);
+  //   });
 
-    this.openConnection('wss://nostr-pub.wellorder.net');
-    this.openConnection('wss://relay.damus.io');
-  }
+  //   // this.openConnection('wss://relay.damus.io');
+  //   this.openConnection('wss://nostr-pub.wellorder.net');
+  // }
 
-  openConnection(server: string) {
-    this.connect(server, (relay: Relay) => {
-      console.log('Connected to:', relay);
+  // openConnection(server: string) {
+  //   this.connect(server, (relay: Relay) => {
+  //     console.log('Connected to:', relay);
 
-      const authors = this.profileService.profiles.map((p) => p.pubkey);
+  //     const authors = this.profileService.profiles.map((p) => p.pubkey);
 
-      if (authors.length === 0) {
-        console.log('No profiles found. Skipping subscribing to any data.');
-        return;
-      }
+  //     if (authors.length === 0) {
+  //       console.log('No profiles found. Skipping subscribing to any data.');
+  //       return;
+  //     }
 
-      const backInTime = moment().subtract(120, 'minutes').unix();
+  //     const backInTime = moment().subtract(120, 'minutes').unix();
 
-      // Start subscribing to our people feeds.
-      const sub = relay.sub([{ kinds: [1], since: backInTime, authors: authors }], {}) as NostrSubscription;
+  //     // Start subscribing to our people feeds.
+  //     const sub = relay.sub([{ kinds: [1], since: backInTime, authors: authors }], {}) as NostrSubscription;
 
-      sub.loading = true;
+  //     sub.loading = true;
 
-      // Keep all subscriptions around so we can close them when needed.
-      this.subs.push(sub);
+  //     // Keep all subscriptions around so we can close them when needed.
+  //     this.subs.push(sub);
 
-      sub.on('event', (originalEvent: any) => {
-        const event = this.eventService.processEvent(originalEvent);
+  //     sub.on('event', (originalEvent: any) => {
+  //       const event = this.eventService.processEvent(originalEvent);
 
-        if (!event) {
-          return;
-        }
+  //       if (!event) {
+  //         return;
+  //       }
 
-        this.#persist(event);
-      });
+  //       this.#persist(event);
+  //     });
 
-      sub.on('eose', () => {
-        console.log('Initial load of people feed completed.');
-        sub.loading = false;
-      });
-    });
-  }
+  //     sub.on('eose', () => {
+  //       console.log('Initial load of people feed completed.');
+  //       sub.loading = false;
+  //     });
+  //   });
+  // }
 
-  connect(server: string, onConnected: any) {
-    // const relay = relayInit('wss://relay.nostr.info');
-    const relay = relayInit(server);
+  // connect(server: string, onConnected: any) {
+  //   // const relay = relayInit('wss://relay.nostr.info');
+  //   const relay = relayInit(server);
 
-    relay.on('connect', () => {
-      console.log(`connected to ${relay?.url}`);
-      onConnected(relay);
-      //this.onConnected(relay);
-    });
+  //   relay.on('connect', () => {
+  //     console.log(`connected to ${relay?.url}`);
+  //     onConnected(relay);
+  //     //this.onConnected(relay);
+  //   });
 
-    relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${relay?.url}`);
-    });
+  //   relay.on('disconnect', () => {
+  //     console.log(`DISCONNECTED! ${relay?.url}`);
+  //   });
 
-    relay.on('notice', () => {
-      console.log(`NOTICE FROM ${relay?.url}`);
-    });
+  //   relay.on('notice', () => {
+  //     console.log(`NOTICE FROM ${relay?.url}`);
+  //   });
 
-    relay.connect();
+  //   relay.connect();
 
-    this.relayService.addRelay(relay);
+  //   this.relays.push(relay);
 
-    return relay;
-  }
+  //   return relay;
+  // }
 }

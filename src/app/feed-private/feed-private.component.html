@@ -48,11 +48,11 @@
           <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
         </mat-expansion-panel-header>
         <p>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.flatfeed" (ngModelChange)="optionsUpdated()">Flat Feed (turn off threads)</mat-slide-toggle>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.ascending" (ngModelChange)="optionsUpdated()">Oldest first</mat-slide-toggle>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.flatfeed" (ngModelChange)="optionsUpdated()">Flat Feed (turn off threads)</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.ascending" (ngModelChange)="optionsUpdated()">Oldest first</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.paused">Pause feed</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
         </p>
       </mat-expansion-panel>
     </mat-accordion>

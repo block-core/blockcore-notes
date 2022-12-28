@@ -12,6 +12,7 @@ import { DataService } from '../services/data.service';
 import { NotesService } from '../services/notes.service';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { OptionsService } from '../services/options.service';
 
 @Component({
   selector: 'app-feed-public',
@@ -24,7 +25,7 @@ export class FeedPublicComponent {
     public appState: ApplicationState,
     public data: DataService,
     private cd: ChangeDetectorRef,
-    public settings: SettingsService,
+    public options: OptionsService,
     private notesService: NotesService,
     public profile: ProfileService,
     private validator: DataValidation,
@@ -53,13 +54,13 @@ export class FeedPublicComponent {
   activeOptions() {
     let options = '';
 
-    if (this.settings.options.hideSpam) {
+    if (this.options.options.hideSpam) {
       options += ' Spam: Filtered';
     } else {
       options += ' Spam: Allowed';
     }
 
-    if (this.settings.options.hideInvoice) {
+    if (this.options.options.hideInvoice) {
       options += ' Invoices: Hidden';
     } else {
       options += ' Invoices: Displayed';
@@ -97,7 +98,7 @@ export class FeedPublicComponent {
     this.events = [];
 
     this.sub.on('event', (originalEvent: any) => {
-      if (this.settings.options.paused) {
+      if (this.options.options.paused) {
         return;
       }
 
@@ -248,17 +249,17 @@ export class FeedPublicComponent {
   feedChanged($event: any, type: string) {
     if (type === 'public') {
       // If user choose public and set the value to values, we'll turn on the private.
-      if (!this.settings.options.publicFeed) {
-        this.settings.options.privateFeed = true;
+      if (!this.options.options.publicFeed) {
+        this.options.options.privateFeed = true;
       } else {
-        this.settings.options.privateFeed = false;
+        this.options.options.privateFeed = false;
       }
     } else {
       // If user choose private and set the value to values, we'll turn on the public.
-      if (!this.settings.options.privateFeed) {
-        this.settings.options.publicFeed = true;
+      if (!this.options.options.privateFeed) {
+        this.options.options.publicFeed = true;
       } else {
-        this.settings.options.publicFeed = false;
+        this.options.options.publicFeed = false;
       }
     }
   }
@@ -279,7 +280,7 @@ export class FeedPublicComponent {
   );
 
   async ngOnInit() {
-    this.settings.options.privateFeed = true;
+    this.options.options.privateFeed = true;
 
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
@@ -291,7 +292,7 @@ export class FeedPublicComponent {
     }
 
     // const relay = relayInit('wss://relay.nostr.info');
-    this.relay = relayInit('wss://relay.damus.io');
+    this.relay = relayInit('wss://nostr-pub.wellorder.net');
 
     this.relay.on('connect', () => {
       console.log(`connected to ${this.relay?.url}`);

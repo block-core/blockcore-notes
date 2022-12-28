@@ -2,7 +2,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">home</mat-icon>
-      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Home</span>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Home</span>
     </ng-template>
     <ng-template matTabContent>
       <app-feed-private></app-feed-private>
@@ -12,7 +12,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
-      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Global</span>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Global</span>
     </ng-template>
     <ng-template matTabContent>
       <app-feed-public></app-feed-public>
@@ -35,7 +35,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">bookmark_border</mat-icon>
-      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Saved</span>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Saved</span>
     </ng-template>
     <ng-template matTabContent>
       <app-notes></app-notes>

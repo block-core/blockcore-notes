@@ -3,6 +3,7 @@ import { ApplicationState } from '../services/applicationstate.service';
 import { EventService } from '../services/event.service';
 import { FeedService } from '../services/feed.service';
 import { ProfileService } from '../services/profile.service';
+import { RelayService } from '../services/relay.service';
 import { StorageService } from '../services/storage.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class SettingsComponent {
   wipedNonFollow = false;
   wipedNotes = false;
 
-  constructor(private feedService: FeedService, private appState: ApplicationState, private storage: StorageService, private profileService: ProfileService) {}
+  constructor(public relayService: RelayService, public feedService: FeedService, public appState: ApplicationState, private storage: StorageService, private profileService: ProfileService) {}
 
   async clearProfileCache() {
     await this.profileService.wipeNonFollow();

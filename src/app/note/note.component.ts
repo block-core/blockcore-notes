@@ -10,6 +10,7 @@ import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { FeedService } from '../services/feed.service';
 import { map, Observable } from 'rxjs';
+import { OptionsService } from '../services/options.service';
 
 @Component({
   selector: 'app-note',
@@ -55,7 +56,7 @@ export class NoteComponent {
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
-    public settings: SettingsService,
+    public options: OptionsService,
     public feedService: FeedService,
     public profiles: ProfileService,
     private validator: DataValidation,
@@ -156,13 +157,13 @@ export class NoteComponent {
   activeOptions() {
     let options = '';
 
-    if (this.settings.options.hideSpam) {
+    if (this.options.options.hideSpam) {
       options += ' Spam: Filtered';
     } else {
       options += ' Spam: Allowed';
     }
 
-    if (this.settings.options.hideInvoice) {
+    if (this.options.options.hideInvoice) {
       options += ' Invoices: Hidden';
     } else {
       options += ' Invoices: Displayed';

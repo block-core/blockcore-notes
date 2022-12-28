@@ -1,4 +1,4 @@
-import { Event, Sub } from 'nostr-tools';
+import { Event, Relay, Sub } from 'nostr-tools';
 
 export interface Circle {
   id: string;
@@ -33,6 +33,10 @@ export interface NostrDocument<T> {
 
   /** The raw and original entry, not filtered or sanitized. */
   raw: string;
+}
+
+export interface NostrRelay extends Relay {
+  nip11: any;
 }
 
 /** OBSOLETE */
