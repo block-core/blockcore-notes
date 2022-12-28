@@ -6,10 +6,6 @@
     </ng-template>
     <ng-template matTabContent>
       <div class="page">
-        <!-- <div class="example-action-buttons">
-          <button mat-button>Expand All</button>
-          <button mat-button>Collapse All</button>
-        </div> -->
         <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel *ngFor="let relay of relayService.relays">
             <mat-expansion-panel-header>
@@ -28,6 +24,15 @@
             >
           </mat-expansion-panel>
         </mat-accordion>
+
+        <p class="dimmed">Relays are managed by your browser extension. Open extension to change which relays Blockcore Notes should use. After modifying relay in extension, click button below.</p>
+
+        <div class="example-action-buttons">
+          <!-- <button mat-button>Expand All</button>
+          <button mat-button>Collapse All</button> -->
+
+          <button mat-button (click)="getRelays()">Update from Extension</button>
+        </div>
       </div>
     </ng-template>
   </mat-tab>

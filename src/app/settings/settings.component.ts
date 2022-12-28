@@ -33,6 +33,17 @@ export class SettingsComponent {
     this.wipedNotes = true;
   }
 
+  async getRelays() {
+    const gt = globalThis as any;
+    const relays = await gt.nostr.getRelays();
+    console.log(relays);
+
+    
+
+    // this.relayService.addRelay( {  });
+
+  }
+
   ngOnInit() {
     this.appState.title = 'Settings';
     this.appState.showBackButton = true;

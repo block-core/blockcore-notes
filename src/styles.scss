@@ -103,6 +103,21 @@ h3 {
   padding: 1em 1em 0 1em;
 }
 
+/* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+@media only screen and (max-width: 599px) {
+  body {
+    font-size: 16px;
+  }
+
+  .page {
+    padding: 0.8em;
+  }
+
+  .feed-page {
+    padding: 0.4em 0.4em 0 0.4em;
+  }
+}
+
 a {
   color: rgb(206, 206, 206);
 }
