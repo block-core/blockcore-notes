@@ -4,6 +4,7 @@ export interface Circle {
   id: string;
   name: string;
   color: string;
+  style: string;
   created?: number;
   modified?: number;
 }
@@ -88,4 +89,9 @@ export interface NostrProfileDocument extends NostrProfile {
 
   /** List of domains where the user has been verified, e.g. "@nostr.directory", "@domain.com" */
   verifications: string[];
+}
+
+export interface CircleStyle {
+  id: string;
+  name: string;
 }

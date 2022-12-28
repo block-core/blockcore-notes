@@ -7,11 +7,20 @@
     <input matInput type="text" autocomplete="off" [(ngModel)]="data.name" />
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="input-full-width">
+  <mat-form-field appearance="fill" class="circle-left-input">
     <div matPrefix ngx-colors-trigger class="color" [style.background]="data.color" [(ngModel)]="data.color">
     </div>
     <mat-label>Color</mat-label>
     <input matInput [(ngModel)]="data.color" autocomplete="off">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="circle-right-input">
+    <mat-label>Type</mat-label>
+    <mat-select [(value)]="data.style">
+      <mat-option *ngFor="let style of styles" [value]="style.id">
+        {{style.name}}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 
 </div>

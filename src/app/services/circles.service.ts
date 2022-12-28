@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CirclesService {
-  static DEFAULT: Circle = { id: '', name: 'Following', color: '#e91e63' };
+  static DEFAULT: Circle = { id: '', name: 'Following', color: '#e91e63', style: '1' };
 
   private table;
 

@@ -62,6 +62,7 @@ import { FeedPublicComponent } from './feed-public/feed-public.component';
 import { NotesComponent } from './notes/notes.component';
 import { NgxColorsModule } from 'ngx-colors';
 import { NoteComponent } from './note/note.component';
+import { CircleStylePipe } from './shared/circle-style';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { NoteComponent } from './note/note.component';
     HomeComponent,
     AgoPipe,
     Bech32Pipe,
+    CircleStylePipe,
     AboutComponent,
     FollowDialog,
     SettingsComponent,

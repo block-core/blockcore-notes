@@ -21,8 +21,25 @@
 .color {
   width: 24px;
   height: 24px;
-  border: 2px solid #FFF;
+  border: 2px solid #fff;
   margin: 12px;
   border-radius: 50%;
+}
 
+.circle-left-input {
+  margin-right: 1em;
+}
+
+.circle-right-input {
+}
+
+@media only screen and (max-width: 540px) {
+  .circle-left-input {
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .circle-right-input {
+    width: 100%;
+  }
 }
