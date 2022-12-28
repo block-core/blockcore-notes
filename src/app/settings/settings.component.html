@@ -5,40 +5,30 @@
       <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Relays</span>
     </ng-template>
     <ng-template matTabContent>
-      <mat-list *ngFor="let relay of relayService.relays">
-        <div mat-subheader>Relay ({{ relay.status }}): {{ relay.url }}</div>
-        <mat-list-item *ngIf="relay.nip11">
-          <mat-icon matListItemIcon>dns</mat-icon>
-          <div matListItemTitle>{{ relay.nip11.name }}</div>
-          <div matListItemLine>{{ relay.nip11.description }}</div>
-        </mat-list-item>
-        <mat-list-item *ngIf="relay.nip11">
-          <mat-icon matListItemIcon>fingerprint</mat-icon>
-          <div matListItemTitle>{{ relay.nip11.pubkey }}</div>
-          <!-- <div matListItemLine>
-            <span *ngIf="relay.nip11">{{ relay.nip11.name }}, {{ relay.nip11.description }}, </span>
-          </div>
-          <div matListItemLine>
-            <span *ngIf="relay.nip11"><br />{{ relay.nip11.supported_nips }}<br />{{ relay.nip11.software }}<br />{{ relay.nip11.version }}, </span>
-          </div> -->
-        </mat-list-item>
-        <mat-list-item *ngIf="relay.nip11">
-          <mat-icon matListItemIcon>privacy_tip</mat-icon>
-          <div matListItemTitle>NIPs: {{ relay.nip11.supported_nips }}</div>
-          <div matListItemLine>{{ relay.nip11.software }} ({{ relay.nip11.version }})</div>
-        </mat-list-item>
-        <!-- <mat-list-item>
-          <mat-icon matListItemIcon>dns</mat-icon>
-          <div matListItemTitle>({{ relay.status }}) {{ relay.url }}</div>
-          <div matListItemLine>
-            <span *ngIf="relay.nip11">{{ relay.nip11.name }}, {{ relay.nip11.description }}, </span>
-          </div>
-          <div matListItemLine>
-            <span *ngIf="relay.nip11">{{ relay.nip11.pubkey }}<br />{{ relay.nip11.supported_nips }}<br />{{ relay.nip11.software }}<br />{{ relay.nip11.version }}, </span>
-          </div>
-        </mat-list-item> -->
-        <mat-divider></mat-divider>
-      </mat-list>
+      <div class="page">
+        <!-- <div class="example-action-buttons">
+          <button mat-button>Expand All</button>
+          <button mat-button>Collapse All</button>
+        </div> -->
+        <mat-accordion class="example-headers-align" multi>
+          <mat-expansion-panel *ngFor="let relay of relayService.relays">
+            <mat-expansion-panel-header>
+              <mat-panel-title> {{ relay.nip11?.name }}</mat-panel-title>
+              <mat-panel-description>
+                {{ relay.url }}
+                <mat-icon class="online">radio_button_checked</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            {{ relay.nip11.description }}<br /><br />
+            <span class="dimmed">
+              NIPs: {{ relay.nip11.supported_nips }}<br />
+              Software: {{ relay.nip11.software }} ({{ relay.nip11.version }})<br />
+              <span class="wrap">ID: {{ relay.nip11.pubkey }}</span></span
+            >
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
     </ng-template>
   </mat-tab>
   <mat-tab>
@@ -51,19 +41,6 @@
     </ng-template>
   </mat-tab>
 
-  <!-- <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">forum</mat-icon>
-      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Chats</span>
-    </ng-template>
-
-    <div class="page">
-      <h2>To be implemented</h2>
-
-      <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
-    </div>
-  </mat-tab> -->
-
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">inventory_2</mat-icon>
@@ -71,8 +48,6 @@
     </ng-template>
     <ng-template matTabContent>
       <div class="page">
-        <!-- <h1 class="marginless">Settings</h1> -->
-
         <p>
           <button mat-flat-button color="warn" (click)="clearProfileCache()">Clear Public Profile Cache</button>
         </p>

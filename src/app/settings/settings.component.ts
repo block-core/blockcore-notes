@@ -9,6 +9,7 @@ import { StorageService } from '../services/storage.service';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent {
   wiped = false;
