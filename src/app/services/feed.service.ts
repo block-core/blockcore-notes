@@ -250,7 +250,7 @@ export class FeedService {
     console.log('DOWNLOAD RECENT FOR:', pubkeys);
     const relay = this.relays[0];
 
-    const backInTime = moment().subtract(120, 'minutes').unix();
+    const backInTime = moment().subtract(12, 'hours').unix();
 
     // Start subscribing to our people feeds.
     const sub = relay.sub([{ kinds: [1], since: backInTime, authors: pubkeys }], {}) as NostrSubscription;
@@ -285,7 +285,7 @@ export class FeedService {
   downloadThread(id: string) {
     const relay = this.relays[0];
 
-    const backInTime = moment().subtract(120, 'minutes').unix();
+    const backInTime = moment().subtract(12, 'hours').unix();
 
     const sub = relay.sub([{ ['#e']: [id] }], {}) as NostrSubscription;
 
