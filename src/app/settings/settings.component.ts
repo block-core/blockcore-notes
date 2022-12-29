@@ -41,6 +41,7 @@ export class SettingsComponent {
   async clearDatabase() {
     await this.storage.wipe();
     this.wiped = true;
+    location.reload();
   }
 
   async clearNotesCache() {

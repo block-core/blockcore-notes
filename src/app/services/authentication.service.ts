@@ -39,7 +39,7 @@ export class AuthenticationService {
 
   anonymous() {
     const user = new UserInfo();
-    user.publicKey = 'anonymous';
+    user.publicKey = '354faab36ca511a7956f0bfc2b64e06fe5395cd7208d9b65d6665270298743d8';
     this.authInfo$.next(user);
     return user;
   }
