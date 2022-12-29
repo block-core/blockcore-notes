@@ -101,6 +101,14 @@ export class NoteComponent {
     return this.feedService.thread.filter((p) => p.kind != 7);
   }
 
+  repliesTo() {
+    if (!this.event) {
+      return;
+    }
+
+    return this.event.tags.filter((t) => t[0] === 'p').map((t) => t[1]);
+  }
+
   ngOnInit() {
     console.log('NG INIT ON NOTE:');
     // this.appState.title = 'Blockcore Notes';

@@ -314,7 +314,7 @@ export class FeedService {
   downloadThread(id: string) {
 
     // First get existing data.
-
+    // this.#filter((e) => { e.tags. });
 
     const relay = this.relayService.relays[0];
 
