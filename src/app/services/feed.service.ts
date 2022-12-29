@@ -263,13 +263,12 @@ export class FeedService {
     const observable = new Observable<NostrEventDocument[]>((observer: Observer<NostrEventDocument[]>) => {
       const totalEvents: NostrEventDocument[] = [];
 
-      console.log('111111111111111:');
       const sub = relay.sub([query], {}) as NostrSubscription;
 
       sub.on('event', (originalEvent: any) => {
         // console.log('downloadFromRelayIndex: event', id);
         const event = this.eventService.processEvent(originalEvent);
-        console.log('downloadFromRelayIndex: event', event);
+        // console.log('downloadFromRelayIndex: event', event);
 
         if (!event) {
           return;
@@ -319,16 +318,13 @@ export class FeedService {
     //const relay = this.relayService.relays[index];
     //console.log('downloadFromRelayIndex:', id, index, relayCount);
 
-    console.log('WITH DELAY:');
-
     const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
-      console.log('111111111111111:');
       const sub = relay.sub([query], {}) as NostrSubscription;
 
       sub.on('event', (originalEvent: any) => {
         // console.log('downloadFromRelayIndex: event', id);
         const event = this.eventService.processEvent(originalEvent);
-        console.log('downloadFromRelayIndex: event', event);
+        // console.log('downloadFromRelayIndex: event', event);
 
         if (!event) {
           return;

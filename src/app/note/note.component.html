@@ -12,6 +12,19 @@
     </span>
   </div>
 
+  <div class="feed-page" *ngIf="thread.before$ | async as events">
+    <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+      <span *ngIf="event.kind != 7">
+        <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+        <app-profile-header [pubkey]="event.pubkey"
+          ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+        ></app-profile-header>
+
+        <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+      </span>
+    </div>
+  </div>
+
   <!-- <div class="parent-events events" *ngFor="let event of filteredThread(); trackBy: trackByFn">
     <span *ngIf="event.kind != 7">
       <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
@@ -41,7 +54,7 @@
   <h3 class="marginless">Loading thread... this can take some seconds.</h3>
 </div>
 
-<div class="feed-page" *ngIf="thread.events$ | async as events">
+<div class="feed-page" *ngIf="thread.after$ | async as events">
   <!-- <mat-accordion class="options">
           <mat-expansion-panel>
             <mat-expansion-panel-header>

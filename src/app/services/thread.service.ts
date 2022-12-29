@@ -38,18 +38,46 @@ export class ThreadService {
   // after$ = this.#afterChanged.asObservable();
 
   get before$(): Observable<NostrEventDocument[]> {
-    return this.#eventsChanged
-      .asObservable()
-      .pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            return a.created_at > b.created_at ? -1 : 1;
-          });
+    return (
+      this.#eventsChanged
+        .asObservable()
+        .pipe(
+          map((data) => {
+            data.sort((a, b) => {
+              return a.created_at > b.created_at ? -1 : 1;
+            });
 
-          return data;
-        })
-      )
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
+            return data;
+          })
+        )
+        .pipe(
+          map((data) =>
+            data.filter((events) => {
+              // console.log(this.#event);
+              const eTags = this.eventService.eTags(this.#event);
+
+              // Skip all replies that are directly on root.
+              if (eTags.length < 2) {
+                return false;
+              }
+
+              const replyTag = this.eventService.replyEventId(this.#event);
+
+              // console.log('REPLAY TAG ON SELECTED EVENT:', replyTag);
+              // console.log('EVENTS ID:', events.id);
+
+              // TODO: Doesn't work.
+              if (replyTag === events.id) {
+                return true;
+              } else {
+                return false;
+              }
+            })
+          )
+        )
+        // Don't render the event itself in the before list.
+        .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))))
+    );
   }
 
   get after$(): Observable<NostrEventDocument[]> {
@@ -63,8 +91,8 @@ export class ThreadService {
 
           return data;
         })
-      )
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
+      ) // Don't render the event itself in the after list.
+      .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 
   get events$(): Observable<NostrEventDocument[]> {
@@ -110,9 +138,7 @@ export class ThreadService {
       console.log('EVENT CHANGED!!!', event);
 
       // Get the root event.
-      const rootEventId = this.eventService.rootEventId(event);
-
-      console.log('ROOT EVENT ID:', rootEventId);
+      let rootEventId = this.eventService.rootEventId(event);
 
       if (rootEventId) {
         this.feedService.downloadEvent(rootEventId).subscribe((event) => {
@@ -121,19 +147,42 @@ export class ThreadService {
           this.#rootChanged.next(this.#root);
           console.log('GOT ROOT EVENT', this.#root);
         });
-
-        // Get all events in the thread.
-        this.feedService.downloadThread(rootEventId).subscribe((events) => {
-          console.log(events);
-          this.#events = events;
-          this.#eventsChanged.next(this.#events);
-          console.log('GOT ROOT EVENT', this.#root);
-        });
       } else {
         this.#root = null;
         // Reset the root if the current event does not have one.
         this.#rootChanged.next(this.#root);
       }
+
+      // If there is root, use that to download thread, if not, use the current event which is a root event.
+      if (this.#root) {
+        // Get all events in the thread.
+        this.feedService.downloadThread(this.#root.id!).subscribe((events) => {
+          console.log(events);
+          this.#events = events;
+          this.#eventsChanged.next(this.#events);
+          console.log('GOT THREAD FOR ROOT', this.#root);
+        });
+      } else {
+        // Get all events in the thread.
+        this.feedService.downloadThread(event.id!).subscribe((events) => {
+          console.log(events);
+          this.#events = events;
+          this.#eventsChanged.next(this.#events);
+          console.log('GOT THREAD FOR EVENT', this.#event);
+        });
+      }
+
+      // // If there are no rootEventId, grab ID from the event itself:
+      // console.log('ROOT EVENT ID:', rootEventId);
+
+      // if (rootEventId) {
+      //   this.feedService.downloadEvent(rootEventId).subscribe((event) => {
+      //     console.log(event);
+      //     this.#root = event;
+      //     this.#rootChanged.next(this.#root);
+      //     console.log('GOT ROOT EVENT', this.#root);
+      //   });
+      // }
     });
   }
 
@@ -147,8 +196,8 @@ export class ThreadService {
     } else {
       // Go grab it from relays.
       this.feedService.downloadEvent(eventId).subscribe((event) => {
-        console.log(event);
-        this.#eventChanged.next(event);
+        this.#event = event;
+        this.#eventChanged.next(this.#event);
       });
     }
   }

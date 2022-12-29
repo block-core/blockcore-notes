@@ -33,6 +33,18 @@ export class EventService {
   }
 
   /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
+  eTags(event: NostrEventDocument | null) {
+    if (!event) {
+      return [];
+    }
+
+    // TODO. All of this parsing of arrays is silly and could be greatly improved with some refactoring
+    // whenever I have time for it.
+    const eTags = event.tags.filter((t) => t[0] === 'e');
+    return eTags;
+  }
+
+  /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
   rootEventId(event: NostrEventDocument) {
     if (!event) {
       return;
@@ -58,5 +70,33 @@ export class EventService {
     }
 
     return eTags[0][1];
+  }
+
+  /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
+  replyEventId(event: NostrEventDocument | null) {
+    if (!event) {
+      return;
+    }
+
+    // TODO. All of this parsing of arrays is silly and could be greatly improved with some refactoring
+    // whenever I have time for it.
+    const eTags = event.tags.filter((t) => t[0] === 'e');
+
+    for (let i = 0; i < eTags.length; i++) {
+      const tag = eTags[i];
+
+      // If more than 4, we likely have "root" or "reply"
+      if (tag.length > 3) {
+        if (tag[3] == 'reply') {
+          return tag[1];
+        }
+      }
+    }
+
+    if (eTags.length < 2) {
+      return null;
+    }
+
+    return eTags[1][1];
   }
 }
