@@ -9,29 +9,31 @@
         <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel *ngFor="let relay of relayService.relays">
             <mat-expansion-panel-header>
-              <mat-panel-title> {{ relay.nip11?.name }}</mat-panel-title>
+              <mat-panel-title>{{ relay.metadata.nip11?.name }}</mat-panel-title>
               <mat-panel-description>
                 {{ relay.url }}
-                <mat-icon class="online">radio_button_checked</mat-icon>
+                <mat-icon class="online" [ngClass]="'relay-status-' + relay.status">radio_button_checked</mat-icon>
               </mat-panel-description>
             </mat-expansion-panel-header>
-
-            {{ relay.nip11.description }}<br /><br />
-            <span class="dimmed">
-              NIPs: {{ relay.nip11.supported_nips }}<br />
-              Software: {{ relay.nip11.software }} ({{ relay.nip11.version }})<br />
-              <span class="wrap">ID: {{ relay.nip11.pubkey }}</span></span
-            >
+            <div *ngIf="relay.metadata.error" class="error">
+              {{relay.metadata.error}}
+            </div>
+            <div *ngIf="relay.metadata.nip11">
+              {{ relay.metadata.nip11.description }}<br /><br />
+              <span class="dimmed">
+                NIPs: {{ relay.metadata.nip11.supported_nips }}<br />
+                Software: {{ relay.metadata.nip11.software }} ({{ relay.metadata.nip11.version }})<br />
+                <span class="wrap">ID: {{ relay.metadata.nip11.pubkey }}</span></span
+              >
+            </div>
           </mat-expansion-panel>
         </mat-accordion>
 
         <p class="dimmed">Relays are managed by your browser extension. Open extension to change which relays Blockcore Notes should use. After modifying relay in extension, click button below.</p>
 
         <div class="example-action-buttons">
-          <!-- <button mat-button>Expand All</button>
-          <button mat-button>Collapse All</button> -->
-
-          <button mat-button (click)="getRelays()">Update from Extension</button>
+          <button mat-flat-button color="primary" (click)="getRelays()">Reset to extension relays</button>&nbsp; <button mat-flat-button color="primary" (click)="getDefaultRelays()">Reset to app relays</button>&nbsp;
+          <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>&nbsp;
         </div>
       </div>
     </ng-template>

@@ -11,6 +11,22 @@
   margin-left: 8px;
 }
 
-.online {
+.relay-status-0 {
+  color: silver;
+}
+
+.relay-status-1 {
   color: green;
+}
+
+.relay-status-2 {
+  color: orange;
+}
+
+.relay-status-3 {
+  color: red;
+}
+
+.error {
+  color: rgb(219, 2, 2)
 }

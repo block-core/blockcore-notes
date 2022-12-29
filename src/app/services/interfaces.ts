@@ -36,7 +36,17 @@ export interface NostrDocument<T> {
 }
 
 export interface NostrRelay extends Relay {
+  // nip11: any;
+  // error: string;
+  metadata: NostrRelayDocument;
+}
+
+export interface NostrRelayDocument {
+  id: string;
+  read: boolean;
+  write: boolean;
   nip11: any;
+  error: string;
 }
 
 /** OBSOLETE */

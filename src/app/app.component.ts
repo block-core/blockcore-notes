@@ -12,6 +12,8 @@ import { Observable, map, shareReplay } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Location } from '@angular/common';
 import { FeedService } from './services/feed.service';
+import { RelayService } from './services/relay.service';
+import { RelayStorageService } from './services/relay.storage.service';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +35,9 @@ export class AppComponent {
     public dialog: MatDialog,
     private location: Location,
     private breakpointObserver: BreakpointObserver,
-    private feedService: FeedService
+    private relayStorage: RelayStorageService,
+    private feedService: FeedService,
+    private relayService: RelayService
   ) {
     // appState.title = 'Blockcore Notes';
 
@@ -60,6 +64,11 @@ export class AppComponent {
   async ngOnInit() {
     await this.storage.open();
     await this.storage.initialize();
+
+    await this.relayStorage.initialize();
+    await this.relayService.initialize();
+    await this.relayService.connect();
+
     await this.feedService.initialize();
 
     console.log('PROFILE SHOULD BE LOADED BY NOW!!');

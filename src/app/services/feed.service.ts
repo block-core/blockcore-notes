@@ -13,6 +13,7 @@ import { EventService } from './event.service';
 import { DataValidation } from './data-validation.service';
 import { OptionsService } from './options.service';
 import { RelayService } from './relay.service';
+import { RelayStorageService } from './relay.storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +39,6 @@ export class FeedService {
 
   subs: Sub[] = [];
   // relays: Relay[] = [];
-
   // events$ = this.#eventsChanged.asObservable();
 
   get events$(): Observable<NostrEventDocument[]> {
@@ -166,7 +166,7 @@ export class FeedService {
       );
   }
 
-  constructor(private options: OptionsService, private relayService: RelayService, private eventService: EventService, private validator: DataValidation, private storage: StorageService, private profileService: ProfileService, private circlesService: CirclesService) {
+  constructor(private options: OptionsService, private relayStorage: RelayStorageService, private relayService: RelayService, private eventService: EventService, private validator: DataValidation, private storage: StorageService, private profileService: ProfileService, private circlesService: CirclesService) {
     console.log('FEED SERVICE CONSTRUCTOR!');
     this.#table = this.storage.table<NostrEventDocument>('events');
   }
@@ -461,70 +461,71 @@ export class FeedService {
       console.log('Profiles changed:', profiles);
     });
 
-    this.openConnection('wss://nostr-pub.wellorder.net');
-    this.openConnection('wss://relay.damus.io');
+    // this.openConnection('wss://nostr-pub.wellorder.net');
+    // this.openConnection('wss://nostr-pub2.wellorder.net');
+    // this.openConnection('wss://relay.damus.io');
   }
 
-  openConnection(server: string) {
-    this.connect(server, (relay: Relay) => {
-      console.log('Connected to:', relay);
+  // openConnection(server: string) {
+  //   this.connect(server, (relay: Relay) => {
+  //     console.log('Connected to:', relay);
 
-      const authors = this.profileService.profiles.map((p) => p.pubkey);
+  //     const authors = this.profileService.profiles.map((p) => p.pubkey);
 
-      if (authors.length === 0) {
-        console.log('No profiles found. Skipping subscribing to any data.');
-        return;
-      }
+  //     if (authors.length === 0) {
+  //       console.log('No profiles found. Skipping subscribing to any data.');
+  //       return;
+  //     }
 
-      const backInTime = moment().subtract(120, 'minutes').unix();
+  //     const backInTime = moment().subtract(120, 'minutes').unix();
 
-      // Start subscribing to our people feeds.
-      const sub = relay.sub([{ kinds: [1], since: backInTime, authors: authors }], {}) as NostrSubscription;
+  //     // Start subscribing to our people feeds.
+  //     const sub = relay.sub([{ kinds: [1], since: backInTime, authors: authors }], {}) as NostrSubscription;
 
-      sub.loading = true;
+  //     sub.loading = true;
 
-      // Keep all subscriptions around so we can close them when needed.
-      this.subs.push(sub);
+  //     // Keep all subscriptions around so we can close them when needed.
+  //     this.subs.push(sub);
 
-      sub.on('event', (originalEvent: any) => {
-        const event = this.eventService.processEvent(originalEvent);
+  //     sub.on('event', (originalEvent: any) => {
+  //       const event = this.eventService.processEvent(originalEvent);
 
-        if (!event) {
-          return;
-        }
+  //       if (!event) {
+  //         return;
+  //       }
 
-        this.#persist(event);
-      });
+  //       this.#persist(event);
+  //     });
 
-      sub.on('eose', () => {
-        console.log('Initial load of people feed completed.');
-        sub.loading = false;
-      });
-    });
-  }
+  //     sub.on('eose', () => {
+  //       console.log('Initial load of people feed completed.');
+  //       sub.loading = false;
+  //     });
+  //   });
+  // }
 
-  connect(server: string, onConnected: any) {
-    // const relay = relayInit('wss://relay.nostr.info');
-    const relay = relayInit(server);
+  // connect(server: string, onConnected: any) {
+  //   // const relay = relayInit('wss://relay.nostr.info');
+  //   const relay = relayInit(server);
 
-    relay.on('connect', () => {
-      console.log(`connected to ${relay?.url}`);
-      onConnected(relay);
-      //this.onConnected(relay);
-    });
+  //   relay.on('connect', () => {
+  //     console.log(`connected to ${relay?.url}`);
+  //     onConnected(relay);
+  //     //this.onConnected(relay);
+  //   });
 
-    relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${relay?.url}`);
-    });
+  //   relay.on('disconnect', () => {
+  //     console.log(`DISCONNECTED! ${relay?.url}`);
+  //   });
 
-    relay.on('notice', () => {
-      console.log(`NOTICE FROM ${relay?.url}`);
-    });
+  //   relay.on('notice', () => {
+  //     console.log(`NOTICE FROM ${relay?.url}`);
+  //   });
 
-    relay.connect();
+  //   relay.connect();
 
-    this.relayService.addRelay(relay);
+  //   this.relayService.addRelay(relay);
 
-    return relay;
-  }
+  //   return relay;
+  // }
 }

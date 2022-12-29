@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { AuthenticationService } from '../services/authentication.service';
+import { RelayService } from '../services/relay.service';
 import { Utilities } from '../services/utilities.service';
 
 @Component({
@@ -15,12 +16,28 @@ export class ConnectComponent {
   timeout: any;
   consent = false;
 
-  constructor(private appState: ApplicationState, private authService: AuthenticationService, private utilities: Utilities, private router: Router, private ngZone: NgZone) {}
+  constructor(private appState: ApplicationState, private relayService: RelayService, private authService: AuthenticationService, private utilities: Utilities, private router: Router, private ngZone: NgZone) {}
 
   async connect() {
     const userInfo = await this.authService.login();
 
     if (userInfo.authenticated()) {
+      let relays;
+
+      try {
+        const gt = globalThis as any;
+        relays = await gt.nostr.getRelays();
+        console.log('RELAYS FROM EXTENSION:', relays);
+      } catch (err) {
+        relays = this.relayService.defaultRelays;
+      }
+
+      // First append whatever the extension give us of relays.
+      await this.relayService.appendRelays(relays);
+
+      // Initiate connections against registered relays.
+      await this.relayService.connect();
+
       this.router.navigateByUrl('/');
     }
   }
