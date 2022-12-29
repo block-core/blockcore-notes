@@ -63,33 +63,7 @@ export class NoteComponent {
     private utilities: Utilities,
     private router: Router
   ) {
-    // this.appState.title = 'Blockcore Notes';
-    this.appState.showBackButton = true;
-
-    this.activatedRoute.paramMap.subscribe(async (params) => {
-      const id: any = params.get('id');
-
-      if (!id) {
-        this.router.navigateByUrl('/');
-        return;
-      }
-
-      this.id = id;
-      this.event = this.feedService.events.find((e) => e.id == this.id);
-
-      if (!this.event) {
-        // this.router.navigateByUrl('/');
-        return;
-      }
-
-      this.appState.title = `Note: ${this.event.content.substring(0, 200)}`;
-
-      // Clear the initial thread:
-      this.feedService.thread = [];
-
-      // First download all posts, if any, that is mentioned in the e tags.
-      this.feedService.downloadThread(this.id!);
-    });
+    console.log('CONSTRUCTOR FOR NOTE!!!');
   }
 
   // TODO: Nasty code, just fix it, quick hack before bed.
@@ -128,6 +102,49 @@ export class NoteComponent {
   }
 
   ngOnInit() {
+    console.log('NG INIT ON NOTE:');
+    // this.appState.title = 'Blockcore Notes';
+    this.appState.showBackButton = true;
+
+    // Subscribe to the event which will update whenever user requests to view a different event.
+    this.feedService.event$.subscribe((event) => {
+      console.log('EVENT CHANGED:', event);
+
+      if (!event) {
+        return;
+      }
+
+      this.event = event;
+
+      // Clear the initial thread:
+      this.feedService.thread = [];
+
+      // First download all posts, if any, that is mentioned in the e tags.
+      this.feedService.downloadThread(this.event.id!);
+    });
+
+    this.activatedRoute.paramMap.subscribe(async (params) => {
+      const id: any = params.get('id');
+
+      if (!id) {
+        this.router.navigateByUrl('/');
+        return;
+      }
+
+      console.log('ROUTE ACTIVATE WITH ID:', id);
+      this.feedService.setActiveEvent(id);
+
+      this.id = id;
+      // this.event = this.feedService.events.find((e) => e.id == this.id);
+
+      // if (!this.event) {
+      //   // this.router.navigateByUrl('/');
+      //   return;
+      // }
+
+      // this.appState.title = `Note: ${this.event.content.substring(0, 200)}`;
+    });
+
     // if (this.pubkey) {
     // console.log('PIPING EVENTS...');
     // this.userEvents$ =

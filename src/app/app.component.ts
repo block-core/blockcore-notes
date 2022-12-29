@@ -40,6 +40,7 @@ export class AppComponent {
     private relayService: RelayService
   ) {
     // appState.title = 'Blockcore Notes';
+    console.log('CONSTRUCTOR FOR APP!');
 
     this.authService.authInfo$.subscribe((auth) => {
       this.authenticated = auth.authenticated();
@@ -62,6 +63,7 @@ export class AppComponent {
   }
 
   async ngOnInit() {
+    console.log('NG INIT APP');
     await this.storage.open();
     await this.storage.initialize();
 
@@ -71,7 +73,7 @@ export class AppComponent {
 
     await this.feedService.initialize();
 
-    console.log('PROFILE SHOULD BE LOADED BY NOW!!');
+    console.log('NG INIT APP: PROFILE SHOULD BE LOADED BY NOW!!');
 
     // const testdata = await this.storage.get('123');
     // console.log(testdata);

@@ -14,6 +14,7 @@ import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialo
 import { FollowDialog } from '../shared/create-follow-dialog/create-follow-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FeedService } from '../services/feed.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-people',
@@ -27,6 +28,7 @@ export class PeopleComponent {
   showCached = false;
   searchTerm: any;
   constructor(
+    public navigation: NavigationService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     public dialog: MatDialog,
@@ -100,20 +102,6 @@ export class PeopleComponent {
     this.sub = this.profileService.profilesChanged$.subscribe(async () => {
       await this.load();
     });
-  }
-
-  openProfile($event: any, event: NostrProfileDocument) {
-    const paths = $event.composedPath();
-
-    if (!paths || paths.length == 0) {
-      return;
-    }
-
-    if (paths[0].className.indexOf('clickable') == -1) {
-      return;
-    }
-
-    this.router.navigate(['/user', event.pubkey]);
   }
 
   async search() {

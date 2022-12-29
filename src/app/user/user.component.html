@@ -27,7 +27,7 @@
           </mat-expansion-panel>
         </mat-accordion> -->
 
-        <div class="events clickable" (click)="openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
+        <div class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
           <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
           <app-profile-header [pubkey]="event.pubkey"
             ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -78,7 +78,7 @@
         </mat-expansion-panel>
       </mat-accordion> -->
 
-        <div class="events clickable" (click)="openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
+        <div class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
           <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
           <app-profile-header [pubkey]="event.pubkey"
             ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon

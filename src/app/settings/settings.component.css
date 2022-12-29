@@ -28,5 +28,9 @@
 }
 
 .error {
-  color: rgb(219, 2, 2)
+  color: rgb(219, 2, 2);
+}
+
+.settings-action-buttons {
+  padding-bottom: 1em;
 }

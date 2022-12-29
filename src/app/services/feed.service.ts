@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
-import { Observable, of, BehaviorSubject, map, combineLatest } from 'rxjs';
+import { Observable, of, BehaviorSubject, map, combineLatest, single } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
 import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from './storage.service';
@@ -23,15 +23,19 @@ export class FeedService {
 
   events: NostrEventDocument[] = [];
 
+  event: NostrEventDocument | null = null;
+
+  #eventChanged: BehaviorSubject<NostrEventDocument | null> = new BehaviorSubject<NostrEventDocument | null>(this.event);
+
   #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
 
-  #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+  // #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
-  #threadedEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+  // #threadedEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
-  #rootEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+  // #rootEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
-  #replyEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
+  // #replyEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
   sortSubject = new BehaviorSubject<'asc' | 'desc'>('asc');
   sort$ = this.sortSubject.asObservable();
@@ -41,8 +45,61 @@ export class FeedService {
   // relays: Relay[] = [];
   // events$ = this.#eventsChanged.asObservable();
 
-  get events$(): Observable<NostrEventDocument[]> {
-    return this.#eventsChanged.asObservable().pipe(
+  eventId: string = '';
+
+  get event$(): Observable<NostrEventDocument | null> {
+    return this.#eventChanged.asObservable();
+  }
+
+  // get events$(): Observable<NostrEventDocument[]> {
+  //   return this.#eventsChanged.asObservable().pipe(
+  //     map((data) => {
+  //       data.sort((a, b) => {
+  //         return a.created_at > b.created_at ? -1 : 1;
+  //       });
+
+  //       return data;
+  //     })
+  //   );
+  // }
+
+  // get events$(): Observable<NostrEventDocument[]> {
+  //   return this.#eventsChanged.asObservable();
+  // }
+
+  /** Posts that does not have any e tags and is not filtered on blocks or mutes, returns everyone. */
+  get rootEvents$(): Observable<NostrEventDocument[]> {
+    return this.events$.pipe(
+      map((data) => {
+        const filtered = data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+        return filtered;
+      })
+    );
+  }
+
+  get replyEvents$(): Observable<NostrEventDocument[]> {
+    return this.events$.pipe(
+      map((data) => {
+        return data.filter((events) => events.tags.find((t) => t[0] === 'e'));
+      })
+    );
+  }
+
+  get threadedEvents$(): Observable<NostrEventDocument[]> {
+    return this.events$.pipe(
+      map((data) => {
+        if (this.options.options.flatfeed) {
+          return data;
+          // return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+        } else {
+          return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+        }
+      })
+    );
+  }
+
+  get muted$(): Observable<NostrEventDocument[]> {
+    return this.events$.pipe(map((data) => data.filter((events) => !this.profileService.mutedPublicKeys().includes(events.pubkey)))).pipe(
       map((data) => {
         data.sort((a, b) => {
           return a.created_at > b.created_at ? -1 : 1;
@@ -53,108 +110,10 @@ export class FeedService {
     );
   }
 
-  // get events$(): Observable<NostrEventDocument[]> {
-  //   return this.#eventsChanged.asObservable();
-  // }
-
-  /** Posts that does not have any e tags and is not filtered on blocks or mutes, returns everyone. */
-  get rootEvents$(): Observable<NostrEventDocument[]> {
-    return (
-      this.#rootEventsChanged
-        .asObservable()
-        .pipe(
-          map((data) => {
-            const filtered = data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
-            return filtered;
-          })
-        ) // If there is any 'e' tags then skip.
-        // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
-        .pipe(
-          map((data) => {
-            data.sort((a, b) => {
-              return a.created_at > b.created_at ? -1 : 1;
-            });
-
-            return data;
-          })
-        )
-    );
-  }
-
-  get replyEvents$(): Observable<NostrEventDocument[]> {
-    return (
-      this.#replyEventsChanged
-        .asObservable()
-        .pipe(
-          map((data) => {
-            return data.filter((events) => events.tags.find((t) => t[0] === 'e'));
-          })
-        ) // If there is any 'e' tags then skip.
-        // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
-        .pipe(
-          map((data) => {
-            data.sort((a, b) => {
-              if (this.options.options.ascending) {
-                return a.created_at < b.created_at ? -1 : 1;
-              } else {
-                return a.created_at > b.created_at ? -1 : 1;
-              }
-            });
-
-            return data;
-          })
-        )
-    );
-  }
-
-  get threadedEvents$(): Observable<NostrEventDocument[]> {
-    return this.#threadedEventsChanged
+  /** Returns all events except those blocked. Blocked events will never be shown. */
+  get events$(): Observable<NostrEventDocument[]> {
+    return this.#eventsChanged
       .asObservable()
-      .pipe(
-        map((data) => {
-          if (this.options.options.flatfeed) {
-            return data;
-            // return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
-          } else {
-            return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
-          }
-        })
-      ) // If there is any 'e' tags then skip.
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
-      .pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            if (this.options.options.ascending) {
-              return a.created_at < b.created_at ? -1 : 1;
-            } else {
-              return a.created_at > b.created_at ? -1 : 1;
-            }
-          });
-
-          return data;
-        })
-      );
-  }
-
-  get filteredEvents$(): Observable<NostrEventDocument[]> {
-    // combineLatest([this.sort$, this.events$])
-    // combineLatest([this.sort$, this.events$])
-    //   .pipe(map((sortOrder, data) => data.filter((sortOrder, events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
-    //   .pipe(
-    //     map(([sortOrder, data]) => {
-    //       this.sortOrder = sortOrder;
-
-    //       if (sortOrder === 'asc') {
-    //         return data;
-    //       } else {
-    //         return data.reverse();
-    //       }
-    //     })
-    //   );
-
-    return this.#filteredEventsChanged
-      .asObservable()
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
       .pipe(
         map((data) => {
           data.sort((a, b) => {
@@ -163,20 +122,30 @@ export class FeedService {
 
           return data;
         })
-      );
+      )
+      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 
-  constructor(private options: OptionsService, private relayStorage: RelayStorageService, private relayService: RelayService, private eventService: EventService, private validator: DataValidation, private storage: StorageService, private profileService: ProfileService, private circlesService: CirclesService) {
+  constructor(
+    private options: OptionsService,
+    private relayStorage: RelayStorageService,
+    private relayService: RelayService,
+    private eventService: EventService,
+    private validator: DataValidation,
+    private storage: StorageService,
+    private profileService: ProfileService,
+    private circlesService: CirclesService
+  ) {
     console.log('FEED SERVICE CONSTRUCTOR!');
     this.#table = this.storage.table<NostrEventDocument>('events');
   }
 
-  #updated() {
+  #eventUpdated() {
+    this.#eventChanged.next(this.event);
+  }
+
+  #eventsUpdated() {
     this.#eventsChanged.next(this.events);
-    this.#filteredEventsChanged.next(this.events);
-    this.#threadedEventsChanged.next(this.events);
-    this.#rootEventsChanged.next(this.events);
-    this.#replyEventsChanged.next(this.events);
   }
 
   async #persist(event: NostrEventDocument) {
@@ -198,7 +167,30 @@ export class FeedService {
       this.events.unshift(event);
     }
 
-    this.#updated();
+    this.#eventsUpdated();
+  }
+
+  async setActiveEvent(eventId: string) {
+    console.log('Set Active Event:', eventId);
+
+    const items = await this.#filter((value) => {
+      return value.id == eventId;
+    });
+
+    console.log('FOUND:', items);
+
+    if (items.length === 0) {
+      // If we don't have the event, go download it.
+      // this.downloadEvent([eventId]);
+      this.event = null;
+    } else {
+      this.event = items[0];
+    }
+
+    console.log('FOUND WHAT AND EXECUT CHANGED:', this.event);
+
+    this.#eventUpdated();
+    // this.#eventChanged.next(this.event);
   }
 
   async #filter(predicate: (value: NostrEventDocument, key: string) => boolean): Promise<NostrEventDocument[]> {
@@ -223,7 +215,10 @@ export class FeedService {
     }
 
     this.events = [];
-    this.#updated();
+    this.event = null;
+
+    this.#eventsUpdated();
+    this.#eventUpdated();
   }
 
   /** Returns all events that are persisted. */
@@ -247,6 +242,38 @@ export class FeedService {
       this.scheduleProfileDownload();
     }, 5000);
   }
+
+  // async downloadEvent(ids: string[]) {
+  //   this.relayStorage.list();
+
+  //   console.log('DOWNLOAD RECENT FOR:', ids);
+  //   const relay = this.relayService.relays[0];
+
+  //   const backInTime = moment().subtract(12, 'hours').unix();
+
+  //   // Start subscribing to our people feeds.
+  //   const sub = relay.sub([{ kinds: [1], since: backInTime, ids: ids }], {}) as NostrSubscription;
+
+  //   sub.loading = true;
+
+  //   // Keep all subscriptions around so we can close them when needed.
+  //   this.subs.push(sub);
+
+  //   sub.on('event', (originalEvent: any) => {
+  //     const event = this.eventService.processEvent(originalEvent);
+
+  //     if (!event) {
+  //       return;
+  //     }
+
+  //     this.#persist(event);
+  //   });
+
+  //   sub.on('eose', () => {
+  //     console.log('Initial load of people feed completed.');
+  //     sub.loading = false;
+  //   });
+  // }
 
   async downloadRecent(pubkeys: string[]) {
     console.log('DOWNLOAD RECENT FOR:', pubkeys);
@@ -285,7 +312,19 @@ export class FeedService {
   // threadQueue: string[];
 
   downloadThread(id: string) {
+
+    // First get existing data.
+
+
     const relay = this.relayService.relays[0];
+
+    if (!relay) {
+      // Queue the event.
+      setTimeout(() => {
+        this.downloadThread(id);
+      }, 1000);
+      return;
+    }
 
     const backInTime = moment().subtract(12, 'hours').unix();
 
@@ -454,7 +493,7 @@ export class FeedService {
     // and an initial load which should likely just return top 100?
     this.events = await this.followEvents(50);
 
-    this.#updated();
+    this.#eventsUpdated();
 
     // Every time profiles are updated, we must change our profile subscription.
     this.profileService.profiles$.subscribe((profiles) => {

@@ -38,7 +38,7 @@
       </mat-list-item>
     </mat-list> -->
 
-    <div class="events clickable"  (click)="openProfile($event, profile)" *ngFor="let profile of profiles; trackBy: trackByFn">
+    <div class="events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of profiles; trackBy: trackByFn">
       <app-profile-actions [profile]="profile"></app-profile-actions>
       <app-profile-header [profile]="profile"><span *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-profile-header>
       <span class="content">

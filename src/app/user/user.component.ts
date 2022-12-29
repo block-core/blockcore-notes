@@ -11,6 +11,7 @@ import { SettingsService } from '../services/settings.service';
 import { FeedService } from '../services/feed.service';
 import { map, Observable } from 'rxjs';
 import { OptionsService } from '../services/options.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-user',
@@ -41,6 +42,7 @@ export class UserComponent {
   );
 
   constructor(
+    public navigation: NavigationService,
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
@@ -75,20 +77,6 @@ export class UserComponent {
     // console.log('PIPING EVENTS...');
     // this.userEvents$ =
     // }
-  }
-
-  openEvent($event: any, event: NostrEventDocument) {
-    const paths = $event.composedPath();
-
-    if (!paths || paths.length == 0) {
-      return;
-    }
-
-    if (paths[0].className.indexOf('clickable') == -1) {
-      return;
-    }
-
-    this.router.navigate(['/note', event.id]);
   }
 
   optionsUpdated() {

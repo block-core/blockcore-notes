@@ -1,5 +1,4 @@
-<span *ngIf="feedService.filteredEvents$ | async as events">
-  
+<span *ngIf="feedService.muted$ | async as events">
   <mat-progress-bar *ngIf="events == null" mode="indeterminate"></mat-progress-bar>
 
   <div class="page loading-container" *ngIf="!profileService.initialized">
@@ -48,21 +47,21 @@
           <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
         </mat-expansion-panel-header>
         <p>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.flatfeed" (ngModelChange)="optionsUpdated()">Flat Feed (turn off threads)</mat-slide-toggle>
+          <!-- <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.flatfeed" (ngModelChange)="optionsUpdated()">Flat Feed (turn off threads)</mat-slide-toggle> -->
           <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.ascending" (ngModelChange)="optionsUpdated()">Oldest first</mat-slide-toggle>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.paused">Pause feed</mat-slide-toggle>
+          <!-- <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.paused">Pause feed</mat-slide-toggle>
           <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle> -->
         </p>
       </mat-expansion-panel>
     </mat-accordion>
 
-    <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+    <div class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
       <app-profile-actions [event]="event"></app-profile-actions>
       <app-profile-header [pubkey]="event.pubkey"
         ><span class="event-date" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
       ></app-profile-header>
-      <div class="content">
+      <span class="content">
         {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
 
         <mat-chip-set class="hashtags">
@@ -73,7 +72,7 @@
           <br />
           <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>
         </div>
-      </div>
+      </span>
       <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
         <mat-icon class="expand-button-icon">expand_more</mat-icon>
       </button>

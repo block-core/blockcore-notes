@@ -13,6 +13,7 @@ import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
+import { NavigationService } from '../services/navigation.service';
 
 interface DefaultProfile {
   pubkey: string;
@@ -67,6 +68,7 @@ export class FeedPrivateComponent {
   ];
 
   constructor(
+    public navigation: NavigationService,
     public appState: ApplicationState,
     public data: DataService,
     private cd: ChangeDetectorRef,
