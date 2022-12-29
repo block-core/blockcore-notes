@@ -46,6 +46,12 @@ export class ConnectComponent {
     const userInfo = await this.authService.anonymous();
 
     if (userInfo.authenticated()) {
+      // First append whatever the extension give us of relays.
+      await this.relayService.appendRelays(this.relayService.defaultRelays);
+
+      // Initiate connections against registered relays.
+      await this.relayService.connect();
+
       this.router.navigateByUrl('/');
     }
   }
