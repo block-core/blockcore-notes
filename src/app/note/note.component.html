@@ -1,25 +1,47 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
 <div class="feed-page">
-  <div class="original-post events noclick" *ngIf="event">
+  <div class="parent-events events" *ngIf="thread.root$ | async as event">
+    <span *ngIf="event.kind != 7">
+      <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+      <app-profile-header [pubkey]="event.pubkey"
+        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+      ></app-profile-header>
+
+      <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+    </span>
+  </div>
+
+  <!-- <div class="parent-events events" *ngFor="let event of filteredThread(); trackBy: trackByFn">
+    <span *ngIf="event.kind != 7">
+      <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+      <app-profile-header [pubkey]="event.pubkey"
+        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+      ></app-profile-header>
+
+      <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+    </span>
+  </div> -->
+
+  <div class="original-post events noclick" *ngIf="thread.event$ | async as event">
     <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
     <app-profile-header [pubkey]="event.pubkey"
       ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
     ></app-profile-header>
     <div class="content">
-      {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
-      <span class="dimmed">{{ rootLikes() }} likes&nbsp;&nbsp;{{ rootDislikes() }} dislikes&nbsp;&nbsp;{{ rootReplies() }} replies</span><br>
-      <br><span class="dimmed">Replying to {{ repliesTo() }}</span>
+      {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span><br />
+      <span class="dimmed">{{ rootLikes() }} likes&nbsp;&nbsp;{{ rootDislikes() }} dislikes&nbsp;&nbsp;{{ rootReplies() }} replies</span><br />
+      <br /><span class="dimmed">Replying to {{ repliesTo() }}</span> <br /><span class="dimmed">Root {{ rootEvent() }}</span>
     </div>
   </div>
 </div>
 <mat-divider></mat-divider>
 
-<div class="page" *ngIf="feedService.thread.length === 0">
+<div class="page" *ngIf="!thread.events$">
   <h3 class="marginless">Loading thread... this can take some seconds.</h3>
 </div>
 
-<div class="feed-page" *ngIf="feedService.thread.length > 0">
+<div class="feed-page" *ngIf="thread.events$ | async as events">
   <!-- <mat-accordion class="options">
           <mat-expansion-panel>
             <mat-expansion-panel-header>
@@ -35,7 +57,7 @@
           </mat-expansion-panel>
         </mat-accordion> -->
 
-  <div class="events" *ngFor="let event of filteredThread(); trackBy: trackByFn">
+  <div class="events" *ngFor="let event of events; trackBy: trackByFn">
     <span *ngIf="event.kind != 7">
       <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
       <app-profile-header [pubkey]="event.pubkey"

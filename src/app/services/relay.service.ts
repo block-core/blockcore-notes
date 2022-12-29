@@ -20,13 +20,14 @@ import { RelayStorageService } from './relay.storage.service';
 export class RelayService {
   /** Default relays that the app has for users without extension. This follows the document structure as extension data. */
   defaultRelays: any = {
+    'wss://relay.nostr.info': { read: true, write: true },
     'wss://nostr-pub.wellorder.net': { read: true, write: true },
     'wss://nostr.nordlysln.net': { read: true, write: true },
     // 'wss://nostr-verified.wellorder.net': { read: false, write: true },
     // 'wss://nostr.bitcoiner.social': { read: true, write: true },
     // 'wss://nostr.drss.io': { read: true, write: true },
     'wss://relay.damus.io': { read: true, write: false },
-    'wss://relay.nostr.info': { read: true, write: true },
+    // 'wss://relay.nostr.info': { read: true, write: true },
     // 'wss://relay.minds.com/nostr/v1/ws': { read: false, write: true },
     'wss://relay.nostr.ch': { read: true, write: true },
   };

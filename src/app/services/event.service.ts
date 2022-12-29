@@ -31,4 +31,32 @@ export class EventService {
 
     return event;
   }
+
+  /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
+  rootEventId(event: NostrEventDocument) {
+    if (!event) {
+      return;
+    }
+
+    // TODO. All of this parsing of arrays is silly and could be greatly improved with some refactoring
+    // whenever I have time for it.
+    const eTags = event.tags.filter((t) => t[0] === 'e');
+
+    for (let i = 0; i < eTags.length; i++) {
+      const tag = eTags[i];
+
+      // If more than 4, we likely have "root" or "reply"
+      if (tag.length > 3) {
+        if (tag[3] == 'root') {
+          return tag[1];
+        }
+      }
+    }
+
+    if (eTags.length == 0) {
+      return null;
+    }
+
+    return eTags[0][1];
+  }
 }

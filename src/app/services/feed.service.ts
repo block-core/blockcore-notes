@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription } from './interfaces';
+import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription, NostrRelay } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
-import { Observable, of, BehaviorSubject, map, combineLatest, single } from 'rxjs';
+import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
 import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from './storage.service';
@@ -243,37 +243,237 @@ export class FeedService {
     }, 5000);
   }
 
-  // async downloadEvent(ids: string[]) {
-  //   this.relayStorage.list();
-
-  //   console.log('DOWNLOAD RECENT FOR:', ids);
-  //   const relay = this.relayService.relays[0];
-
-  //   const backInTime = moment().subtract(12, 'hours').unix();
-
-  //   // Start subscribing to our people feeds.
-  //   const sub = relay.sub([{ kinds: [1], since: backInTime, ids: ids }], {}) as NostrSubscription;
-
-  //   sub.loading = true;
-
-  //   // Keep all subscriptions around so we can close them when needed.
-  //   this.subs.push(sub);
-
-  //   sub.on('event', (originalEvent: any) => {
-  //     const event = this.eventService.processEvent(originalEvent);
-
-  //     if (!event) {
-  //       return;
-  //     }
-
-  //     this.#persist(event);
-  //   });
-
-  //   sub.on('eose', () => {
-  //     console.log('Initial load of people feed completed.');
-  //     sub.loading = false;
-  //   });
+  // public subscribe<T>(key: string): Observable<EventBusMetaData> {
+  //   return this.eventBus.asObservable().pipe(
+  //     filter((event: IEventBusMessage) => this.keyMatch(event.key, key)),
+  //     map((event: IEventBusMessage) => event.metadata)
+  //   );
   // }
+
+  getEvent(id: string): Observable<NostrEventDocument> {
+    const subject = new Subject<NostrEventDocument>();
+    return subject.asObservable();
+  }
+
+  // downloadFromRelayIndex(id: string, index: number, relayCount: number): Observable<NostrEventDocument> {
+  downloadFromRelay(query: any, relay: NostrRelay): Observable<NostrEventDocument[]> {
+    //const relay = this.relayService.relays[index];
+    //console.log('downloadFromRelayIndex:', id, index, relayCount);
+
+    const observable = new Observable<NostrEventDocument[]>((observer: Observer<NostrEventDocument[]>) => {
+      const totalEvents: NostrEventDocument[] = [];
+
+      console.log('111111111111111:');
+      const sub = relay.sub([query], {}) as NostrSubscription;
+
+      sub.on('event', (originalEvent: any) => {
+        // console.log('downloadFromRelayIndex: event', id);
+        const event = this.eventService.processEvent(originalEvent);
+        console.log('downloadFromRelayIndex: event', event);
+
+        if (!event) {
+          return;
+        }
+
+        totalEvents.unshift(event);
+        observer.next(totalEvents);
+        // sub.unsub();
+      });
+
+      sub.on('eose', () => {
+        // console.log('downloadFromRelayIndex: eose', id);
+        observer.complete();
+        sub.unsub();
+      });
+    });
+    // .pipe(race(observable, this.downloadFromRelayIndex(id, index, relayCount)))
+    // // .pipe(takeUntil(timer(5)), tap(() => { console.log('TAKE UNTIL TAP!') }))
+    //   .pipe(
+    //     // tap(() => { console.log('CONTINUED HAPPENED, SWITCH MAP AND DOWNLOAD AGAIN!') }),
+    //     // timeout(5000),
+    //     // catchError(error => of("Error while request"))
+    //     // takeUntil(myTimer),
+    //     switchMap((data) => {
+    //       ++index;
+    //       console.log('DATA FROM SWITCH MAP:', data);
+    //       return data ? of(data) : this.downloadFromRelayIndex(id, index, relayCount);
+    //     })
+    //   );
+
+    // .pipe(concatMap(event => {
+    //   if (event == null) {
+    //     ++index;
+
+    //     if (index < relayCount) {
+    //       return this.downloadFromRelayIndex(id, index, relayCount));
+    //       // return ;
+    //     }
+    //   }
+    // });
+
+    return observable;
+  }
+
+  // downloadFromRelayIndex(id: string, index: number, relayCount: number): Observable<NostrEventDocument> {
+  downloadSingleFromRelay(query: any, relay: NostrRelay): Observable<NostrEventDocument> {
+    //const relay = this.relayService.relays[index];
+    //console.log('downloadFromRelayIndex:', id, index, relayCount);
+
+    console.log('WITH DELAY:');
+
+    const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
+      console.log('111111111111111:');
+      const sub = relay.sub([query], {}) as NostrSubscription;
+
+      sub.on('event', (originalEvent: any) => {
+        // console.log('downloadFromRelayIndex: event', id);
+        const event = this.eventService.processEvent(originalEvent);
+        console.log('downloadFromRelayIndex: event', event);
+
+        if (!event) {
+          return;
+        }
+
+        observer.next(event);
+        observer.complete();
+        // sub.unsub();
+      });
+
+      sub.on('eose', () => {
+        // console.log('downloadFromRelayIndex: eose', id);
+        // observer.complete();
+        sub.unsub();
+      });
+    });
+    // .pipe(race(observable, this.downloadFromRelayIndex(id, index, relayCount)))
+    // // .pipe(takeUntil(timer(5)), tap(() => { console.log('TAKE UNTIL TAP!') }))
+    //   .pipe(
+    //     // tap(() => { console.log('CONTINUED HAPPENED, SWITCH MAP AND DOWNLOAD AGAIN!') }),
+    //     // timeout(5000),
+    //     // catchError(error => of("Error while request"))
+    //     // takeUntil(myTimer),
+    //     switchMap((data) => {
+    //       ++index;
+    //       console.log('DATA FROM SWITCH MAP:', data);
+    //       return data ? of(data) : this.downloadFromRelayIndex(id, index, relayCount);
+    //     })
+    //   );
+
+    // .pipe(concatMap(event => {
+    //   if (event == null) {
+    //     ++index;
+
+    //     if (index < relayCount) {
+    //       return this.downloadFromRelayIndex(id, index, relayCount));
+    //       // return ;
+    //     }
+    //   }
+    // });
+
+    return observable;
+  }
+
+  downloadThread(id: string) {
+    // TODO: Change the logic to create a new observable for each X milisecond and make them
+    // race against each other and don't create more observables if a result is found.
+    const observables = this.relayService.relays.map((r, index) => this.downloadFromRelay({ ['#e']: [id] }, r));
+    console.log('OBSERVABLES:', observables);
+    return race(observables);
+  }
+
+  downloadEvent(id: string) {
+    // TODO: Change the logic to create a new observable for each X milisecond and make them
+    // race against each other and don't create more observables if a result is found.
+    const observables = this.relayService.relays.map((r, index) => this.downloadSingleFromRelay({ kinds: [1], ids: [id] }, r));
+    console.log('OBSERVABLES:', observables);
+    return race(observables);
+
+    // const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
+    //   const observables = this.relayService.relays.map((r => { this.downloadFromRelayIndex(id, r); }));
+    //   race(observables);
+    //      // for (let i = 0; i < this.relayService.relays.length; i++) {
+    //   //   const relay = this.relayService.relays[i];
+
+    //   //   if (relay.status != 1) {
+    //   //     continue;
+    //   //   }
+
+    //   //   this.downloadFromRelay(id, relay);
+    //   // }
+
+    //   // this.downloadFromRelayIndex(id, 0, this.relayService.relays.length).subscribe((event) => {
+    //   //   console.log('FINIHED DOWNLOAD OBSERSVABLE:', event);
+    //   //   observer.next(event);
+    //   // });
+
+    //   // this.downloadFromRelayIndex(id, 0);
+
+    //   // const relayIndex = 0;
+
+    //   // const relay = this.relayService.relays[0];
+
+    //   // this.downloadFromRelay(id, relay).subscribe((event) => {
+    //   //   console.log('COMPLETED FIRST DOWNLAOD FROM RELAY:', event);
+    //   // });
+
+    //   // for (let i = 0; i < this.relayService.relays.length; i++) {
+    //   //   const relay = this.relayService.relays[i];
+
+    //   //   if (relay.status != 1) {
+    //   //     continue;
+    //   //   }
+
+    //   //   this.downloadFromRelay(id, relay);
+    //   // }
+
+    //   // console.log('DOWNLOAD EVENT:', id);
+    //   // const relay = this.relayService.relays[0];
+
+    //   // // Start subscribing to our people feeds.
+    //   // const sub = relay.sub([{ kinds: [1], ids: [id] }], {}) as NostrSubscription;
+
+    //   // // Keep all subscriptions around so we can close them when needed.
+    //   // // this.subs.push(sub);
+
+    //   // sub.on('event', (originalEvent: any) => {
+    //   //   const event = this.eventService.processEvent(originalEvent);
+
+    //   //   if (!event) {
+    //   //     return;
+    //   //   }
+
+    //   //   downloadedEvent = event;
+    //   //   observer.next(event);
+    //   //   // this.#persist(event);
+    //   // });
+
+    //   // sub.on('eose', () => {
+    //   //   console.log('Initial load of people feed completed.');
+    //   //   // const subIndex = this.subs.findIndex(sub);
+    //   //   if (downloadedEvent) {
+    //   //     observer.complete();
+    //   //     sub.unsub();
+    //   //   } else {
+    //   //     // Go to next relay and try there.
+    //   //     // First let us unsub the current subscription.
+    //   //     sub.unsub();
+    //   //   }
+    //   // });
+    // });
+
+    // return observable;
+
+    // get rootEvents$(): Observable<NostrEventDocument[]> {
+    //   return this.events$.pipe(
+    //     map((data) => {
+    //       const filtered = data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
+    //       return filtered;
+    //     })
+    //   );
+    // }
+
+    // this.relayStorage.list();
+  }
 
   async downloadRecent(pubkeys: string[]) {
     console.log('DOWNLOAD RECENT FOR:', pubkeys);
@@ -311,8 +511,7 @@ export class FeedService {
 
   // threadQueue: string[];
 
-  downloadThread(id: string) {
-
+  downloadThread2(id: string) {
     // First get existing data.
     // this.#filter((e) => { e.tags. });
 

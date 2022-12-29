@@ -11,6 +11,7 @@ import { SettingsService } from '../services/settings.service';
 import { FeedService } from '../services/feed.service';
 import { map, Observable } from 'rxjs';
 import { OptionsService } from '../services/options.service';
+import { ThreadService } from '../services/thread.service';
 
 @Component({
   selector: 'app-note',
@@ -59,6 +60,7 @@ export class NoteComponent {
     public options: OptionsService,
     public feedService: FeedService,
     public profiles: ProfileService,
+    public thread: ThreadService,
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router
@@ -109,27 +111,64 @@ export class NoteComponent {
     return this.event.tags.filter((t) => t[0] === 'p').map((t) => t[1]);
   }
 
+  parentEvent?: NostrEventDocument;
+
+  /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
+  rootEvent() {
+    if (!this.event) {
+      return;
+    }
+
+    // TODO. All of this parsing of arrays is silly and could be greatly improved with some refactoring
+    // whenever I have time for it.
+    const eTags = this.event.tags.filter((t) => t[0] === 'e');
+
+    for (let i = 0; i < eTags.length; i++) {
+      const tag = eTags[i];
+
+      // If more than 4, we likely have "root" or "reply"
+      if (tag.length > 3) {
+        if (tag[3] == 'root') {
+          return tag[1];
+        }
+      }
+    }
+
+    return eTags[0][1];
+  }
+
   ngOnInit() {
     console.log('NG INIT ON NOTE:');
     // this.appState.title = 'Blockcore Notes';
     this.appState.showBackButton = true;
 
     // Subscribe to the event which will update whenever user requests to view a different event.
-    this.feedService.event$.subscribe((event) => {
-      console.log('EVENT CHANGED:', event);
+    // this.feedService.event$(1).subscribe((event) => {
+    //   console.log('EVENT CHANGED:', event);
 
-      if (!event) {
-        return;
-      }
+    //   if (!event) {
+    //     return;
+    //   }
 
-      this.event = event;
+    //   this.event = event;
 
-      // Clear the initial thread:
-      this.feedService.thread = [];
+    //   // Query for root
+    //   // Query all child
 
-      // First download all posts, if any, that is mentioned in the e tags.
-      this.feedService.downloadThread(this.event.id!);
-    });
+    //   // Get the root event.
+    //   const rootEventId = this.rootEvent();
+
+    //   if (rootEventId) {
+    //     // Start downloading the root event.
+    //     this.feedService.downloadEvent([rootEventId]);
+    //   }
+
+    //   // Clear the initial thread:
+    //   this.feedService.thread = [];
+
+    //   // First download all posts, if any, that is mentioned in the e tags.
+    //   this.feedService.downloadThread(this.event.id!);
+    // });
 
     this.activatedRoute.paramMap.subscribe(async (params) => {
       const id: any = params.get('id');
@@ -139,10 +178,11 @@ export class NoteComponent {
         return;
       }
 
-      console.log('ROUTE ACTIVATE WITH ID:', id);
-      this.feedService.setActiveEvent(id);
-
+      this.thread.changeSelectedEvent(id);
       this.id = id;
+
+      // console.log('ROUTE ACTIVATE WITH ID:', id);
+      // this.feedService.setActiveEvent(id);
       // this.event = this.feedService.events.find((e) => e.id == this.id);
 
       // if (!this.event) {
