@@ -284,14 +284,26 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-page-header-left {
+  flex: 0 1 auto;
+}
+
+.profile-page-header-middle {
+  flex: 1 2 auto;
 }
 
 .profile-page-header-right {
+  width: 48px;
 }
 
 .profile-button-container {
   margin-bottom: 0.4em;
 }
+
+// @media only screen and (max-width: 599px) {
+//   .profile-button-container {
+//     margin-bottom: 0.4em;
+//   }
+// }
 
 .event-header {
   display: grid;
@@ -337,7 +349,6 @@ mat-sidenav-content mat-toolbar {
     border-radius: 50%;
   }
 }
-
 
 .event-header .name {
   grid-area: name;

@@ -4,6 +4,19 @@
       <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" [src]="imagePath" />
       <img *ngIf="!profile?.follow" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
     </div>
+    <div class="profile-page-header-middle">
+      <span *ngIf="profile">
+        <h2 class="marginless">{{ profile.display_name }}</h2>
+        <span>
+          <span class="dimmed">{{ profileName }} / {{ profile.nip05 }}</span><br />
+          <!-- <span class="dimmed wrap">{{ npub }}</span> -->
+          <p *ngIf="profile.about">{{ profile.about }}</p>
+          <!-- <p>{{ profile.lud06 }}</p> -->
+          <!-- Tip: <a class="ln-link" [href]="sanitize('lightning:' + profile.lud06)" target="_blank">⚡️</a> -->
+          <p *ngIf="profile.website">{{ profile.website }}</p>
+        </span>
+      </span>
+    </div>
     <div class="profile-page-header-right">
       <div class="profile-button-container">
         <a mat-mini-fab color="primary" [href]="sanitize('lightning:' + profile.lud06)">⚡️</a>
@@ -21,17 +34,15 @@
     </div>
   </div>
 
-  <span *ngIf="profile">
+  <!-- <span *ngIf="profile">
     <h2 class="marginless">{{ profile.display_name }}</h2>
     <span>
       {{ profileName }} / {{ profile.nip05 }}<br />
       <span class="dimmed wrap">{{ npub }}</span>
       <p *ngIf="profile.about">{{ profile.about }}</p>
-      <!-- <p>{{ profile.lud06 }}</p> -->
-      <!-- Tip: <a class="ln-link" [href]="sanitize('lightning:' + profile.lud06)" target="_blank">⚡️</a> -->
       <p *ngIf="profile.website">{{ profile.website }}</p>
     </span>
-  </span>
+  </span> -->
 </div>
 
 <mat-tab-group>
