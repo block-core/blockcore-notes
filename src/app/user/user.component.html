@@ -1,21 +1,37 @@
-<div class="page">
-
-  <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" [src]="imagePath" />
-  <img *ngIf="!profile?.follow" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
+<div class="profile-page">
+  <div class="profile-page-header" *ngIf="profile">
+    <div class="profile-page-header-left">
+      <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" [src]="imagePath" />
+      <img *ngIf="!profile?.follow" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
+    </div>
+    <div class="profile-page-header-right">
+      <div class="profile-button-container">
+        <a mat-mini-fab color="primary" [href]="sanitize('lightning:' + profile.lud06)">⚡️</a>
+      </div>
+      <!--
+        DO WE WANT A FOLLOW SHORTCUT OR ENOUGH WITH "..." MENU?
+        <div class="profile-button-container">
+        <button mat-mini-fab>
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </div> -->
+      <div class="profile-button-container">
+        <app-profile-actions [fab]="true" [profile]="profile"></app-profile-actions>
+      </div>
+    </div>
+  </div>
 
   <span *ngIf="profile">
     <h2 class="marginless">{{ profile.display_name }}</h2>
     <span>
       {{ profileName }} / {{ profile.nip05 }}<br />
       <span class="dimmed wrap">{{ npub }}</span>
-      <p>{{ profile.about }}</p>
+      <p *ngIf="profile.about">{{ profile.about }}</p>
       <!-- <p>{{ profile.lud06 }}</p> -->
-      Tip: <a class="ln-link" [href]="sanitize('lightning:' + profile.lud06)" target="_blank">⚡️</a>
-      <p>{{ profile.website }}</p>
+      <!-- Tip: <a class="ln-link" [href]="sanitize('lightning:' + profile.lud06)" target="_blank">⚡️</a> -->
+      <p *ngIf="profile.website">{{ profile.website }}</p>
     </span>
   </span>
-
-  
 </div>
 
 <mat-tab-group>

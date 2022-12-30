@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
@@ -18,6 +18,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent {
   pubkey?: string | null;
@@ -101,7 +102,8 @@ export class UserComponent {
   }
 
   sanitize(url: string) {
-    return this.sanitizer.bypassSecurityTrustUrl(url);
+    const clean = this.sanitizer.bypassSecurityTrustUrl(url);
+    return clean;
   }
 
   ngOnInit() {

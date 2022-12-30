@@ -14,6 +14,7 @@ import { FeedService } from 'src/app/services/feed.service';
   templateUrl: './profile-actions.component.html',
 })
 export class ProfileActionsComponent {
+  @Input() fab: boolean = false;
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;

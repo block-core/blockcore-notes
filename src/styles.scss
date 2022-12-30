@@ -99,6 +99,10 @@ h3 {
   padding: 2em;
 }
 
+.profile-page {
+  padding: 2em 2em 0 2em;
+}
+
 .feed-page {
   padding: 1em 1em 0 1em;
 }
@@ -111,6 +115,10 @@ h3 {
 
   .page {
     padding: 0.8em;
+  }
+
+  .profile-page {
+    padding: 0.8em 0.8em 0 0.8em;
   }
 
   .feed-page {
@@ -256,7 +264,6 @@ mat-sidenav-content mat-toolbar {
 }
 
 .ln-link:hover {
-
 }
 
 .profile-image {
@@ -271,6 +278,20 @@ mat-sidenav-content mat-toolbar {
   text-decoration: line-through;
 }
 
+.profile-page-header {
+  display: flex;
+  gap: 1em;
+}
+
+.profile-page-header-left {
+}
+
+.profile-page-header-right {
+}
+
+.profile-button-container {
+  margin-bottom: 0.4em;
+}
 
 .event-header {
   display: grid;
@@ -304,10 +325,19 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-image-large {
-  width: 256px;
-  height: 256px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
 }
+
+@media only screen and (max-width: 599px) {
+  .profile-image-large {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+  }
+}
+
 
 .event-header .name {
   grid-area: name;
