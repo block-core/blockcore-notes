@@ -1,5 +1,6 @@
 <div class="page">
-  <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath" />
+
+  <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" [src]="imagePath" />
   <img *ngIf="!profile?.follow" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
 
   <span *ngIf="profile">
