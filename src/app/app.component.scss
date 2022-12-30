@@ -28,3 +28,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.mdc-list-item.active {
+  background: rgba(255,255,255, 0.08);
+}
