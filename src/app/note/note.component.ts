@@ -69,7 +69,7 @@ export class NoteComponent {
   }
 
   // TODO: Nasty code, just fix it, quick hack before bed.
-  rootLikes() {
+  likes(event: NostrEventDocument) {
     let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
 
     eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
@@ -82,7 +82,7 @@ export class NoteComponent {
   }
 
   // TODO: Nasty code, just fix it, quick hack before bed.
-  rootDislikes() {
+  dislikes(event: NostrEventDocument) {
     let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
 
     eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
@@ -94,7 +94,7 @@ export class NoteComponent {
     return eventsWithSingleeTag.length;
   }
 
-  rootReplies() {
+  replies(event: NostrEventDocument) {
     const eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind != 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
     return eventsWithSingleeTag.length;
   }
@@ -103,12 +103,15 @@ export class NoteComponent {
     return this.feedService.thread.filter((p) => p.kind != 7);
   }
 
-  repliesTo() {
-    if (!this.event) {
+  repliesTo(event: NostrEventDocument) {
+    if (!event) {
       return;
     }
 
-    return this.event.tags.filter((t) => t[0] === 'p').map((t) => t[1]);
+    let tags = event.tags.filter((t) => t[0] === 'p').map((t) => t[1]);
+    tags = tags.filter((t) => t !== event.pubkey);
+
+    return tags;
   }
 
   parentEvent?: NostrEventDocument;

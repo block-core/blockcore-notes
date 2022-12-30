@@ -45,7 +45,7 @@ export class EventService {
   }
 
   /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
-  rootEventId(event: NostrEventDocument) {
+  rootEventId(event: NostrEventDocument | null) {
     if (!event) {
       return;
     }

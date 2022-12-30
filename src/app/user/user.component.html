@@ -30,7 +30,7 @@
         <div class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
           <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
           <app-profile-header [pubkey]="event.pubkey"
-            ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+            ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
           ></app-profile-header>
 
           <span class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></span>
@@ -89,9 +89,9 @@
       </div>
     </span></mat-tab
   >
-  <mat-tab label="Likes">
+  <!-- <mat-tab label="Likes">
     <div class="page">
       <h2>To be implemented</h2>
     </div>
-  </mat-tab>
+  </mat-tab> -->
 </mat-tab-group>

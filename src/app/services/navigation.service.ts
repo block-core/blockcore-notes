@@ -19,7 +19,7 @@ export class NavigationService {
       return;
     }
 
-    this.router.navigate(['/note', event.id]);
+    this.router.navigate(['/e', event.id]);
   }
 
   openProfile($event: any, event: NostrProfileDocument) {
@@ -33,6 +33,6 @@ export class NavigationService {
       return;
     }
 
-    this.router.navigate(['/user', event.pubkey]);
+    this.router.navigate(['/p', event.pubkey]);
   }
 }

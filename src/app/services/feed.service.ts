@@ -373,7 +373,6 @@ export class FeedService {
     // TODO: Change the logic to create a new observable for each X milisecond and make them
     // race against each other and don't create more observables if a result is found.
     const observables = this.relayService.relays.map((r, index) => this.downloadFromRelay({ ['#e']: [id] }, r));
-    console.log('OBSERVABLES:', observables);
     return race(observables);
   }
 
@@ -381,7 +380,6 @@ export class FeedService {
     // TODO: Change the logic to create a new observable for each X milisecond and make them
     // race against each other and don't create more observables if a result is found.
     const observables = this.relayService.relays.map((r, index) => this.downloadSingleFromRelay({ kinds: [1], ids: [id] }, r));
-    console.log('OBSERVABLES:', observables);
     return race(observables);
 
     // const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
@@ -686,7 +684,7 @@ export class FeedService {
     // Load all persisted events. This will of course be too many as user get more and more... so
     // this must be changed into a filter ASAP. Two filters are needed: "Current View" which allows scrolling back in time,
     // and an initial load which should likely just return top 100?
-    this.events = await this.followEvents(50);
+    this.events = await this.followEvents(200);
 
     this.#eventsUpdated();
 

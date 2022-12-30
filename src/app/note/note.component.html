@@ -2,7 +2,7 @@
 
 <div class="feed-page">
   <div class="parent-events events" *ngIf="thread.root$ | async as event">
-    <span *ngIf="event.kind != 7">
+    <span>
       <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
       <app-profile-header [pubkey]="event.pubkey"
         ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -14,7 +14,7 @@
 
   <div class="feed-page" *ngIf="thread.before$ | async as events">
     <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-      <span *ngIf="event.kind != 7">
+      <span>
         <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
         <app-profile-header [pubkey]="event.pubkey"
           ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -24,6 +24,7 @@
       </span>
     </div>
   </div>
+  <div *ngIf="!thread.before$">NO ITEMS!</div>
 
   <!-- <div class="parent-events events" *ngFor="let event of filteredThread(); trackBy: trackByFn">
     <span *ngIf="event.kind != 7">
@@ -43,8 +44,16 @@
     ></app-profile-header>
     <div class="content">
       {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span><br />
-      <span class="dimmed">{{ rootLikes() }} likes&nbsp;&nbsp;{{ rootDislikes() }} dislikes&nbsp;&nbsp;{{ rootReplies() }} replies</span><br />
-      <br /><span class="dimmed">Replying to {{ repliesTo() }}</span> <br /><span class="dimmed">Root {{ rootEvent() }}</span>
+      <!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->
+      <br /><span *ngIf="repliesTo(event) as replies" class="dimmed"
+        >
+        <span *ngIf="replies.length > 0">Replying to</span>
+        <span *ngFor="let pubkey of replies">
+          <a [routerLink]="['/p', pubkey]">{{ pubkey }}</a
+          >,
+        </span>
+      </span>
+      <br />
     </div>
   </div>
 </div>
@@ -53,6 +62,10 @@
 <div class="page" *ngIf="!thread.events$">
   <h3 class="marginless">Loading thread... this can take some seconds.</h3>
 </div>
+
+<div *ngIf="!thread.after$">NO ITEMS!</div>
+
+<mat-progress-bar *ngIf="!thread.hasLoaded" mode="indeterminate"></mat-progress-bar>
 
 <div class="feed-page" *ngIf="thread.after$ | async as events">
   <!-- <mat-accordion class="options">
@@ -71,7 +84,7 @@
         </mat-accordion> -->
 
   <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-    <span *ngIf="event.kind != 7">
+    <span>
       <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
       <app-profile-header [pubkey]="event.pubkey"
         ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon

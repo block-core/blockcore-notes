@@ -52,9 +52,6 @@ export class StorageBase<T> {
 
     const index = this.items.findIndex((i: any) => i.id == id);
 
-    console.log('EXISTING INDEX:', index);
-    console.log('EXISTING INDEX:', id);
-
     if (index === -1) {
       this.items.push(document);
     } else {

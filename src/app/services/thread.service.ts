@@ -1,19 +1,9 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription } from './interfaces';
-import * as sanitizeHtml from 'sanitize-html';
-import { SettingsService } from './settings.service';
-import { Observable, of, BehaviorSubject, map, combineLatest, single, ReplaySubject, mergeMap } from 'rxjs';
-import { Relay, relayInit, Sub } from 'nostr-tools';
-import { v4 as uuidv4 } from 'uuid';
+import { NostrEventDocument } from './interfaces';
+import { Observable, BehaviorSubject, map, ReplaySubject, filter } from 'rxjs';
 import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
-import { CirclesService } from './circles.service';
-import * as moment from 'moment';
 import { EventService } from './event.service';
-import { DataValidation } from './data-validation.service';
-import { OptionsService } from './options.service';
-import { RelayService } from './relay.service';
-import { RelayStorageService } from './relay.storage.service';
 import { FeedService } from './feed.service';
 
 @Injectable({
@@ -28,19 +18,14 @@ export class ThreadService {
   #rootChanged: BehaviorSubject<NostrEventDocument | null> = new BehaviorSubject<NostrEventDocument | null>(this.#root);
   root$ = this.#rootChanged.asObservable();
 
-  #events: NostrEventDocument[] = [];
-  #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#events);
+  #events: NostrEventDocument[] | null = [];
+  #eventsChanged: BehaviorSubject<NostrEventDocument[] | null> = new BehaviorSubject<NostrEventDocument[] | null>(this.#events);
 
-  // #beforeChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#events);
-  // before$ = this.#beforeChanged.asObservable();
-
-  // #afterChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#events);
-  // after$ = this.#afterChanged.asObservable();
+  hasLoaded = false;
 
   get before$(): Observable<NostrEventDocument[]> {
     return (
-      this.#eventsChanged
-        .asObservable()
+      this.events$
         .pipe(
           map((data) => {
             data.sort((a, b) => {
@@ -81,8 +66,7 @@ export class ThreadService {
   }
 
   get after$(): Observable<NostrEventDocument[]> {
-    return this.#eventsChanged
-      .asObservable()
+    return this.events$
       .pipe(
         map((data) => {
           data.sort((a, b) => {
@@ -95,19 +79,23 @@ export class ThreadService {
       .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 
+  // TODO: This should aggregate likes/RTs, etc. pr. note.
+  /** Currently drops kind = 7, this must be used to calculate up later on. */
   get events$(): Observable<NostrEventDocument[]> {
     return this.#eventsChanged
       .asObservable()
+      .pipe(filter((data) => data !== null))
       .pipe(
         map((data) => {
-          data.sort((a, b) => {
+          data!.sort((a, b) => {
             return a.created_at > b.created_at ? -1 : 1;
           });
 
           return data;
         })
       )
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
+      .pipe(map((data) => data!.filter((events) => events.kind != 7 && events.kind != 6))) // Filter out likes and "reposts".
+      .pipe(map((data) => data!.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 
   get rootEvents$(): Observable<NostrEventDocument[]> {
@@ -131,11 +119,8 @@ export class ThreadService {
     // Whenever the event has changed, we can go grab the parent and the thread itself
     this.#eventChanged.subscribe((event) => {
       if (event == null) {
-        console.log('EVENT WAS NULL!');
         return;
       }
-
-      console.log('EVENT CHANGED!!!', event);
 
       // Get the root event.
       let rootEventId = this.eventService.rootEventId(event);
@@ -145,7 +130,6 @@ export class ThreadService {
           console.log(event);
           this.#root = event;
           this.#rootChanged.next(this.#root);
-          console.log('GOT ROOT EVENT', this.#root);
         });
       } else {
         this.#root = null;
@@ -153,42 +137,43 @@ export class ThreadService {
         this.#rootChanged.next(this.#root);
       }
 
-      // If there is root, use that to download thread, if not, use the current event which is a root event.
-      if (this.#root) {
-        // Get all events in the thread.
-        this.feedService.downloadThread(this.#root.id!).subscribe((events) => {
-          console.log(events);
-          this.#events = events;
-          this.#eventsChanged.next(this.#events);
-          console.log('GOT THREAD FOR ROOT', this.#root);
-        });
-      } else {
-        // Get all events in the thread.
-        this.feedService.downloadThread(event.id!).subscribe((events) => {
-          console.log(events);
-          this.#events = events;
-          this.#eventsChanged.next(this.#events);
-          console.log('GOT THREAD FOR EVENT', this.#event);
-        });
+      if (!rootEventId) {
+        rootEventId = event.id!;
       }
 
-      // // If there are no rootEventId, grab ID from the event itself:
-      // console.log('ROOT EVENT ID:', rootEventId);
-
-      // if (rootEventId) {
-      //   this.feedService.downloadEvent(rootEventId).subscribe((event) => {
-      //     console.log(event);
-      //     this.#root = event;
-      //     this.#rootChanged.next(this.#root);
-      //     console.log('GOT ROOT EVENT', this.#root);
-      //   });
-      // }
+      this.feedService
+        .downloadThread(rootEventId)
+        // .pipe(
+        //   catchError((err) => {
+        //     console.log('WHOPS ERROR 222!!', err);
+        //     throw new Error('Yeh');
+        //   })
+        // )
+        // .pipe(
+        //   finalize(() => {
+        //     console.log('FINALIZER 2222!!');
+        //   })
+        // )
+        .subscribe((events) => {
+          this.hasLoaded = true;
+          this.#events = events;
+          this.#eventsChanged.next(this.#events);
+        });
     });
   }
 
   async changeSelectedEvent(eventId: string) {
+    this.hasLoaded = false;
+
+    // Reset so UI doesn't show previous events.
+    this.#events = null;
+    this.#eventsChanged.next(this.#events);
+
+    this.#event = null;
+    this.#eventChanged.next(this.#event);
+
     // Get the event itself.
-    const event = await this.storage.get<NostrEventDocument>(eventId);
+    const event = await this.storage.get<NostrEventDocument>(eventId, 'events');
 
     if (event) {
       this.#event = event;
@@ -200,11 +185,5 @@ export class ThreadService {
         this.#eventChanged.next(this.#event);
       });
     }
-  }
-
-  /** Fetches the whole thread of data to be rendered in the UI. */
-  async fetchThread(id: string) {
-    // Second get the original post to render ontop of the page and all of the other events in e tags.
-    // Third get the replies to the id supplied.
   }
 }
