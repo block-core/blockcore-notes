@@ -10,40 +10,27 @@
     </mat-toolbar>
 
     <mat-nav-list>
-      <a [routerLink]="['/']" mat-menu-item (click)="toggleMenu()">
+      <a [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>notes</mat-icon>
         <span>Notes</span>
       </a>
-
-      <!--
-      <a [routerLink]="['/identities']" mat-menu-item (click)="drawer.toggle()">
-        <mat-icon>people</mat-icon>
-        <span>Identities</span>
-      </a>
-      <a [routerLink]="['/notes']" mat-menu-item (click)="drawer.toggle()">
-        <mat-icon>computer</mat-icon>
-        <span>Relays</span>
-      </a> -->
-      <!-- <mat-divider></mat-divider> -->
-
-      <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()">
+      <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>people</mat-icon>
         <span>People</span>
       </a>
-      <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()">
+      <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>animation</mat-icon>
         <span>Circles</span>
       </a>
-
-      <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()">
+      <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>settings</mat-icon>
         <span>Settings</span>
       </a>
-      <a [routerLink]="['/about']" mat-menu-item (click)="toggleMenu()">
+      <a [routerLink]="['/about']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>help_outline</mat-icon>
         <span>About</span>
       </a>
-      <a [routerLink]="['/logout']" mat-menu-item (click)="toggleMenu()">
+      <a [routerLink]="['/logout']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>logout</mat-icon>
         <span>Logout</span>
       </a>
