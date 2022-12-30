@@ -138,6 +138,9 @@ export class ProfileService {
         about: existingProfile ? existingProfile.about : '',
         picture: existingProfile ? existingProfile.picture : '',
         nip05: existingProfile ? existingProfile.nip05 : '',
+        lud06: existingProfile ? existingProfile.lud06 : '',
+        display_name: existingProfile ? existingProfile.display_name : '',
+        website: existingProfile ? existingProfile.website : '',
         verifications: existingProfile ? existingProfile.verifications : [],
         pubkey: pubkey,
         follow: follow,
@@ -282,6 +285,9 @@ export class ProfileService {
       profile.name = document.name;
       profile.about = document.about;
       profile.nip05 = document.nip05;
+      profile.lud06 = document.lud06;
+      profile.website = document.website;
+      profile.display_name = document.display_name;
       profile.picture = document.picture;
     }
 

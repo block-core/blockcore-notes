@@ -5,13 +5,15 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { FeedService } from '../services/feed.service';
 import { map, Observable } from 'rxjs';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
+import { CirclesService } from '../services/circles.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user',
@@ -19,7 +21,13 @@ import { NavigationService } from '../services/navigation.service';
 })
 export class UserComponent {
   pubkey?: string | null;
+  npub?: string;
   profile?: NostrProfileDocument;
+  about?: string;
+  imagePath = '/assets/profile.png';
+  profileName = '';
+  circle?: Circle;
+  muted? = false;
 
   userEvents$ = this.feedService.rootEvents$.pipe(
     map((data) => {
@@ -42,6 +50,7 @@ export class UserComponent {
   );
 
   constructor(
+    private sanitizer: DomSanitizer,
     public navigation: NavigationService,
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
@@ -50,6 +59,7 @@ export class UserComponent {
     public feedService: FeedService,
     public profiles: ProfileService,
     private validator: DataValidation,
+    private circleService: CirclesService,
     private utilities: Utilities,
     private router: Router
   ) {
@@ -66,10 +76,32 @@ export class UserComponent {
       this.pubkey = pubkey;
       this.profile = await this.profiles.getProfile(pubkey);
 
-      if (this.profile) {
+      console.log(this.profile);
+
+      if (!this.profile) {
+        this.npub = this.utilities.getNostrIdentifier(pubkey);
+        this.profileName = '';
+        this.imagePath = '/assets/profile.png';
+
+        // If the user has name in their profile, show that and not pubkey.
+        this.circle = undefined;
+        this.muted = false;
+        this.appState.title = `@${this.npub}`;
+      } else {
+        this.npub = this.utilities.getNostrIdentifier(pubkey);
+        this.profileName = this.profile.name;
+        this.imagePath = this.profile.picture || '/assets/profile.png';
+
+        // If the user has name in their profile, show that and not pubkey.
+        this.circle = await this.circleService.getCircle(this.profile.circle);
+        this.muted = this.profile.mute;
         this.appState.title = `@${this.profile.name}`;
       }
     });
+  }
+
+  sanitize(url: string) {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
   ngOnInit() {

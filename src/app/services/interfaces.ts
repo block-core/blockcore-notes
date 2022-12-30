@@ -72,6 +72,12 @@ export interface NostrProfile {
 
   /** https://github.com/nostr-protocol/nips/blob/master/05.md */
   nip05: string;
+
+  lud06: string;
+
+  display_name: string;
+
+  website: string;
 }
 
 export interface NostrSubscription extends Sub {

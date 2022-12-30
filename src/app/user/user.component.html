@@ -1,3 +1,22 @@
+<div class="page">
+  <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath" />
+  <img *ngIf="!profile?.follow" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
+
+  <span *ngIf="profile">
+    <h2 class="marginless">{{ profile.display_name }}</h2>
+    <span>
+      {{ profileName }} / {{ profile.nip05 }}<br />
+      <span class="dimmed wrap">{{ npub }}</span>
+      <p>{{ profile.about }}</p>
+      <!-- <p>{{ profile.lud06 }}</p> -->
+      Tip: <a class="ln-link" [href]="sanitize('lightning:' + profile.lud06)" target="_blank">⚡️</a>
+      <p>{{ profile.website }}</p>
+    </span>
+  </span>
+
+  
+</div>
+
 <mat-tab-group>
   <mat-tab label="Notes">
     <span *ngIf="userEvents$ | async as events">
