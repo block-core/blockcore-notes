@@ -34,3 +34,16 @@
 .settings-action-buttons {
   padding-bottom: 1em;
 }
+
+.settings-action-buttons button {
+  margin-bottom: 1em;
+  margin-right: 1em;
+}
+
+/* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+@media only screen and (max-width: 599px) {
+  .settings-action-buttons button {
+    width: 100%;
+    margin-right: 0;
+  }
+}
