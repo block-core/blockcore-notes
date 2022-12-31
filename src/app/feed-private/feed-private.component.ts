@@ -83,7 +83,7 @@ export class FeedPrivateComponent {
   }
 
   get eventsView$(): Observable<NostrEventDocument[]> {
-    return this.feedService.events$.pipe();
+    return this.feedService.events$.pipe(map((x) => x.slice(0, this.eventsCount)));
   }
 
   ngAfterViewInit() {
@@ -92,6 +92,12 @@ export class FeedPrivateComponent {
 
   ngAfterContentInit() {
     console.log('ngAfterContentInit');
+  }
+
+  eventsCount = 20;
+
+  showMore() {
+    this.eventsCount += 20;
   }
 
   optionsUpdated() {
