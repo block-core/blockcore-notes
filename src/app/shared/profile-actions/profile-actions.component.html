@@ -18,12 +18,12 @@
   </button>
 
   <button mat-menu-item (click)="follow()" *ngIf="!profile?.follow">
-    <mat-icon>add_circle</mat-icon>
+    <mat-icon>person_add</mat-icon>
     <span>Follow</span>
   </button>
 
   <button mat-menu-item (click)="unfollow()" *ngIf="profile?.follow">
-    <mat-icon>remove_circle</mat-icon>
+    <mat-icon>person_remove</mat-icon>
     <span>Unfollow</span>
   </button>
 
