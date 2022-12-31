@@ -61,24 +61,24 @@
       <app-profile-header [pubkey]="event.pubkey"
         ><span class="event-date" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
       ></app-profile-header>
-      <span class="content">
+      <div class="content clickable">
         {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span>
 
         <mat-chip-set class="hashtags">
           <mat-chip *ngFor="let tag of hashtags(event.tags)">#{{ tag }}</mat-chip>
         </mat-chip-set>
 
-        <div *ngIf="details">
+        <!-- <div *ngIf="details">
           <br />
           <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>
-        </div>
-      </span>
-      <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+        </div> -->
+      </div>
+      <!-- <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
         <mat-icon class="expand-button-icon">expand_more</mat-icon>
       </button>
       <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
         <mat-icon class="expand-button-icon">expand_less</mat-icon>
-      </button>
+      </button> -->
     </div>
   </div>
 </span>
