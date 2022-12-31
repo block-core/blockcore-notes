@@ -26,20 +26,13 @@
   border-radius: 50%;
 }
 
-.circle-left-input {
+.circle-input {
   margin-right: 1em;
 }
 
-.circle-right-input {
-}
-
 @media only screen and (max-width: 540px) {
-  .circle-left-input {
+  .circle-input {
     margin-right: 0;
-    width: 100%;
-  }
-
-  .circle-right-input {
     width: 100%;
   }
 }

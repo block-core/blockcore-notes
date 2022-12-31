@@ -2,13 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
-import { relayInit } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
 import { Circle, NostrEvent, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { StorageService } from '../services/storage.service';
-import { map } from 'rxjs';
 import { CirclesService } from '../services/circles.service';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -97,7 +94,7 @@ export class CirclesComponent {
 
   createCircle(): void {
     const dialogRef = this.dialog.open(CircleDialog, {
-      data: { name: '', style: '1' },
+      data: { name: '', style: '1', public: true },
       maxWidth: '100vw',
       panelClass: 'full-width-dialog',
     });

@@ -7,6 +7,7 @@ export interface Circle {
   style: string;
   created?: number;
   modified?: number;
+  public: boolean;
 }
 
 export interface Action {
