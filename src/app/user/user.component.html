@@ -9,7 +9,7 @@
         <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">{{ profile.display_name }}</h2>
         <br />
         <span>
-          <span class="dimmed">{{ profileName }} / {{ profile.nip05 }}</span
+          <span class="dimmed">{{ profileName }}<span *ngIf="profile.nip05"> / {{ profile.nip05 }}</span></span
           ><br />
           <!-- <span class="dimmed wrap">{{ npub }}</span> -->
           <p class="wrap" *ngIf="profile.about">{{ profile.about }}</p>
