@@ -101,7 +101,7 @@ export class UserComponent {
 
         if (!this.profile) {
           this.npub = this.utilities.getNostrIdentifier(pubkey);
-          this.profileName = '';
+          this.profileName = this.utilities.getShortenedIdentifier(pubkey);
           this.imagePath = '/assets/profile.png';
 
           // If the user has name in their profile, show that and not pubkey.
@@ -111,6 +111,11 @@ export class UserComponent {
         } else {
           this.npub = this.utilities.getNostrIdentifier(pubkey);
           this.profileName = this.profile.name;
+
+          if (!this.profile.display_name) {
+            this.profile.display_name = this.profileName;
+          }
+
           this.imagePath = this.profile.picture || '/assets/profile.png';
 
           // If the user has name in their profile, show that and not pubkey.

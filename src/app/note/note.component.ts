@@ -2,14 +2,10 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
-import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrEventDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
-import { SettingsService } from '../services/settings.service';
 import { FeedService } from '../services/feed.service';
-import { map, Observable } from 'rxjs';
 import { OptionsService } from '../services/options.service';
 import { ThreadService } from '../services/thread.service';
 
@@ -22,37 +18,6 @@ export class NoteComponent {
   id?: string | null;
   event?: NostrEventDocument;
 
-  // userEvents$ = this.feedService.replyEvents$.pipe(
-  //   map((data) => {
-  //     return data.filter((events) => {
-  //       events.tags
-
-  //       const eTag = events.tags.find((t) => t[0] === 'e');
-
-  //       if (eTag[1] == this.id) {
-  //         return ;
-  //       }
-
-  //       console.log(eTag[1]);
-  //     });
-
-  //     // data.filter((events) => events.tags.find((t) => t[0] === 'e')
-
-  //     // return data.filter((events) => events.tags.find((t) => t[0] === 'e'));
-  //     // return data;
-  //   })
-  // );
-
-  // replyEvents$ = this.feedService.events$.pipe(
-  //   map((data) => {
-  //     if (!this.pubkey) {
-  //       return;
-  //     }
-
-  //     return data.filter((n) => n.pubkey == this.pubkey);
-  //   })
-  // );
-
   constructor(
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
@@ -64,9 +29,7 @@ export class NoteComponent {
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router
-  ) {
-    console.log('CONSTRUCTOR FOR NOTE!!!');
-  }
+  ) {}
 
   // TODO: Nasty code, just fix it, quick hack before bed.
   likes(event: NostrEventDocument) {
@@ -201,20 +164,6 @@ export class NoteComponent {
     // this.userEvents$ =
     // }
   }
-
-  // openEvent($event: any, event: NostrEventDocument) {
-  //   const paths = $event.composedPath();
-
-  //   if (!paths || paths.length == 0) {
-  //     return;
-  //   }
-
-  //   if (paths[0].className.indexOf('clickable') == -1) {
-  //     return;
-  //   }
-
-  //   this.router.navigate(['/note', event.id]);
-  // }
 
   optionsUpdated() {
     // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
