@@ -8,7 +8,6 @@ import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
-import { DataService } from '../services/data.service';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { FeedService } from '../services/feed.service';
@@ -70,7 +69,6 @@ export class FeedPrivateComponent {
   constructor(
     public navigation: NavigationService,
     public appState: ApplicationState,
-    public data: DataService,
     private cd: ChangeDetectorRef,
     public options: OptionsService,
     public profileService: ProfileService,

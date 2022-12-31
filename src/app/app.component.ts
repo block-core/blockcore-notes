@@ -14,6 +14,7 @@ import { Location } from '@angular/common';
 import { FeedService } from './services/feed.service';
 import { RelayService } from './services/relay.service';
 import { RelayStorageService } from './services/relay.storage.service';
+import { DataService } from './services/data.service';
 
 @Component({
   selector: 'app-root',
@@ -37,7 +38,8 @@ export class AppComponent {
     private breakpointObserver: BreakpointObserver,
     private relayStorage: RelayStorageService,
     private feedService: FeedService,
-    private relayService: RelayService
+    private relayService: RelayService,
+    private dataService: DataService
   ) {
     // appState.title = 'Blockcore Notes';
     console.log('CONSTRUCTOR FOR APP!');
@@ -70,8 +72,10 @@ export class AppComponent {
     await this.relayStorage.initialize();
     await this.relayService.initialize();
     await this.relayService.connect();
-
     await this.feedService.initialize();
+
+    // This service will perform data cleanup, etc.
+    await this.dataService.initialize();
 
     console.log('NG INIT APP: PROFILE SHOULD BE LOADED BY NOW!!');
 

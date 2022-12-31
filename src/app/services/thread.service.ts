@@ -75,7 +75,8 @@ export class ThreadService {
 
           return data;
         })
-      ) // Don't render the event itself in the after list.
+      )
+       // Don't render the event itself in the after list.
       .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 

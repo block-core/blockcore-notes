@@ -1,81 +1,53 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person } from './interfaces';
-import * as sanitizeHtml from 'sanitize-html';
-import { SettingsService } from './settings.service';
-import { Observable, of } from 'rxjs';
-import { relayInit } from 'nostr-tools';
-import { v4 as uuidv4 } from 'uuid';
+import { NostrProfileDocument } from './interfaces';
 import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
-  // Requirements:
-  // The public feed should be 200 items in-memory and filtered down to 100 visible at any time.
-  // The follow feed
+  daysToKeepProfiles = 14;
 
-  /** We keep circles in-memory at all times */
-  #circles: Circle[] = [];
+  constructor(private storage: StorageService, private profile: ProfileService) {}
 
-  /** All people that user is following. We don't keep this in memory at all times, but populated upon request. */
-  #people: Person[] = [];
-
-  circles: Observable<Circle[]>;
-  people: Observable<Person[]>;
-  #public: NostrEventDocument[] = [];
-
-  /**  */
-  // #posts: NostrEventDocument[] = [];
-
-  /** Returns the last 100 entries of public feed. The internal data holds 200 entries,
-   * so when filter/options is turned off, the result is taken from the 200 entries. */
-  public$: Observable<NostrEventDocument[]>;
-
-  constructor(private storage: StorageService, private profile: ProfileService) {
-    this.circles = this.getCircles();
-    this.people = this.getPeople();
-
-    this.public$ = this.getPublic();
+  async initialize() {
+    // Don't start the data processing until an initial timeout.
+    setTimeout(() => {
+      this.process();
+    }, 5000);
   }
 
-  openRelay() {
-    // const relay = relayInit('wss://relay.nostr.info');
-    // this.relay = relayInit('wss://relay.damus.io');
-    // this.relay.on('connect', () => {
-    //   console.log(`connected to ${this.relay?.url}`);
-    //   this.onConnected(this.relay);
-    // });
-    // this.relay.on('disconnect', () => {
-    //   console.log(`DISCONNECTED! ${this.relay?.url}`);
-    // });
-    // this.relay.on('notice', () => {
-    //   console.log(`NOTICE FROM ${this.relay?.url}`);
-    // });
-    // this.relay.connect();
+  async process() {
+    console.log('Data Service Process Interval...');
+
+    await this.cleanProfiles();
+
+    setTimeout(async () => {
+      await this.process();
+    }, 5000);
   }
 
-  getPublic(): Observable<NostrEventDocument[]> {
-    return new Observable<NostrEventDocument[]>((observer) => {
-      observer.next(this.#public);
+  async cleanProfiles() {
+    const profileTable = this.storage.table<NostrProfileDocument>('profile');
+    const iterator = profileTable.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+    const now = moment();
 
-      setTimeout(() => {
-        // this.#public.push({ id: '', name: '', price: 899 });
-        // observer.next(this.#public);
-      }, 3000);
-    });
-  }
+    for await (const [key, value] of iterator) {
+      // Skip all profiles that the user is following, blocked or muted.
+      if (value.follow || value.block || value.mute) {
+        continue;
+      }
 
-  getPeople(): Observable<Person[]> {
-    return new Observable<Person[]>((observer) => {
-      observer.next(this.#people);
-    });
-  }
+      const lastChanged = value.modified || value.created;
+      const date = moment.unix(lastChanged).add(-2, 'days');
+      var days = now.diff(date, 'days');
 
-  getCircles(): Observable<Circle[]> {
-    return new Observable<Circle[]>((observer) => {
-      observer.next(this.#circles);
-    });
+      if (days > this.daysToKeepProfiles) {
+        console.log('Profile removed from cache: ', value);
+        await profileTable.del(key);
+      }
+    }
   }
 }
