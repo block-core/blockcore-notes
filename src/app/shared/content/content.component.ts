@@ -56,11 +56,15 @@ export class ContentComponent {
 
   repliesTo(event: NostrEventDocument) {
     if (!event) {
-      return;
+      return null;
     }
 
     let tags = event.tags.filter((t) => t[0] === 'p').map((t) => t[1]);
     tags = tags.filter((t) => t !== event.pubkey);
+
+    if (tags.length == 0) {
+      return null;
+    }
 
     return tags;
   }

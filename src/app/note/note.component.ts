@@ -202,19 +202,19 @@ export class NoteComponent {
     // }
   }
 
-  openEvent($event: any, event: NostrEventDocument) {
-    const paths = $event.composedPath();
+  // openEvent($event: any, event: NostrEventDocument) {
+  //   const paths = $event.composedPath();
 
-    if (!paths || paths.length == 0) {
-      return;
-    }
+  //   if (!paths || paths.length == 0) {
+  //     return;
+  //   }
 
-    if (paths[0].className.indexOf('clickable') == -1) {
-      return;
-    }
+  //   if (paths[0].className.indexOf('clickable') == -1) {
+  //     return;
+  //   }
 
-    this.router.navigate(['/note', event.id]);
-  }
+  //   this.router.navigate(['/note', event.id]);
+  // }
 
   optionsUpdated() {
     // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);

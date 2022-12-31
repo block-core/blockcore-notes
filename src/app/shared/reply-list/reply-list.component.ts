@@ -27,8 +27,6 @@ export class ReplyListComponent {
 
       let profile = await this.profileService.getProfile(key);
 
-      console.log('key in reply:', key);
-
       if (!profile) {
         profile = {
           pubkey: key,
