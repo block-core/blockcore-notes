@@ -94,10 +94,10 @@ export class FeedPrivateComponent {
     console.log('ngAfterContentInit');
   }
 
-  eventsCount = 20;
+  eventsCount = 10;
 
   showMore() {
-    this.eventsCount += 20;
+    this.eventsCount += 10;
   }
 
   optionsUpdated() {
@@ -327,12 +327,11 @@ export class FeedPrivateComponent {
   }
 
   async ngOnInit() {
+    this.appState.title = 'Following Notes';
     this.options.options.privateFeed = true;
 
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
-
-    this.appState.title = '';
 
     // if (this.relay) {
     //   return;
