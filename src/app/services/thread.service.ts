@@ -166,6 +166,9 @@ export class ThreadService {
   async changeSelectedEvent(eventId: string) {
     this.hasLoaded = false;
 
+    this.#root = null;
+    this.#rootChanged.next(this.#root);
+
     // Reset so UI doesn't show previous events.
     this.#events = null;
     this.#eventsChanged.next(this.#events);
