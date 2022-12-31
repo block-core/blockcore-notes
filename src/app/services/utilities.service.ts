@@ -22,6 +22,11 @@ export class Utilities {
     return converted;
   }
 
+  getShortenedIdentifier(pubkey: string) {
+    const fullId = this.getNostrIdentifier(pubkey);
+    return `${fullId.substring(4, 12)}:${fullId.substring(fullId.length - 8)}`;
+  }
+
   private convertToBech32(key: Uint8Array, prefix: string) {
     const words = bech32.toWords(key);
     const value = bech32.encode(prefix, words);

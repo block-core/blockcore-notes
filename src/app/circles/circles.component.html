@@ -1,8 +1,7 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
 <div class="feed-page">
-  <p>Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
-
+  <!-- <p>Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p> -->
   <div class="circle-container" *ngFor="let circle of circles">
     <div class="circle-item"><mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon></div>
     <div class="circle-item">
@@ -14,4 +13,7 @@
       </button>
     </div>
   </div>
+
+  <p class="dimmed">Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
+
 </div>

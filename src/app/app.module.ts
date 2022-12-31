@@ -64,6 +64,7 @@ import { NgxColorsModule } from 'ngx-colors';
 import { NoteComponent } from './note/note.component';
 import { CircleStylePipe } from './shared/circle-style';
 import { ReplyListComponent } from './shared/reply-list/reply-list.component';
+import { ContentComponent } from './shared/content/content.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { ReplyListComponent } from './shared/reply-list/reply-list.component';
     FeedPublicComponent,
     NotesComponent,
     NoteComponent,
-    ReplyListComponent
+    ReplyListComponent,
+    ContentComponent
   ],
   imports: [
     BrowserModule,

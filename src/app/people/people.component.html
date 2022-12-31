@@ -1,15 +1,15 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
 <div class="feed-page">
-  <p>People are those you are following. You can use circles to organize your people.</p>
+  
 
-  <p class="search">
+  <!-- <p class="search">
     <mat-form-field appearance="fill" class="input-full-width">
       <mat-label>Search in People</mat-label>
       <input matInput placeholder="name, display name, about or pubkey" type="search" (keyup.enter)="search()" autocomplete="off" [(ngModel)]="searchTerm" />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-  </p>
+  </p> -->
 
   <!-- <mat-accordion class="options">
     <mat-expansion-panel>
@@ -57,6 +57,9 @@
       </div>
     </div>
   </div> -->
+
+  <p class="dimmed">People are those you are following. You can use circles to organize your people.</p>
+
 </div>
 
 <!-- <mat-list>
