@@ -65,11 +65,20 @@ export class ProfileService {
     this.#profileRequested.next(pubkey);
   }
 
+  // profileDownloadQueue: string[] = [];
+
   /** Will attempt to get the profile from local storage, if not available will attempt to get from relays. */
   async getProfile(pubkey: string) {
     const profile = await this.#get<NostrProfileDocument>(pubkey);
 
     if (!profile) {
+      await this.downloadProfile(pubkey);
+
+      // if (!this.profileDownloadQueue.find((p) => p === pubkey)) {
+      //   // Register this profile in queue for downloading
+      //   this.profileDownloadQueue.unshift(pubkey);
+      // }
+
       return;
     }
 

@@ -8,10 +8,10 @@ import { OptionsService } from './options.service';
   providedIn: 'root',
 })
 export class DataValidation {
-  contentLimit = 560;
+  contentLimit = 1024;
   tagsLimit = 10;
 
-  profileLimit = 1024;
+  profileLimit = 2048;
   profileTagsLimit = 10;
 
   constructor(private options: OptionsService) {}
@@ -83,10 +83,18 @@ export class DataValidation {
       return null;
     }
 
-    // Reduce the content length to reduce system resource usage and improve UI experience.
-    if (event.content.length > this.contentLimit) {
-      event.content = event.content.substring(0, this.contentLimit);
-      event.contentCut = true;
+    if (event.kind === 0) {
+      // Reduce the content length to reduce system resource usage and improve UI experience.
+      if (event.content.length > this.profileLimit) {
+        event.content = event.content.substring(0, this.profileLimit);
+        event.contentCut = true;
+      }
+    } else {
+      // Reduce the content length to reduce system resource usage and improve UI experience.
+      if (event.content.length > this.contentLimit) {
+        event.content = event.content.substring(0, this.contentLimit);
+        event.contentCut = true;
+      }
     }
 
     // TODO: Do we need more validation for tags? Probably limited length?

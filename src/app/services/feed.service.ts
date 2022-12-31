@@ -236,12 +236,12 @@ export class FeedService {
     });
   }
 
-  scheduleProfileDownload() {
-    setTimeout(() => {
-      this.processProfilesQueue();
-      this.scheduleProfileDownload();
-    }, 5000);
-  }
+  // scheduleProfileDownload() {
+  //   setTimeout(() => {
+  //     this.processProfilesQueue();
+  //     this.scheduleProfileDownload();
+  //   }, 5000);
+  // }
 
   // public subscribe<T>(key: string): Observable<EventBusMetaData> {
   //   return this.eventBus.asObservable().pipe(
@@ -551,135 +551,135 @@ export class FeedService {
     });
   }
 
-  async downloadProfile(pubkey: string) {
-    console.log('ADD DOWNLOAD PROFILE:', pubkey);
-    if (!pubkey) {
-      debugger;
-      return;
-    }
+  // async downloadProfile(pubkey: string) {
+  //   console.log('ADD DOWNLOAD PROFILE:', pubkey);
+  //   if (!pubkey) {
+  //     debugger;
+  //     return;
+  //   }
 
-    this.profileQueue.push(pubkey);
+  //   this.profileQueue.push(pubkey);
 
-    // Wait some CPU cycles for potentially more profiles before we process.
-    setTimeout(() => {
-      this.processProfilesQueue();
-    }, 500);
+  //   // Wait some CPU cycles for potentially more profiles before we process.
+  //   setTimeout(() => {
+  //     this.processProfilesQueue();
+  //   }, 500);
 
-    // TODO: Loop all relays until we find the profile.
-    // return this.fetchProfiles(this.relays[0], [pubkey]);
-  }
+  //   // TODO: Loop all relays until we find the profile.
+  //   // return this.fetchProfiles(this.relays[0], [pubkey]);
+  // }
 
-  profileQueue: string[] = [];
+  // profileQueue: string[] = [];
 
-  processProfilesQueue() {
-    // console.log('processProfilesQueue', this.isFetching);
+  // processProfilesQueue() {
+  //   // console.log('processProfilesQueue', this.isFetching);
 
-    // If currently fetching, just skip until next interval.
-    if (this.isFetching) {
-      return;
-    }
+  //   // If currently fetching, just skip until next interval.
+  //   if (this.isFetching) {
+  //     return;
+  //   }
 
-    // Grab all queued up profiles and ask for them, or should we have a maximum item?
-    // For now, let us grab 10 and process those until next interval.
-    const pubkeys = this.profileQueue.splice(0, 10);
-    this.fetchProfiles(this.relayService.relays[0], pubkeys);
-  }
+  //   // Grab all queued up profiles and ask for them, or should we have a maximum item?
+  //   // For now, let us grab 10 and process those until next interval.
+  //   const pubkeys = this.profileQueue.splice(0, 10);
+  //   this.fetchProfiles(this.relayService.relays[0], pubkeys);
+  // }
 
-  isFetching = false;
+  // isFetching = false;
 
-  fetchProfiles(relay: Relay, authors: string[]) {
-    if (!authors || authors.length === 0) {
-      return;
-    }
+  // fetchProfiles(relay: Relay, authors: string[]) {
+  //   if (!authors || authors.length === 0) {
+  //     return;
+  //   }
 
-    console.log('FETCHING PROFILE!', authors);
+  //   console.log('FETCHING PROFILE!', authors);
 
-    // Add a protection timeout if we never receive the profiles. After 30 seconds, cancel and allow query to continue.
-    setTimeout(() => {
-      this.isFetching = false;
+  //   // Add a protection timeout if we never receive the profiles. After 30 seconds, cancel and allow query to continue.
+  //   setTimeout(() => {
+  //     this.isFetching = false;
 
-      try {
-        profileSub.unsub();
-      } catch (err) {
-        console.warn('Error during automatic failover for profile fetch.', err);
-      }
-    }, 30000);
+  //     try {
+  //       profileSub.unsub();
+  //     } catch (err) {
+  //       console.warn('Error during automatic failover for profile fetch.', err);
+  //     }
+  //   }, 30000);
 
-    this.isFetching = true;
-    let profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
+  //   this.isFetching = true;
+  //   let profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
 
-    profileSub.on('event', async (originalEvent: NostrEvent) => {
-      console.log('EVENT ON PROFILE:', originalEvent);
-      const event = this.eventService.processEvent(originalEvent);
+  //   profileSub.on('event', async (originalEvent: NostrEvent) => {
+  //     console.log('EVENT ON PROFILE:', originalEvent);
+  //     const event = this.eventService.processEvent(originalEvent);
 
-      if (!event) {
-        return;
-      }
+  //     if (!event) {
+  //       return;
+  //     }
 
-      try {
-        const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
+  //     try {
+  //       const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
 
-        console.log('GOT PROFILE:;', profile);
+  //       console.log('GOT PROFILE:;', profile);
 
-        // Persist the profile.
-        await this.profileService.updateProfile(event.pubkey, profile);
+  //       // Persist the profile.
+  //       await this.profileService.updateProfile(event.pubkey, profile);
 
-        // TODO: Add NIP-05 and nostr.directory verification.
-        // const displayName = encodeURIComponent(profile.name);
-        // const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
+  //       // TODO: Add NIP-05 and nostr.directory verification.
+  //       // const displayName = encodeURIComponent(profile.name);
+  //       // const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
 
-        // const rawResponse = await fetch(url, {
-        //   method: 'GET',
-        //   mode: 'cors',
-        // });
+  //       // const rawResponse = await fetch(url, {
+  //       //   method: 'GET',
+  //       //   mode: 'cors',
+  //       // });
 
-        // if (rawResponse.status === 200) {
-        //   const content = await rawResponse.json();
-        //   const directoryPublicKey = content.names[displayName];
+  //       // if (rawResponse.status === 200) {
+  //       //   const content = await rawResponse.json();
+  //       //   const directoryPublicKey = content.names[displayName];
 
-        //   if (event.pubkey === directoryPublicKey) {
-        //     if (!profile.verifications) {
-        //       profile.verifications = [];
-        //     }
+  //       //   if (event.pubkey === directoryPublicKey) {
+  //       //     if (!profile.verifications) {
+  //       //       profile.verifications = [];
+  //       //     }
 
-        //     profile.verifications.push('@nostr.directory');
+  //       //     profile.verifications.push('@nostr.directory');
 
-        //     // Update the profile with verification data.
-        //     await this.profile.putProfile(event.pubkey, profile);
-        //   } else {
-        //     // profile.verified = false;
-        //     console.warn('Nickname reuse:', url);
-        //   }
-        // } else {
-        //   // profile.verified = false;
-        // }
-      } catch (err) {
-        console.warn('This profile event was not parsed due to errors:', event);
-      }
-    });
+  //       //     // Update the profile with verification data.
+  //       //     await this.profile.putProfile(event.pubkey, profile);
+  //       //   } else {
+  //       //     // profile.verified = false;
+  //       //     console.warn('Nickname reuse:', url);
+  //       //   }
+  //       // } else {
+  //       //   // profile.verified = false;
+  //       // }
+  //     } catch (err) {
+  //       console.warn('This profile event was not parsed due to errors:', event);
+  //     }
+  //   });
 
-    profileSub.on('eose', () => {
-      console.log('eose for profile', authors);
-      profileSub.unsub();
-      this.isFetching = false;
-    });
-  }
+  //   profileSub.on('eose', () => {
+  //     console.log('eose for profile', authors);
+  //     profileSub.unsub();
+  //     this.isFetching = false;
+  //   });
+  // }
 
   async initialize() {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
-    this.profileService.profileRequested$.subscribe(async (pubkey) => {
-      if (!pubkey) {
-        return;
-      }
+    // this.profileService.profileRequested$.subscribe(async (pubkey) => {
+    //   if (!pubkey) {
+    //     return;
+    //   }
 
-      await this.downloadProfile(pubkey);
-    });
+    //   await this.downloadProfile(pubkey);
+    // });
 
     // TODO: Use rxjs to trigger the queue to process and then complete, don't do this setInterval.
-    this.scheduleProfileDownload();
+    // this.scheduleProfileDownload();
 
     // Populate the profile observable.
-    await this.profileService.populate();
+    // await this.profileService.populate();
 
     // Load all persisted events. This will of course be too many as user get more and more... so
     // this must be changed into a filter ASAP. Two filters are needed: "Current View" which allows scrolling back in time,
@@ -689,9 +689,9 @@ export class FeedService {
     this.#eventsUpdated();
 
     // Every time profiles are updated, we must change our profile subscription.
-    this.profileService.profiles$.subscribe((profiles) => {
-      console.log('Profiles changed:', profiles);
-    });
+    // this.profileService.profiles$.subscribe((profiles) => {
+    //   console.log('Profiles changed:', profiles);
+    // });
 
     // this.openConnection('wss://nostr-pub.wellorder.net');
     // this.openConnection('wss://nostr-pub2.wellorder.net');

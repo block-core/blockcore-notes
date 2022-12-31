@@ -15,6 +15,7 @@ import { FeedService } from './services/feed.service';
 import { RelayService } from './services/relay.service';
 import { RelayStorageService } from './services/relay.storage.service';
 import { DataService } from './services/data.service';
+import { ProfileService } from './services/profile.service';
 
 @Component({
   selector: 'app-root',
@@ -39,7 +40,8 @@ export class AppComponent {
     private relayStorage: RelayStorageService,
     private feedService: FeedService,
     private relayService: RelayService,
-    private dataService: DataService
+    private dataService: DataService,
+    private profileService: ProfileService
   ) {
     // appState.title = 'Blockcore Notes';
     console.log('CONSTRUCTOR FOR APP!');
@@ -69,6 +71,7 @@ export class AppComponent {
     await this.storage.open();
     await this.storage.initialize();
 
+    await this.profileService.populate();
     await this.relayStorage.initialize();
     await this.relayService.initialize();
     await this.relayService.connect();
