@@ -96,17 +96,6 @@ export class FeedPrivateComponent {
     // this.events = this.validator.filterEvents(this.events);
   }
 
-  // TODO: FIX THIS IMMEDIATELY FOR PERFORMANCE!
-  hashtags(tags: any[]) {
-    const hashtags = tags.filter((row) => {
-      if (row[0] === 't') {
-        return row[1];
-      }
-    });
-
-    return hashtags;
-  }
-
   activeOptions() {
     let options = '';
 

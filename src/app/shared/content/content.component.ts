@@ -54,6 +54,19 @@ export class ContentComponent {
     this.content = content;
   }
 
+  // TODO: FIX THIS IMMEDIATELY FOR PERFORMANCE!
+  hashtags(tags: any[]) {
+    const hashtags = tags.filter((row) => row[0] === 't').map(t => t[1]);
+
+    if (hashtags.length == 0) {
+      return null;
+    }
+
+    // console.log(hashtags.toString());
+
+    return hashtags;
+  }
+
   repliesTo(event: NostrEventDocument) {
     if (!event) {
       return null;

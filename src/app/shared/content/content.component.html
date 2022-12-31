@@ -6,4 +6,7 @@
     <span class="clickable" *ngIf="replies.length > 0">Replying to </span>
     <app-reply-list [keys]="replies"></app-reply-list>
   </div>
+  <mat-chip-set class="hashtags">
+    <mat-chip *ngFor="let tag of hashtags(event.tags)">#{{ tag }}</mat-chip>
+  </mat-chip-set>
 </div>
