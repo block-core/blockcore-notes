@@ -16,7 +16,7 @@ export class DataService {
   daysToKeepProfiles = 14;
   cleanProfileInterval = 1000 * 60 * 60; // Every hour
   //downloadProfileInterval = 1000 * 3; // Every 3 seconds
-  downloadProfileInterval = 250; // Every 250 ms
+  downloadProfileInterval = 500;
 
   constructor(private storage: StorageService, private profileService: ProfileService, private feedService: FeedService, private validator: DataValidation, private eventService: EventService, private relayService: RelayService) {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
@@ -40,22 +40,12 @@ export class DataService {
   }
 
   async downloadProfiles() {
-    // this.profile.profileDownloadQueue
-    // this.profile.downloadProfile()
-
     this.processProfilesQueue();
 
     setTimeout(async () => {
       await this.downloadProfiles();
     }, this.downloadProfileInterval);
   }
-
-  // scheduleProfileDownload() {
-  //   setTimeout(() => {
-  //     this.processProfilesQueue();
-  //     this.scheduleProfileDownload();
-  //   }, 5000);
-  // }
 
   isFetching = false;
   profileQueue: string[] = [];
@@ -70,24 +60,25 @@ export class DataService {
 
     // Grab all queued up profiles and ask for them, or should we have a maximum item?
     // For now, let us grab 10 and process those until next interval.
-    const pubkeys = this.profileQueue.splice(0, 10);
+    const pubkeys = this.profileQueue.splice(0, 20);
     this.fetchProfiles(this.relayService.relays[0], pubkeys);
   }
 
   async downloadProfile(pubkey: string) {
-    console.log('ADD DOWNLOAD PROFILE:', pubkey);
-
     if (!pubkey) {
       debugger;
       return;
     }
 
-    this.profileQueue.push(pubkey);
+    if (!this.profileQueue.find((p) => p === pubkey)) {
+      console.log('ADD DOWNLOAD PROFILE:', pubkey);
+      this.profileQueue.push(pubkey);
+    }
 
     // Wait some CPU cycles for potentially more profiles before we process.
     setTimeout(() => {
       this.processProfilesQueue();
-    }, 500);
+    }, 250);
 
     // TODO: Loop all relays until we find the profile.
     // return this.fetchProfiles(this.relays[0], [pubkey]);
@@ -97,8 +88,6 @@ export class DataService {
     if (!authors || authors.length === 0) {
       return;
     }
-
-    console.log('FETCHING PROFILE!', authors);
 
     // Add a protection timeout if we never receive the profiles. After 30 seconds, cancel and allow query to continue.
     setTimeout(() => {
@@ -115,7 +104,6 @@ export class DataService {
     let profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
 
     profileSub.on('event', async (originalEvent: NostrEvent) => {
-      console.log('EVENT ON PROFILE:', originalEvent);
       const prossedEvent = this.eventService.processEvent(originalEvent);
 
       if (!prossedEvent) {
@@ -125,8 +113,6 @@ export class DataService {
       try {
         const jsonParsed = JSON.parse(prossedEvent.content) as NostrProfileDocument;
         const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
-
-        console.log('GOT PROFILE:;', profile);
 
         // Persist the profile.
         await this.profileService.updateProfile(prossedEvent.pubkey, profile);
@@ -166,7 +152,6 @@ export class DataService {
     });
 
     profileSub.on('eose', () => {
-      console.log('eose for profile', authors);
       profileSub.unsub();
       this.isFetching = false;
     });

@@ -41,7 +41,7 @@ export class UserComponent {
     })
   );
 
-  replyEvents$ = this.feedService.events$.pipe(
+  replyEvents$ = this.feedService.replyEvents$.pipe(
     map((data) => {
       if (!this.pubkey) {
         return;
@@ -77,8 +77,6 @@ export class UserComponent {
 
       this.pubkey = pubkey;
       this.profile = await this.profiles.getProfile(pubkey);
-
-      console.log(this.profile);
 
       if (!this.profile) {
         this.npub = this.utilities.getNostrIdentifier(pubkey);
