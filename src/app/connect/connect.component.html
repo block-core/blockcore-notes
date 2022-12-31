@@ -44,8 +44,8 @@
       <br />
 
       <div *ngIf="!extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" disabled="disabled">Waiting for extension...</button></div>
-      <div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" [disabled]="!consent">Connect using extension</button></div>
-      <div *ngIf="!consent" class="dimmed space">You must agree with the notice above to enable buttons</div>
+      <div *ngIf="extensionDiscovered"><button (click)="connect()" mat-raised-button color="primary" [disabled]="!consent">Connect using extension</button><span *ngIf="!consent" class="dimmed space">&nbsp;&nbsp;You must agree with the notice above to enable buttons</span></div>
+      
 
       <br />
       <p>Want to view the app first?</p>

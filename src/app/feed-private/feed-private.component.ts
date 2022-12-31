@@ -5,7 +5,7 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
@@ -80,6 +80,10 @@ export class FeedPrivateComponent {
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
+  }
+
+  get eventsView$(): Observable<NostrEventDocument[]> {
+    return this.feedService.events$.pipe();
   }
 
   ngAfterViewInit() {
