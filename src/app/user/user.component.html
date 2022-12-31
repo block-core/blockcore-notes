@@ -6,9 +6,11 @@
     </div>
     <div class="profile-page-header-middle">
       <span *ngIf="profile">
-        <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">{{ profile.display_name }}</h2><br>
+        <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">{{ profile.display_name }}</h2>
+        <br />
         <span>
-          <span class="dimmed">{{ profileName }} / {{ profile.nip05 }}</span><br />
+          <span class="dimmed">{{ profileName }} / {{ profile.nip05 }}</span
+          ><br />
           <!-- <span class="dimmed wrap">{{ npub }}</span> -->
           <p class="wrap" *ngIf="profile.about">{{ profile.about }}</p>
           <!-- <p>{{ profile.lud06 }}</p> -->
@@ -45,8 +47,13 @@
   </span> -->
 </div>
 
-<mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
-  <mat-tab label="Notes">
+<div class="page" *ngIf="profile && !profile?.follow">
+  <p>Data is currently only loaded if you follow this user.</p>
+  <p><button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button></p>
+</div>
+
+<mat-tab-group *ngIf="profile?.follow" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
+  <mat-tab label="Notes" *ngIf="profile?.follow">
     <span *ngIf="userEvents$ | async as events">
       <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
@@ -96,7 +103,7 @@
 
     <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
-  <mat-tab label="Replies">
+  <mat-tab label="Replies" *ngIf="profile?.follow">
     <span *ngIf="replyEvents$ | async as events">
       <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
@@ -129,7 +136,7 @@
           <app-profile-header [pubkey]="event.pubkey"
             ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
           ></app-profile-header>
-          <div class="content">Reply: {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
+          <div class="content clickable">Reply: {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
         </div>
       </div>
     </span></mat-tab

@@ -122,6 +122,12 @@ export class UserComponent {
     );
   }
 
+  async follow() {
+    this.profile!.follow = true;
+    await this.profiles.follow(this.pubkey!);
+    await this.feedService.downloadRecent([this.pubkey!]);
+  }
+
   sanitize(url: string) {
     const clean = this.sanitizer.bypassSecurityTrustUrl(url);
     return clean;
