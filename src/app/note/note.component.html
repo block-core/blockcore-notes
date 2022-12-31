@@ -1,7 +1,7 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
 <div class="feed-page">
-  <div class="parent-events events" *ngIf="thread.root$ | async as event">
+  <div class="root-event events" *ngIf="thread.root$ | async as event">
     <span>
       <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
       <app-profile-header [pubkey]="event.pubkey"
@@ -12,20 +12,22 @@
     </span>
   </div>
 
-  <div class="feed-page" *ngIf="thread.before$ | async as events">
-    <div class="events" *ngFor="let event of events; trackBy: trackByFn">
-      <span>
-        <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
-        <app-profile-header [pubkey]="event.pubkey"
-          ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-        ></app-profile-header>
-        <app-content [event]="event"></app-content>
-        <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
-      </span>
+  <ng-template *ngIf="thread.before$ | async as events">
+    <div class="feed-page" *ngIf="events.length > 0">
+      <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+        <span>
+          <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+          <app-profile-header [pubkey]="event.pubkey"
+            ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+          ></app-profile-header>
+          <app-content [event]="event"></app-content>
+          <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
+        </span>
+      </div>
     </div>
-  </div>
-  <div *ngIf="!thread.before$">NO ITEMS!</div>
-
+  </ng-template>
+  <!-- <div *ngIf="!thread.before$">NO ITEMS!</div> -->
+  <!-- </span> -->
   <!-- <div class="parent-events events" *ngFor="let event of filteredThread(); trackBy: trackByFn">
     <span *ngIf="event.kind != 7">
       <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
@@ -37,7 +39,7 @@
     </span>
   </div> -->
 
-  <div class="original-post events noclick" *ngIf="thread.event$ | async as event">
+  <div class="current-event events noclick" *ngIf="thread.event$ | async as event">
     <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
     <app-profile-header [pubkey]="event.pubkey"
       ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon

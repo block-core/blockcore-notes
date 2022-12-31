@@ -106,6 +106,9 @@ export class NoteComponent {
   ngOnInit() {
     console.log('NG INIT ON NOTE:');
     // this.appState.title = 'Blockcore Notes';
+
+    this.appState.title = 'Thread';
+
     this.appState.showBackButton = true;
 
     // Subscribe to the event which will update whenever user requests to view a different event.

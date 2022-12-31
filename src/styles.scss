@@ -213,16 +213,22 @@ mat-sidenav-content mat-toolbar {
   margin: 0;
 }
 
-.parent-events {
+.root-event {
   // margin-left: 3em;
-  background-color: #303030 !important;
-  background-color: #a30770 !important;
+  // background-color: #a30770 !important;
 }
 
-.original-post {
+.current-event {
   margin-bottom: 2em;
-  background-color: #a30770 !important;
+  // margin-left: 2em;
   background-color: #303030 !important;
+}
+
+@media only screen and (max-width: 599px) {
+  .current-event {
+    margin-bottom: 1em;
+    // margin-left: 1em;
+  }
 }
 
 .events {
