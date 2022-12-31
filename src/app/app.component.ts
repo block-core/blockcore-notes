@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ApplicationState } from './services/applicationstate.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Router } from '@angular/router';
+import { Router, TitleStrategy } from '@angular/router';
 import { AuthenticationService } from './services/authentication.service';
 import { AppUpdateService } from './services/app-update.service';
 import { CheckForUpdateService } from './services/check-for-update.service';
@@ -16,6 +16,8 @@ import { RelayService } from './services/relay.service';
 import { RelayStorageService } from './services/relay.storage.service';
 import { DataService } from './services/data.service';
 import { ProfileService } from './services/profile.service';
+import { ScrollEvent } from './shared/scroll.directive';
+import { NavigationService } from './services/navigation.service';
 
 @Component({
   selector: 'app-root',
@@ -41,7 +43,8 @@ export class AppComponent {
     private feedService: FeedService,
     private relayService: RelayService,
     private dataService: DataService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private navigationService: NavigationService
   ) {
     // appState.title = 'Blockcore Notes';
     console.log('CONSTRUCTOR FOR APP!');
@@ -53,6 +56,26 @@ export class AppComponent {
         await this.initialize();
       }
     });
+  }
+
+  async onScroll(event: ScrollEvent) {
+    if (event.isReachingBottom) {
+      // console.log(`the user is reaching the bottom`);
+      this.navigationService.showMore();
+
+      // this.loading = true;
+      // setTimeout(async () => {
+
+      //   // await this.updateTransactions(this.link);
+      //   // this.loading = false;
+      // });
+    }
+    if (event.isReachingTop) {
+      // console.log(`the user is reaching the top`);
+    }
+    if (event.isWindowEvent) {
+      console.log(`This event is fired on Window not on an element.`);
+    }
   }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe('(max-width: 599px)').pipe(

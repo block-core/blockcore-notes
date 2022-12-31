@@ -65,6 +65,7 @@ import { NoteComponent } from './note/note.component';
 import { CircleStylePipe } from './shared/circle-style';
 import { ReplyListComponent } from './shared/reply-list/reply-list.component';
 import { ContentComponent } from './shared/content/content.component';
+import { ScrollDirective } from './shared/scroll.directive';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,8 @@ import { ContentComponent } from './shared/content/content.component';
     NotesComponent,
     NoteComponent,
     ReplyListComponent,
-    ContentComponent
+    ContentComponent,
+    ScrollDirective
   ],
   imports: [
     BrowserModule,

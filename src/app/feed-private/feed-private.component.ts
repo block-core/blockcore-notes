@@ -13,6 +13,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
+import { ScrollEvent } from '../shared/scroll.directive';
 
 interface DefaultProfile {
   pubkey: string;
@@ -270,9 +271,9 @@ export class FeedPrivateComponent {
   // }
 
   ngOnDestroy() {
-    // if (this.sub) {
-    //   this.sub.unsub();
-    // }
+    for (let i = 0; i < this.subscriptions.length; i++) {
+      this.subscriptions[i].unsubscribe();
+    }
   }
 
   feedChanged($event: any, type: string) {
@@ -326,9 +327,17 @@ export class FeedPrivateComponent {
     this.cd.detectChanges();
   }
 
+  subscriptions: Subscription[] = [];
+
   async ngOnInit() {
     this.appState.title = 'Following Notes';
     this.options.options.privateFeed = true;
+
+    this.subscriptions.push(
+      this.navigation.showMore$.subscribe(() => {
+        this.showMore();
+      })
+    );
 
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc

@@ -131,7 +131,7 @@
       </button>
     </mat-toolbar>
 
-    <div class="scrolling-content">
+    <div class="scrolling-content" appDetectScroll (onScroll)="onScroll($event)" [bottomOffset]="300" [topOffset]="300">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
