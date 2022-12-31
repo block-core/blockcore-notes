@@ -288,7 +288,10 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-page-header-middle {
-  flex: 1 2 auto;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 
 .profile-page-header-right {
