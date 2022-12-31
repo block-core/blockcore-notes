@@ -112,7 +112,7 @@ export class FeedPrivateComponent {
 
     const peopleCount = this.profileService.profiles.length;
 
-    options += `Viewing ${peopleCount} people`;
+    // options += `Viewing ${peopleCount} people`;
 
     // if (this.settings.options.hideSpam) {
     //   options += ' Spam: Filtered';

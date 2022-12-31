@@ -36,7 +36,7 @@ export class ConnectComponent {
       await this.relayService.appendRelays(relays);
 
       // Initiate connections against registered relays.
-      await this.relayService.connect();
+      this.relayService.connect();
 
       this.router.navigateByUrl('/');
     }

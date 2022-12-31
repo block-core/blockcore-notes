@@ -188,7 +188,7 @@ export class RelayService {
     private profileService: ProfileService,
     private circlesService: CirclesService
   ) {
-    console.log('FEED SERVICE CONSTRUCTOR!');
+    console.log('RELAY SERVICE CONSTRUCTOR!');
     this.#table = this.storage.table<NostrEventDocument>('events');
   }
 
@@ -505,7 +505,7 @@ export class RelayService {
     }
   }
 
-  async connect() {
+  connect() {
     for (var i = 0; i < this.relayStorage.items.length; i++) {
       const entry = this.relayStorage.items[i];
       this.openConnection(entry);

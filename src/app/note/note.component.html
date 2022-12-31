@@ -48,10 +48,11 @@
       <br /><span *ngIf="repliesTo(event) as replies" class="dimmed"
         >
         <span *ngIf="replies.length > 0">Replying to </span>
-        <span *ngFor="let pubkey of replies">
+        <app-reply-list [keys]="replies" ></app-reply-list>
+        <!-- <span *ngFor="let pubkey of replies">
           <a [routerLink]="['/p', pubkey]">{{ pubkey }}</a
           >,
-        </span>
+        </span> -->
       </span>
       <br />
     </div>

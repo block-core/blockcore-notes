@@ -1,0 +1,4 @@
+<span *ngFor="let profile of profiles; let i=index; let isLast=last">
+  <a class="reply-link" [routerLink]="['/p', profile.pubkey]">{{ profile.name }}</a
+  ><span *ngIf="!isLast">, </span>
+</span>
