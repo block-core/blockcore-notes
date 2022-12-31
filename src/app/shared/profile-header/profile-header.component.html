@@ -2,14 +2,14 @@
 
 <div class="event-header">
   <div class="icon">
-    <a [routerLink]="['/user', pubkey]">
+    <a [routerLink]="['/p', pubkey]">
       <img *ngIf="profile?.follow" class="profile-image-follow" [matTooltip]="tooltip" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath" />
       <img *ngIf="!profile?.follow" class="profile-image" matTooltipPosition="above" [src]="imagePath" />
       <!-- <app-profile-image [publicKey]="event.pubkey"></app-profile-image> -->
     </a>
   </div>
   <div class="name clickable">
-    <a [routerLink]="['/user', pubkey]">
+    <a [routerLink]="['/p', pubkey]">
       <span [class.muted]="muted" [matTooltip]="tooltipName" matTooltipPosition="above">{{ profileName }}</span>
       <!-- <span *ngIf="!tooltip" [matTooltip]="tooltipName">{{ profileName }}</span> -->
       <!-- <app-profile-name [publicKey]="pubkey"></app-profile-name> -->
