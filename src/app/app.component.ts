@@ -18,6 +18,7 @@ import { DataService } from './services/data.service';
 import { ProfileService } from './services/profile.service';
 import { ScrollEvent } from './shared/scroll.directive';
 import { NavigationService } from './services/navigation.service';
+import { NostrProfileDocument } from './services/interfaces';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,8 @@ export class AppComponent {
   authenticated = false;
   bgimagePath = '/assets/profile-bg.png';
   profileimagePath = '/assets/profile.png';
+  profile: NostrProfileDocument | undefined;
+
   constructor(
     public appState: ApplicationState,
     private storage: StorageService,
@@ -44,7 +47,7 @@ export class AppComponent {
     private feedService: FeedService,
     private relayService: RelayService,
     private dataService: DataService,
-    private profileService: ProfileService,
+    public profileService: ProfileService,
     private navigationService: NavigationService
   ) {
     // appState.title = 'Blockcore Notes';
@@ -54,6 +57,10 @@ export class AppComponent {
       if (this.authenticated) {
         await this.initialize();
       }
+    });
+
+    this.profileService.profile$.subscribe((profile) => {
+      this.profile = profile;
     });
   }
 
@@ -90,6 +97,15 @@ export class AppComponent {
     if (this.breakpointObserver.isMatched('(max-width: 599px)')) {
       this.drawer.toggle();
     }
+  }
+
+  openProfile() {
+    this.router.navigateByUrl('/profile');
+    this.toggleProfileMenu();
+  }
+
+  toggleProfileMenu() {
+    this.draweraccount.toggle();
   }
 
   /** Run initialize whenever user has been authenticated. */

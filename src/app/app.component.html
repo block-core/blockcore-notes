@@ -21,7 +21,7 @@
         <mat-icon>animation</mat-icon>
         <span>Circles</span>
       </a>
-    <mat-divider></mat-divider>
+      <mat-divider></mat-divider>
 
       <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>settings</mat-icon>
@@ -35,21 +35,20 @@
   </mat-sidenav>
 
   <mat-sidenav #draweraccount class="sidenav-right print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'" position="end">
- 
     <div class="container">
       <button class="close-sidenav-icon" mat-icon-button (click)="draweraccount.toggle()">
         <mat-icon>close</mat-icon>
       </button>
       <header>
-        <div class="bio">
+        <div class="bio" (click)="openProfile()">
           <img [src]="bgimagePath" alt="background" class="bg" />
           <div class="desc">
-            <h3>@Username</h3>
-            <p>about ...</p>
+            <h3>@{{ profile?.name }}</h3>
+            <p>{{ profile?.about }}</p>
           </div>
         </div>
         <div class="avatarcontainer">
-          <img [src]="profileimagePath" alt="avatar" class="avatar" />
+          <img [src]="profile?.picture" alt="avatar" class="avatar" />
         </div>
       </header>
       <div class="content">
@@ -63,11 +62,11 @@
     </div>
     <mat-divider></mat-divider>
     <mat-nav-list>
-      <a [routerLink]="['/profile']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+      <a [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>edit</mat-icon>
         <span>Edit profile</span>
       </a>
-      <a [routerLink]="['/logout']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+      <a [routerLink]="['/logout']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>logout</mat-icon>
         <span>Logout</span>
       </a>

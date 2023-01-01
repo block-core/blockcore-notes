@@ -3,6 +3,7 @@ import { NostrProfile, NostrProfileDocument } from './interfaces';
 import { StorageService } from './storage.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as moment from 'moment';
+import { ApplicationState } from './applicationstate.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,19 @@ export class ProfileService {
   private table;
 
   initialized = false;
+
+  // #profile: NostrProfileDocument;
+
+  #profileChanged: BehaviorSubject<NostrProfileDocument | undefined> = new BehaviorSubject<NostrProfileDocument | undefined>(undefined);
+
+  /** Profile of the authenticated user. */
+  get profile$(): Observable<NostrProfileDocument | undefined> {
+    return this.#profileChanged.asObservable();
+  }
+
+  userProfileUpdated(profile: NostrProfileDocument | undefined) {
+    this.#profileChanged.next(profile);
+  }
 
   /** TODO: Destroy this array when there are zero subscribers left. */
   profiles: NostrProfileDocument[] = [];
@@ -54,7 +68,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private storage: StorageService) {
+  constructor(private storage: StorageService, private appState: ApplicationState) {
     this.table = this.storage.table<NostrProfileDocument>('profile');
   }
 
@@ -104,9 +118,13 @@ export class ProfileService {
 
   /** Populate the observable with profiles which we are following. */
   async populate() {
-    this.profiles = await this.followList();
+    // Get follow-list + self if available.
+    this.profiles = await this.followList(this.appState.getPublicKey());
     this.initialized = true;
     this.#updated();
+
+    const profile = this.profiles.find((p) => p.pubkey === this.appState.getPublicKey());
+    this.userProfileUpdated(profile);
   }
 
   private async filter(predicate: (value: NostrProfileDocument, key: string) => boolean): Promise<NostrProfileDocument[]> {
@@ -123,8 +141,12 @@ export class ProfileService {
     return items;
   }
 
-  async followList() {
-    return this.filter((value, key) => value.follow == true);
+  async followList(includePubKey?: string) {
+    if (includePubKey) {
+      return this.filter((value, key) => value.follow == true || value.pubkey == includePubKey);
+    } else {
+      return this.filter((value, key) => value.follow == true);
+    }
   }
 
   async publicList() {
@@ -321,6 +343,12 @@ export class ProfileService {
     profile!.retrieved = now;
 
     await this.putProfile(pubkey, profile);
+
+    // If the profile that was written was our own, trigger the observable for it.
+    if (this.appState.getPublicKey() === pubkey) {
+      debugger;
+      this.userProfileUpdated(profile);
+    }
   }
 
   async updateProfileValue(pubkey: string, predicate: (value: NostrProfileDocument, key: string) => NostrProfileDocument): Promise<void> {
