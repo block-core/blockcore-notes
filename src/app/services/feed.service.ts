@@ -735,7 +735,6 @@ export class FeedService {
       const sub = relay.sub([{ kinds: [3], authors: [pubkey] }], {}) as NostrSubscription;
 
       sub.on('event', (originalEvent: any) => {
-        debugger;
         // console.log('downloadFromRelayIndex: event', id);
         const event = this.eventService.processContacts(originalEvent);
         // console.log('downloadFromRelayIndex: event', event);
@@ -752,7 +751,6 @@ export class FeedService {
       });
 
       sub.on('eose', () => {
-        debugger;
         // If we did not find the data, we must finish.
         if (!finished) {
           observer.complete();

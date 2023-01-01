@@ -22,7 +22,6 @@ export class FeedPublicComponent {
 
   constructor(
     public appState: ApplicationState,
-    private cd: ChangeDetectorRef,
     public options: OptionsService,
     private notesService: NotesService,
     public profile: ProfileService,
@@ -30,6 +29,7 @@ export class FeedPublicComponent {
     private utilities: Utilities,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
+    private cd: ChangeDetectorRef,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?

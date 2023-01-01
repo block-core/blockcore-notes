@@ -11,7 +11,7 @@
     </mat-form-field>
   </p> -->
 
-  <!-- <mat-accordion class="options">
+  <mat-accordion class="options">
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>Options</mat-panel-title>
@@ -22,7 +22,7 @@
         <mat-slide-toggle class="options-slider" [(ngModel)]="showCached" (change)="optionsUpdated($event, 2)">Show cached</mat-slide-toggle>
       </p>
     </mat-expansion-panel>
-  </mat-accordion> -->
+  </mat-accordion>
 
   <div class="centered" style="width: 100%" *ngIf="loading">
     <br />
@@ -41,9 +41,9 @@
     <div class="events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of profiles; trackBy: trackByFn">
       <app-profile-actions [profile]="profile"></app-profile-actions>
       <app-profile-header [profile]="profile"><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-profile-header>
-      <span class="content clickable">
+      <div class="content clickable">
         {{ profile.about }}
-      </span>
+      </div>
     </div>
   </div>
 

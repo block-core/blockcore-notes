@@ -17,7 +17,7 @@
     <span>Remove from Notes</span>
   </button>
 
-  <button mat-menu-item (click)="follow()" *ngIf="!profile?.follow">
+  <button mat-menu-item (click)="follow()" *ngIf="!profile?.follow && profile?.block != true">
     <mat-icon>person_add</mat-icon>
     <span>Follow</span>
   </button>
@@ -27,7 +27,7 @@
     <span>Unfollow</span>
   </button>
 
-  <button mat-menu-item [matMenuTriggerFor]="categories">
+  <button mat-menu-item [matMenuTriggerFor]="categories" *ngIf="profile?.block != true">
     <mat-icon>supervised_user_circle</mat-icon>
     <span>Move to Circle</span>
   </button>
@@ -37,12 +37,12 @@
     <span>Copy</span>
   </button>
 
-  <button mat-menu-item (click)="unmute()" *ngIf="profile?.mute == true">
+  <button mat-menu-item (click)="unmute()" *ngIf="profile?.mute == true && profile?.block != true">
     <mat-icon>do_not_disturb_off</mat-icon>
     <span>Unmute</span>
   </button>
 
-  <button mat-menu-item (click)="mute()" *ngIf="!profile?.mute">
+  <button mat-menu-item (click)="mute()" *ngIf="!profile?.mute && profile?.block != true">
     <mat-icon>do_not_disturb_on</mat-icon>
     <span>Mute</span>
   </button>

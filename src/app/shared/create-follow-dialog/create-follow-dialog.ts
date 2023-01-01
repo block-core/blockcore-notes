@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface FollowDialogData {
-  note: string;
+  pubkey: string;
 }
 
 @Component({
@@ -11,18 +11,10 @@ export interface FollowDialogData {
   styleUrls: ['create-follow-dialog.scss'],
 })
 export class FollowDialog {
-  constructor(public dialogRef: MatDialogRef<FollowDialogData>, @Inject(MAT_DIALOG_DATA) public data: FollowDialogData) {
-    this.data.note = '';
-  }
+  constructor(public dialogRef: MatDialogRef<FollowDialogData>, @Inject(MAT_DIALOG_DATA) public data: FollowDialogData) {}
 
   onNoClick(): void {
-    this.data.note = '';
+    this.data.pubkey = '';
     this.dialogRef.close();
-  }
-
-  public isEmojiPickerVisible: boolean | undefined;
-  public addEmoji(event: { emoji: { native: any } }) {
-    this.data.note = `${this.data.note}${event.emoji.native}`;
-    this.isEmojiPickerVisible = false;
   }
 }
