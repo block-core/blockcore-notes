@@ -297,7 +297,6 @@ mat-sidenav-content mat-toolbar {
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
-
 }
 
 .profile-page-header-right {
@@ -456,11 +455,18 @@ select {
   margin-top: 0.6em;
 }
 
+
+
+
 @media only screen and (max-width: 599px) {
   .full-width-dialog {
     max-width: 100vw !important;
     height: 100%;
     width: 100%;
     min-width: 0;
+  }
+
+  .hide-small {
+    display: none !important;
   }
 }
