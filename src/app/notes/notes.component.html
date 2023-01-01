@@ -8,18 +8,19 @@
       >Posted: <span class="event-date">{{ note.created_at | ago }}</span
       >, Saved: <span class="event-date">{{ note.saved | ago }}</span>
     </app-profile-header>
-    <div class="content">
+    <app-content [event]="note"></app-content>
+    <!-- <div class="content">
       {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
       <div *ngIf="details">
         <br />
         <span *ngFor="let tag of note.tags" class="dimmed">TAG: {{ tag }}</span>
       </div>
-    </div>
-    <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+    </div> -->
+    <!-- <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
       <mat-icon class="expand-button-icon">expand_more</mat-icon>
     </button>
     <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
       <mat-icon class="expand-button-icon">expand_less</mat-icon>
-    </button>
+    </button> -->
   </div>
 </div>
