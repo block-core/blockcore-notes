@@ -1,32 +1,4 @@
-<div class="profile-page">
-  <div class="profile-page-header" *ngIf="profile">
-    <div class="profile-page-header-left">
-      <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" [src]="imagePath" />
-      <img *ngIf="!profile?.follow" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
-    </div>
-    <div class="profile-page-header-middle">
-      <span *ngIf="profile">
-        <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">{{ profile.display_name }}</h2>
-        <br />
-        <span>
-          <span class="dimmed"
-            >{{ profileName }}<span *ngIf="profile.nip05"> / {{ profile.nip05 }}</span></span
-          ><br />
-          <p class="wrap" *ngIf="profile.about">{{ profile.about }}</p>
-          <p *ngIf="profile.website">{{ profile.website }}</p>
-        </span>
-      </span>
-    </div>
-    <div class="profile-page-header-right">
-      <div class="profile-button-container" *ngIf="profile.lud06">
-        <a mat-mini-fab color="primary" [href]="sanitize('lightning:' + profile.lud06)">⚡️</a>
-      </div>
-      <div class="profile-button-container">
-        <app-profile-actions [fab]="true" [profile]="profile"></app-profile-actions>
-      </div>
-    </div>
-  </div>
-</div>
+<app-profile-header *ngIf="profile" [profile]="profile"></app-profile-header>
 
 <div class="page" *ngIf="profile && !profile?.follow">
   <p>Data is currently only loaded if you follow this user.</p>

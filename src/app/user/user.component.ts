@@ -12,7 +12,6 @@ import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
 import { CirclesService } from '../services/circles.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { map, Subscription } from 'rxjs';
 
@@ -56,7 +55,7 @@ export class UserComponent {
   subscriptions: Subscription[] = [];
 
   constructor(
-    private sanitizer: DomSanitizer,
+    
     public navigation: NavigationService,
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
@@ -131,11 +130,6 @@ export class UserComponent {
     this.profile!.follow = true;
     await this.profiles.follow(this.pubkey!);
     await this.feedService.downloadRecent([this.pubkey!]);
-  }
-
-  sanitize(url: string) {
-    const clean = this.sanitizer.bypassSecurityTrustUrl(url);
-    return clean;
   }
 
   tabIndex?: number;
