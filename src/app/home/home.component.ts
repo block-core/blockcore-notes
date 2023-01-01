@@ -178,7 +178,7 @@ export class HomeComponent {
         kind: 1,
         created_at: Math.floor(Date.now() / 1000),
         content: note,
-        pubkey: this.authService.authInfo$.getValue().publicKeyHex!,
+        pubkey: this.appState.getPublicKey(),
         tags: [],
       };
 

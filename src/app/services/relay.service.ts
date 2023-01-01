@@ -14,6 +14,7 @@ import { DataValidation } from './data-validation.service';
 import { OptionsService } from './options.service';
 import { RelayStorageService } from './relay.storage.service';
 import { AuthenticationService } from './authentication.service';
+import { ApplicationState } from './applicationstate.service';
 
 @Injectable({
   providedIn: 'root',
@@ -187,6 +188,7 @@ export class RelayService {
     private validator: DataValidation,
     private storage: StorageService,
     private profileService: ProfileService,
+    private appState: ApplicationState,
     private authService: AuthenticationService,
     private circlesService: CirclesService
   ) {
@@ -336,7 +338,7 @@ export class RelayService {
     });
 
     sub.on('eose', () => {
-      console.log('Initial load of people feed completed.');
+      // console.log('Initial load of people feed completed.');
       sub.loading = false;
     });
   }
@@ -376,7 +378,7 @@ export class RelayService {
     });
 
     sub.on('eose', () => {
-      console.log('Initial load of people feed completed.');
+      // console.log('Initial load of people feed completed.');
       sub.loading = false;
       sub.unsub();
     });
@@ -531,7 +533,7 @@ export class RelayService {
     const relay = relayInit(server.id) as NostrRelay;
 
     relay.on('connect', () => {
-      console.log(`connected to ${relay?.url}`);
+      // console.log(`connected to ${relay?.url}`);
       onConnected(relay);
       //this.onConnected(relay);
     });
@@ -556,19 +558,12 @@ export class RelayService {
 
   openConnection(server: NostrRelayDocument) {
     this.#connectToRelay(server, (relay: Relay) => {
-      console.log('Connected to:', relay);
+      console.log('Connected to:', relay.url);
 
       const authors = this.profileService.profiles.map((p) => p.pubkey);
 
-      // if (authors.length === 0) {
-      //   console.log('No profiles found. Skipping subscribing to any data.');
-      //   return;
-      // }
-
       // Append ourself to the authors list so we receive everything we publish to any relay.
-      authors.push(this.authService.authInfo$.getValue().publicKeyHex!);
-
-      console.log('LISTENTING TO FOLLOWING:', authors);
+      authors.push(this.appState.getPublicKey());
 
       const backInTime = moment().subtract(120, 'minutes').unix();
 
@@ -591,7 +586,7 @@ export class RelayService {
       });
 
       sub.on('eose', () => {
-        console.log('Initial load of people feed completed.');
+        // console.log('Initial load of people feed completed.');
         sub.loading = false;
       });
     });

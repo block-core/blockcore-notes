@@ -20,8 +20,8 @@ export class ApplicationState {
     );
   }
 
-  getPublicKey() {
-    return this.authService.authInfo$.getValue().publicKeyHex;
+  getPublicKey(): string {
+    return this.authService.authInfo$.getValue().publicKeyHex!;
   }
 
   title = 'Blockcore Notes';

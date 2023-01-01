@@ -15,6 +15,7 @@ import { OptionsService } from './options.service';
 import { RelayService } from './relay.service';
 import { RelayStorageService } from './relay.storage.service';
 import { AuthenticationService } from './authentication.service';
+import { ApplicationState } from './applicationstate.service';
 
 @Injectable({
   providedIn: 'root',
@@ -134,6 +135,7 @@ export class FeedService {
     private eventService: EventService,
     private validator: DataValidation,
     private authService: AuthenticationService,
+    private appState: ApplicationState,
     private storage: StorageService,
     private profileService: ProfileService,
     private circlesService: CirclesService
@@ -504,7 +506,7 @@ export class FeedService {
     });
 
     sub.on('eose', () => {
-      console.log('Initial load of people feed completed.');
+      // console.log('Initial load of people feed completed.');
       sub.loading = false;
     });
   }
@@ -555,7 +557,7 @@ export class FeedService {
     });
 
     sub.on('eose', () => {
-      console.log('Initial load of people feed completed.');
+      // console.log('Initial load of people feed completed.');
       sub.loading = false;
       sub.unsub();
     });
@@ -773,7 +775,7 @@ export class FeedService {
       kind: 3,
       created_at: Math.floor(Date.now() / 1000),
       content: '',
-      pubkey: this.authService.authInfo$.getValue().publicKeyHex!,
+      pubkey: this.appState.getPublicKey(),
       tags: mappedContacts,
     };
 

@@ -15,6 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from '../services/authentication.service';
 import { FeedService } from '../services/feed.service';
 import { copyToClipboard } from '../shared/utilities';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-circles',
@@ -39,12 +40,12 @@ export class CirclesComponent {
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private ngZone: NgZone
-  ) {}
+  ) {
+    console.log('CIRCLE CTOR!');
+  }
 
   ngOnDestroy() {
-    // if (this.sub) {
-    //   this.sub.unsub();
-    // }
+    this.utilities.unsubscribe(this.subscriptions);
   }
 
   circles: Circle[] = [];
@@ -64,6 +65,8 @@ export class CirclesComponent {
   countMembers(circle: Circle) {
     return this.getFollowingInCircle(circle).length;
   }
+
+  subscriptions: Subscription[] = [];
 
   async importFollowList() {
     const dialogRef = this.dialog.open(ImportFollowDialog, {
@@ -90,29 +93,31 @@ export class CirclesComponent {
       // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
       // follow lists and having to process everything multiple times. Just query one by one until
       // we find the list. Until then, we simply grab the first relay only.
-      this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-        console.log('DOWNLOAD COMPLETE!', contacts);
+      this.subscriptions.push(
+        this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
+          console.log('DOWNLOAD COMPLETE!', contacts);
 
-        const publicKeys = contacts.tags.map((t) => t[1]);
+          const publicKeys = contacts.tags.map((t) => t[1]);
 
-        for (let i = 0; i < publicKeys.length; i++) {
-          const publicKey = publicKeys[i];
-          const profile = await this.profile.getProfile(publicKey);
+          for (let i = 0; i < publicKeys.length; i++) {
+            const publicKey = publicKeys[i];
+            const profile = await this.profile.getProfile(publicKey);
 
-          // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-          if (profile) {
-            await this.profile.follow(publicKeys[i], profile.circle);
-          } else {
-            await this.profile.follow(publicKeys[i]);
+            // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+            if (profile) {
+              await this.profile.follow(publicKeys[i], profile.circle);
+            } else {
+              await this.profile.follow(publicKeys[i]);
+            }
           }
-        }
 
-        await this.load();
+          await this.load();
 
-        this.ngZone.run(() => {
-          this.cd.detectChanges();
-        });
-      });
+          this.ngZone.run(() => {
+            this.cd.detectChanges();
+          });
+        })
+      );
 
       // if (pubkey.startsWith('npub')) {
       //   pubkey = this.utilities.arrayToHex(this.utilities.convertFromBech32(pubkey));
@@ -201,44 +206,5 @@ export class CirclesComponent {
     ];
 
     await this.load();
-
-    // if (this.relay) {
-    //   return;
-    // }
-    // // const relay = relayInit('wss://relay.nostr.info');
-    // this.relay = relayInit('wss://relay.damus.io');
-    // this.relay.on('connect', () => {
-    //   console.log(`connected to ${this.relay.url}`);
-    //   this.onConnected(this.relay);
-    // });
-    // this.relay.on('disconnect', () => {
-    //   console.log(`DISCONNECTED! ${this.relay.url}`);
-    // });
-    // this.relay.on('notice', () => {
-    //   console.log(`NOTICE FROM ${this.relay.url}`);
-    // });
-    // this.relay.connect();
-    // sub.on('eose', () => {
-    //   sub.unsub();
-    // });
   }
-
-  // about
-  // display_name
-  // name
-  // pubkey
-  // async search() {
-  //   const text: string = this.searchTerm;
-
-  //   if (text == 'undefined' || text == null || text == '') {
-  //     this.loading = true;
-  //     this.profiles = await this.profile.followList();
-  //     this.loading = false;
-  //   } else {
-  //     this.loading = true;
-  //     const allprofiles = await this.profile.followList();
-  //     this.profiles = allprofiles.filter((item: any) => item.name === text || item.display_name === text || item.about === text || item.pubkey === text);
-  //     this.loading = false;
-  //   }
-  // }
 }
