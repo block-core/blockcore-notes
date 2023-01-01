@@ -8,13 +8,13 @@ import { OptionsService } from './options.service';
   providedIn: 'root',
 })
 export class DataValidation {
-  contentLimit = 1024;
+  contentLimit = 16384;
   tagsLimit = 10;
 
-  profileLimit = 2048;
+  profileLimit = 16384;
   profileTagsLimit = 10;
 
-  contactsContentLimit = 2048;
+  contactsContentLimit = 16384;
 
   constructor(private options: OptionsService) {}
 
