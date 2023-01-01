@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
-import { relayInit, Relay } from 'nostr-tools';
+import { relayInit, Relay, Event } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
@@ -14,6 +14,8 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { OptionsService } from '../services/options.service';
+import { FeedService } from '../services/feed.service';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'app-home',
@@ -29,9 +31,11 @@ export class HomeComponent {
     public dialog: MatDialog,
     public profile: ProfileService,
     private validator: DataValidation,
+    private authService: AuthenticationService,
     private utilities: Utilities,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
+    private feedService: FeedService,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
@@ -159,17 +163,26 @@ export class HomeComponent {
   //   await this.load();
   // }
 
-  note: any;
-
   createNote(): void {
     const dialogRef = this.dialog.open(NoteDialog, {
-      data: { name: this.note },
+      data: {},
       maxWidth: '100vw',
       panelClass: 'full-width-dialog',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      this.note = result;
+    dialogRef.afterClosed().subscribe(async (data) => {
+      console.log('dialog data:', data);
+      let note = data.note;
+
+      let event: Event = {
+        kind: 1,
+        created_at: Math.floor(Date.now() / 1000),
+        content: note,
+        pubkey: this.authService.authInfo$.getValue().publicKeyHex!,
+        tags: [],
+      };
+
+      await this.feedService.publish(event);
     });
   }
 

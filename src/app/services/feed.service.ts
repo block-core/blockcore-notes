@@ -3,7 +3,7 @@ import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Cir
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
 import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
-import { Relay, relayInit, Sub } from 'nostr-tools';
+import { Relay, relayInit, Sub, Event, getEventHash, validateEvent, verifySignature } from 'nostr-tools';
 import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
@@ -250,10 +250,10 @@ export class FeedService {
   //   );
   // }
 
-  getEvent(id: string): Observable<NostrEventDocument> {
-    const subject = new Subject<NostrEventDocument>();
-    return subject.asObservable();
-  }
+  // getEvent(id: string): Observable<NostrEventDocument> {
+  //   const subject = new Subject<NostrEventDocument>();
+  //   return subject.asObservable();
+  // }
 
   // downloadFromRelayIndex(id: string, index: number, relayCount: number): Observable<NostrEventDocument> {
   downloadFromRelay(query: any, relay: NostrRelay): Observable<NostrEventDocument[]> {
@@ -665,6 +665,56 @@ export class FeedService {
   //   });
   // }
 
+  async publish(originalEvent: Event) {
+    originalEvent.id = getEventHash(originalEvent);
+
+    const gt = globalThis as any;
+
+    // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
+    const signedEvent = await gt.nostr.signEvent(originalEvent);
+    originalEvent = signedEvent;
+
+    // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
+    // We must do this before we run nostr-tools validate and signature validation.
+    const event = this.eventService.processEvent(originalEvent as NostrEventDocument);
+
+    let ok = validateEvent(originalEvent);
+
+    if (!ok) {
+      throw new Error('The event is not valid. Cannot publish.');
+    }
+
+    let veryOk = await verifySignature(originalEvent as any); // Required .id and .sig, which we know has been added at this stage.
+
+    if (!veryOk) {
+      throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
+    }
+
+    if (!event) {
+      return;
+    }
+
+    console.log('PUBLISH EVENT:', originalEvent);
+
+    // First we persist our own event like would normally happen if we receive this event.
+    await this.#persist(event);
+
+    for (let i = 0; i < this.relayService.relays.length; i++) {
+      const relay = this.relayService.relays[i];
+
+      let pub = relay.publish(event);
+      pub.on('ok', () => {
+        console.log(`${relay.url} has accepted our event`);
+      });
+      pub.on('seen', () => {
+        console.log(`we saw the event on ${relay.url}`);
+      });
+      pub.on('failed', (reason: any) => {
+        console.log(`failed to publish to ${relay.url}: ${reason}`);
+      });
+    }
+  }
+
   async initialize() {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {
@@ -684,7 +734,7 @@ export class FeedService {
     // Load all persisted events. This will of course be too many as user get more and more... so
     // this must be changed into a filter ASAP. Two filters are needed: "Current View" which allows scrolling back in time,
     // and an initial load which should likely just return top 100?
-    this.events = await this.followEvents(200);
+    this.events = await this.followEvents(500);
 
     this.#eventsUpdated();
 

@@ -13,6 +13,7 @@ import { EventService } from './event.service';
 import { DataValidation } from './data-validation.service';
 import { OptionsService } from './options.service';
 import { RelayStorageService } from './relay.storage.service';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root',
@@ -186,6 +187,7 @@ export class RelayService {
     private validator: DataValidation,
     private storage: StorageService,
     private profileService: ProfileService,
+    private authService: AuthenticationService,
     private circlesService: CirclesService
   ) {
     console.log('RELAY SERVICE CONSTRUCTOR!');
@@ -558,10 +560,15 @@ export class RelayService {
 
       const authors = this.profileService.profiles.map((p) => p.pubkey);
 
-      if (authors.length === 0) {
-        console.log('No profiles found. Skipping subscribing to any data.');
-        return;
-      }
+      // if (authors.length === 0) {
+      //   console.log('No profiles found. Skipping subscribing to any data.');
+      //   return;
+      // }
+
+      // Append ourself to the authors list so we receive everything we publish to any relay.
+      authors.push(this.authService.authInfo$.getValue().publicKeyHex!);
+
+      console.log('LISTENTING TO FOLLOWING:', authors);
 
       const backInTime = moment().subtract(120, 'minutes').unix();
 
@@ -596,28 +603,21 @@ export class RelayService {
     //   if (!pubkey) {
     //     return;
     //   }
-
     //   await this.downloadProfile(pubkey);
     // });
-
     // // TODO: Use rxjs to trigger the queue to process and then complete, don't do this setInterval.
     // this.scheduleProfileDownload();
-
     // Populate the profile observable.
     // await this.profileService.populate();
-
     // Load all persisted events. This will of course be too many as user get more and more... so
     // this must be changed into a filter ASAP. Two filters are needed: "Current View" which allows scrolling back in time,
     // and an initial load which should likely just return top 100?
     // this.events = await this.followEvents(50);
-
     // this.#updated();
-
     // Every time profiles are updated, we must change our profile subscription.
     // this.profileService.profiles$.subscribe((profiles) => {
     //   console.log('Profiles changed:', profiles);
     // });
-
     // this.openConnection('wss://relay.damus.io');
     // this.openConnection('wss://nostr-pub.wellorder.net');
   }

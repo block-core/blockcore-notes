@@ -11,5 +11,5 @@
 <div mat-dialog-actions class="mat-dialog-actions" align="end">
   <mat-icon (click)="toggleSize()" class="hide-small maximize-button" matTooltip="Maximize the window">zoom_out_map</mat-icon>
   <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-  <button mat-flat-button [mat-dialog-close]="data.note" color="primary" cdkFocusInitial>Send</button>
+  <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Post</button>
 </div>
