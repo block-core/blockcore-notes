@@ -103,6 +103,9 @@ export interface NostrProfileDocument extends NostrProfile {
   /** Timestamp when user started following. */
   followed?: number;
 
+  /** Timestamp when last retrieved. */
+  retrieved?: number;
+
   /** Indicates if the user is following this profile. If not, then the profile can be wiped during cache cleanup. */
   follow?: boolean;
 

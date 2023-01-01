@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { NostrProfile, NostrProfileDocument } from './interfaces';
 import { StorageService } from './storage.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -176,8 +177,19 @@ export class ProfileService {
     // Put profile since we already got it in the beginning.
     await this.putProfile(pubkey, profile);
 
-    // Always refresh the profile when adding a follow on a user.
-    await this.downloadProfile(pubkey);
+    if (!profile.retrieved) {
+      await this.downloadProfile(pubkey);
+    } else {
+      const now = moment();
+      const date = moment.unix(profile.retrieved);
+      var hours = now.diff(date, 'hours');
+
+      // If it is more than 12 hours since we got the profile and user changed follow/unfollow/circle, we'll
+      // go grab new data if available.
+      if (hours > 12) {
+        await this.downloadProfile(pubkey);
+      }
+    }
   }
 
   async follow(pubkey: string, circle?: string, existingProfile?: NostrProfileDocument) {
@@ -299,6 +311,7 @@ export class ProfileService {
     }
 
     profile!.modified = now;
+    profile!.retrieved = now;
 
     await this.putProfile(pubkey, profile);
   }

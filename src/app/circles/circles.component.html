@@ -7,7 +7,7 @@
     <div class="circle-item">
       {{ circle.name }}<br />
       <span class="dimmed"
-        ><span *ngIf="circle.public">Count: {{ countMembers(circle) }}</span></span
+        ><span>Count: {{ countMembers(circle) }}</span></span
       ><br />
       <span class="dimmed"><span *ngIf="circle.public">Public</span> <span *ngIf="!circle.public">Private</span> - {{ circle.style | circlestyle }} - Created: {{ circle.created | ago }}</span>
     </div>
@@ -42,7 +42,7 @@
 
   <p class="circle-actions">
     <button mat-stroked-button (click)="importFollowList()">Import Following List</button>
-    <!-- <button mat-stroked-button (click)="publishFollowList()">Publish Follow List</button> -->
+    <button mat-stroked-button (click)="publishFollowList()">Publish Follow List</button>
   </p>
 
   <p class="dimmed">Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>

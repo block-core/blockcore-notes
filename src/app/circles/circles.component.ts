@@ -81,7 +81,7 @@ export class CirclesComponent {
       }
 
       this.snackBar.open('Importing followers process has started', 'Hide', {
-        duration: 2500,
+        duration: 2000,
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
       });
@@ -129,7 +129,7 @@ export class CirclesComponent {
 
   getFollowingInCircle(circle: Circle) {
     if (circle.id == null || circle.id == '') {
-      return this.following.filter((f) => f.circle == null);
+      return this.following.filter((f) => f.circle == null || f.circle == '');
     } else {
       return this.following.filter((f) => f.circle == circle.id);
     }
@@ -152,11 +152,39 @@ export class CirclesComponent {
     return pubkeys;
   }
 
+  private getPublicPublicKeys() {
+    console.log(this.circles);
+    console.log(this.following);
+
+    const items: string[] = [];
+
+    for (let i = 0; i < this.circles.length; i++) {
+      const circle = this.circles[i];
+
+      if (circle.public) {
+        const profiles = this.getFollowingInCircle(circle);
+        const pubkeys = profiles.map((p) => p.pubkey);
+        items.push(...pubkeys);
+      }
+    }
+
+    return items;
+  }
+
   getNpub(hex: string) {
     return this.utilities.getNostrIdentifier(hex);
   }
 
-  publishFollowList() {}
+  publishFollowList() {
+    const publicPublicKeys = this.getPublicPublicKeys();
+    console.log('publicPublicKeys:', publicPublicKeys);
+
+    this.snackBar.open(`A total of ${publicPublicKeys.length} was added to your public following list`, 'Hide', {
+      duration: 2000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
+  }
 
   createCircle(): void {
     const dialogRef = this.dialog.open(CircleDialog, {
@@ -180,6 +208,7 @@ export class CirclesComponent {
   }
 
   async ngOnInit() {
+    console.log('CIRCLE NG ON INIT!');
     this.appState.title = 'Circles';
     this.appState.showBackButton = true;
     this.appState.actions = [
