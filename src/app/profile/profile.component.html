@@ -47,82 +47,74 @@
   </span> -->
 </div>
 
-
-
 <mat-tab-group>
-
-  <mat-tab label="public profile">
+  <mat-tab label="Profile">
     <div class="page">
-      <form class="profile-form" [formGroup]="profileForm">
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar class="header-image"></div>
+          <mat-card-title>Profile</mat-card-title>
+          <mat-card-subtitle>public meta data</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>alternate_email</mat-icon>
+              <mat-label>Name</mat-label>
+              <input matInput type="text" [(ngModel)]="profileName" autocomplete="off" />
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>help_outline</mat-icon>
+              <mat-label>About</mat-label>
+              <textarea matInput type="text" [(ngModel)]="about" autocomplete="off" rows="3"></textarea>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>image</mat-icon>
+              <mat-label>Image</mat-label>
+              <input matInput type="text" [(ngModel)]="imagePath" autocomplete="off" />
+            </mat-form-field>
+          </p>
 
-        <mat-card>
-          <mat-card-header>
-            <div mat-card-avatar class="header-image"></div>
-            <mat-card-title>Edit Profile</mat-card-title>
-            <mat-card-subtitle>public profile</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>
-              <mat-form-field appearance="fill" class="input-full-width">
-                <mat-icon matPrefix>alternate_email</mat-icon>
-                <mat-label>Name</mat-label>
-                <input matInput type="text" autocomplete="off" />
-              </mat-form-field>
-            </p>
-            <p>
-              <mat-form-field appearance="fill" class="input-full-width">
-                <mat-icon matPrefix>help_outline</mat-icon>
-                <mat-label>About</mat-label>
-                <textarea matInput type="text" autocomplete="off" rows="3"></textarea>
-              </mat-form-field>
-            </p>
-            <p>
-              <mat-form-field appearance="fill" class="input-full-width">
-                <mat-icon matPrefix>image</mat-icon>
-                <mat-label>Image</mat-label>
-                <input matInput type="text" autocomplete="off" />
-              </mat-form-field>
-            </p>
-
-          </mat-card-content>
-          <mat-card-footer align="end">
-            <button mat-raised-button color="primary">Save</button>
-          </mat-card-footer>
-        </mat-card>
-      </form>
+        </mat-card-content>
+        <mat-card-footer align="end">
+          <button mat-raised-button color="primary" (click)="updateMetadata()">Save</button>
+        </mat-card-footer>
+      </mat-card>
     </div>
   </mat-tab>
 
-  <mat-tab label="public key & provate key">
+  <mat-tab label="Public key">
     <div class="page">
-      <form class="profile-form" [formGroup]="profileForm">
-        <mat-card>
-          <mat-card-header>
-            <div mat-card-avatar class="header-image"></div>
-            <mat-card-title>Edit Profile</mat-card-title>
-            <mat-card-subtitle>public key & provate key</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>
-              <mat-form-field appearance="fill" class="input-full-width">
-                <mat-icon matPrefix>key</mat-icon>
-                <mat-label>Public key</mat-label>
-                <input matInput type="text" autocomplete="off" />
-              </mat-form-field>
-            </p>
-            <p>
-              <mat-form-field appearance="fill" class="input-full-width">
-                <mat-icon matPrefix>key_off</mat-icon>
-                <mat-label>Private key</mat-label>
-                <input matInput type="text" autocomplete="off" />
-              </mat-form-field>
-            </p>
-          </mat-card-content>
-          <mat-card-footer align="end">
-            <button mat-raised-button color="primary">Save</button>
-          </mat-card-footer>
-        </mat-card>
-      </form>
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar class="header-image"></div>
+          <mat-card-title>Public key</mat-card-title>
+          <mat-card-subtitle>private data in localstorage</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>key</mat-icon>
+              <mat-label>Public key</mat-label>
+              <input matInput type="text" autocomplete="off" />
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>key_off</mat-icon>
+              <mat-label>Private key</mat-label>
+              <input matInput type="text" autocomplete="off" />
+            </mat-form-field>
+          </p>
+        </mat-card-content>
+        <mat-card-footer align="end">
+          <button mat-raised-button color="primary">Save</button>
+        </mat-card-footer>
+      </mat-card>
     </div>
   </mat-tab>
 
