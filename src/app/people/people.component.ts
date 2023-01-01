@@ -11,7 +11,7 @@ import { StorageService } from '../services/storage.service';
 import { map, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
-import { FollowDialog } from '../shared/create-follow-dialog/create-follow-dialog';
+import { FollowDialog, FollowDialogData } from '../shared/create-follow-dialog/create-follow-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FeedService } from '../services/feed.service';
 import { NavigationService } from '../services/navigation.service';
@@ -116,34 +116,41 @@ export class PeopleComponent {
     }
   }
 
+  async addFollow(pubkey: string) {
+    if (pubkey.startsWith('nsec')) {
+      let sb = this.snackBar.open('This is a private key, not a public key.', 'Hide', {
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
+      return;
+    }
+
+    pubkey = this.utilities.ensureHexIdentifier(pubkey);
+
+    await this.profileService.follow(pubkey);
+    await this.feedService.downloadRecent([pubkey]);
+  }
+
   createFollow(): void {
     const dialogRef = this.dialog.open(FollowDialog, {
-      data: { name: '' },
+      data: {},
       maxWidth: '100vw',
       panelClass: 'full-width-dialog',
     });
 
-    dialogRef.afterClosed().subscribe(async (result: string) => {
-      if (!result) {
+    dialogRef.afterClosed().subscribe(async (data: FollowDialogData) => {
+      if (!data) {
         return;
       }
 
-      if (result.startsWith('nsec')) {
-        let sb = this.snackBar.open('This is a private key, not a public key.', 'Hide', {
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        });
-        return;
+      let pubkey = data.pubkey;
+
+      pubkey = pubkey.replaceAll('[', '').replaceAll(']', '').replaceAll('"', '');
+      const pubkeys = pubkey.split(',');
+
+      for (let i = 0; i < pubkeys.length; i++) {
+        await this.addFollow(pubkeys[i]);
       }
-
-      let pubkey = result;
-
-      if (pubkey.startsWith('npub')) {
-        pubkey = this.utilities.arrayToHex(this.utilities.convertFromBech32(pubkey));
-      }
-
-      await this.profileService.follow(pubkey);
-      await this.feedService.downloadRecent([pubkey]);
     });
   }
 }

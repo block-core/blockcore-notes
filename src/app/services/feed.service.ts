@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription, NostrRelay } from './interfaces';
+import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription, NostrRelay, Contact } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
 import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
@@ -14,6 +14,8 @@ import { DataValidation } from './data-validation.service';
 import { OptionsService } from './options.service';
 import { RelayService } from './relay.service';
 import { RelayStorageService } from './relay.storage.service';
+import { AuthenticationService } from './authentication.service';
+import { ApplicationState } from './applicationstate.service';
 
 @Injectable({
   providedIn: 'root',
@@ -132,11 +134,12 @@ export class FeedService {
     private relayService: RelayService,
     private eventService: EventService,
     private validator: DataValidation,
+    private authService: AuthenticationService,
+    private appState: ApplicationState,
     private storage: StorageService,
     private profileService: ProfileService,
     private circlesService: CirclesService
   ) {
-    console.log('FEED SERVICE CONSTRUCTOR!');
     this.#table = this.storage.table<NostrEventDocument>('events');
   }
 
@@ -318,6 +321,8 @@ export class FeedService {
     //const relay = this.relayService.relays[index];
     //console.log('downloadFromRelayIndex:', id, index, relayCount);
 
+    let finished = false;
+
     const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([query], {}) as NostrSubscription;
 
@@ -330,12 +335,18 @@ export class FeedService {
           return;
         }
 
+        finished = true;
+
         observer.next(event);
         observer.complete();
         // sub.unsub();
       });
 
       sub.on('eose', () => {
+        if (!finished) {
+          observer.complete();
+        }
+
         // console.log('downloadFromRelayIndex: eose', id);
         // observer.complete();
         sub.unsub();
@@ -494,7 +505,7 @@ export class FeedService {
     });
 
     sub.on('eose', () => {
-      console.log('Initial load of people feed completed.');
+      // console.log('Initial load of people feed completed.');
       sub.loading = false;
     });
   }
@@ -545,7 +556,7 @@ export class FeedService {
     });
 
     sub.on('eose', () => {
-      console.log('Initial load of people feed completed.');
+      // console.log('Initial load of people feed completed.');
       sub.loading = false;
       sub.unsub();
     });
@@ -713,6 +724,107 @@ export class FeedService {
         console.log(`failed to publish to ${relay.url}: ${reason}`);
       });
     }
+  }
+
+  downloadContacts(pubkey: string) {
+    //const relay = this.relayService.relays[index];
+    //console.log('downloadFromRelayIndex:', id, index, relayCount);
+    const relay = this.relayService.relays[0];
+    let finished = false;
+
+    const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
+      const sub = relay.sub([{ kinds: [3], authors: [pubkey] }], {}) as NostrSubscription;
+
+      sub.on('event', (originalEvent: any) => {
+        // console.log('downloadFromRelayIndex: event', id);
+        const event = this.eventService.processContacts(originalEvent);
+        // console.log('downloadFromRelayIndex: event', event);
+
+        if (!event) {
+          return;
+        }
+
+        finished = true;
+
+        observer.next(event);
+        observer.complete();
+        // sub.unsub();
+      });
+
+      sub.on('eose', () => {
+        // If we did not find the data, we must finish.
+        if (!finished) {
+          observer.complete();
+        }
+        // console.log('downloadFromRelayIndex: eose', id);
+        // observer.complete();
+        sub.unsub();
+      });
+    });
+
+    return observable;
+  }
+
+  async publishContacts(contacts: Contact[]) {
+    const mappedContacts = contacts.map((c) => {
+      return ['p', c.pubkey];
+    });
+
+    let originalEvent: Event = {
+      kind: 3,
+      created_at: Math.floor(Date.now() / 1000),
+      content: '',
+      pubkey: this.appState.getPublicKey(),
+      tags: mappedContacts,
+    };
+
+    originalEvent.id = getEventHash(originalEvent);
+
+    const gt = globalThis as any;
+
+    // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
+    const signedEvent = await gt.nostr.signEvent(originalEvent);
+    originalEvent = signedEvent;
+
+    // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
+    // We must do this before we run nostr-tools validate and signature validation.
+    const event = this.eventService.processEvent(originalEvent as NostrEventDocument);
+
+    let ok = validateEvent(originalEvent);
+
+    if (!ok) {
+      throw new Error('The event is not valid. Cannot publish.');
+    }
+
+    let veryOk = await verifySignature(originalEvent as any); // Required .id and .sig, which we know has been added at this stage.
+
+    if (!veryOk) {
+      throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
+    }
+
+    if (!event) {
+      return;
+    }
+
+    console.log('PUBLISH EVENT:', originalEvent);
+
+    // First we persist our own event like would normally happen if we receive this event.
+    // await this.#persist(event);
+
+    // for (let i = 0; i < this.relayService.relays.length; i++) {
+    //   const relay = this.relayService.relays[i];
+
+    //   let pub = relay.publish(event);
+    //   pub.on('ok', () => {
+    //     console.log(`${relay.url} has accepted our event`);
+    //   });
+    //   pub.on('seen', () => {
+    //     console.log(`we saw the event on ${relay.url}`);
+    //   });
+    //   pub.on('failed', (reason: any) => {
+    //     console.log(`failed to publish to ${relay.url}: ${reason}`);
+    //   });
+    // }
   }
 
   async initialize() {

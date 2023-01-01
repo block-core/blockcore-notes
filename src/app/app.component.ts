@@ -48,8 +48,6 @@ export class AppComponent {
     private navigationService: NavigationService
   ) {
     // appState.title = 'Blockcore Notes';
-    console.log('CONSTRUCTOR FOR APP!');
-
     this.authService.authInfo$.subscribe(async (auth) => {
       this.authenticated = auth.authenticated();
 
@@ -96,7 +94,6 @@ export class AppComponent {
 
   /** Run initialize whenever user has been authenticated. */
   async initialize() {
-    console.log('APP:INITIALIZE');
     await this.storage.open();
     await this.storage.initialize();
 
@@ -111,15 +108,9 @@ export class AppComponent {
   }
 
   async ngOnInit() {
-    console.log('NG INIT APP');
-
-    console.log('NG INIT APP: PROFILE SHOULD BE LOADED BY NOW!!');
-
     // const testdata = await this.storage.get('123');
     // console.log(testdata);
-
     // await this.storage.putProfile('123', { about: 'Hi', name: 'Name', picture: '' });
-
     // const testdata = await this.storage.get('123', 'profile');
     // console.log(testdata);
   }

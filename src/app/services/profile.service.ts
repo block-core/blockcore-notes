@@ -157,6 +157,10 @@ export class ProfileService {
         created: now,
       };
     } else {
+      if (profile.block == true) {
+        throw new Error('You have to unblock a user before you can follow again.');
+      }
+
       profile.follow = follow;
       profile.circle = circle;
     }

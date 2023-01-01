@@ -66,6 +66,7 @@ import { CircleStylePipe } from './shared/circle-style';
 import { ReplyListComponent } from './shared/reply-list/reply-list.component';
 import { ContentComponent } from './shared/content/content.component';
 import { ScrollDirective } from './shared/scroll.directive';
+import { ImportFollowDialog } from './circles/import-follow-dialog/import-follow-dialog';
 
 @NgModule({
   declarations: [
@@ -96,7 +97,8 @@ import { ScrollDirective } from './shared/scroll.directive';
     NoteComponent,
     ReplyListComponent,
     ContentComponent,
-    ScrollDirective
+    ScrollDirective,
+    ImportFollowDialog,
   ],
   imports: [
     BrowserModule,

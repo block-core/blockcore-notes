@@ -180,8 +180,6 @@ export class UserComponent {
   }
 
   ngOnDestroy() {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      this.subscriptions[i].unsubscribe();
-    }
+    this.utilities.unsubscribe(this.subscriptions);
   }
 }

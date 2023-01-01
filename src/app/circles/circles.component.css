@@ -15,7 +15,6 @@
 }
 
 .circle-button {
-
 }
 
 .circle-button-icon {
@@ -41,16 +40,21 @@
   order: 0;
   flex: 0 1 auto;
   align-self: auto;
-  }
+}
 
 .circle-item:nth-child(2) {
   order: 0;
   flex: 1 1 auto;
   align-self: auto;
-  }
+}
 
 .circle-item:nth-child(3) {
   order: 0;
   flex: 0 1 auto;
   align-self: auto;
-  }
+}
+
+.circle-actions button {
+  margin-right: 0.4em;
+  margin-bottom: 0.4em;
+}

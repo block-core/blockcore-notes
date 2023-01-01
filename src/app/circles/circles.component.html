@@ -5,15 +5,45 @@
   <div class="circle-container" *ngFor="let circle of circles">
     <div class="circle-item"><mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon></div>
     <div class="circle-item">
-      {{ circle.name }}<br /><span class="dimmed"><span *ngIf="circle.public">Public</span><span *ngIf="!circle.public">Private</span> - {{ circle.style | circlestyle }} - Created: {{ circle.created | ago }}</span>
+      {{ circle.name }}<br />
+      <span class="dimmed"
+        ><span *ngIf="circle.public">Count: {{ countMembers(circle) }}</span></span
+      ><br />
+      <span class="dimmed"><span *ngIf="circle.public">Public</span> <span *ngIf="!circle.public">Private</span> - {{ circle.style | circlestyle }} - Created: {{ circle.created | ago }}</span>
     </div>
     <div class="circle-item">
-      <button (click)="deleteCircle(circle.id)" *ngIf="circle.id" class="circle-button" mat-icon-button>
-        <mat-icon class="circle-button-icon">delete</mat-icon>
+      <button class="circle-button" mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon class="circle-button-icon">more_vert</mat-icon>
       </button>
+
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="copyMenu">
+          <mat-icon>copy_all</mat-icon>
+          <span>Copy</span>
+        </button>
+        <button *ngIf="circle.id" mat-menu-item (click)="deleteCircle(circle.id)">
+          <mat-icon>delete</mat-icon>
+          <span>Delete Circle</span>
+        </button>
+      </mat-menu>
+
+      <mat-menu #copyMenu="matMenu">
+        <button mat-menu-item (click)="copyPubKeys(circle)">
+          <mat-icon>content_copy</mat-icon>
+          <span>Public Keys (npub)</span>
+        </button>
+        <button mat-menu-item (click)="copyPubKeysHex(circle)">
+          <mat-icon>content_copy</mat-icon>
+          <span>Public Keys (hex)</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
 
-  <p class="dimmed">Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
+  <p class="circle-actions">
+    <button mat-stroked-button (click)="importFollowList()">Import Following List</button>
+    <!-- <button mat-stroked-button (click)="publishFollowList()">Publish Follow List</button> -->
+  </p>
 
+  <p class="dimmed">Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
 </div>

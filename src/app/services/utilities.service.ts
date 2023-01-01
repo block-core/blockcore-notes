@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as secp from '@noble/secp256k1';
 import { bech32 } from '@scure/base';
+import { Subscription } from 'rxjs';
 
 export function sleep(durationInMillisecond: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, durationInMillisecond));
@@ -10,10 +11,28 @@ export function sleep(durationInMillisecond: number): Promise<void> {
   providedIn: 'root',
 })
 export class Utilities {
+  unsubscribe(subscriptions: Subscription[]) {
+    if (!subscriptions) {
+      return;
+    }
+
+    for (let i = 0; i < subscriptions.length; i++) {
+      subscriptions[i].unsubscribe();
+    }
+  }
+
   getNostrIdentifier(pubkey: string) {
     const key = this.hexToArray(pubkey);
     const converted = this.convertToBech32(key, 'npub');
     return converted;
+  }
+
+  ensureHexIdentifier(pubkey: string) {
+    if (pubkey.startsWith('npub')) {
+      pubkey = this.arrayToHex(this.convertFromBech32(pubkey));
+    }
+
+    return pubkey;
   }
 
   getHexIdentifier(pubkey: string) {

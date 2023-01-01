@@ -10,6 +10,12 @@ export interface Circle {
   public: boolean;
 }
 
+export interface Contact {
+  pubkey: string;
+  relay?: string;
+  name?: string;
+}
+
 export interface Action {
   tooltip: string;
   icon: string;

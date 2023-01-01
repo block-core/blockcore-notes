@@ -1,5 +1,6 @@
-<h1 mat-dialog-title>Enter Public Key to Follow</h1>
+<h1 mat-dialog-title>Import complete following list</h1>
 <div mat-dialog-content class="mat-dialog-content">
+  <p>The existing value is your own public key, use this to import your own public following list.</p>
   <mat-form-field appearance="fill" class="input-full-width">
     <mat-icon class="circle" matPrefix>person_add</mat-icon>
     <mat-label>Public Key</mat-label>
@@ -9,5 +10,5 @@
 
 <div mat-dialog-actions class="mat-dialog-actions" align="end">
   <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-  <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Follow</button>
+  <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Import</button>
 </div>
