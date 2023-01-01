@@ -5,10 +5,9 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay, Event } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { FeedService } from '../services/feed.service';
 import { DataService } from '../services/data.service';
@@ -21,10 +20,12 @@ export class ProfileComponent {
   pubkey?: string;
   npub!: string;
   profile?: NostrProfileDocument;
+  originalProfile?: NostrProfileDocument;
   about?: string;
   imagePath = '';
   profileName = '';
   loading!: boolean;
+  subscriptions: Subscription[] = [];
 
   constructor(
     public appState: ApplicationState,
@@ -40,35 +41,30 @@ export class ProfileComponent {
   ) {}
 
   async ngOnInit() {
-    const pubkey = this.appState.getPublicKey();
-    this.pubkey = pubkey;
-    this.profile = await this.profiles.getProfile(pubkey);
+    this.appState.title = 'Edit Profile';
 
-    if (!this.profile) {
-      this.dataService.downloadProfile(pubkey);
-    }
+    this.subscriptions.push(
+      this.profileService.profile$.subscribe((profile) => {
+        this.originalProfile = profile;
 
-    if (!this.profile) {
-      this.npub = this.utilities.getNostrIdentifier(pubkey);
-      this.profileName = this.utilities.getShortenedIdentifier(pubkey);
-      this.imagePath = 'https://notes.blockcore.net/assets/profile.png';
+        if (this.originalProfile) {
+          this.cloneProfile();
+        }
+      })
+    );
+  }
 
-      // If the user has name in their profile, show that and not pubkey.
+  cloneProfile() {
+    const profileClone = JSON.stringify(this.originalProfile);
+    this.profile = JSON.parse(profileClone);
+  }
 
-      this.appState.title = `@${this.npub}`;
-    } else {
-      this.npub = this.utilities.getNostrIdentifier(pubkey);
-      this.profileName = this.profile.name;
+  cancelEdit() {
+    this.cloneProfile();
+  }
 
-      if (!this.profile.display_name) {
-        this.profile.display_name = this.profileName;
-      }
-
-      this.imagePath = this.profile.picture || 'https://notes.blockcore.net/assets/profile.png';
-
-      // If the user has name in their profile, show that and not pubkey.
-      this.appState.title = `@${this.profile.name}`;
-    }
+  ngOnDestroy() {
+    this.utilities.unsubscribe(this.subscriptions);
   }
 
   sanitize(url: string) {
@@ -77,17 +73,24 @@ export class ProfileComponent {
   }
 
   async updateMetadata() {
-    //"{name: <string>, about: <string>, picture: <url, string>}",
-    const content = `"{name:"${this.profileName}", about: "${this.about}", picture:"${this.imagePath}"}"`;
+    const profileContent = this.utilities.reduceProfile(this.profile!);
 
     let event: Event = {
       kind: 0,
       created_at: Math.floor(Date.now() / 1000),
-      content: content,
+      content: JSON.stringify(profileContent),
       pubkey: this.appState.getPublicKey(),
       tags: [],
     };
 
-    //await this.feedService.publish(event);
+    await this.feedService.publish(event, false); // Don't persist this locally.
+
+    this.profile!.created_at = event.created_at;
+
+    // Use the whole document for this update as we don't want to loose additional metadata we have, such
+    // as follow (on self).
+    await this.profileService.updateProfile(this.profile!.pubkey, this.profile!);
+
+    this.appState.navigateBack();
   }
 }

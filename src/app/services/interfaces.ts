@@ -119,6 +119,9 @@ export interface NostrProfileDocument extends NostrProfile {
 
   /** List of domains where the user has been verified, e.g. "@nostr.directory", "@domain.com" */
   verifications: string[];
+
+  /** Copy of the value from original event. */
+  created_at?: number;
 }
 
 export interface CircleStyle {

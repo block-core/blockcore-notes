@@ -6,11 +6,23 @@
     </div>
     <div class="profile-page-header-middle">
       <span *ngIf="profile">
-        <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">{{ profile.display_name }}</h2>
+        <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">
+          <span *ngIf="profile.display_name">
+            {{ profile.display_name }}
+          </span>
+          <span *ngIf="!profile.display_name">
+            <span *ngIf="profile.name">
+              {{ profile.name }}
+            </span>
+            <span *ngIf="!profile.name">
+              {{ npub }}
+            </span>
+          </span>
+        </h2>
         <br />
         <span>
           <span class="dimmed"
-            >{{ profileName }}<span *ngIf="profile.nip05"> / {{ profile.nip05 }}</span></span
+            >{{ profile.name }}<span *ngIf="profile.nip05"> / {{ profile.nip05 }}</span></span
           ><br />
           <p class="wrap" *ngIf="profile.about">{{ profile.about }}</p>
           <p *ngIf="profile.website">{{ profile.website }}</p>

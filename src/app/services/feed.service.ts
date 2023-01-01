@@ -676,7 +676,7 @@ export class FeedService {
   //   });
   // }
 
-  async publish(originalEvent: Event) {
+  async publish(originalEvent: Event, persist = true) {
     originalEvent.id = getEventHash(originalEvent);
 
     const gt = globalThis as any;
@@ -707,8 +707,10 @@ export class FeedService {
 
     console.log('PUBLISH EVENT:', originalEvent);
 
-    // First we persist our own event like would normally happen if we receive this event.
-    await this.#persist(event);
+    if (persist) {
+      // First we persist our own event like would normally happen if we receive this event.
+      await this.#persist(event);
+    }
 
     for (let i = 0; i < this.relayService.relays.length; i++) {
       const relay = this.relayService.relays[i];

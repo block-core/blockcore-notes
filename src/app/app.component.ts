@@ -90,7 +90,7 @@ export class AppComponent {
   );
 
   goBack() {
-    this.location.back();
+    this.appState.navigateBack();
   }
 
   toggleMenu() {

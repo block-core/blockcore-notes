@@ -136,6 +136,9 @@ export class DataService {
         const jsonParsed = JSON.parse(prossedEvent.content) as NostrProfileDocument;
         const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
 
+        // Keep a copy of the created_at value.
+        profile.created_at = prossedEvent.created_at;
+
         // Persist the profile.
         await this.profileService.updateProfile(prossedEvent.pubkey, profile);
 

@@ -346,7 +346,6 @@ export class ProfileService {
 
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {
-      debugger;
       this.userProfileUpdated(profile);
     }
   }

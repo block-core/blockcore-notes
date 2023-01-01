@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as secp from '@noble/secp256k1';
 import { bech32 } from '@scure/base';
 import { Subscription } from 'rxjs';
+import { NostrProfileDocument, NostrProfile } from './interfaces';
 
 export function sleep(durationInMillisecond: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, durationInMillisecond));
@@ -19,6 +20,19 @@ export class Utilities {
     for (let i = 0; i < subscriptions.length; i++) {
       subscriptions[i].unsubscribe();
     }
+  }
+
+  reduceProfile(profile: NostrProfileDocument): NostrProfile {
+    return {
+      name: profile.name,
+      about: profile.about,
+      picture: profile.picture,
+      nip05: profile.nip05,
+      lud06: profile.lud06,
+      // TODO: Consider adding support for these in the future depending on how the community of Nostr grows and adopts these fields.
+      // display_name: profile.display_name,
+      // website: profile.website
+    } as NostrProfile;
   }
 
   getNostrIdentifier(pubkey: string) {

@@ -1,57 +1,61 @@
-<app-profile-header *ngIf="profileName" [profile]="profile"></app-profile-header>
+<app-profile-header *ngIf="profile" [profile]="profile"></app-profile-header>
 
 <!-- <mat-tab-group>
   <mat-tab label="Profile"> -->
-    <div class="page">
-      <mat-card>
-        <mat-card-header>
-          <div mat-card-avatar class="header-image"></div>
-          <mat-card-title>Profile</mat-card-title>
-          <mat-card-subtitle>public meta data</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            <mat-form-field appearance="outline" class="input-full-width">
-              <mat-icon matPrefix>alternate_email</mat-icon>
-              <mat-label>Name</mat-label>
-              <input matInput type="text" [(ngModel)]="profileName" />
-            </mat-form-field>
-          </p>
-          <p>
-            <mat-form-field appearance="outline" class="input-full-width">
-              <mat-icon matPrefix>help_outline</mat-icon>
-              <mat-label>About</mat-label>
-              <textarea matInput type="text" [(ngModel)]="about" autocomplete="off" rows="3"></textarea>
-            </mat-form-field>
-          </p>
-          <p>
-            <mat-form-field appearance="outline" class="input-full-width">
-              <mat-icon matPrefix>image</mat-icon>
-              <mat-label>Image</mat-label>
-              <input matInput type="text" [(ngModel)]="imagePath" />
-            </mat-form-field>
-          </p>
-          <p>
-            <mat-form-field appearance="outline" class="input-full-width">
-              <mat-icon matPrefix>how_to_reg</mat-icon>
-              <mat-label>E-mail/Domain Identifier (NIP05)</mat-label>
-              <input matInput type="text" [(ngModel)]="imagePath" />
-            </mat-form-field>
-          </p>
-          <p>
-            <mat-form-field appearance="outline" class="input-full-width">
-              <mat-icon matPrefix>currency_bitcoin</mat-icon>
-              <mat-label>Bitcoin Payment Link (LUD06)</mat-label>
-              <input matInput type="text" placeholder="LNURL..." />
-            </mat-form-field>
-          </p>
-        </mat-card-content>
-        <mat-card-footer align="end">
-          <button mat-raised-button color="primary" (click)="updateMetadata()">Save</button>
-        </mat-card-footer>
-      </mat-card>
-    </div>
-  <!-- </mat-tab>
+<div class="page">
+  <mat-card>
+    <!-- <mat-card-header>
+      <div mat-card-avatar class="header-image"></div>
+      <mat-card-title>Profile</mat-card-title>
+      <mat-card-subtitle>public meta data</mat-card-subtitle>
+    </mat-card-header> -->
+    <mat-card-content *ngIf="profile">
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>alternate_email</mat-icon>
+          <mat-label>Name</mat-label>
+          <input matInput type="text" [(ngModel)]="profile.name" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>help_outline</mat-icon>
+          <mat-label>About</mat-label>
+          <textarea matInput type="text" [(ngModel)]="profile.about" autocomplete="off" rows="3"></textarea>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>image</mat-icon>
+          <mat-label>Image</mat-label>
+          <input matInput type="text" [(ngModel)]="profile.picture" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>how_to_reg</mat-icon>
+          <mat-label>E-mail/Domain Identifier (NIP05)</mat-label>
+          <input matInput type="text" [(ngModel)]="profile.nip05" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>currency_bitcoin</mat-icon>
+          <mat-label>Bitcoin Payment Link (LUD06)</mat-label>
+          <input matInput type="text" [(ngModel)]="profile.lud06" placeholder="LNURL..." />
+        </mat-form-field>
+      </p>
+      <p>
+        Last updated: {{profile.created_at | ago}}
+      </p>
+    </mat-card-content>
+    <mat-card-footer align="end">
+      <button mat-raised-button (click)="cancelEdit()">Cancel</button>&nbsp;
+      <button mat-raised-button color="primary" (click)="updateMetadata()">Save</button>
+    </mat-card-footer>
+  </mat-card>
+</div>
+<!-- </mat-tab>
 
   <mat-tab label="Public key">
     <div class="page">

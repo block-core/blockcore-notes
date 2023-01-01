@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, map, shareReplay, Observable } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import { Action } from './interfaces';
+import { Location } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationState {
-  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticationService) {
+  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticationService, private location: Location) {
     this.isSmallScreen$ = this.breakpointObserver.observe('(max-width: 599px)').pipe(
       map((result) => result.matches),
       shareReplay()
@@ -22,6 +23,10 @@ export class ApplicationState {
 
   getPublicKey(): string {
     return this.authService.authInfo$.getValue().publicKeyHex!;
+  }
+
+  navigateBack() {
+    this.location.back();
   }
 
   title = 'Blockcore Notes';

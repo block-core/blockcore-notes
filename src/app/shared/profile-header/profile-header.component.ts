@@ -1,9 +1,9 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CirclesService } from 'src/app/services/circles.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
-import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { Circle, NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
   selector: 'app-profile-header',
@@ -14,10 +14,9 @@ export class ProfileHeaderComponent {
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
 
-  imagePath = '/assets/profile.png';
+  static defaultProfileImage = '/assets/profile.png';
   tooltip = '';
   tooltipName = '';
-  profileName = '';
   circle?: Circle;
   muted? = false;
   npub!: string;
@@ -26,11 +25,18 @@ export class ProfileHeaderComponent {
 
   async ngAfterViewInit() {}
 
+  get imagePath() {
+    if (this.profile?.picture) {
+      return this.profile.picture;
+    }
+
+    return ProfileHeaderComponent.defaultProfileImage;
+  }
+
   async ngOnInit() {
     if (!this.profile) {
       this.profile = await this.profiles.getProfile(this.pubkey);
       this.npub = this.utilities.getNostrIdentifier(this.pubkey);
-      this.profileName = this.npub;
 
       if (!this.profile) {
         return;
@@ -38,18 +44,12 @@ export class ProfileHeaderComponent {
     } else {
       this.pubkey = this.profile.pubkey;
       this.npub = this.utilities.getNostrIdentifier(this.profile.pubkey);
-      this.profileName = this.npub;
-    }
-
-    if (this.profile.picture) {
-      this.imagePath = this.profile.picture;
     }
 
     this.tooltip = this.profile.about;
-    this.tooltipName = this.profileName;
 
     // If the user has name in their profile, show that and not pubkey.
-    this.profileName = this.profile.name || this.profileName;
+    // this.profileName = this.profile.name || this.profileName;
 
     this.circle = await this.circleService.getCircle(this.profile.circle);
 
