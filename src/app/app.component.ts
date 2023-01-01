@@ -28,7 +28,8 @@ export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
   authenticated = false;
-
+  bgimagePath = '/assets/profile-bg.png';
+  profileimagePath = '/assets/profile.png';
   constructor(
     public appState: ApplicationState,
     private storage: StorageService,

@@ -183,10 +183,11 @@ mat-sidenav-content mat-toolbar {
 }
 
 .sidenav-left {
+  min-width: 200px;
 }
 
 .sidenav-right {
-  min-width: 200px;
+  min-width: 320px;
 }
 
 ::-webkit-scrollbar {
