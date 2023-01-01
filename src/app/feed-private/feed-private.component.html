@@ -58,9 +58,9 @@
 
     <div class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
       <app-profile-actions [event]="event"></app-profile-actions>
-      <app-profile-header [pubkey]="event.pubkey"
+      <app-event-header [pubkey]="event.pubkey"
         ><span class="event-date" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-      ></app-profile-header>
+      ></app-event-header>
       <div class="content clickable">
         <app-content [event]="event"></app-content>
         <!-- {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span> -->

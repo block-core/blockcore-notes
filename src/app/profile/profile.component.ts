@@ -21,7 +21,7 @@ export class ProfileComponent {
   npub!: string;
   profile?: NostrProfileDocument;
   about?: string;
-  imagePath = 'https://notes.blockcore.net/assets/profile.png';
+  imagePath = '';
   profileName = '';
   loading!: boolean;
 

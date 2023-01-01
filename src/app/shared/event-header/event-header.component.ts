@@ -5,11 +5,11 @@ import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
-  selector: 'app-profile-header',
-  templateUrl: './profile-header.component.html',
-  styleUrls: ['./profile-header.component.css'],
+  selector: 'app-event-header',
+  templateUrl: './event-header.component.html',
+  styleUrls: ['./event-header.component.css'],
 })
-export class ProfileHeaderComponent {
+export class EventHeaderComponent {
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
 

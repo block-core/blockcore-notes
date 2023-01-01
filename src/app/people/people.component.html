@@ -40,7 +40,7 @@
 
     <div class="events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of profiles; trackBy: trackByFn">
       <app-profile-actions [profile]="profile"></app-profile-actions>
-      <app-profile-header [profile]="profile"><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-profile-header>
+      <app-event-header [profile]="profile"><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-event-header>
       <div class="content clickable">
         {{ profile.about }}
       </div>
