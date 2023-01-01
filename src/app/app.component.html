@@ -21,17 +21,12 @@
         <mat-icon>animation</mat-icon>
         <span>Circles</span>
       </a>
+    <mat-divider></mat-divider>
+
       <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>settings</mat-icon>
         <span>Settings</span>
       </a>
-      <a [routerLink]="['/logout']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </a>
-    </mat-nav-list>
-    <mat-divider></mat-divider>
-    <mat-nav-list>
       <a [routerLink]="['/about']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>help_outline</mat-icon>
         <span>About</span>
@@ -71,6 +66,10 @@
       <a [routerLink]="['/profile']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>edit</mat-icon>
         <span>Edit profile</span>
+      </a>
+      <a [routerLink]="['/logout']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
       </a>
     </mat-nav-list>
     <mat-menu #accounts="matMenu" hasBackdrop="true" backdropClass="menu-mode-backdrop" overlapTrigger="false"> </mat-menu>
