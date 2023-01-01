@@ -9,12 +9,12 @@ import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocum
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { FeedService } from '../services/feed.service';
-import { filter, map, Observable, Subscription } from 'rxjs';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
 import { CirclesService } from '../services/circles.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { map, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user',
