@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { FeedService } from '../services/feed.service';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-profile',
@@ -25,66 +26,60 @@ export class ProfileComponent {
   profileName = '';
   loading!: boolean;
 
-  subscriptions: Subscription[] = [];
-
-  constructor(public appState: ApplicationState,
+  constructor(
+    public appState: ApplicationState,
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router,
     public profiles: ProfileService,
     private sanitizer: DomSanitizer,
+    private profileService: ProfileService,
+    private dataService: DataService,
     private activatedRoute: ActivatedRoute,
-    private feedService: FeedService,
+    private feedService: FeedService
+  ) {}
 
-  ) {
+  async ngOnInit() {
+    const pubkey = this.appState.getPublicKey();
+    this.pubkey = pubkey;
+    this.profile = await this.profiles.getProfile(pubkey);
 
-    this.subscriptions.push(
-      this.activatedRoute.paramMap.subscribe(async (params) => {
-        const pubkey: any = params.get('id');
+    if (!this.profile) {
+      this.dataService.downloadProfile(pubkey);
+    }
 
-        if (!pubkey) {
-          return;
-        }
+    if (!this.profile) {
+      this.npub = this.utilities.getNostrIdentifier(pubkey);
+      this.profileName = this.utilities.getShortenedIdentifier(pubkey);
+      this.imagePath = 'https://notes.blockcore.net/assets/profile.png';
 
-        this.pubkey = pubkey;
-        this.profile = await this.profiles.getProfile(pubkey);
+      // If the user has name in their profile, show that and not pubkey.
 
-        if (!this.profile) {
-          this.npub = this.utilities.getNostrIdentifier(pubkey);
-          this.profileName = this.utilities.getShortenedIdentifier(pubkey);
-          this.imagePath = 'https://notes.blockcore.net/assets/profile.png';
+      this.appState.title = `@${this.npub}`;
+    } else {
+      this.npub = this.utilities.getNostrIdentifier(pubkey);
+      this.profileName = this.profile.name;
 
-          // If the user has name in their profile, show that and not pubkey.
+      if (!this.profile.display_name) {
+        this.profile.display_name = this.profileName;
+      }
 
-          this.appState.title = `@${this.npub}`;
-        } else {
-          this.npub = this.utilities.getNostrIdentifier(pubkey);
-          this.profileName = this.profile.name;
+      this.imagePath = this.profile.picture || 'https://notes.blockcore.net/assets/profile.png';
 
-          if (!this.profile.display_name) {
-            this.profile.display_name = this.profileName;
-          }
-
-          this.imagePath = this.profile.picture || 'https://notes.blockcore.net/assets/profile.png';
-
-          // If the user has name in their profile, show that and not pubkey.
-          this.appState.title = `@${this.profile.name}`;
-        }
-      })
-    );
+      // If the user has name in their profile, show that and not pubkey.
+      this.appState.title = `@${this.profile.name}`;
+    }
   }
-
-  async ngOnInit() { }
 
   sanitize(url: string) {
     const clean = this.sanitizer.bypassSecurityTrustUrl(url);
     return clean;
   }
 
-   async updateMetadata() {
+  async updateMetadata() {
     //"{name: <string>, about: <string>, picture: <url, string>}",
     const content = `"{name:"${this.profileName}", about: "${this.about}", picture:"${this.imagePath}"}"`;
-   
+
     let event: Event = {
       kind: 0,
       created_at: Math.floor(Date.now() / 1000),
@@ -95,7 +90,4 @@ export class ProfileComponent {
 
     //await this.feedService.publish(event);
   }
-
-
 }
-

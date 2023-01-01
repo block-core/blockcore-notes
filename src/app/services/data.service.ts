@@ -8,6 +8,7 @@ import { EventService } from './event.service';
 import { RelayService } from './relay.service';
 import { Relay } from 'nostr-tools';
 import { DataValidation } from './data-validation.service';
+import { ApplicationState } from './applicationstate.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +19,17 @@ export class DataService {
   //downloadProfileInterval = 1000 * 3; // Every 3 seconds
   downloadProfileInterval = 500;
   profileBatchSize = 20;
+  refreshUserProfile = 1000 * 60 * 60 * 2; // Every second hour
 
-  constructor(private storage: StorageService, private profileService: ProfileService, private feedService: FeedService, private validator: DataValidation, private eventService: EventService, private relayService: RelayService) {
+  constructor(
+    private appState: ApplicationState,
+    private storage: StorageService,
+    private profileService: ProfileService,
+    private feedService: FeedService,
+    private validator: DataValidation,
+    private eventService: EventService,
+    private relayService: RelayService
+  ) {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     this.profileService.profileRequested$.subscribe(async (pubkey) => {
       if (!pubkey) {
@@ -38,6 +48,17 @@ export class DataService {
     setTimeout(async () => {
       await this.downloadProfiles();
     }, this.downloadProfileInterval);
+
+    // On set interval, add the user's own profile to download.
+    // setTimeout(async () => {
+    //   this.profileQueue.push(this.appState.getPublicKey());
+    // }, this.refreshUserProfile);
+
+    // If at startup we don't have the logged on user profile, queue it up for retreival.
+    // When requesting the profile, it will be auto-requested from relays.
+    setTimeout(async () => {
+      await this.profileService.getProfile(this.appState.getPublicKey());
+    }, 2000);
   }
 
   async downloadProfiles() {
@@ -65,7 +86,7 @@ export class DataService {
     this.fetchProfiles(this.relayService.relays[0], pubkeys);
   }
 
-  async downloadProfile(pubkey: string) {
+  downloadProfile(pubkey: string) {
     if (!pubkey) {
       debugger;
       return;
