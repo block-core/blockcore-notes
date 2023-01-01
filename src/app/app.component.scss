@@ -72,10 +72,6 @@ header {
 .avatar {
   width: 100%;
   border: 8px solid #9c27b0;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
@@ -91,7 +87,6 @@ header {
   cursor: pointer;
 }
 
-
 .data {
   margin-top: .6em;
   color: #81878b;
@@ -102,7 +97,8 @@ header {
   text-align: center;
   display: inline-block;
 }
-.data ul{
+
+.data ul {
   padding-inline-start: 0 !important;
 }
 
@@ -127,24 +123,17 @@ header {
   color: white;
   text-align: center;
   opacity: 0.5;
-  -webkit-transition-property: all;
-  -moz-transition-property: all;
-  -o-transition-property: all;
   transition-property: all;
-  -webkit-transition-duration: 0.3s;
-  -moz-transition-duration: 0.3s;
-  -o-transition-duration: 0.3s;
   transition-duration: 0.3s;
-  -webkit-transition-timing-function: ease-in;
-  -moz-transition-timing-function: ease-in;
-  -o-transition-timing-function: ease-in;
   transition-timing-function: ease-in;
 }
 
 .desc h3 {
   font-size: 1.2em;
-  margin-bottom: .5em; }
+  margin-bottom: .5em;
+}
 
 .desc p {
   font-size: .9em;
-  line-height: 1.5em; }
+  line-height: 1.5em;
+}
