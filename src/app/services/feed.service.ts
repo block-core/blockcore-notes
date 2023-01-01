@@ -320,6 +320,8 @@ export class FeedService {
     //const relay = this.relayService.relays[index];
     //console.log('downloadFromRelayIndex:', id, index, relayCount);
 
+    let finished = false;
+
     const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([query], {}) as NostrSubscription;
 
@@ -332,12 +334,18 @@ export class FeedService {
           return;
         }
 
+        finished = true;
+
         observer.next(event);
         observer.complete();
         // sub.unsub();
       });
 
       sub.on('eose', () => {
+        if (!finished) {
+          observer.complete();
+        }
+
         // console.log('downloadFromRelayIndex: eose', id);
         // observer.complete();
         sub.unsub();
