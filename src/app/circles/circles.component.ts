@@ -83,7 +83,7 @@ export class CirclesComponent {
         verticalPosition: 'bottom',
       });
 
-      let pubkey = result.pubkey;
+      let pubkey = this.utilities.ensureHexIdentifier(result.pubkey);
 
       console.log('GET FOLLOWING LIST FOR:', pubkey);
 

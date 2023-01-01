@@ -16,6 +16,14 @@ export class Utilities {
     return converted;
   }
 
+  ensureHexIdentifier(pubkey: string) {
+    if (pubkey.startsWith('npub')) {
+      pubkey = this.arrayToHex(this.convertFromBech32(pubkey));
+    }
+
+    return pubkey;
+  }
+
   getHexIdentifier(pubkey: string) {
     const key = this.hexToArray(pubkey);
     const converted = this.convertToBech32(key, 'npub');

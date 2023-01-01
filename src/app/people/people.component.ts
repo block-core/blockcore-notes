@@ -125,9 +125,7 @@ export class PeopleComponent {
       return;
     }
 
-    if (pubkey.startsWith('npub')) {
-      pubkey = this.utilities.arrayToHex(this.utilities.convertFromBech32(pubkey));
-    }
+    pubkey = this.utilities.ensureHexIdentifier(pubkey);
 
     await this.profileService.follow(pubkey);
     await this.feedService.downloadRecent([pubkey]);

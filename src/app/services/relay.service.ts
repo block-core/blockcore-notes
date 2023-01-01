@@ -598,6 +598,20 @@ export class RelayService {
   }
 
   async initialize() {
+    if (this.relays.length === 0) {
+      let relays;
+
+      try {
+        const gt = globalThis as any;
+        relays = await gt.nostr.getRelays();
+      } catch (err) {
+        relays = this.defaultRelays;
+      }
+
+      // First append whatever the extension give us of relays.
+      await this.appendRelays(relays);
+    }
+
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {
     //   if (!pubkey) {
