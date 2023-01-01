@@ -6,16 +6,16 @@
     <mat-spinner class="loading"></mat-spinner>
   </div>
 
-  <div class="page loading-container" *ngIf="profileService.initialized && events.length === 0 && profileService.profiles.length > 0">
+  <div class="page loading-container" *ngIf="profileService.initialized && events.length === 0 && hasFollowers">
     Updating the user profiles and getting their recent notes... wait a few seconds.<br /><br /><br />
     <mat-spinner class="loading"></mat-spinner>
   </div>
 
-  <div class="page" *ngIf="profileService.initialized && profileService.profiles.length === 0">
+  <div class="page" *ngIf="profileService.initialized && !hasFollowers">
     <h1 class="marginless">Hi, having fun yet?</h1>
     <p>Here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>
 
-    <mat-grid-list gutterSize="1em" [cols]="(isHandset$ | async) ? '1' : '2'" rowHeight="180px">
+    <mat-grid-list gutterSize="1em" [cols]="(appState.isSmallScreen$ | async) ? '1' : '2'" rowHeight="180px">
       <mat-grid-tile *ngFor="let profile of defaults">
         <!-- <img [src]="profile.picture">&nbsp;
         {{ profile.name }}<br>
@@ -38,6 +38,8 @@
 
     <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button>
   </div>
+
+  {{ hasFollowers }}
 
   <div class="feed-page" *ngIf="events.length > 0">
     <!-- <mat-accordion class="options">
