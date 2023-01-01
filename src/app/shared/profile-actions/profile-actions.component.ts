@@ -57,7 +57,7 @@ export class ProfileActionsComponent {
       await this.feedService.downloadRecent([this.profile.pubkey]);
     } else {
       // If we already follow but just change the circle, do a smaller operation.
-      await this.profileService.follow(this.profile.pubkey, circle);
+      await this.profileService.setCircle(this.profile.pubkey, circle);
     }
   }
 

@@ -196,6 +196,13 @@ export class ProfileService {
     return this.#setFollow(pubkey, circle, true, existingProfile);
   }
 
+  async setCircle(pubkey: string, circle?: string) {
+    return this.updateProfileValue(pubkey, (p) => {
+      p.circle = circle;
+      return p;
+    });
+  }
+
   async unfollow(pubkey: string) {
     return this.#setFollow(pubkey, undefined, undefined);
   }

@@ -765,9 +765,9 @@ export class FeedService {
     return observable;
   }
 
-  async publishContacts(contacts: Contact[]) {
-    const mappedContacts = contacts.map((c) => {
-      return ['p', c.pubkey];
+  async publishContacts(pubkeys: string[]) {
+    const mappedContacts = pubkeys.map((c) => {
+      return ['p', c];
     });
 
     let originalEvent: Event = {
@@ -811,20 +811,20 @@ export class FeedService {
     // First we persist our own event like would normally happen if we receive this event.
     // await this.#persist(event);
 
-    // for (let i = 0; i < this.relayService.relays.length; i++) {
-    //   const relay = this.relayService.relays[i];
+    for (let i = 0; i < this.relayService.relays.length; i++) {
+      const relay = this.relayService.relays[i];
 
-    //   let pub = relay.publish(event);
-    //   pub.on('ok', () => {
-    //     console.log(`${relay.url} has accepted our event`);
-    //   });
-    //   pub.on('seen', () => {
-    //     console.log(`we saw the event on ${relay.url}`);
-    //   });
-    //   pub.on('failed', (reason: any) => {
-    //     console.log(`failed to publish to ${relay.url}: ${reason}`);
-    //   });
-    // }
+      let pub = relay.publish(event);
+      pub.on('ok', () => {
+        console.log(`${relay.url} has accepted our event`);
+      });
+      pub.on('seen', () => {
+        console.log(`we saw the event on ${relay.url}`);
+      });
+      pub.on('failed', (reason: any) => {
+        console.log(`failed to publish to ${relay.url}: ${reason}`);
+      });
+    }
   }
 
   async initialize() {

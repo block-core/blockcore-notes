@@ -58,12 +58,19 @@ export class CirclesComponent {
   }
 
   async deleteCircle(id: string) {
+    const pubKeys = this.getFollowingInCircle(id).map((f) => f.pubkey);
+
     await this.circlesService.deleteCircle(id);
+
+    for (var i = 0; i < pubKeys.length; i++) {
+      await this.profile.setCircle(pubKeys[i], '');
+    }
+
     await this.load();
   }
 
   countMembers(circle: Circle) {
-    return this.getFollowingInCircle(circle).length;
+    return this.getFollowingInCircle(circle.id).length;
   }
 
   subscriptions: Subscription[] = [];
@@ -127,11 +134,11 @@ export class CirclesComponent {
     });
   }
 
-  getFollowingInCircle(circle: Circle) {
-    if (circle.id == null || circle.id == '') {
+  getFollowingInCircle(id: string) {
+    if (id == null || id == '') {
       return this.following.filter((f) => f.circle == null || f.circle == '');
     } else {
-      return this.following.filter((f) => f.circle == circle.id);
+      return this.following.filter((f) => f.circle == id);
     }
   }
 
@@ -147,7 +154,7 @@ export class CirclesComponent {
   }
 
   private getPublicKeys(circle: Circle) {
-    const profiles = this.getFollowingInCircle(circle);
+    const profiles = this.getFollowingInCircle(circle.id);
     const pubkeys = profiles.map((p) => p.pubkey);
     return pubkeys;
   }
@@ -162,7 +169,7 @@ export class CirclesComponent {
       const circle = this.circles[i];
 
       if (circle.public) {
-        const profiles = this.getFollowingInCircle(circle);
+        const profiles = this.getFollowingInCircle(circle.id);
         const pubkeys = profiles.map((p) => p.pubkey);
         items.push(...pubkeys);
       }
@@ -175,9 +182,10 @@ export class CirclesComponent {
     return this.utilities.getNostrIdentifier(hex);
   }
 
-  publishFollowList() {
+  async publishFollowList() {
     const publicPublicKeys = this.getPublicPublicKeys();
-    console.log('publicPublicKeys:', publicPublicKeys);
+
+    await this.feedService.publishContacts(publicPublicKeys);
 
     this.snackBar.open(`A total of ${publicPublicKeys.length} was added to your public following list`, 'Hide', {
       duration: 2000,

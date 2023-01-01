@@ -17,6 +17,7 @@ export class DataService {
   cleanProfileInterval = 1000 * 60 * 60; // Every hour
   //downloadProfileInterval = 1000 * 3; // Every 3 seconds
   downloadProfileInterval = 500;
+  profileBatchSize = 20;
 
   constructor(private storage: StorageService, private profileService: ProfileService, private feedService: FeedService, private validator: DataValidation, private eventService: EventService, private relayService: RelayService) {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
@@ -60,7 +61,7 @@ export class DataService {
 
     // Grab all queued up profiles and ask for them, or should we have a maximum item?
     // For now, let us grab 10 and process those until next interval.
-    const pubkeys = this.profileQueue.splice(0, 20);
+    const pubkeys = this.profileQueue.splice(0, this.profileBatchSize);
     this.fetchProfiles(this.relayService.relays[0], pubkeys);
   }
 
