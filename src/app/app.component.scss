@@ -30,7 +30,7 @@
 }
 
 .mdc-list-item.active {
-  background: rgba(156, 39, 176, .15)
+  background: rgba(156, 39, 176, 0.15);
 }
 
 header {
@@ -50,7 +50,7 @@ header {
   border-bottom: 8px solid #9c27b0;
 }
 
-.bio:hover>.desc {
+.bio:hover > .desc {
   cursor: pointer;
   opacity: 1;
 }
@@ -65,7 +65,7 @@ header {
   display: block;
 }
 
-.avatarcontainer:hover>.hover {
+.avatarcontainer:hover > .hover {
   opacity: 1;
 }
 
@@ -82,13 +82,13 @@ header {
   height: 65px;
 }
 
-.avatar:hover+.hover {
+.avatar:hover + .hover {
   opacity: 1;
   cursor: pointer;
 }
 
 .data {
-  margin-top: .6em;
+  margin-top: 0.6em;
   color: #81878b;
 }
 
@@ -109,8 +109,8 @@ header {
 .data li span {
   display: block;
   text-transform: uppercase;
-  font-size: .5em;
-  margin-top: .6em;
+  font-size: 0.5em;
+  margin-top: 0.6em;
   font-weight: 700;
 }
 
@@ -130,10 +130,16 @@ header {
 
 .desc h3 {
   font-size: 1.2em;
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
 }
 
 .desc p {
-  font-size: .9em;
+  font-size: 0.9em;
   line-height: 1.5em;
+}
+
+.close-sidenav-icon {
+  float: left;
+  position: fixed;
+  z-index: 100000;
 }
