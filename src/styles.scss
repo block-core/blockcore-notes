@@ -456,8 +456,30 @@ select {
   margin-top: 0.6em;
 }
 
+.input-full-width {
+  width: 100% !important;
+}
 
+mat-card-footer{
+  padding: 16px;
+}
 
+.header-image {
+  background-image: url('/assets/profile.png');
+  background-size: cover;
+}
+
+.mat-mdc-card-avatar
+{
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.profile-form {
+  min-width: 150px;
+  width: 100%;
+  margin-bottom: 20px;
+}
 
 @media only screen and (max-width: 599px) {
   .full-width-dialog {

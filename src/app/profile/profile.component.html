@@ -1,32 +1,121 @@
-<div class="page">
-<form class="profile-form">
-    <table class="example-full-width" cellspacing="0"><tr>
-        <td>
-            <mat-form-field class="example-full-width">
-            <mat-label>Username</mat-label>
-            <input matInput>
-        </mat-form-field></td>
-        <td><mat-form-field class="example-full-width">
-            <mat-label>NIP05</mat-label>
-            <input matInput>
-        </mat-form-field></td>
-    </tr></table>
-  
-    <p><mat-form-field class="example-full-width">
-        <mat-label>LUD06</mat-label>
-        <input matInput placeholder="LNURL...">
-    </mat-form-field></p>
-
-    <p><mat-form-field class="example-full-width">
-      <mat-label>About</mat-label>
-      <textarea matInput></textarea>
-    </mat-form-field></p>
-  
-    <mat-form-field class="example-full-width" >
-        <mat-label>Image</mat-label>
-        <input matInput placeholder="Image URL">
-      </mat-form-field>
-  </form>
-  
-      <button mat-raised-button color="primary">Submit</button>
+<div class="profile-page">
+  <div class="profile-page-header" *ngIf="profile">
+    <div class="profile-page-header-left">
+      <img *ngIf="profile?.follow" class="profile-image-large profile-image-follow" [src]="imagePath" />
+      <img *ngIf="!profile?.follow" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
+    </div>
+    <div class="profile-page-header-middle">
+      <span *ngIf="profile">
+        <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">{{ profile.display_name }}
+        </h2>
+        <br />
+        <span>
+          <span class="dimmed">{{ profileName }}<span *ngIf="profile.nip05"> / {{ profile.nip05 }}</span></span><br />
+          <!-- <span class="dimmed wrap">{{ npub }}</span> -->
+          <p class="wrap" *ngIf="profile.about">{{ profile.about }}</p>
+          <!-- <p>{{ profile.lud06 }}</p> -->
+          <!-- Tip: <a class="ln-link" [href]="sanitize('lightning:' + profile.lud06)" target="_blank">⚡️</a> -->
+          <p *ngIf="profile.website">{{ profile.website }}</p>
+        </span>
+      </span>
+    </div>
+    <div class="profile-page-header-right">
+      <div class="profile-button-container" *ngIf="profile.lud06">
+        <a mat-mini-fab color="primary" [href]="sanitize('lightning:' + profile.lud06)">⚡️</a>
+      </div>
+      <!--
+        DO WE WANT A FOLLOW SHORTCUT OR ENOUGH WITH "..." MENU?
+        <div class="profile-button-container">
+        <button mat-mini-fab>
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </div> -->
+      <div class="profile-button-container">
+        <app-profile-actions [fab]="true" [profile]="profile"></app-profile-actions>
+      </div>
+    </div>
   </div>
+
+  <!-- <span *ngIf="profile">
+    <h2 class="marginless">{{ profile.display_name }}</h2>
+    <span>
+      {{ profileName }} / {{ profile.nip05 }}<br />
+      <span class="dimmed wrap">{{ npub }}</span>
+      <p *ngIf="profile.about">{{ profile.about }}</p>
+      <p *ngIf="profile.website">{{ profile.website }}</p>
+    </span>
+  </span> -->
+</div>
+
+<mat-tab-group>
+  <mat-tab label="Profile">
+    <div class="page">
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar class="header-image"></div>
+          <mat-card-title>Profile</mat-card-title>
+          <mat-card-subtitle>public meta data</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>alternate_email</mat-icon>
+              <mat-label>Name</mat-label>
+              <input matInput type="text" [(ngModel)]="profileName" autocomplete="off" />
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>help_outline</mat-icon>
+              <mat-label>About</mat-label>
+              <textarea matInput type="text" [(ngModel)]="about" autocomplete="off" rows="3"></textarea>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>image</mat-icon>
+              <mat-label>Image</mat-label>
+              <input matInput type="text" [(ngModel)]="imagePath" autocomplete="off" />
+            </mat-form-field>
+          </p>
+
+        </mat-card-content>
+        <mat-card-footer align="end">
+          <button mat-raised-button color="primary" (click)="updateMetadata()">Save</button>
+        </mat-card-footer>
+      </mat-card>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Public key">
+    <div class="page">
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar class="header-image"></div>
+          <mat-card-title>Public key</mat-card-title>
+          <mat-card-subtitle>private data in localstorage</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>key</mat-icon>
+              <mat-label>Public key</mat-label>
+              <input matInput type="text" autocomplete="off" />
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon matPrefix>key_off</mat-icon>
+              <mat-label>Private key</mat-label>
+              <input matInput type="text" autocomplete="off" />
+            </mat-form-field>
+          </p>
+        </mat-card-content>
+        <mat-card-footer align="end">
+          <button mat-raised-button color="primary">Save</button>
+        </mat-card-footer>
+      </mat-card>
+    </div>
+  </mat-tab>
+
+</mat-tab-group>
