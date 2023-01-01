@@ -140,7 +140,6 @@ export class FeedService {
     private profileService: ProfileService,
     private circlesService: CirclesService
   ) {
-    console.log('FEED SERVICE CONSTRUCTOR!');
     this.#table = this.storage.table<NostrEventDocument>('events');
   }
 

@@ -25,7 +25,9 @@ import { Subscription } from 'rxjs';
 export class CirclesComponent {
   publicKey?: string | null;
   loading = false;
+  following: NostrProfileDocument[] = [];
   searchTerm: any;
+
   constructor(
     public appState: ApplicationState,
     private circlesService: CirclesService,
@@ -40,9 +42,7 @@ export class CirclesComponent {
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private ngZone: NgZone
-  ) {
-    console.log('CIRCLE CTOR!');
-  }
+  ) {}
 
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);
@@ -88,15 +88,11 @@ export class CirclesComponent {
 
       let pubkey = this.utilities.ensureHexIdentifier(result.pubkey);
 
-      console.log('GET FOLLOWING LIST FOR:', pubkey);
-
       // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
       // follow lists and having to process everything multiple times. Just query one by one until
       // we find the list. Until then, we simply grab the first relay only.
       this.subscriptions.push(
         this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-          console.log('DOWNLOAD COMPLETE!', contacts);
-
           const publicKeys = contacts.tags.map((t) => t[1]);
 
           for (let i = 0; i < publicKeys.length; i++) {
@@ -118,13 +114,6 @@ export class CirclesComponent {
           });
         })
       );
-
-      // if (pubkey.startsWith('npub')) {
-      //   pubkey = this.utilities.arrayToHex(this.utilities.convertFromBech32(pubkey));
-      // }
-
-      // await this.profileService.follow(pubkey);
-      // await this.feedService.downloadRecent([pubkey]);
     });
   }
 
@@ -189,8 +178,6 @@ export class CirclesComponent {
       await this.load();
     });
   }
-
-  following: NostrProfileDocument[] = [];
 
   async ngOnInit() {
     this.appState.title = 'Circles';

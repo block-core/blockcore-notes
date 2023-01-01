@@ -192,7 +192,6 @@ export class RelayService {
     private authService: AuthenticationService,
     private circlesService: CirclesService
   ) {
-    console.log('RELAY SERVICE CONSTRUCTOR!');
     this.#table = this.storage.table<NostrEventDocument>('events');
   }
 
