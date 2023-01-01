@@ -173,17 +173,11 @@ export class ProfileService {
       profile.followed = now;
     }
 
-    console.log('PUT PROFILE:', profile);
-
     // Put profile since we already got it in the beginning.
     await this.putProfile(pubkey, profile);
 
-    console.log('DOWNLOAD PROFILE CALL 1');
-
     // Always refresh the profile when adding a follow on a user.
     await this.downloadProfile(pubkey);
-
-    console.log('DOWNLOAD PROFILE CALL 2');
   }
 
   async follow(pubkey: string, circle?: string, existingProfile?: NostrProfileDocument) {
