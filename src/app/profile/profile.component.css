@@ -1,16 +1,7 @@
-.profile-form {
-    min-width: 150px;
-  max-width: 500px;
+.example-full-width {
   width: 100%;
-  }
-  
-  .example-full-width {
-    width: 100%;
-  }
-  
-  td {
-    padding-right: 2px;
-  }
+}
 
-
-  
+td {
+  padding-right: 2px;
+}
