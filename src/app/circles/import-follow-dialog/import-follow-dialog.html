@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Import complete following list</h1>
+<div mat-dialog-content class="mat-dialog-content">
+  <p>The existing value is your own public key, use this to import your own public following list.</p>
+  <mat-form-field appearance="fill" class="input-full-width">
+    <mat-icon class="circle" matPrefix>person_add</mat-icon>
+    <mat-label>Public Key</mat-label>
+    <input matInput type="text" autocomplete="off" [(ngModel)]="data.pubkey" />
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions" align="end">
+  <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+  <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Import</button>
+</div>

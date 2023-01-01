@@ -10,6 +10,10 @@ import { CirclesService } from '../services/circles.service';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { v4 as uuidv4 } from 'uuid';
+import { ImportFollowDialog, ImportFollowDialogData } from './import-follow-dialog/import-follow-dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthenticationService } from '../services/authentication.service';
+import { FeedService } from '../services/feed.service';
 
 @Component({
   selector: 'app-circles',
@@ -26,9 +30,12 @@ export class CirclesComponent {
     private storage: StorageService,
     private profile: ProfileService,
     public dialog: MatDialog,
+    private feedService: FeedService,
     private validator: DataValidation,
     private utilities: Utilities,
-    private router: Router
+    private authService: AuthenticationService,
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   // public trackByFn(index: number, item: NostrProfileDocument) {
@@ -92,6 +99,53 @@ export class CirclesComponent {
     await this.load();
   }
 
+  countMembers(circle: Circle) {
+    if (circle.id == null || circle.id == '') {
+      return this.following.filter((f) => f.circle == null).length;
+    } else {
+      return this.following.filter((f) => f.circle == circle.id).length;
+    }
+  }
+
+  async importFollowList() {
+    const dialogRef = this.dialog.open(ImportFollowDialog, {
+      data: { pubkey: this.appState.getPublicKey() },
+      maxWidth: '100vw',
+      panelClass: 'full-width-dialog',
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: ImportFollowDialogData) => {
+      if (!result) {
+        return;
+      }
+
+      this.snackBar.open('Importing followers process has started', 'Hide', {
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
+
+      let pubkey = result.pubkey;
+
+      console.log('GET FOLLOWING LIST FOR:', pubkey);
+
+      // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
+      // follow lists and having to process everything multiple times. Just query one by one until
+      // we find the list. Until then, we simply grab the first relay only.
+      this.feedService.downloadContacts(pubkey).subscribe((contacts) => {
+        console.log('DOWNLOAD COMPLETE!', contacts);
+      });
+
+      // if (pubkey.startsWith('npub')) {
+      //   pubkey = this.utilities.arrayToHex(this.utilities.convertFromBech32(pubkey));
+      // }
+
+      // await this.profileService.follow(pubkey);
+      // await this.feedService.downloadRecent([pubkey]);
+    });
+  }
+
+  publishFollowList() {}
+
   createCircle(): void {
     const dialogRef = this.dialog.open(CircleDialog, {
       data: { name: '', style: '1', public: true },
@@ -113,7 +167,11 @@ export class CirclesComponent {
     });
   }
 
+  following: NostrProfileDocument[] = [];
+
   async ngOnInit() {
+    this.following = await this.profile.followList();
+
     this.appState.title = 'Circles';
     this.appState.showBackButton = true;
     this.appState.actions = [

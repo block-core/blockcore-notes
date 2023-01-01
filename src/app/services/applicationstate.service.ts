@@ -1,13 +1,14 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, map, shareReplay, Observable } from 'rxjs';
+import { AuthenticationService } from './authentication.service';
 import { Action } from './interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationState {
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticationService) {
     this.isSmallScreen$ = this.breakpointObserver.observe('(max-width: 599px)').pipe(
       map((result) => result.matches),
       shareReplay()
@@ -17,6 +18,10 @@ export class ApplicationState {
       map((result) => result.matches),
       shareReplay()
     );
+  }
+
+  getPublicKey() {
+    return this.authService.authInfo$.getValue().publicKeyHex;
   }
 
   title = 'Blockcore Notes';

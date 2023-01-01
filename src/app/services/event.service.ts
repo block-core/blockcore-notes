@@ -19,11 +19,34 @@ export class EventService {
     }
 
     event = this.validator.sanitizeEvent(event);
-    event = this.validator.filterEvent(event);
+    // event = this.validator.filterEvent(event);
 
     if (!event) {
       return null;
     }
+
+    // TODO: Store the raw event.
+    // const nostrEvent = event as NostrEventDocument;
+    // nostrEvent.raw = originalEvent;
+
+    return event;
+  }
+
+  processContacts(originalEvent: NostrEvent): NostrEvent | null {
+    // Validate the event:
+    let event = this.validator.validateContacts(originalEvent);
+
+    if (!event) {
+      debugger;
+      console.log('INVALID CONTACT EVENT!');
+      return null;
+    }
+
+    // event = this.validator.filterEvent(event);
+
+    // if (!event) {
+    //   return null;
+    // }
 
     // TODO: Store the raw event.
     // const nostrEvent = event as NostrEventDocument;

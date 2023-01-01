@@ -14,6 +14,8 @@ export class DataValidation {
   profileLimit = 2048;
   profileTagsLimit = 10;
 
+  contactsContentLimit = 2048;
+
   constructor(private options: OptionsService) {}
 
   sanitizeEvent(event: NostrEvent) {
@@ -102,6 +104,41 @@ export class DataValidation {
     if (event.tags && event.tags.length > this.tagsLimit) {
       event.tags = event.tags.splice(0, this.tagsLimit);
       event.tagsCut = true;
+    }
+
+    return event;
+  }
+
+  /** Returns true if valid, false if not valid. Does not throw error for optimization purposes. */
+  validateContacts(event: NostrEvent) {
+    if (event.pubkey.length < 60 || event.pubkey.length > 70) {
+      return null;
+    }
+
+    if (!event.sig || !event.id) {
+      return null;
+    }
+
+    if (event.sig.length < 100 || event.pubkey.length > 150) {
+      return null;
+    }
+
+    if (event.id.length !== 64) {
+      return null;
+    }
+
+    if (typeof event.kind !== 'number' || typeof event.created_at !== 'number') {
+      return null;
+    }
+
+    if (event.kind !== 3) {
+      return null;
+    }
+
+    // Reduce the content length to reduce system resource usage and improve UI experience.
+    if (event.content.length > this.contactsContentLimit) {
+      event.content = event.content.substring(0, this.contactsContentLimit);
+      event.contentCut = true;
     }
 
     return event;

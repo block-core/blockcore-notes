@@ -147,7 +147,7 @@ export class FeedPublicComponent {
     }
 
     event = this.validator.sanitizeEvent(event);
-    event = this.validator.filterEvent(event);
+    // event = this.validator.filterEvent(event);
 
     if (!event) {
       return null;

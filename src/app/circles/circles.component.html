@@ -5,7 +5,10 @@
   <div class="circle-container" *ngFor="let circle of circles">
     <div class="circle-item"><mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon></div>
     <div class="circle-item">
-      {{ circle.name }}<br /><span class="dimmed"><span *ngIf="circle.public">Public</span><span *ngIf="!circle.public">Private</span> - {{ circle.style | circlestyle }} - Created: {{ circle.created | ago }}</span>
+      {{ circle.name }}<br />
+      <span class="dimmed"><span *ngIf="circle.public">Count: {{ countMembers(circle) }}</span></span><br />
+      <span class="dimmed"><span *ngIf="circle.public">Public</span>
+      <span *ngIf="!circle.public">Private</span> - {{ circle.style | circlestyle }} - Created: {{ circle.created | ago }}</span>
     </div>
     <div class="circle-item">
       <button (click)="deleteCircle(circle.id)" *ngIf="circle.id" class="circle-button" mat-icon-button>
@@ -14,6 +17,10 @@
     </div>
   </div>
 
-  <p class="dimmed">Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
+  <p class="circle-actions">
+    <button mat-stroked-button (click)="importFollowList()">Import Follow List</button>
+    <button mat-stroked-button (click)="publishFollowList()">Publish Follow List</button>
+  </p>
 
+  <p class="dimmed">Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p>
 </div>
