@@ -9,16 +9,17 @@
         <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel *ngFor="let relay of relayService.relays">
             <mat-expansion-panel-header>
-              <mat-panel-title>{{ relay.metadata.nip11?.name }}</mat-panel-title>
+              <mat-panel-title *ngIf="!(appState.isSmallScreen$ | async)">{{ relay.metadata.nip11?.name }}</mat-panel-title>
               <mat-panel-description>
                 {{ relay.url }}
                 <mat-icon class="online" [ngClass]="'relay-status-' + relay.status">radio_button_checked</mat-icon>
               </mat-panel-description>
             </mat-expansion-panel-header>
             <div *ngIf="relay.metadata.error" class="error">
-              {{relay.metadata.error}}
+              {{ relay.metadata.error }}
             </div>
             <div *ngIf="relay.metadata.nip11">
+              <h2 *ngIf="relay.metadata.nip11?.name">{{ relay.metadata.nip11?.name }}</h2>
               {{ relay.metadata.nip11.description }}<br /><br />
               <span class="dimmed">
                 NIPs: {{ relay.metadata.nip11.supported_nips }}<br />
@@ -26,13 +27,17 @@
                 <span class="wrap">ID: {{ relay.metadata.nip11.pubkey }}</span></span
               >
             </div>
+            <button class="delete-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">Delete</button>
           </mat-expansion-panel>
         </mat-accordion>
 
         <p class="dimmed">Relays are managed by your browser extension. Open extension to change which relays Blockcore Notes should use. After modifying relay in extension, click button below.</p>
 
         <div class="settings-action-buttons">
-          <button mat-flat-button color="primary" (click)="getRelays()">Reset to extension relays</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Reset to app relays</button><button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>&nbsp;
+          <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
+          <br>
+          <button mat-flat-button color="primary" (click)="getRelays()">Append extension relays</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append app relays</button
+          ><button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
         </div>
       </div>
     </ng-template>

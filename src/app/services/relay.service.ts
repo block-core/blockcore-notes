@@ -54,7 +54,14 @@ export class RelayService {
 
   subs: Sub[] = [];
   relays: NostrRelay[] = [];
+
+  #relaysChanged: BehaviorSubject<any> = new BehaviorSubject<any>(this.relays);
+
   // events$ = this.#eventsChanged.asObservable();
+
+  get relays$(): Observable<any> {
+    return this.#relaysChanged.asObservable();
+  }
 
   get events$(): Observable<NostrEventDocument[]> {
     return this.#eventsChanged.asObservable().pipe(
@@ -286,8 +293,8 @@ export class RelayService {
       await this.#table.del(key);
     }
 
-    this.events = [];
-    this.#updated();
+    this.relays = [];
+    this.#relaysChanged.next(this.relays);
   }
 
   /** Returns all events that are persisted. */
@@ -499,6 +506,8 @@ export class RelayService {
 
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async appendRelays(relays: any) {
+    console.log('APPEND RELAYS:', relays);
+
     let preparedRelays = relays;
 
     if (Array.isArray(preparedRelays)) {
@@ -516,6 +525,14 @@ export class RelayService {
       const val = preparedRelays[key];
       await this.relayStorage.put({ id: key, write: val.write, read: val.read });
     }
+  }
+
+  /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
+  async deleteRelay(url: string) {
+    await this.#table.del(url);
+
+    const relayIndex = this.relays.findIndex((r) => r.url == url);
+    this.relays.splice(relayIndex, 1);
   }
 
   connect() {

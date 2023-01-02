@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
+import { Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate.service';
 import { EventService } from '../services/event.service';
 import { FeedService } from '../services/feed.service';
@@ -33,6 +34,14 @@ export class SettingsComponent {
     }
   }
 
+  async deleteRelay(relay: Relay) {
+    await this.relayService.deleteRelay(relay.url);
+  }
+
+  async deleteRelays() {
+    await this.relayService.wipe();
+  }
+
   async clearProfileCache() {
     await this.profileService.wipeNonFollow();
     this.wipedNonFollow = true;
@@ -51,7 +60,9 @@ export class SettingsComponent {
 
   async getDefaultRelays() {
     // Reset all in-memory relay, all subscriptions and wipe the storage.
-    await this.relayService.reset();
+    // await this.relayService.reset();
+
+    console.log('DEFAULT RELAYS:', this.relayService.defaultRelays);
 
     // Append the default relays.
     await this.relayService.appendRelays(this.relayService.defaultRelays);
