@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription, NostrRelay, NostrRelayDocument } from './interfaces';
-import * as sanitizeHtml from 'sanitize-html';
-import { SettingsService } from './settings.service';
-import { Observable, of, BehaviorSubject, map, combineLatest } from 'rxjs';
+import { NostrEventDocument, NostrSubscription, NostrRelay, NostrRelayDocument } from './interfaces';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
-import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
 import { CirclesService } from './circles.service';
@@ -56,8 +53,6 @@ export class RelayService {
   relays: NostrRelay[] = [];
 
   #relaysChanged: BehaviorSubject<any> = new BehaviorSubject<any>(this.relays);
-
-  // events$ = this.#eventsChanged.asObservable();
 
   get relays$(): Observable<any> {
     return this.#relaysChanged.asObservable();
@@ -312,198 +307,6 @@ export class RelayService {
     });
   }
 
-  // scheduleProfileDownload() {
-  //   setTimeout(() => {
-  //     this.processProfilesQueue();
-  //     this.scheduleProfileDownload();
-  //   }, 5000);
-  // }
-
-  async downloadRecent(pubkeys: string[]) {
-    console.log('DOWNLOAD RECENT FOR:', pubkeys);
-    const relay = this.relays[0];
-
-    const backInTime = moment().subtract(12, 'hours').unix();
-
-    // Start subscribing to our people feeds.
-    const sub = relay.sub([{ kinds: [1], since: backInTime, authors: pubkeys }], {}) as NostrSubscription;
-
-    sub.loading = true;
-
-    // Keep all subscriptions around so we can close them when needed.
-    this.subs.push(sub);
-
-    sub.on('event', (originalEvent: any) => {
-      const event = this.eventService.processEvent(originalEvent);
-
-      if (!event) {
-        return;
-      }
-
-      this.#persist(event);
-    });
-
-    sub.on('eose', () => {
-      // console.log('Initial load of people feed completed.');
-      sub.loading = false;
-    });
-  }
-
-  // TODO: Temporary container for thread events. The downloadThread should probably return an Observable that should
-  // vanish when the user is finished watched it.
-  thread: NostrEvent[] = [];
-
-  // threadQueue: string[];
-
-  downloadThread(id: string) {
-    const relay = this.relays[0];
-
-    const backInTime = moment().subtract(12, 'hours').unix();
-
-    const sub = relay.sub([{ ['#e']: [id] }], {}) as NostrSubscription;
-
-    sub.loading = true;
-
-    // Keep all subscriptions around so we can close them when needed.
-    this.subs.push(sub);
-
-    sub.on('event', (originalEvent: any) => {
-      const event = this.eventService.processEvent(originalEvent);
-
-      if (!event) {
-        return;
-      }
-
-      const eventIndex = this.thread.findIndex((e) => e.id == event.id);
-
-      if (eventIndex > -1) {
-        this.thread[eventIndex] = event;
-      } else {
-        this.thread.unshift(event);
-      }
-    });
-
-    sub.on('eose', () => {
-      // console.log('Initial load of people feed completed.');
-      sub.loading = false;
-      sub.unsub();
-    });
-  }
-
-  // async downloadProfile(pubkey: string) {
-  //   console.log('ADD DOWNLOAD PROFILE:', pubkey);
-  //   if (!pubkey) {
-  //     debugger;
-  //     return;
-  //   }
-
-  //   this.profileQueue.push(pubkey);
-
-  //   // Wait some CPU cycles for potentially more profiles before we process.
-  //   setTimeout(() => {
-  //     this.processProfilesQueue();
-  //   }, 500);
-
-  //   // TODO: Loop all relays until we find the profile.
-  //   // return this.fetchProfiles(this.relays[0], [pubkey]);
-  // }
-
-  // profileQueue: string[] = [];
-
-  // processProfilesQueue() {
-  //   // console.log('processProfilesQueue', this.isFetching);
-
-  //   // If currently fetching, just skip until next interval.
-  //   if (this.isFetching) {
-  //     return;
-  //   }
-
-  //   // Grab all queued up profiles and ask for them, or should we have a maximum item?
-  //   // For now, let us grab 10 and process those until next interval.
-  //   const pubkeys = this.profileQueue.splice(0, 10);
-  //   this.fetchProfiles(this.relays[0], pubkeys);
-  // }
-
-  // isFetching = false;
-
-  // fetchProfiles(relay: Relay, authors: string[]) {
-  //   if (!authors || authors.length === 0) {
-  //     return;
-  //   }
-
-  //   console.log('FETCHING PROFILE!', authors);
-
-  //   // Add a protection timeout if we never receive the profiles. After 30 seconds, cancel and allow query to continue.
-  //   setTimeout(() => {
-  //     this.isFetching = false;
-
-  //     try {
-  //       profileSub.unsub();
-  //     } catch (err) {
-  //       console.warn('Error during automatic failover for profile fetch.', err);
-  //     }
-  //   }, 30000);
-
-  //   this.isFetching = true;
-  //   let profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
-
-  //   profileSub.on('event', async (originalEvent: NostrEvent) => {
-  //     console.log('EVENT ON PROFILE:', originalEvent);
-  //     const event = this.eventService.processEvent(originalEvent);
-
-  //     if (!event) {
-  //       return;
-  //     }
-
-  //     try {
-  //       const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
-
-  //       console.log('GOT PROFILE:;', profile);
-
-  //       // Persist the profile.
-  //       await this.profileService.updateProfile(event.pubkey, profile);
-
-  //       // TODO: Add NIP-05 and nostr.directory verification.
-  //       // const displayName = encodeURIComponent(profile.name);
-  //       // const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
-
-  //       // const rawResponse = await fetch(url, {
-  //       //   method: 'GET',
-  //       //   mode: 'cors',
-  //       // });
-
-  //       // if (rawResponse.status === 200) {
-  //       //   const content = await rawResponse.json();
-  //       //   const directoryPublicKey = content.names[displayName];
-
-  //       //   if (event.pubkey === directoryPublicKey) {
-  //       //     if (!profile.verifications) {
-  //       //       profile.verifications = [];
-  //       //     }
-
-  //       //     profile.verifications.push('@nostr.directory');
-
-  //       //     // Update the profile with verification data.
-  //       //     await this.profile.putProfile(event.pubkey, profile);
-  //       //   } else {
-  //       //     // profile.verified = false;
-  //       //     console.warn('Nickname reuse:', url);
-  //       //   }
-  //       // } else {
-  //       //   // profile.verified = false;
-  //       // }
-  //     } catch (err) {
-  //       console.warn('This profile event was not parsed due to errors:', event);
-  //     }
-  //   });
-
-  //   profileSub.on('eose', () => {
-  //     console.log('eose for profile', authors);
-  //     profileSub.unsub();
-  //     this.isFetching = false;
-  //   });
-  // }
-
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async appendRelays(relays: any) {
     console.log('APPEND RELAYS:', relays);
@@ -632,28 +435,5 @@ export class RelayService {
       // First append whatever the extension give us of relays.
       await this.appendRelays(relays);
     }
-
-    // Whenever the profile service needs to get a profile from the network, this event is triggered.
-    // this.profileService.profileRequested$.subscribe(async (pubkey) => {
-    //   if (!pubkey) {
-    //     return;
-    //   }
-    //   await this.downloadProfile(pubkey);
-    // });
-    // // TODO: Use rxjs to trigger the queue to process and then complete, don't do this setInterval.
-    // this.scheduleProfileDownload();
-    // Populate the profile observable.
-    // await this.profileService.populate();
-    // Load all persisted events. This will of course be too many as user get more and more... so
-    // this must be changed into a filter ASAP. Two filters are needed: "Current View" which allows scrolling back in time,
-    // and an initial load which should likely just return top 100?
-    // this.events = await this.followEvents(50);
-    // this.#updated();
-    // Every time profiles are updated, we must change our profile subscription.
-    // this.profileService.profiles$.subscribe((profiles) => {
-    //   console.log('Profiles changed:', profiles);
-    // });
-    // this.openConnection('wss://relay.damus.io');
-    // this.openConnection('wss://nostr-pub.wellorder.net');
   }
 }
