@@ -499,11 +499,21 @@ export class RelayService {
 
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async appendRelays(relays: any) {
-    const entries = Object.keys(relays);
+    let preparedRelays = relays;
+
+    if (Array.isArray(preparedRelays)) {
+      preparedRelays = {};
+
+      for (let i = 0; i < relays.length; i++) {
+        preparedRelays[relays[i]] = { read: true, write: true };
+      }
+    }
+
+    const entries = Object.keys(preparedRelays);
 
     for (var i = 0; i < entries.length; i++) {
       const key = entries[i];
-      const val = relays[key];
+      const val = preparedRelays[key];
       await this.relayStorage.put({ id: key, write: val.write, read: val.read });
     }
   }
