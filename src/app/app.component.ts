@@ -19,6 +19,7 @@ import { ProfileService } from './services/profile.service';
 import { ScrollEvent } from './shared/scroll.directive';
 import { NavigationService } from './services/navigation.service';
 import { NostrProfileDocument } from './services/interfaces';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,6 @@ export class AppComponent {
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
   authenticated = false;
   bgimagePath = '/assets/profile-bg.png';
-  profileimagePath = '/assets/profile.png';
   profile: NostrProfileDocument | undefined;
 
   constructor(
@@ -48,7 +48,8 @@ export class AppComponent {
     private relayService: RelayService,
     private dataService: DataService,
     public profileService: ProfileService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    public theme: ThemeService
   ) {
     // appState.title = 'Blockcore Notes';
     this.authService.authInfo$.subscribe(async (auth) => {
@@ -124,6 +125,7 @@ export class AppComponent {
   }
 
   async ngOnInit() {
+    this.theme.init();
     // const testdata = await this.storage.get('123');
     // console.log(testdata);
     // await this.storage.putProfile('123', { about: 'Hi', name: 'Name', picture: '' });

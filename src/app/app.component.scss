@@ -47,7 +47,7 @@ header {
 }
 
 .bg {
-  border-bottom: 8px solid #9c27b0;
+  border-bottom: 3px solid #9c27b0;
 }
 
 .bio:hover > .desc {
@@ -71,7 +71,7 @@ header {
 
 .avatar {
   width: 100%;
-  border: 8px solid #9c27b0;
+  border: 3px solid #9c27b0;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
@@ -142,4 +142,15 @@ header {
   float: left;
   position: fixed;
   z-index: 100000;
+  margin: 5px;
 }
+
+.theme-sidenav-icon {
+  float: right;
+  position: fixed;
+  z-index: 100000;
+  margin: 5px;
+  right: 5px;
+}
+
+
