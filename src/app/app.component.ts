@@ -48,7 +48,7 @@ export class AppComponent {
     private relayService: RelayService,
     private dataService: DataService,
     public profileService: ProfileService,
-    private navigationService: NavigationService,
+    public navigationService: NavigationService,
     public theme: ThemeService
   ) {
     // appState.title = 'Blockcore Notes';

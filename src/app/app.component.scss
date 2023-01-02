@@ -153,4 +153,19 @@ header {
   right: 5px;
 }
 
+.new-post {
+  text-align: center;
+}
 
+.new-post-button {
+  width: 92px;
+  height: 92px;
+  position: fixed;
+  bottom: 2em;
+  left: 2.9em;
+  cursor: pointer;
+}
+
+.new-post-button:hover {
+  opacity: 0.6;
+}

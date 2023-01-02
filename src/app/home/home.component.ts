@@ -16,6 +16,7 @@ import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { OptionsService } from '../services/options.service';
 import { FeedService } from '../services/feed.service';
 import { AuthenticationService } from '../services/authentication.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +32,7 @@ export class HomeComponent {
     public dialog: MatDialog,
     public profile: ProfileService,
     private validator: DataValidation,
+    public navigationService: NavigationService,
     private authService: AuthenticationService,
     private utilities: Utilities,
     private router: Router,
@@ -163,29 +165,6 @@ export class HomeComponent {
   //   await this.load();
   // }
 
-  createNote(): void {
-    const dialogRef = this.dialog.open(NoteDialog, {
-      data: {},
-      maxWidth: '100vw',
-      panelClass: 'full-width-dialog',
-    });
-
-    dialogRef.afterClosed().subscribe(async (data) => {
-      console.log('dialog data:', data);
-      let note = data.note;
-
-      let event: Event = {
-        kind: 1,
-        created_at: Math.floor(Date.now() / 1000),
-        content: note,
-        pubkey: this.appState.getPublicKey(),
-        tags: [],
-      };
-
-      await this.feedService.publish(event);
-    });
-  }
-
   async ngOnInit() {
     this.options.options.privateFeed = true;
 
@@ -199,7 +178,7 @@ export class HomeComponent {
         icon: 'note_add',
         tooltip: 'Create Note',
         click: () => {
-          this.createNote();
+          this.navigationService.createNote();
         },
       },
     ];
