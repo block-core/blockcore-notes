@@ -216,7 +216,6 @@ export class CirclesComponent {
   }
 
   async ngOnInit() {
-    console.log('CIRCLE NG ON INIT!');
     this.appState.title = 'Circles';
     this.appState.showBackButton = true;
     this.appState.actions = [

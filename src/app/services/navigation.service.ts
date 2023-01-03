@@ -57,6 +57,10 @@ export class NavigationService {
     });
 
     dialogRef.afterClosed().subscribe(async (data) => {
+      if (!data) {
+        return;
+      }
+
       console.log('dialog data:', data);
       let note = data.note;
 
