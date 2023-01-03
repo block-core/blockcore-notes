@@ -1,13 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate.service';
 import { EventService } from '../services/event.service';
 import { FeedService } from '../services/feed.service';
+import { NostrRelay } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { RelayService } from '../services/relay.service';
 import { RelayStorageService } from '../services/relay.storage.service';
 import { StorageService } from '../services/storage.service';
+import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
 
 @Component({
   selector: 'app-settings',
@@ -22,7 +25,15 @@ export class SettingsComponent {
   wipedNotes = false;
   open = false;
 
-  constructor(public relayService: RelayService, public relayStorage: RelayStorageService, public feedService: FeedService, public appState: ApplicationState, private storage: StorageService, private profileService: ProfileService) {}
+  constructor(
+    public relayService: RelayService,
+    public dialog: MatDialog,
+    public relayStorage: RelayStorageService,
+    public feedService: FeedService,
+    public appState: ApplicationState,
+    private storage: StorageService,
+    private profileService: ProfileService
+  ) {}
 
   toggle() {
     if (this.open) {
@@ -39,7 +50,7 @@ export class SettingsComponent {
   }
 
   async deleteRelays() {
-    await this.relayService.wipe();
+    await this.relayService.reset();
   }
 
   async clearProfileCache() {
@@ -59,11 +70,6 @@ export class SettingsComponent {
   }
 
   async getDefaultRelays() {
-    // Reset all in-memory relay, all subscriptions and wipe the storage.
-    // await this.relayService.reset();
-
-    console.log('DEFAULT RELAYS:', this.relayService.defaultRelays);
-
     // Append the default relays.
     await this.relayService.appendRelays(this.relayService.defaultRelays);
 
@@ -85,6 +91,31 @@ export class SettingsComponent {
   ngOnInit() {
     this.appState.title = 'Settings';
     this.appState.showBackButton = true;
-    this.appState.actions = [];
+    this.appState.actions = [
+      {
+        icon: 'add_circle',
+        tooltip: 'Add Relay',
+        click: () => {
+          this.addRelay();
+        },
+      },
+    ];
+  }
+
+  addRelay(): void {
+    const dialogRef = this.dialog.open(AddRelayDialog, {
+      data: { read: true, write: true },
+      maxWidth: '100vw',
+      panelClass: 'full-width-dialog',
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: AddRelayDialogData) => {
+      if (!result) {
+        return;
+      }
+
+      await this.relayService.appendRelay(result.url, result.read, result.write);
+      this.relayService.connect();
+    });
   }
 }

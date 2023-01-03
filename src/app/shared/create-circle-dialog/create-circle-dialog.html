@@ -1,43 +1,36 @@
-<h1 mat-dialog-title>Create Circle</h1>
-<div mat-dialog-content class="mat-dialog-content">
+<div class="dialog">
+  <h1 mat-dialog-title>Create Circle</h1>
+  <div mat-dialog-content>
+    <mat-form-field appearance="fill" class="input-full-width">
+      <mat-icon class="circle" matPrefix>supervised_user_circle</mat-icon>
+      <mat-label>Circle Name</mat-label>
+      <input matInput type="text" autocomplete="off" [(ngModel)]="data.name" />
+    </mat-form-field>
 
-  <mat-form-field appearance="fill" class="input-full-width">
-    <mat-icon class="circle" matPrefix>supervised_user_circle</mat-icon>
-    <mat-label>Circle Name</mat-label>
-    <input matInput type="text" autocomplete="off" [(ngModel)]="data.name" />
-  </mat-form-field>
+    <mat-form-field appearance="fill" class="circle-input">
+      <div matPrefix ngx-colors-trigger class="color" [style.background]="data.color" [(ngModel)]="data.color"></div>
+      <mat-label>Color</mat-label>
+      <input matInput [(ngModel)]="data.color" autocomplete="off" />
+    </mat-form-field>
 
-  <mat-form-field appearance="fill" class="circle-input">
-    <div matPrefix ngx-colors-trigger class="color" [style.background]="data.color" [(ngModel)]="data.color">
-    </div>
-    <mat-label>Color</mat-label>
-    <input matInput [(ngModel)]="data.color" autocomplete="off">
-  </mat-form-field>
+    <mat-form-field appearance="fill" class="circle-input">
+      <mat-label>Type</mat-label>
+      <mat-select [(value)]="data.style">
+        <mat-option *ngFor="let style of styles" [value]="style.id"> {{style.name}} </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="fill" class="circle-input">
-    <mat-label>Type</mat-label>
-    <mat-select [(value)]="data.style">
-      <mat-option *ngFor="let style of styles" [value]="style.id">
-        {{style.name}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field appearance="fill" class="circle-input">
+      <mat-label>Visibility</mat-label>
+      <mat-select [(value)]="data.public">
+        <mat-option [value]="true"> Public </mat-option>
+        <mat-option [value]="false"> Private </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-  <mat-form-field appearance="fill" class="circle-input">
-    <mat-label>Visibility</mat-label>
-    <mat-select [(value)]="data.public">
-      <mat-option [value]="true">
-        Public
-      </mat-option>
-      <mat-option [value]="false">
-        Private
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-</div>
-
-<div mat-dialog-actions class="mat-dialog-actions" align="end">
-  <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-  <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Save</button>
+  <div mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+    <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Save</button>
+  </div>
 </div>

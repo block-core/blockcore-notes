@@ -1,15 +1,17 @@
-<h1 mat-dialog-title>Write Your Note</h1>
+<div class="dialog">
+  <h1 mat-dialog-title>Write Your Note</h1>
 
-<div mat-dialog-content class="mat-dialog-content">
-  <mat-form-field appearance="fill" class="input-full-width">
-    <mat-icon class="emoji" matPrefix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;">sentiment_satisfied</mat-icon>
-    <mat-label>Note</mat-label>
-    <textarea class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="data.note" rows="6"></textarea>
-  </mat-form-field>
-  <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
-</div>
-<div mat-dialog-actions class="mat-dialog-actions" align="end">
-  <mat-icon (click)="toggleSize()" class="hide-small maximize-button" matTooltip="Maximize the window">zoom_out_map</mat-icon>
-  <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-  <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Post</button>
+  <div mat-dialog-content class="mat-dialog-content">
+    <mat-form-field appearance="fill" class="input-full-width">
+      <mat-icon class="emoji" matPrefix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;">sentiment_satisfied</mat-icon>
+      <mat-label>Note</mat-label>
+      <textarea class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="data.note" rows="6"></textarea>
+    </mat-form-field>
+    <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+  </div>
+  <div mat-dialog-actions class="mat-dialog-actions" align="end">
+    <mat-icon (click)="toggleSize()" class="hide-small maximize-button" matTooltip="Maximize the window">zoom_out_map</mat-icon>
+    <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+    <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Post</button>
+  </div>
 </div>

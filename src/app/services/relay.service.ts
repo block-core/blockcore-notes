@@ -22,16 +22,13 @@ export class RelayService {
     'wss://relay.nostr.info': { read: true, write: true },
     'wss://nostr-pub.wellorder.net': { read: true, write: true },
     'wss://nostr.nordlysln.net': { read: true, write: true },
-    // 'wss://nostr-verified.wellorder.net': { read: false, write: true },
-    // 'wss://nostr.bitcoiner.social': { read: true, write: true },
-    // 'wss://nostr.drss.io': { read: true, write: true },
     'wss://relay.damus.io': { read: true, write: false },
-    // 'wss://relay.nostr.info': { read: true, write: true },
-    // 'wss://relay.minds.com/nostr/v1/ws': { read: false, write: true },
     'wss://relay.nostr.ch': { read: true, write: true },
   };
 
   #table;
+
+  // #relayTable;
 
   events: NostrEventDocument[] = [];
 
@@ -52,9 +49,9 @@ export class RelayService {
   subs: Sub[] = [];
   relays: NostrRelay[] = [];
 
-  #relaysChanged: BehaviorSubject<any> = new BehaviorSubject<any>(this.relays);
+  #relaysChanged: BehaviorSubject<NostrRelay[]> = new BehaviorSubject<NostrRelay[]>(this.relays);
 
-  get relays$(): Observable<any> {
+  get relays$(): Observable<NostrRelay[]> {
     return this.#relaysChanged.asObservable();
   }
 
@@ -69,10 +66,6 @@ export class RelayService {
       })
     );
   }
-
-  // get events$(): Observable<NostrEventDocument[]> {
-  //   return this.#eventsChanged.asObservable();
-  // }
 
   /** Posts that does not have any e tags and is not filtered on blocks or mutes, returns everyone. */
   get rootEvents$(): Observable<NostrEventDocument[]> {
@@ -183,18 +176,9 @@ export class RelayService {
       );
   }
 
-  constructor(
-    public relayStorage: RelayStorageService,
-    private options: OptionsService,
-    private eventService: EventService,
-    private validator: DataValidation,
-    private storage: StorageService,
-    private profileService: ProfileService,
-    private appState: ApplicationState,
-    private authService: AuthenticationService,
-    private circlesService: CirclesService
-  ) {
+  constructor(public relayStorage: RelayStorageService, private options: OptionsService, private eventService: EventService, private storage: StorageService, private profileService: ProfileService, private appState: ApplicationState) {
     this.#table = this.storage.table<NostrEventDocument>('events');
+    // this.#relayTable = this.storage.table<any>('relays');
   }
 
   /** Add an in-memory instance of relay and get stored metadata for it. */
@@ -235,6 +219,8 @@ export class RelayService {
 
     // Persist the latest NIP11 metadata on the NostrRelayDocument.
     await this.relayStorage.put(relay.metadata);
+
+    this.relaysUpdated();
   }
 
   #updated() {
@@ -282,14 +268,14 @@ export class RelayService {
     return items;
   }
 
-  /** Wipes all profiles. */
+  /** Wipes all events. */
   async wipe() {
     for await (const [key, value] of this.#table.iterator({})) {
       await this.#table.del(key);
     }
 
     this.relays = [];
-    this.#relaysChanged.next(this.relays);
+    this.relaysUpdated();
   }
 
   /** Returns all events that are persisted. */
@@ -309,8 +295,6 @@ export class RelayService {
 
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async appendRelays(relays: any) {
-    console.log('APPEND RELAYS:', relays);
-
     let preparedRelays = relays;
 
     if (Array.isArray(preparedRelays)) {
@@ -328,24 +312,46 @@ export class RelayService {
       const val = preparedRelays[key];
       await this.relayStorage.put({ id: key, write: val.write, read: val.read });
     }
+
+    this.relaysUpdated();
+  }
+
+  async appendRelay(url: string, read: boolean, write: boolean) {
+    await this.relayStorage.put({ id: url, read: read, write: write });
+    this.relaysUpdated();
+  }
+
+  relaysUpdated() {
+    this.#relaysChanged.next(this.relays);
   }
 
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async deleteRelay(url: string) {
-    await this.#table.del(url);
+    await this.relayStorage.delete(url);
 
     const relayIndex = this.relays.findIndex((r) => r.url == url);
     this.relays.splice(relayIndex, 1);
+
+    this.relaysUpdated();
   }
 
   connect() {
     for (var i = 0; i < this.relayStorage.items.length; i++) {
       const entry = this.relayStorage.items[i];
+
+      const existingConnection = this.relays.find((r) => r.url == entry.id);
+
+      // If we are already connected, skip opening connection again.
+      if (existingConnection && existingConnection.status == 1) {
+        continue;
+      }
+
       this.openConnection(entry);
     }
   }
 
   async reset() {
+    console.log('RESET RUNNING!');
     for (var i = 0; i < this.relays.length; i++) {
       const relay = this.relays[i];
       relay.close();
@@ -355,6 +361,10 @@ export class RelayService {
     this.relays = [];
 
     await this.relayStorage.wipe();
+
+    this.relaysUpdated();
+
+    console.log('THERE ARE NO RELAYS:', this.relays);
   }
 
   async #connectToRelay(server: NostrRelayDocument, onConnected: any) {

@@ -22,18 +22,18 @@ export class ConnectComponent {
     const userInfo = await this.authService.login();
 
     if (userInfo.authenticated()) {
-      let relays;
+      // let relays;
 
-      try {
-        const gt = globalThis as any;
-        relays = await gt.nostr.getRelays();
-        console.log('RELAYS FROM EXTENSION:', relays);
-      } catch (err) {
-        relays = this.relayService.defaultRelays;
-      }
+      // try {
+      //   const gt = globalThis as any;
+      //   relays = await gt.nostr.getRelays();
+      //   console.log('RELAYS FROM EXTENSION:', relays);
+      // } catch (err) {
+      //   relays = this.relayService.defaultRelays;
+      // }
 
-      // First append whatever the extension give us of relays.
-      await this.relayService.appendRelays(relays);
+      // // First append whatever the extension give us of relays.
+      // await this.relayService.appendRelays(relays);
 
       // Initiate connections against registered relays.
       // this.relayService.connect();
@@ -46,12 +46,6 @@ export class ConnectComponent {
     const userInfo = await this.authService.anonymous();
 
     if (userInfo.authenticated()) {
-      // First append whatever the extension give us of relays.
-      await this.relayService.appendRelays(this.relayService.defaultRelays);
-
-      // Initiate connections against registered relays.
-      await this.relayService.connect();
-
       this.router.navigateByUrl('/');
     }
   }

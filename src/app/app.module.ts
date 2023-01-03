@@ -68,6 +68,7 @@ import { ContentComponent } from './shared/content/content.component';
 import { ScrollDirective } from './shared/scroll.directive';
 import { ImportFollowDialog } from './circles/import-follow-dialog/import-follow-dialog';
 import { ProfileHeaderComponent } from './shared/profile-header/profile-header.component';
+import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import { ProfileHeaderComponent } from './shared/profile-header/profile-header.c
     ScrollDirective,
     ImportFollowDialog,
     ProfileHeaderComponent,
+    AddRelayDialog,
   ],
   imports: [
     BrowserModule,
