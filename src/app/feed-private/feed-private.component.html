@@ -13,7 +13,12 @@
 
   <div class="page" *ngIf="profileService.initialized && !hasFollowers">
     <h1 class="marginless">Hi, having fun yet?</h1>
-    <p>Here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>
+    
+    <p>You can import your existing followers:</p>
+    <button class="follow-button" mat-stroked-button color="primary" (click)="import()">Import my existing following list</button>
+    <br><br>
+
+    <p>If you are new to Blockcore Notes, here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>
 
     <mat-grid-list gutterSize="1em" [cols]="(appState.isSmallScreen$ | async) ? '1' : '2'" rowHeight="180px">
       <mat-grid-tile *ngFor="let profile of defaults">

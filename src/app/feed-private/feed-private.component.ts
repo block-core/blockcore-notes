@@ -14,6 +14,7 @@ import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
 import { ScrollEvent } from '../shared/scroll.directive';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface DefaultProfile {
   pubkey: string;
@@ -78,6 +79,7 @@ export class FeedPrivateComponent {
     private utilities: Utilities,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
+    private snackBar: MatSnackBar,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
@@ -191,6 +193,45 @@ export class FeedPrivateComponent {
 
     // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
     this.cd.detectChanges();
+  }
+
+  import() {
+    // TODO: This is a copy-paste of code in circles, refactor ASAP!
+
+    this.snackBar.open('Importing followers process has started', 'Hide', {
+      duration: 2000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
+
+    let pubkey = this.utilities.ensureHexIdentifier(this.appState.getPublicKey());
+
+    // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
+    // follow lists and having to process everything multiple times. Just query one by one until
+    // we find the list. Until then, we simply grab the first relay only.
+    this.subscriptions.push(
+      this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
+        const publicKeys = contacts.tags.map((t) => t[1]);
+
+        for (let i = 0; i < publicKeys.length; i++) {
+          const publicKey = publicKeys[i];
+          const profile = await this.profileService.getProfile(publicKey);
+
+          // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+          if (profile) {
+            await this.profileService.follow(publicKeys[i], profile.circle);
+          } else {
+            await this.profileService.follow(publicKeys[i]);
+          }
+        }
+
+        this.router.navigateByUrl('/people');
+
+        // this.ngZone.run(() => {
+        //   this.cd.detectChanges();
+        // });
+      })
+    );
   }
 
   subscriptions: Subscription[] = [];
