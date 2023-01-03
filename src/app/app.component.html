@@ -44,7 +44,7 @@
         <mat-icon>close</mat-icon>
       </button>
       <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="mat-icon-button theme-sidenav-icon">
-        <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "light_mode" : "dark_mode" }}</mat-icon>
+        <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode": "light_mode" }}</mat-icon>
       </button>
       <header>
         <div class="bio" (click)="openProfile()">

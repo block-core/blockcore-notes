@@ -13,11 +13,13 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$blockcore-notes-primary: mat.define-palette(mat.$purple-palette);
-$blockcore-notes-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$blockcore-light-primary: mat.define-palette(mat.$purple-palette);
+$blockcore-light-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$blockcore-light-warn: mat.define-palette(mat.$red-palette);
 
-// The warn palette is optional (defaults to red).
-$blockcore-notes-warn: mat.define-palette(mat.$red-palette);
+$blockcore-dark-primary: mat.define-palette(mat.$purple-palette);
+$blockcore-dark-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$blockcore-dark-warn: mat.define-palette(mat.$red-palette);
 
 $blockcore-notes-typography: mat.define-typography-config(
   $font-family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
@@ -33,12 +35,12 @@ $blockcore-notes-level: mat.define-typography-level(
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$blockcore-notes-theme: mat.define-dark-theme(
+$blockcore-light-theme: mat.define-light-theme(
   (
     color: (
-      primary: $blockcore-notes-primary,
-      accent: $blockcore-notes-accent,
-      warn: $blockcore-notes-warn,
+      primary: $blockcore-light-primary,
+      accent: $blockcore-light-accent,
+      warn: $blockcore-light-warn,
     ),
     typography: $blockcore-notes-typography,
     level: $blockcore-notes-level,
@@ -48,7 +50,7 @@ $blockcore-notes-theme: mat.define-dark-theme(
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include mat.all-component-themes($blockcore-notes-theme);
+@include mat.all-component-themes($blockcore-light-theme);
 
 // $blockcore-notes-level: mat.define-typography-level(
 //   $font-family: Roboto,
@@ -60,19 +62,21 @@ $blockcore-notes-theme: mat.define-dark-theme(
 
 /* You can add global styles to this file, and also import other style files */
 
-// $angular-dark-theme: mat.define-dark-theme(
-//   (
-//     color: (
-//       primary: $angular-primary,
-//       accent: $angular-accent,
-//       warn: $angular-warn,
-//     ),
-//   )
-// );
+$blockcore-dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $blockcore-dark-primary,
+      accent: $blockcore-dark-accent,
+      warn: $blockcore-dark-warn,
+    ),
+    typography: $blockcore-notes-typography,
+    level: $blockcore-notes-level,
+  )
+);
 
-// .darkMode {
-//   @include mat.all-component-colors($angular-dark-theme);
-// }
+.dark {
+  @include mat.all-component-colors($blockcore-dark-theme);
+}
 
 html,
 body {
@@ -464,17 +468,16 @@ select {
   width: 100% !important;
 }
 
-mat-card-footer{
+mat-card-footer {
   padding: 16px;
 }
 
 .header-image {
-  background-image: url('/assets/profile.png');
+  background-image: url("/assets/profile.png");
   background-size: cover;
 }
 
-.mat-mdc-card-avatar
-{
+.mat-mdc-card-avatar {
   width: 50px !important;
   height: 50px !important;
 }

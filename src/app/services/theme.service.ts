@@ -1,41 +1,48 @@
-import { Injectable, Renderer2 } from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
+  public renderer: Renderer2;
 
-    get darkMode(): boolean {
-        if (localStorage.getItem('theme')) {
-            if (localStorage.getItem('theme') === 'dark') {
-                return true;
-            }
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return true;
-        }
+  constructor(private _renderer: RendererFactory2) {
+    this.renderer = _renderer.createRenderer(null, null);
+  }
 
-        return false;
+  get darkMode(): boolean {
+    if (localStorage.getItem('theme')) {
+      if (localStorage.getItem('theme') === 'dark') {
+        return true;
+      }
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return true;
     }
 
-    set darkMode(value: boolean) {
-        if (value) {
-            localStorage.setItem('theme', 'dark');
-        } else {
-            localStorage.setItem('theme', 'light');
-        }
+    return false;
+  }
 
-        this.updateMode();
+  set darkMode(value: boolean) {
+    if (value) {
+      localStorage.setItem('theme', 'dark');
+    } else {
+      localStorage.setItem('theme', 'light');
     }
 
-    public init() {
-        this.updateMode();
-    }
+    this.updateMode();
+  }
 
-    private updateMode() {
-        if (this.darkMode) {
-          document.documentElement.classList.add('dark')
-        } else {
-          document.documentElement.classList.remove('dark')
-        }
+  public init() {
+    this.updateMode();
+  }
+
+  private updateMode() {
+    if (this.darkMode) {
+      this.renderer.addClass(document.body, 'dark');
+      //   document.documentElement.classList.add('dark');
+    } else {
+      this.renderer.removeClass(document.body, 'dark');
+      // document.documentElement.classList.remove('dark');
     }
+  }
 }
