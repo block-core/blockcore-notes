@@ -239,9 +239,12 @@ mat-sidenav-content mat-toolbar {
 }
 
 .current-event {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 2em;
   // margin-left: 2em;
-  background-color: #303030 !important;
+  background-color: transparent !important;
+  border: 0 !important;
 }
 
 @media only screen and (max-width: 599px) {

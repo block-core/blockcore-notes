@@ -42,7 +42,7 @@
     </span>
   </div> -->
 
-  <mat-card class="current-event events noclick" *ngIf="thread.event$ | async as event">
+  <div class="current-event events noclick" *ngIf="thread.event$ | async as event">
     <div class="events-header">
       <app-event-header [pubkey]="event.pubkey"
         ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -60,7 +60,7 @@
       </span>
       <br />
     </div> -->
-  </mat-card>
+  </div>
 </div>
 <mat-divider></mat-divider>
 
