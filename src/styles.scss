@@ -386,6 +386,11 @@ mat-sidenav-content mat-toolbar {
   border-radius: 50%;
 }
 
+.profile-image-large:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 599px) {
   .profile-image-large {
     width: 96px;

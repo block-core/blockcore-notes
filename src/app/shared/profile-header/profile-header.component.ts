@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CirclesService } from 'src/app/services/circles.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfileDocument } from '../../services/interfaces';
+import { ProfileImageDialog, ProfileImageDialogData } from '../profile-image-dialog/profile-image-dialog';
 
 @Component({
   selector: 'app-profile-header',
@@ -21,7 +23,7 @@ export class ProfileHeaderComponent {
   muted? = false;
   npub!: string;
 
-  constructor(private profiles: ProfileService, private sanitizer: DomSanitizer, private circleService: CirclesService, private utilities: Utilities) {}
+  constructor(private profiles: ProfileService, public dialog: MatDialog, private sanitizer: DomSanitizer, private circleService: CirclesService, private utilities: Utilities) {}
 
   async ngAfterViewInit() {}
 
@@ -31,6 +33,12 @@ export class ProfileHeaderComponent {
     }
 
     return ProfileHeaderComponent.defaultProfileImage;
+  }
+
+  showProfileImage() {
+    this.dialog.open(ProfileImageDialog, {
+      data: { picture: this.imagePath },
+    });
   }
 
   async ngOnInit() {
