@@ -2,7 +2,7 @@
 
 <div class="feed-page">
   <!-- <p>Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p> -->
-  <div class="circle-container" *ngFor="let circle of circles">
+  <mat-card class="circle-container" *ngFor="let circle of circles">
     <div class="circle-item"><mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon></div>
     <div class="circle-item">
       {{ circle.name }}<br />
@@ -38,7 +38,7 @@
         </button>
       </mat-menu>
     </div>
-  </div>
+  </mat-card>
 
   <p class="circle-actions">
     <button mat-stroked-button (click)="importFollowList()">Import Following List</button>

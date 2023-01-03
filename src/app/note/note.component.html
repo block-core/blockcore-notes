@@ -14,16 +14,19 @@
 
   <ng-template *ngIf="thread.before$ | async as events">
     <div class="feed-page" *ngIf="events.length > 0">
-      <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+      <mat-card class="events" *ngFor="let event of events; trackBy: trackByFn">
         <span>
-          <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
-          <app-event-header [pubkey]="event.pubkey"
-            ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-          ></app-event-header>
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"
+              ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+            ></app-event-header>
+            <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+          </div>
+
           <app-content [event]="event"></app-content>
           <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
         </span>
-      </div>
+      </mat-card>
     </div>
   </ng-template>
   <!-- <div *ngIf="!thread.before$">NO ITEMS!</div> -->
@@ -39,11 +42,14 @@
     </span>
   </div> -->
 
-  <div class="current-event events noclick" *ngIf="thread.event$ | async as event">
-    <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
-    <app-event-header [pubkey]="event.pubkey"
-      ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-    ></app-event-header>
+  <mat-card class="current-event events noclick" *ngIf="thread.event$ | async as event">
+    <div class="events-header">
+      <app-event-header [pubkey]="event.pubkey"
+        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+      ></app-event-header>
+      <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+    </div>
+
     <app-content [event]="event"></app-content>
     <!-- <div class="content">
       {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span><br />
@@ -54,7 +60,7 @@
       </span>
       <br />
     </div> -->
-  </div>
+  </mat-card>
 </div>
 <mat-divider></mat-divider>
 
@@ -82,14 +88,16 @@
           </mat-expansion-panel>
         </mat-accordion> -->
 
-  <div class="events" *ngFor="let event of events; trackBy: trackByFn">
+  <mat-card class="events" *ngFor="let event of events; trackBy: trackByFn">
     <span>
-      <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
-      <app-event-header [pubkey]="event.pubkey"
+      <div class="events-header">
+        <app-event-header [pubkey]="event.pubkey"
         ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-      ></app-event-header>
+          ></app-event-header>
+          <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+      </div>
       <app-content [event]="event"></app-content>
       <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
     </span>
-  </div>
+  </mat-card>
 </div>

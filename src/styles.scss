@@ -78,6 +78,14 @@ $blockcore-dark-theme: mat.define-dark-theme(
   @include mat.all-component-colors($blockcore-dark-theme);
 }
 
+// .box {
+//   // Read the 500 hue from the primary color palette.
+//   color: mat.get-color-from-palette($purple-palette, 500);
+
+//   // background-color: mat.$drawer-background-color;
+//   // color: theming.get-color-from-palette(mat.$foreground, text);
+// }
+
 html,
 body {
   height: 100%;
@@ -86,7 +94,7 @@ body {
 }
 body {
   font-size: 18px;
-  background-color: #212121;
+  // background-color: mat.$background-color;
   color: white;
   overscroll-behavior-y: contain;
 }
@@ -141,6 +149,10 @@ a {
 a:hover {
   color: #c7b3ea;
   text-decoration: none;
+}
+
+app-profile-actions {
+  display: inline;
 }
 
 .mat-sidenav-content {
@@ -244,8 +256,7 @@ mat-sidenav-content mat-toolbar {
   margin-top: 1em;
   padding: 1em;
   margin-bottom: 1em;
-  background-color: #424242;
-  border-radius: 10px;
+  border-radius: 10px !important;
 }
 
 // .events {
@@ -254,22 +265,38 @@ mat-sidenav-content mat-toolbar {
 // }
 
 .events.clickable:hover {
-  background-color: #535353;
+  // background-color: #535353;
+  background-color: rgba(0, 0, 0, 0.04);
   cursor: pointer;
 }
 
 .noclick:hover {
-  background-color: #424242;
+  background-color: rgba(0, 0, 0, 0.04);
+  // background-color: #424242;
   cursor: default;
 }
 
-.items {
-  margin-top: 1em;
-  padding: 1em;
-  margin-bottom: 1em;
-  background-color: #424242;
-  border-radius: 10px;
+.events-header {
+  gap: 0.4em;
+  display: flex;
+  flex-direction: row;
 }
+
+.events-header app-event-header {
+  flex-grow: 2;
+}
+
+.events-header app-profile-actions {
+  width: 48px;
+}
+
+// .items {
+//   margin-top: 1em;
+//   padding: 1em;
+//   margin-bottom: 1em;
+//   background-color: #424242;
+//   border-radius: 10px;
+// }
 
 .options {
 }

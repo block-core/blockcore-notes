@@ -2,12 +2,15 @@
 
 <div class="feed-page">
   <div *ngIf="notes.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.<br /></div>
-  <div class="events" *ngFor="let note of notes">
-    <app-profile-actions [event]="note"></app-profile-actions>
-    <app-event-header [pubkey]="note.pubkey"
+  <mat-card class="events" *ngFor="let note of notes">
+    <div class="events-header">
+      <app-event-header [pubkey]="note.pubkey"
       >Posted: <span class="event-date">{{ note.created_at | ago }}</span
-      >, Saved: <span class="event-date">{{ note.saved | ago }}</span>
-    </app-event-header>
+        >, Saved: <span class="event-date">{{ note.saved | ago }}</span>
+      </app-event-header>
+      <app-profile-actions [event]="note"></app-profile-actions>
+    </div>
+    
     <app-content [event]="note"></app-content>
     <!-- <div class="content">
       {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
@@ -22,5 +25,5 @@
     <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
       <mat-icon class="expand-button-icon">expand_less</mat-icon>
     </button> -->
-  </div>
+  </mat-card>
 </div>

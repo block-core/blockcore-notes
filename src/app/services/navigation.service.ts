@@ -32,6 +32,10 @@ export class NavigationService {
       return;
     }
 
+    if (!event.id) {
+      debugger;
+    }
+
     this.router.navigate(['/e', event.id]);
   }
 

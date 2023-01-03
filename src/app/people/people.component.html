@@ -1,8 +1,6 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
 <div class="feed-page">
-  
-
   <!-- <p class="search">
     <mat-form-field appearance="fill" class="input-full-width">
       <mat-label>Search in People</mat-label>
@@ -38,13 +36,17 @@
       </mat-list-item>
     </mat-list> -->
 
-    <div class="events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of profiles; trackBy: trackByFn">
-      <app-profile-actions [profile]="profile"></app-profile-actions>
-      <app-event-header [profile]="profile"><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-event-header>
+    <mat-card class="events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of profiles; trackBy: trackByFn">
+      <div class="events-header">
+        <app-event-header [profile]="profile"
+          ><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon
+        ></app-event-header>
+        <app-profile-actions [profile]="profile"></app-profile-actions>
+      </div>
       <div class="content clickable">
         {{ profile.about }}
       </div>
-    </div>
+    </mat-card>
   </div>
 
   <!-- <div class="events" *ngFor="let profile of profiles">
@@ -59,7 +61,6 @@
   </div> -->
 
   <p class="dimmed">People are those you are following. You can use circles to organize your people.</p>
-
 </div>
 
 <!-- <mat-list>
