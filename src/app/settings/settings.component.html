@@ -31,12 +31,10 @@
           </mat-expansion-panel>
         </mat-accordion>
 
-        <p class="dimmed">Relays are managed by your browser extension. Open extension to change which relays Blockcore Notes should use. After modifying relay in extension, click button below.</p>
-
         <div class="settings-action-buttons">
           <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
           <br>
-          <button mat-flat-button color="primary" (click)="getRelays()">Append extension relays</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append app relays</button
+          <button mat-flat-button color="primary" (click)="getRelays()">Append relays from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append relays from app</button
           ><button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
         </div>
       </div>
