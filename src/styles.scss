@@ -78,13 +78,13 @@ $blockcore-dark-theme: mat.define-dark-theme(
   @include mat.all-component-colors($blockcore-dark-theme);
 }
 
-// .box {
-//   // Read the 500 hue from the primary color palette.
-//   color: mat.get-color-from-palette($purple-palette, 500);
+a {
+  color: mat.get-color-from-palette($blockcore-dark-primary);
+}
 
-//   // background-color: mat.$drawer-background-color;
-//   // color: theming.get-color-from-palette(mat.$foreground, text);
-// }
+.dark a {
+  color: mat.get-color-from-palette($blockcore-light-primary);
+}
 
 html,
 body {
@@ -95,7 +95,6 @@ body {
 body {
   font-size: 18px;
   // background-color: mat.$background-color;
-  color: white;
   overscroll-behavior-y: contain;
 }
 
@@ -143,7 +142,7 @@ h3 {
 }
 
 a {
-  color: rgb(206, 206, 206);
+  // color: rgb(206, 206, 206);
 }
 
 a:hover {
@@ -361,12 +360,10 @@ mat-sidenav-content mat-toolbar {
 }
 
 .event-header a {
-  color: white;
   text-decoration: none;
 }
 
 .event-header a:hover {
-  color: silver;
   text-decoration: underline;
 }
 
@@ -402,7 +399,7 @@ mat-sidenav-content mat-toolbar {
 
 .event-header .date {
   grid-area: date;
-  color: rgba(206, 206, 206, 0.618);
+  // color: rgba(206, 206, 206, 0.618);
   font-size: 0.8em;
 }
 
@@ -473,8 +470,8 @@ select {
 
 .dimmed {
   font-size: 0.9em;
-  color: gray;
-  // color: rgba(0, 0, 0, 0.87);
+  // color: gray;
+  // color: rgba(0, 0, 0, 0.9);
 }
 
 .space {
