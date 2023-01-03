@@ -6,7 +6,7 @@
     </div>
     <div class="profile-page-header-middle">
       <span *ngIf="profile">
-        <h2 class="profile-name marginless" [matTooltip]="npub" matTooltipPosition="above">
+        <h2 class="profile-name" [matTooltip]="npub" matTooltipPosition="above">
           <span *ngIf="profile.display_name">
             {{ profile.display_name }}
           </span>
@@ -19,13 +19,20 @@
             </span>
           </span>
         </h2>
-        <br />
+        <div class="profile-labels">
+          <div class="profile-labels-left"><mat-icon (click)="copy(npub)" class="profile-icon">key</mat-icon></div>
+          <div class="profile-labels-middle dimmed">@{{ profile.name }}</div>
+        </div>
+        <div class="profile-labels" *ngIf="profile.nip05" (click)="copy(profile.nip05)">
+          <div class="profile-labels-left"><mat-icon class="profile-icon">verified</mat-icon></div>
+          <div class="profile-labels-middle dimmed">{{ profile.nip05 }}</div>
+        </div>
+        <div class="profile-labels" *ngIf="profile.website" (click)="copy(profile.website)">
+          <div class="profile-labels-left"><mat-icon class="profile-icon">link</mat-icon></div>
+          <div class="profile-labels-middle dimmed">{{ profile.website }}</div>
+        </div>
         <span>
-          <span class="dimmed"
-            >{{ profile.name }}<span *ngIf="profile.nip05"> / {{ profile.nip05 }}</span></span
-          ><br />
           <p class="wrap" *ngIf="profile.about">{{ profile.about }}</p>
-          <p *ngIf="profile.website">{{ profile.website }}</p>
         </span>
       </span>
     </div>

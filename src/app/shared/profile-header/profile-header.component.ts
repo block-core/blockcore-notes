@@ -56,6 +56,10 @@ export class ProfileHeaderComponent {
     this.muted = this.profile.mute;
   }
 
+  copy(text: string) {
+    this.utilities.copy(text);
+  }
+
   sanitize(url: string) {
     const clean = this.sanitizer.bypassSecurityTrustUrl(url);
     return clean;

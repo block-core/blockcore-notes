@@ -1,0 +1,30 @@
+.profile-icon {
+  text-align: center;
+}
+
+.profile-name {
+  margin-top: 0;
+  margin-bottom: 0.2em;
+}
+
+.profile-labels {
+  display: flex;
+  gap: 0.4em;
+  justify-content: center;
+}
+
+.profile-labels:hover {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.profile-labels-left {
+  flex: 0 1 auto;
+  width: 24px;
+}
+
+.profile-labels-middle {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

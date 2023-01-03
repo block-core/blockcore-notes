@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import * as secp from '@noble/secp256k1';
 import { bech32 } from '@scure/base';
 import { Subscription } from 'rxjs';
+import { copyToClipboard } from '../shared/utilities';
 import { NostrProfileDocument, NostrProfile } from './interfaces';
 
 export function sleep(durationInMillisecond: number): Promise<void> {
@@ -12,6 +14,8 @@ export function sleep(durationInMillisecond: number): Promise<void> {
   providedIn: 'root',
 })
 export class Utilities {
+  constructor(private snackBar: MatSnackBar) {}
+
   unsubscribe(subscriptions: Subscription[]) {
     if (!subscriptions) {
       return;
@@ -47,6 +51,16 @@ export class Utilities {
     }
 
     return pubkey;
+  }
+
+  copy(text: string) {
+    copyToClipboard(text);
+
+    this.snackBar.open('Copied to clipboard', 'Hide', {
+      duration: 2500,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
 
   getHexIdentifier(pubkey: string) {
