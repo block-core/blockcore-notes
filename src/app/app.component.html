@@ -62,7 +62,7 @@
         <div class="data">
           <ul>
             <li>0 <span>Followers</span></li>
-            <li>0 <span>Following</span></li>
+            <li *ngIf="profileService.following$ | async as following">{{ following.length }} <span>Following</span></li>
           </ul>
         </div>
       </div>

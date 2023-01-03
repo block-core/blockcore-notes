@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NostrProfile, NostrProfileDocument } from './interfaces';
 import { StorageService } from './storage.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
 
@@ -15,6 +15,21 @@ export class ProfileService {
 
   // #profile: NostrProfileDocument;
 
+  /** TODO: Destroy this array when there are zero subscribers left. */
+  profiles: NostrProfileDocument[] = [];
+
+  #followingChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.profiles);
+
+  get following$(): Observable<NostrProfileDocument[]> {
+    // value.follow == true
+    return this.#profilesChanged.asObservable().pipe(
+      map((data) => {
+        const filtered = data.filter((events) => events.follow == true);
+        return filtered;
+      })
+    );
+  }
+
   #profileChanged: BehaviorSubject<NostrProfileDocument | undefined> = new BehaviorSubject<NostrProfileDocument | undefined>(undefined);
 
   /** Profile of the authenticated user. */
@@ -25,9 +40,6 @@ export class ProfileService {
   userProfileUpdated(profile: NostrProfileDocument | undefined) {
     this.#profileChanged.next(profile);
   }
-
-  /** TODO: Destroy this array when there are zero subscribers left. */
-  profiles: NostrProfileDocument[] = [];
 
   #profilesChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.profiles);
 
@@ -43,6 +55,7 @@ export class ProfileService {
 
   #updated() {
     this.#profilesChanged.next(this.profiles);
+    this.#followingChanged.next(this.profiles);
   }
 
   mutedPublicKeys() {
