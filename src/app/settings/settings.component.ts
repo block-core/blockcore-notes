@@ -10,6 +10,7 @@ import { ProfileService } from '../services/profile.service';
 import { RelayService } from '../services/relay.service';
 import { RelayStorageService } from '../services/relay.storage.service';
 import { StorageService } from '../services/storage.service';
+import { ThemeService } from '../services/theme.service';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
 
 @Component({
@@ -32,7 +33,8 @@ export class SettingsComponent {
     public feedService: FeedService,
     public appState: ApplicationState,
     private storage: StorageService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    public theme: ThemeService
   ) {}
 
   toggle() {
