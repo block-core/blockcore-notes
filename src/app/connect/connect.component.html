@@ -11,7 +11,7 @@
           <a class="start-button" href="/connect#start" [class.mat-elevation-z8]="true" mat-raised-button color="primary">Learn more</a>
           <div *ngIf="consent">
             <div *ngIf="!extensionDiscovered"><button class="start-button" (click)="connect()" mat-flat-button color="accent">Waiting for extension...</button></div>
-            <div *ngIf="extensionDiscovered"><button class="start-button" (click)="connect()" mat-flat-button color="accent">Connect using extension</button><span *ngIf="!consent" class="dimmed space">&nbsp;&nbsp;</span></div>
+            <div *ngIf="extensionDiscovered"><button class="start-button" (click)="connect()" mat-flat-button color="accent">Connect using extension</button></div>
           </div>
         </div>
       </mat-card-content>
@@ -70,7 +70,7 @@
             <br />
             <p>Want to view the app first?</p>
 
-            <div><button (click)="anonymous()" mat-raised-button [disabled]="!consent">Go straight in</button></div>
+            <div><button (click)="anonymous()" mat-raised-button>Go straight in</button></div>
           </div>
         </div>
         <div *ngIf="!consent" class="consent-required warn">You must agree with the notice above to enable login</div>
