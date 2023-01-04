@@ -134,8 +134,10 @@
 }
 
 .screenshot {
-  border-radius: 20px;
+  border-radius: 20px 0 0 20px;
   margin-left: 8em;
+  background: transparent url("/assets/blockcore-notes-screenshot.png") no-repeat left center;
+  height: 776px;
 }
 
 @media only screen and (max-width: 760px) {
@@ -145,6 +147,7 @@
     margin-top: 1em;
     margin-left: 1em;
   }
+
   .screenshot {
     margin-left: 2em;
   }
@@ -164,5 +167,17 @@
 @media only screen and (max-width: 700px) {
   .hide-tiny {
     display: none;
+  }
+
+  .connect-logo {
+    width: 64px;
+    height: 64px;
+    margin-top: -0.47em;
+    margin-left: 0em;
+  }
+
+  .logo-text {
+    margin-left: 84px;
+    margin-top: 0.2em;
   }
 }
