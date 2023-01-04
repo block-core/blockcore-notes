@@ -30,10 +30,10 @@ export class DataValidation {
     });
 
     // Some JSON content returned have new lines that breaks parsing.
-    clean = this.escapeNewLineChars(clean);
+    // clean = this.escapeNewLineChars(clean);
 
     // This escapes any linebreaks that might happen to be within the .content or elsewhere, ensuring that the content will parse to JSON.
-    clean = clean.replace('\\r', '\\\\r').replace('\\n', '\\\\n');
+    // clean = clean.replace('\\r', '\\\\r').replace('\\n', '\\\\n');
 
     event.content = clean;
 

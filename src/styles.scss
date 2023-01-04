@@ -414,6 +414,7 @@ mat-sidenav-content mat-toolbar {
 .content {
   padding: 0.2em 0.2em 0.2em 0.2em;
   overflow-wrap: break-word;
+  white-space: pre-line;
 }
 
 .wrap {

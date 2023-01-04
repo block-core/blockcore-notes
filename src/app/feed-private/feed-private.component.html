@@ -13,10 +13,10 @@
 
   <div class="page" *ngIf="profileService.initialized && !hasFollowers">
     <h1 class="marginless">Hi, having fun yet?</h1>
-    
+
     <p>You can import your existing followers:</p>
     <button class="follow-button" mat-stroked-button color="primary" (click)="import()">Import my existing following list</button>
-    <br><br>
+    <br /><br />
 
     <p>If you are new to Blockcore Notes, here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>
 
@@ -64,19 +64,17 @@
     <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
       <div class="events-header">
         <app-event-header [pubkey]="event.pubkey"
-        ><span class="event-date" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-      ></app-event-header>
-      <app-profile-actions [event]="event"></app-profile-actions>
+          ><span class="event-date" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+        ></app-event-header>
+        <app-profile-actions [event]="event"></app-profile-actions>
       </div>
-      <div class="content clickable">
-        <app-content [event]="event"></app-content>
-        <!-- {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span> -->
+      <app-content [event]="event"></app-content>
+      <!-- {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span> -->
 
-        <!-- <div *ngIf="details">
+      <!-- <div *ngIf="details">
           <br />
           <span *ngFor="let tag of event.tags" class="dimmed">TAG: {{ tag }}</span>
         </div> -->
-      </div>
       <!-- <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
         <mat-icon class="expand-button-icon">expand_more</mat-icon>
       </button>
