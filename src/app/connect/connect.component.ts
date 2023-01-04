@@ -38,6 +38,23 @@ export class ConnectComponent {
     }
   }
 
+  scroll(value: number) {
+    const element = document.getElementById('container');
+
+    if (!element) {
+      console.log('NOT FOUND!');
+      return;
+    }
+
+    element.scroll(0, value);
+
+    // element.scrollIntoView();
+    // element.scrollIntoView(false);
+    // element.scrollIntoView({ block: 'end' });
+    // element.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+    // element.scrollBy({top: 500, left: 0, behavior: 'smooth'})
+  }
+
   async anonymous() {
     const userInfo = await this.authService.anonymous();
 
