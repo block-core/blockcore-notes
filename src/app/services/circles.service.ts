@@ -82,7 +82,7 @@ export class CirclesService {
     const id = document.id;
 
     // Remove the id from the document before we persist.
-    delete document.id;
+    // delete document.id;
 
     document.created = Math.floor(Date.now() / 1000);
 

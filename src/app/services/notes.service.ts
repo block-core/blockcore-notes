@@ -47,7 +47,7 @@ export class NotesService {
     const id = document.id;
 
     // Remove the id from the document before we persist.
-    delete document.id;
+    // delete document.id;
 
     await this.table.put(id, document);
 
