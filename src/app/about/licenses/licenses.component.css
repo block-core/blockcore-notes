@@ -1,0 +1,28 @@
+.mascot {
+  width: 100%;
+  max-width: 1024px;
+}
+
+.logo {
+  float: left;
+  margin-bottom: 1em;
+  margin-right: 1em;
+  max-width: 128px;
+  margin-left: -8em;
+}
+
+.help {
+  padding-left: 10em;
+}
+
+@media only screen and (max-width: 599px) {
+  .help {
+    font-size: 0.8em;
+    padding-left: 8em;
+  }
+
+  .logo {
+    max-width: 64px;
+    margin-left: -6em;
+  }
+}

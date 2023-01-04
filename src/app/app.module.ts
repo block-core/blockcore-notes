@@ -70,6 +70,8 @@ import { ImportFollowDialog } from './circles/import-follow-dialog/import-follow
 import { ProfileHeaderComponent } from './shared/profile-header/profile-header.component';
 import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { ProfileImageDialog } from './shared/profile-image-dialog/profile-image-dialog';
+import { LicensesComponent } from './about/licenses/licenses.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -104,9 +106,11 @@ import { ProfileImageDialog } from './shared/profile-image-dialog/profile-image-
     ImportFollowDialog,
     ProfileHeaderComponent,
     AddRelayDialog,
-    ProfileImageDialog
+    ProfileImageDialog,
+    LicensesComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

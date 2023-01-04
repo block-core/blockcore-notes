@@ -12,6 +12,7 @@ import { UserComponent } from './user/user.component';
 import { CirclesComponent } from './circles/circles.component';
 import { PeopleComponent } from './people/people.component';
 import { NoteComponent } from './note/note.component';
+import { LicensesComponent } from './about/licenses/licenses.component';
 
 const routes: Routes = [
   {
@@ -66,6 +67,11 @@ const routes: Routes = [
   {
     path: 'about',
     component: AboutComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'about/licenses',
+    component: LicensesComponent,
     canActivate: [AuthGuard],
   },
   {
