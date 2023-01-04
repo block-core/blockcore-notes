@@ -11,7 +11,7 @@ export class UserInfo {
   short?: string;
 
   authenticated() {
-    return !!this.publicKey;
+    return !!this.publicKeyHex;
   }
 }
 
@@ -38,8 +38,10 @@ export class AuthenticationService {
   }
 
   anonymous() {
-    const user = new UserInfo();
-    user.publicKey = '354faab36ca511a7956f0bfc2b64e06fe5395cd7208d9b65d6665270298743d8';
+    const publicKey = '354faab36ca511a7956f0bfc2b64e06fe5395cd7208d9b65d6665270298743d8';
+    const user = this.createUser(publicKey);
+    localStorage.setItem('blockcore:notes:nostr:pubkey', publicKey);
+
     this.authInfo$.next(user);
     return user;
   }

@@ -1,4 +1,4 @@
-import { NgZone } from '@angular/core';
+import { ChangeDetectorRef, NgZone } from '@angular/core';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
@@ -14,30 +14,26 @@ import { Utilities } from '../services/utilities.service';
 export class ConnectComponent {
   extensionDiscovered = false;
   timeout: any;
-  consent = false;
+  consent: boolean = false;
 
-  constructor(private appState: ApplicationState, private relayService: RelayService, private authService: AuthenticationService, private utilities: Utilities, private router: Router, private ngZone: NgZone) {}
+  constructor(
+    private appState: ApplicationState,
+    private cd: ChangeDetectorRef,
+    private relayService: RelayService,
+    private authService: AuthenticationService,
+    private utilities: Utilities,
+    private router: Router,
+    private ngZone: NgZone
+  ) {}
+
+  persist() {
+    localStorage.setItem('blockcore:notes:nostr:consent', this.consent.toString());
+  }
 
   async connect() {
     const userInfo = await this.authService.login();
 
     if (userInfo.authenticated()) {
-      // let relays;
-
-      // try {
-      //   const gt = globalThis as any;
-      //   relays = await gt.nostr.getRelays();
-      //   console.log('RELAYS FROM EXTENSION:', relays);
-      // } catch (err) {
-      //   relays = this.relayService.defaultRelays;
-      // }
-
-      // // First append whatever the extension give us of relays.
-      // await this.relayService.appendRelays(relays);
-
-      // Initiate connections against registered relays.
-      // this.relayService.connect();
-
       this.router.navigateByUrl('/');
     }
   }
@@ -51,6 +47,7 @@ export class ConnectComponent {
   }
 
   ngOnInit() {
+    this.consent = localStorage.getItem('blockcore:notes:nostr:consent') === 'true';
     this.checkForExtension();
   }
 

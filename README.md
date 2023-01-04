@@ -15,6 +15,8 @@
 
 Blockcore Notes is an app for your public and personal notes. It is built to support the Nostr and Web5 (coming in the future).
 
+![](/src/assets/blockcore-notes-screenshot.png)
+
 ## Nostr
 
 The Nostr support for Blockcore Notes relies on using your Nostr identity (public key) and uses a set of relays to publish and store your notes. You can run your own personal relay to always keep a backup of your notes.
