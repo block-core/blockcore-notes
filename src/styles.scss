@@ -96,7 +96,22 @@ body {
   font-size: 18px;
   // background-color: mat.$background-color;
   overscroll-behavior-y: contain;
+  overflow-x: hidden;
 }
+
+// .connect-container {
+//   min-height: 100%;
+//   background-color: #ddd;
+//   border-left: 2px solid #666;
+//   border-right: 2px solid #666;
+//   width: 676px;
+//   margin: 0 auto;
+// }
+// * html .connect-container {
+//   height: 100%;
+// }
+
+
 
 * {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;

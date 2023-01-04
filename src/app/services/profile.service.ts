@@ -115,6 +115,10 @@ export class ProfileService {
   }
 
   async #get<T>(id: string): Promise<T | undefined> {
+    if (!id) {
+      return;
+    }
+
     try {
       const entry = await this.table.get<string, T>(id, { keyEncoding: 'utf8', valueEncoding: 'json' });
       return entry;

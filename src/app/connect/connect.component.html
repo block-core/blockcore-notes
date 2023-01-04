@@ -1,86 +1,95 @@
 <div class="connect-container">
-  <div class="container" id="container">
-    <div class="children one">
-      <img class="connect-logo" src="assets/icons/icon-256x256.png" />
-      <mat-card class="card start-card first-card">
-        <mat-card-content>
-          <h1>Blockcore Notes</h1>
-          <p>Experience the world of Nostr. Nostr is a uncensorable protocol for communication with your friends and the world.</p>
-          <p class="notice"><strong>PROTOTYPE:</strong> This app is currently under development and should be considered prototype-quality.</p>
-
-          <div class="button-container">
-            <a class="start-button" href="/connect#start" [class.mat-elevation-z8]="true" mat-raised-button color="primary">Learn more</a>
-            <div *ngIf="consent">
-              <div *ngIf="!extensionDiscovered"><button class="start-button" (click)="connect()" mat-flat-button color="accent">Waiting for extension...</button></div>
-              <div *ngIf="extensionDiscovered"><button class="start-button" (click)="connect()" mat-flat-button color="accent">Connect using extension</button></div>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-      <img class="screenshot" src="/assets/blockcore-notes-screenshot.png" />
+  <div class="connect-menu">
+    <img class="connect-logo" src="assets/icons/icon-256x256.png" />
+    <div class="logo-text"><span class="hide-tiny">Blockcore</span> Notes</div>
+    <div class="connect-spacer"></div>
+    <div class="connect-button" *ngIf="searchingForExtension">
+      <button class="start-button" mat-flat-button color="accent">
+        <mat-spinner class="spinner" color="accent" diameter="30"></mat-spinner>
+      </button>
     </div>
-    <div id="start">
-      <mat-card class="card start-card first-card">
-        <mat-card-content>
-          <h1>More ways to connect with humanity</h1>
-          <p>Share your thoughts and interact with others in a fully transparent and open manner that is not restricted by any boundries.</p>
-        </mat-card-content>
-      </mat-card>
-      <br /><br />
-      <mat-card class="card start-card second-card">
-        <mat-card-content>
-          <h1>Be gentle and kind</h1>
-          <p>Being uncensorable and uncancellable means more responsibility is on you, you are in control and you are responsible.</p>
-          <!-- <p>
-          <a class="start-button" href="/connect#concent" [class.mat-elevation-z8]="true" mat-raised-button color="primary">Get started</a>
+    <div class="connect-button" *ngIf="showInstallLink">
+      <a class="start-button" (click)="connect()" mat-flat-button color="accent" href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Install <span class="hide-tiny">extension</span></a>
+    </div>
+    <div class="connect-button" *ngIf="extensionDiscovered"><button class="start-button" (click)="connect()" mat-flat-button color="accent">Connect <span class="hide-tiny">using extension</span></button></div>
+  </div>
+  <div class="connect-content">
+    <mat-card class="card first-card">
+      <mat-card-content>
+        <h1>New ways to connect with humanity</h1>
+        <p>
+          Share your thoughts and interact with others in a fully transparent and open manner that is not restricted by any boundries. Experience the world of <strong>Nostr</strong>. Nostr is a uncensorable protocol for communication with
+          your friends and the world.
+        </p>
+        <p class="notice"><strong>PROTOTYPE:</strong> This app is currently under development and should be considered prototype-quality.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <img class="screenshot" src="/assets/blockcore-notes-screenshot.png" />
+
+    <mat-card class="card">
+      <mat-card-content>
+        <h1>Follow your favorite creators</h1>
+        <p>
+          No matter if they are photographers, film makers, bloggers, journalists or anyone else who likes to share and engage in communities and chats, Blockcore Notes have you covered with dynamic content layouts and organization of
+          people.
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card">
+      <mat-card-content>
+        <h1>Be humble and kind</h1>
+        <p>Being uncensorable and uncancellable means more responsibility is on you, you are in control and you are responsible.</p>
+        <p>💛🖤</p>
+      </mat-card-content>
+    </mat-card>
+    <br><br>
+    <mat-card class="card">
+      <mat-card-content>
+        <h1>Read Only Login</h1>
+        <div *ngIf="consent">
+          <div>
+            <p>Want to view the app first or view someone's profile in read-only view?</p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon class="circle" matPrefix>person_add</mat-icon>
+              <mat-label>Public Key</mat-label>
+              <input matInput type="text" autocomplete="off" [(ngModel)]="readOnlyKey" />
+            </mat-form-field>
+            <div><button class="skip-button" (click)="anonymous()" color="primary" mat-raised-button>Go straight in</button></div>
+          </div>
+        </div>
+        <div *ngIf="!consent" class="consent-required warn">You must agree with the notice below to enable login.</div>
+        <br />
+        <!-- <p class="notice">
+          You must use a browser extension to manage your Nostr identities. You can choose to use any third party extension or install the
+          <a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a> (Chrome, Edge, Brave extension) provided by the same team behind Blockcore Notes.
         </p> -->
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div id="concent">
-      <mat-card class="start-card first-card warn">
-        <mat-card-content>
-          <h1 *ngIf="!consent">Your approval is needed</h1>
-          <h1 *ngIf="consent">Thank you!</h1>
-          <div *ngIf="!consent">
-            <p>
-              Nostr is a decentralized and distributed network of relays that relays data by users. That means there is no centralized service where filtering or censoring is occurring. You may be exposed to content that will be disturbing
-              and against your morality and world views.
-            </p>
-            <p>Content you publish are your responsibility and you cannot undo/delete after you publish. Don't publish or share a note (post) you wouldn't say to your neighbour.</p>
-
-            <p>Blockcore has no involvement in the type of content being produced and shown to you in this app.</p>
-
-            <p>You accept that all usage of Blockcore Notes, Blockcore infrastructure and software must be the result of peaceful voluntary human interactions.</p>
-
-            <p>If you're young and still living with your parents, consider asking them for permission before you continue.</p>
-
-            <p>To continue you must agree with our <a href="https://www.blockcore.net/policy" target="_blank">Privacy Policy and Terms & Conditions</a>.</p>
-          </div>
-          <mat-checkbox color="primary" (change)="persist()" [(ngModel)]="consent">I have read and agree to this notice</mat-checkbox>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="card start-card second-card last-card">
-        <mat-card-content>
-          <h1>Login</h1>
-          <div *ngIf="consent">
-            <div *ngIf="!extensionDiscovered"><button class="start-button" (click)="connect()" mat-flat-button color="accent">Waiting for extension...</button></div>
-            <div *ngIf="extensionDiscovered">
-              <button class="start-button" (click)="connect()" mat-flat-button color="accent">Connect using extension</button>
-              <br />
-              <p>Want to view the app first?</p>
-              <div><button (click)="anonymous()" color="accent" mat-raised-button>Go straight in</button></div>
-            </div>
-          </div>
-          <div *ngIf="!consent" class="consent-required warn">You must agree with the notice above to enable login</div>
-          <br />
-          <p class="notice">
-            You must use a browser extension to manage your Nostr identities. You can choose to use any third party extension or install the
-            <a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a> (Chrome, Edge, Brave extension) provided by the same team behind Blockcore Notes.
+      </mat-card-content>
+    </mat-card>
+    <br><br>
+    <mat-card class="card warn">
+      <mat-card-content>
+        <h1 *ngIf="!consent">Your approval is needed</h1>
+        <h1 *ngIf="consent">Thank you!</h1>
+        <div *ngIf="!consent">
+          <p>
+            Nostr is a decentralized and distributed network of relays that relays data by users. That means there is no centralized service where filtering or censoring is occurring. You may be exposed to content that will be disturbing
+            and against your morality and world views.
           </p>
-        </mat-card-content>
-      </mat-card>
-    </div>
+          <p>Content you publish are your responsibility and you cannot undo/delete after you publish. Don't publish or share a note (post) you wouldn't say to your neighbour.</p>
+
+          <p>Blockcore has no involvement in the type of content being produced and shown to you in this app.</p>
+
+          <p>You accept that all usage of Blockcore Notes, Blockcore infrastructure and software must be the result of peaceful voluntary human interactions.</p>
+
+          <p>If you're young and still living with your parents, consider asking them for permission before you continue.</p>
+
+          <p>To continue you must agree with our <a href="https://www.blockcore.net/policy" target="_blank">Privacy Policy and Terms & Conditions</a>.</p>
+        </div>
+        <mat-checkbox color="primary" (change)="persist()" [(ngModel)]="consent">I have read and agree to this notice</mat-checkbox>
+      </mat-card-content>
+    </mat-card>
+    <div id="consent-card"></div>
   </div>
 </div>

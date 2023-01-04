@@ -31,6 +31,13 @@ export class ConnectComponent {
   }
 
   async connect() {
+    if (!this.consent) {
+      const element = document.getElementById('consent-card');
+      // document.body.scroll(0, 5000);
+      element!.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+      return;
+    }
+
     const userInfo = await this.authService.login();
 
     if (userInfo.authenticated()) {
@@ -74,11 +81,26 @@ export class ConnectComponent {
     }
   }
 
+  readOnlyKey = 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m';
+
+  checkedTimes = 0;
+  showInstallLink = false;
+  searchingForExtension = true;
+
   checkForExtension() {
+    this.checkedTimes++;
     const gt = globalThis as any;
 
     if (gt.nostr) {
+      this.searchingForExtension = false;
       this.extensionDiscovered = true;
+      return;
+    }
+
+    if (this.checkedTimes > 10) {
+      this.searchingForExtension = false;
+      this.showInstallLink = true;
+
       return;
     }
 
