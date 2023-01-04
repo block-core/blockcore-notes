@@ -57,6 +57,7 @@
 .start-button {
   padding-top: 1.4em;
   padding-bottom: 1.4em;
+  background-color: #9f0771 !important;
 }
 
 .consent-required {
@@ -81,7 +82,6 @@
   margin-left: 1em;
 } */
 
-
 .container {
   max-width: 1024px;
   height: 100vh;
@@ -102,18 +102,8 @@
 }
 
 .children {
-  height: 100vh;
+  /* height: 100vh; */
   /* scroll-snap-align: start; */
-}
-.one {
-  /* background-color: rgb(0, 0, 0, 0.25); */
-  /* background-image: url("/assets/shubham-dhage-PACWvLRNzj8-unsplash.jpg"); */
-}
-.two {
-  /* background-color: rgb(36, 36, 36, 0.4); */
-}
-.three {
-  /* background-color: rgb(71, 71, 71, 0.1); */
 }
 
 .screenshot {
@@ -238,5 +228,14 @@
   .start-card h1 {
     margin-bottom: 0.8em;
     font-size: 1.4em;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  /* Safari only override */
+  ::i-block-chrome,
+  .connect-logo {
+    transform: none;
+    animation: none;
   }
 }
