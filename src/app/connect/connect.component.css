@@ -82,6 +82,14 @@
   margin-left: 1em;
 } */
 
+.connect-container {
+  background-image: url("/assets/bg.jpg");
+  background-repeat: no-repeat;
+  background-attachment: local, scroll;
+  background-size: cover;
+  background-position: center top;
+}
+
 .container {
   max-width: 1024px;
   height: 100vh;
@@ -89,11 +97,7 @@
   overflow-x: hidden;
 
   /* scroll-snap-type: y mandatory; */
-  background-image: url("/assets/connect-bg.jpg");
-  background-repeat: no-repeat;
-  background-attachment: local, scroll;
-  background-size: cover;
-  background-position: center top;
+
   margin: auto;
 }
 

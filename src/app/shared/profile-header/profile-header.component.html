@@ -34,6 +34,30 @@
         <span>
           <p class="wrap linebreaks" *ngIf="profile.about">{{ profile.about }}</p>
         </span>
+
+        <!-- <div>
+          <a mat-mini-fab [matMenuTriggerFor]="menu"><mat-icon>notifications</mat-icon></a>
+
+          <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon class="action-button-icon">more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>notifications_off</mat-icon>
+              <span>Save Note</span>
+            </button>
+
+            <button mat-menu-item>
+              <mat-icon>notifications_paused</mat-icon>
+              <span>Remove from Notes</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>notifications</mat-icon>
+              <span>Remove from Notes</span>
+            </button>
+          </mat-menu>
+        </div> -->
       </span>
     </div>
     <div class="profile-page-header-right">
