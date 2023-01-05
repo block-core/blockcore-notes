@@ -338,6 +338,16 @@ export class ProfileService {
     this.#changed();
   }
 
+  isFollowing(pubkey: string) {
+    const profile = this.#profilesChanged.value.find((p) => p.pubkey === pubkey);
+
+    if (!profile) {
+      return false;
+    }
+
+    return profile.follow;
+  }
+
   /** Update the profile if it already exists, ensuring we don't loose follow and block states. */
   async updateProfile(pubkey: string, document: NostrProfileDocument | any) {
     let profile = await this.getProfile(pubkey);

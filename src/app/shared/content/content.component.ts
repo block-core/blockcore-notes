@@ -17,9 +17,14 @@ export class ContentComponent {
   profiles: NostrProfileDocument[] = [];
   content?: string;
 
+  images: string[] = [];
+  static regexp = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif))/g;
+
   constructor(private profileService: ProfileService, private utilities: Utilities) {}
 
   async ngOnInit() {
+    this.images = [];
+
     if (!this.event) {
       return;
     }
@@ -51,12 +56,20 @@ export class ContentComponent {
       content = content.substring(0, content.indexOf('#[')) + '@' + profile?.name + content.substring(endIndex + 1);
     }
 
+    if (this.profileService.isFollowing(this.event.pubkey)) {
+      const images = [...content.matchAll(ContentComponent.regexp)];
+      this.images = images.map((i) => i[0]);
+
+      // Remove the image links from the text.
+      content = content.replaceAll(ContentComponent.regexp, '');
+    }
+
     this.content = content;
   }
 
   // TODO: FIX THIS IMMEDIATELY FOR PERFORMANCE!
   hashtags(tags: any[]) {
-    const hashtags = tags.filter((row) => row[0] === 't').map(t => t[1]);
+    const hashtags = tags.filter((row) => row[0] === 't').map((t) => t[1]);
 
     if (hashtags.length == 0) {
       return null;
