@@ -5,6 +5,7 @@ import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
 import { EventService } from './event.service';
 import { FeedService } from './feed.service';
+import { Kind } from 'nostr-tools';
 
 @Injectable({
   providedIn: 'root',
@@ -97,7 +98,7 @@ export class ThreadService {
           return data;
         })
       )
-      .pipe(map((data) => data!.filter((events) => events.kind != 7 && events.kind != 6))) // Filter out likes and "reposts".
+      .pipe(map((data) => data!.filter((events) => events.kind != Kind.Reaction))) // Filter out likes.
       .pipe(map((data) => data!.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 
