@@ -33,12 +33,21 @@
         </div>
         <div class="profile-labels" *ngIf="profile.website">
           <div class="profile-labels-left"><mat-icon class="profile-icon">link</mat-icon></div>
-          <div class="profile-labels-middle dimmed"><a class="dimmed lightning-link" *ngIf="profile.website" [href]="sanitize(profile.website)" target="_blank">{{ profile.website }}</a></div>
+          <div class="profile-labels-middle dimmed">
+            <a class="dimmed lightning-link" *ngIf="profile.website" [href]="sanitize(profile.website)" target="_blank">{{ profile.website }}</a>
+          </div>
         </div>
-        <div class="profile-labels" *ngIf="profile.lud06">
+        <div class="profile-labels" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
           <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
-          <div class="profile-labels-middle dimmed"><a class="dimmed lightning-link" *ngIf="profile.lud06" [href]="sanitize('lightning:' + profile.lud06)">{{ getLightningLabel(profile.lud06) }}</a></div>
+          <div class="profile-labels-middle dimmed">
+            <a class="dimmed lightning-link" *ngIf="profile.lud06" [href]="sanitize('lightning:' + profile.lud06)">{{ getLightningLabel(profile.lud06) }}</a>
+          </div>
         </div>
+
+        <ng-template #tooltipTpl>
+          <img class="qr-code" *ngIf="qr" [src]="qr" />
+        </ng-template>
+
         <span>
           <p class="wrap linebreaks" *ngIf="profile.about">{{ profile.about }}</p>
         </span>

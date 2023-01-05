@@ -6,6 +6,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog, ProfileImageDialogData } from '../profile-image-dialog/profile-image-dialog';
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-profile-header',
@@ -22,6 +23,7 @@ export class ProfileHeaderComponent {
   circle?: Circle;
   muted? = false;
   npub!: string;
+  qr?: string;
 
   constructor(private profiles: ProfileService, public dialog: MatDialog, private sanitizer: DomSanitizer, private circleService: CirclesService, private utilities: Utilities) {}
 
@@ -70,6 +72,15 @@ export class ProfileHeaderComponent {
     this.circle = await this.circleService.getCircle(this.profile.circle);
 
     this.muted = this.profile.mute;
+
+    // Pre-generate the QR value as we had some issues doing it dynamically.
+    if (this.profile.lud06) {
+      this.qr = await QRCode.toDataURL('lightning:' + this.profile.lud06, {
+        errorCorrectionLevel: 'L',
+        margin: 2,
+        scale: 5,
+      });
+    }
   }
 
   copy(text: string) {

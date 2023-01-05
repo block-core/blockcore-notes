@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { MtxTooltipModule } from '@ng-matero/extensions/tooltip';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -107,7 +108,7 @@ import { HttpClientModule } from '@angular/common/http';
     ProfileHeaderComponent,
     AddRelayDialog,
     ProfileImageDialog,
-    LicensesComponent
+    LicensesComponent,
   ],
   imports: [
     HttpClientModule,
@@ -130,6 +131,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatBadgeModule,
     MatTabsModule,
     MatTooltipModule,
+    MtxTooltipModule,
     MatExpansionModule,
     MatTableModule,
     MatStepperModule,
