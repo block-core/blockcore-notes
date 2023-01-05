@@ -189,7 +189,8 @@ export class RelayService {
       this.relays.push(relay);
     } else {
       // First initiate a close and then replace it.
-      this.relays[index].close();
+      // Attempting to not close existing connections, there is no point in doing so.
+      // this.relays[index].close();
       this.relays[index] = relay;
     }
 
