@@ -36,7 +36,6 @@
 
 .connect-spacer {
   flex-grow: 3;
-  max-width: 800px;
 }
 
 .connect-button {
@@ -71,8 +70,7 @@
 
 .card {
   background-color: white;
-  max-width: 1140px;
-  border-radius: 30px;
+  border-radius: 10px;
   margin-left: 11em;
   margin-right: 2em;
   padding: 4em;
@@ -134,10 +132,27 @@
 }
 
 .screenshot {
-  border-radius: 20px 0 0 20px;
-  margin-left: 8em;
+  background-size: cover;
   background: transparent url("/assets/blockcore-notes-screenshot.png") no-repeat left center;
   height: 776px;
+}
+
+.card-image{
+  padding: 0px !important;
+}
+
+@media only screen and (min-width: 1360px) {
+  .card {
+    max-width: 944px;
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .card {
+    margin-right: 11em;
+  }
 }
 
 @media only screen and (max-width: 760px) {
@@ -154,14 +169,11 @@
 
   .card {
     font-size: 0.8em;
-    margin-left: 4em;
-    margin-right: 1em;
+    margin-left: 2em;
+    margin-right: 2em;
     padding: 2em;
   }
 
-  .first-card {
-    margin-top: 4em;
-  }
 }
 
 @media only screen and (max-width: 700px) {
