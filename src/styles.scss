@@ -95,8 +95,10 @@ body {
 body {
   font-size: 18px;
   // background-color: mat.$background-color;
+  // overflow: hidden;
   overscroll-behavior-y: contain;
   overflow-x: hidden;
+  // overflow: scroll !important;
 }
 
 // .connect-container {
@@ -169,8 +171,21 @@ app-profile-actions {
 
 .mat-sidenav-content {
   /* Disable scrolling on the content, we want it specific on child element */
-  overflow: hidden !important;
+  // overflow: hidden !important;
 }
+
+/* Container for the actual content, which is our scrolling container. */
+.scrolling-content {
+  overflow: scroll;
+  // overflow: overlay !important;
+  // height: 300px;
+  height: 100%;
+  border: 1px solid red;
+  // max-height: 300px;
+  background-color: yellow;
+}
+
+
 
 app-root {
   height: 100%;
@@ -206,12 +221,6 @@ mat-sidenav-content mat-toolbar {
     flex: 0 1 auto !important;
     height: 60px !important;
   }
-}
-
-/* Container for the actual content, which is our scrolling container. */
-.scrolling-content {
-  overflow: overlay !important;
-  height: 100%;
 }
 
 .sidenav-left {

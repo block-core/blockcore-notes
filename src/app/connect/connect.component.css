@@ -53,6 +53,11 @@
   background-color: #9f0771 !important;
 }
 
+.start-button-consent {
+  background-color: white !important;
+  color: black !important;
+}
+
 .skip-button {
   border-radius: 40px;
   min-width: 140px;

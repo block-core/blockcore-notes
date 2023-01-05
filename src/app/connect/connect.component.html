@@ -79,6 +79,9 @@
       <mat-card-content>
         <h1 *ngIf="!consent">Your approval is needed</h1>
         <h1 *ngIf="consent">Thank you!</h1>
+        <div *ngIf="consent">
+          <button class="start-button start-button-consent" *ngIf="consent" (click)="connect()" mat-flat-button>Connect <span class="hide-tiny">using extension</span></button><br><br>
+        </div>
         <div *ngIf="!consent">
           <p>
             Nostr is a decentralized and distributed network of relays that relays data by users. That means there is no centralized service where filtering or censoring is occurring. You may be exposed to content that will be disturbing
