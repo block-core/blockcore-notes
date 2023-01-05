@@ -76,6 +76,16 @@ export class ProfileHeaderComponent {
     this.utilities.copy(text);
   }
 
+  getWellKnownLink(nip05: string) {
+    if (nip05.indexOf('@') === -1) {
+      return '';
+    }
+
+    const values = nip05.split('@');
+    const url = `https://${values[1]}/.well-known/nostr.json?name=${values[0]}`;
+    return url;
+  }
+
   sanitize(url: string) {
     const clean = this.sanitizer.bypassSecurityTrustUrl(url);
     return clean;
