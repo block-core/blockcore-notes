@@ -55,7 +55,6 @@ export class UserComponent {
   subscriptions: Subscription[] = [];
 
   constructor(
-    
     public navigation: NavigationService,
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
@@ -69,9 +68,7 @@ export class UserComponent {
     private router: Router
   ) {
     // this.appState.title = 'Blockcore Notes';
-    this.appState.showBackButton = true;
-
-    console.log('USER CONSTRUCTOR RUN!');
+    
 
     // this.subscriptions.push(
     //   this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event) => {
@@ -139,6 +136,9 @@ export class UserComponent {
   }
 
   ngOnInit() {
+    this.appState.showBackButton = true;
+    this.appState.actions = [];
+
     // if (this.pubkey) {
     // console.log('PIPING EVENTS...');
     // this.userEvents$ =
