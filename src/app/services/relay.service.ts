@@ -179,6 +179,15 @@ export class RelayService {
   constructor(public relayStorage: RelayStorageService, private options: OptionsService, private eventService: EventService, private storage: StorageService, private profileService: ProfileService, private appState: ApplicationState) {
     this.#table = this.storage.table<NostrEventDocument>('events');
     // this.#relayTable = this.storage.table<any>('relays');
+
+    // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
+    this.appState.visibility$.subscribe((visible) => {
+      console.log('VISIBILITY CHANGED:', visible);
+
+      if (visible) {
+        this.connect();
+      }
+    });
   }
 
   /** Add an in-memory instance of relay and get stored metadata for it. */

@@ -21,6 +21,8 @@ export class ApplicationState {
     );
 
     this.connected$ = this.connectedChanged.asObservable();
+
+    this.visibility$ = this.visibilityChanged.asObservable();
   }
 
   getPublicKey(): string {
@@ -52,5 +54,13 @@ export class ApplicationState {
 
   connected(status: boolean) {
     this.connectedChanged.next(status);
+  }
+
+  visibility$: Observable<boolean>;
+
+  visibilityChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  visibility(status: boolean) {
+    this.visibilityChanged.next(status);
   }
 }

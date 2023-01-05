@@ -33,6 +33,7 @@ export class AppComponent {
   authenticated = false;
   bgimagePath = '/assets/profile-bg.png';
   profile: NostrProfileDocument | undefined;
+  visibilityHandler: any;
 
   constructor(
     public appState: ApplicationState,
@@ -52,6 +53,12 @@ export class AppComponent {
     public navigationService: NavigationService,
     public theme: ThemeService
   ) {
+    if (!this.visibilityHandler) {
+      addEventListener('visibilitychange', (event) => {
+        this.appState.visibility(document.visibilityState === 'visible');
+      });
+    }
+
     // This must happen in the constructor on app component, or when loading in PWA, it won't
     // be possible to read the query parameters.
     const queryParam = globalThis.location.search;
