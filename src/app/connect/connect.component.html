@@ -9,7 +9,9 @@
       </button>
     </div>
     <div class="connect-button" *ngIf="showInstallLink">
-      <a class="start-button" (click)="connect()" mat-flat-button color="accent" href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Install <span class="hide-tiny">extension</span></a>
+      <a class="start-button" (click)="connect()" mat-flat-button color="accent" href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank"
+        >Install <span class="hide-tiny">extension</span></a
+      >
     </div>
     <div class="connect-button" *ngIf="extensionDiscovered">
       <button class="start-button" *ngIf="consent" (click)="connect()" mat-flat-button color="accent">Connect <span class="hide-tiny">using extension</span></button>
@@ -28,11 +30,10 @@
       </mat-card-content>
     </mat-card>
 
-
-    <!-- <img class="screenshot" src="/assets/blockcore-notes-screenshot.png" /> -->
     <mat-card class="card card-image">
-      <img mat-card-image src="/assets/blockcore-notes-screenshot.png" alt="Photo of a Shiba Inu">
+      <img mat-card-image src="/assets/blockcore-notes-screenshot.png" />
     </mat-card>
+
     <mat-card class="card">
       <mat-card-content>
         <h1>Follow your favorite creators</h1>
@@ -50,7 +51,6 @@
         <p>💛🖤</p>
       </mat-card-content>
     </mat-card>
-
 
     <mat-card class="card">
       <mat-card-content>
@@ -74,13 +74,13 @@
         </p> -->
       </mat-card-content>
     </mat-card>
-    
+
     <mat-card class="card warn">
       <mat-card-content>
         <h1 *ngIf="!consent">Your approval is needed</h1>
         <h1 *ngIf="consent">Thank you!</h1>
         <div *ngIf="consent">
-          <button class="start-button start-button-consent" *ngIf="consent" (click)="connect()" mat-flat-button>Connect <span class="hide-tiny">using extension</span></button><br><br>
+          <button class="start-button start-button-consent" *ngIf="consent" (click)="connect()" mat-flat-button>Connect using extension</button><br /><br />
         </div>
         <div *ngIf="!consent">
           <p>

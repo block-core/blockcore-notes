@@ -136,12 +136,6 @@
   z-index: 10000;
 }
 
-.screenshot {
-  background-size: cover;
-  background: transparent url("/assets/blockcore-notes-screenshot.png") no-repeat left center;
-  height: 776px;
-}
-
 .card-image{
   padding: 0px !important;
 }
@@ -166,10 +160,6 @@
     height: 96px;
     margin-top: 1em;
     margin-left: 1em;
-  }
-
-  .screenshot {
-    margin-left: 2em;
   }
 
   .card {
