@@ -8,6 +8,7 @@ import { ProfileService } from '../services/profile.service';
 import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { ThreadService } from '../services/thread.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-note',
@@ -24,6 +25,7 @@ export class NoteComponent {
     private cd: ChangeDetectorRef,
     public options: OptionsService,
     public feedService: FeedService,
+    public navigation: NavigationService,
     public profiles: ProfileService,
     public thread: ThreadService,
     private validator: DataValidation,
@@ -108,7 +110,6 @@ export class NoteComponent {
     // this.appState.title = 'Blockcore Notes';
 
     this.appState.title = 'Thread';
-
     this.appState.showBackButton = true;
 
     // Subscribe to the event which will update whenever user requests to view a different event.
@@ -147,25 +148,19 @@ export class NoteComponent {
         return;
       }
 
-      this.thread.changeSelectedEvent(id);
-      this.id = id;
-
-      // console.log('ROUTE ACTIVATE WITH ID:', id);
-      // this.feedService.setActiveEvent(id);
-      // this.event = this.feedService.events.find((e) => e.id == this.id);
-
-      // if (!this.event) {
-      //   // this.router.navigateByUrl('/');
-      //   return;
-      // }
-
-      // this.appState.title = `Note: ${this.event.content.substring(0, 200)}`;
+      if (this.appState.connectedChanged.value === true) {
+        setTimeout(() => {
+          this.thread.changeSelectedEvent(id);
+          this.id = id;
+        }, 0);
+      } else {
+        // POOR MANS WAIT... this is not suppose to be needed, but appears to help sometimes.
+        setTimeout(() => {
+          this.thread.changeSelectedEvent(id);
+          this.id = id;
+        }, 4000);
+      }
     });
-
-    // if (this.pubkey) {
-    // console.log('PIPING EVENTS...');
-    // this.userEvents$ =
-    // }
   }
 
   optionsUpdated() {

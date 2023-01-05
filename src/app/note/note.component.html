@@ -64,11 +64,11 @@
 </div>
 <mat-divider></mat-divider>
 
-<div class="page" *ngIf="!thread.events$">
+<!-- <div class="page" *ngIf="!thread.events$">
   <h3 class="marginless">Loading thread... this can take some seconds.</h3>
-</div>
+</div> -->
 
-<div *ngIf="!thread.after$">NO ITEMS!</div>
+<!-- <div *ngIf="!thread.after$">NO ITEMS!</div> -->
 
 <mat-progress-bar *ngIf="!thread.hasLoaded" mode="indeterminate"></mat-progress-bar>
 
@@ -88,11 +88,11 @@
           </mat-expansion-panel>
         </mat-accordion> -->
 
-  <mat-card class="events" *ngFor="let event of events; trackBy: trackByFn">
+  <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
     <span>
       <div class="events-header">
         <app-event-header [pubkey]="event.pubkey"
-        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+        ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
           ></app-event-header>
           <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
       </div>

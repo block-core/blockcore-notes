@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, Circle, Person, NostrSubscription, NostrRelay, Contact } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
 import { SettingsService } from './settings.service';
-import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
+import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race, from, concatAll, reduce, forkJoin, take, merge } from 'rxjs';
 import { Relay, relayInit, Sub, Event, getEventHash, validateEvent, verifySignature } from 'nostr-tools';
 import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from './storage.service';
@@ -327,6 +327,8 @@ export class FeedService {
       const sub = relay.sub([query], {}) as NostrSubscription;
 
       sub.on('event', (originalEvent: any) => {
+        // console.log('RECEIVED EVENT:', originalEvent);
+
         // console.log('downloadFromRelayIndex: event', id);
         const event = this.eventService.processEvent(originalEvent);
         // console.log('downloadFromRelayIndex: event', event);
@@ -388,10 +390,20 @@ export class FeedService {
   }
 
   downloadEvent(id: string) {
+    // this.relayService.relays$.pipe(switchMap(value2 => ))
+
+    // TODO: We must wait for relays to connect before we run this command.
+
     // TODO: Change the logic to create a new observable for each X milisecond and make them
     // race against each other and don't create more observables if a result is found.
     const observables = this.relayService.relays.map((r, index) => this.downloadSingleFromRelay({ kinds: [1], ids: [id] }, r));
-    return race(observables);
+    return (this.appState.connected$.pipe(map((status) => status === true)), merge(...observables)).pipe(take(1));
+
+    // Promise.all()
+
+    // return merge(observables).pipe(take(1)).pipe(tap());
+
+    // return race(observables);
 
     // const observable = new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
     //   const observables = this.relayService.relays.map((r => { this.downloadFromRelayIndex(id, r); }));

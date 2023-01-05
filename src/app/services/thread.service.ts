@@ -66,18 +66,20 @@ export class ThreadService {
   }
 
   get after$(): Observable<NostrEventDocument[]> {
-    return this.events$
-      .pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            return a.created_at > b.created_at ? -1 : 1;
-          });
+    return (
+      this.events$
+        .pipe(
+          map((data) => {
+            data.sort((a, b) => {
+              return a.created_at > b.created_at ? -1 : 1;
+            });
 
-          return data;
-        })
-      )
-       // Don't render the event itself in the after list.
-      .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))));
+            return data;
+          })
+        )
+        // Don't render the event itself in the after list.
+        .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))))
+    );
   }
 
   // TODO: This should aggregate likes/RTs, etc. pr. note.
@@ -128,7 +130,7 @@ export class ThreadService {
 
       if (rootEventId) {
         this.feedService.downloadEvent(rootEventId).subscribe((event) => {
-          console.log(event);
+          // console.log('DOWNLOAD EVENT CALLBACK:', event);
           this.#root = event;
           this.#rootChanged.next(this.#root);
         });
@@ -183,8 +185,10 @@ export class ThreadService {
       this.#event = event;
       this.#eventChanged.next(this.#event);
     } else {
+      // console.log('DOWNLOADING2:', eventId);
       // Go grab it from relays.
       this.feedService.downloadEvent(eventId).subscribe((event) => {
+        // console.log('DOWNLOAD EVENT CALLBACK 2:', event);
         this.#event = event;
         this.#eventChanged.next(this.#event);
       });

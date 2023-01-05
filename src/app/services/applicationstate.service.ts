@@ -19,6 +19,8 @@ export class ApplicationState {
       map((result) => result.matches),
       shareReplay()
     );
+
+    this.connected$ = this.connectedChanged.asObservable();
   }
 
   getPublicKey(): string {
@@ -40,4 +42,12 @@ export class ApplicationState {
   isSmallScreen$: Observable<boolean>;
 
   displayLabels$: Observable<boolean>;
+
+  connected$: Observable<boolean>;
+
+  connectedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  connected(status: boolean) {
+    this.connectedChanged.next(status);
+  }
 }

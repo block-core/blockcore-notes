@@ -399,6 +399,9 @@ export class RelayService {
     this.#connectToRelay(server, (relay: Relay) => {
       console.log('Connected to:', relay.url);
 
+      // When finished, trigger an observable that we are connected.
+      this.appState.connected(true);
+
       const authors = this.profileService.profiles.map((p) => p.pubkey);
 
       // Append ourself to the authors list so we receive everything we publish to any relay.
