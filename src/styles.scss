@@ -111,8 +111,6 @@ body {
 //   height: 100%;
 // }
 
-
-
 * {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
@@ -130,7 +128,7 @@ h3 {
 }
 
 .profile-page {
-  padding: 2em 2em 0 2em;
+  padding: 1.6em 1.6em 0 1.6em;
 }
 
 .feed-page {
@@ -269,6 +267,37 @@ mat-sidenav-content mat-toolbar {
   }
 }
 
+.profile-button {
+  display: inline-block;
+  box-sizing: border-box;
+  border-radius: 5px;
+  height: 40px;
+  width: 40px;
+  margin-right: 1em;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 0;
+  // padding: 1em;
+  text-decoration: none;
+  padding: 0;
+  align-items: flex-start;
+  text-align: center;
+}
+
+.profile-button:hover {
+  text-decoration: none;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.65);
+}
+
+.profile-button-icon {
+  // margin-top: -1em;
+  // margin-left: -1em;
+  // font-size: 16px;
+  // font-size: 16px;
+  // height: auto !important;
+  // width: auto !important;
+}
+
 .events {
   margin-top: 1em;
   padding: 1em;
@@ -352,12 +381,12 @@ mat-sidenav-content mat-toolbar {
   text-overflow: ellipsis;
 }
 
-.profile-page-header-right {
-  width: 48px;
-}
+// .profile-page-header-right {
+//   width: 48px;
+// }
 
 .profile-button-container {
-  margin-bottom: 0.4em;
+  float: right;
 }
 
 // @media only screen and (max-width: 599px) {
@@ -446,8 +475,8 @@ mat-sidenav-content mat-toolbar {
 
 .action-button {
   float: right;
-  margin-top: -0.4em;
-  margin-right: -0.4em;
+  // margin-top: -0.4em;
+  // margin-right: -0.4em;
 }
 
 .action-button-icon {
@@ -498,12 +527,12 @@ select {
 
 .dimmed {
   font-size: 0.9em;
-  color: rgba(0, 0, 0, 0.65)
+  color: rgba(0, 0, 0, 0.65);
 }
 
 .dark .dimmed {
   font-size: 0.9em;
-  color: rgba(255, 255, 255, 0.65)
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .space {

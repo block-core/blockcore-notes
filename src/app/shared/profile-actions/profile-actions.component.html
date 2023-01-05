@@ -38,12 +38,12 @@
   </button>
 
   <button mat-menu-item (click)="unmute()" *ngIf="profile?.mute == true && profile?.block != true">
-    <mat-icon>do_not_disturb_off</mat-icon>
+    <mat-icon>notifications</mat-icon>
     <span>Unmute</span>
   </button>
 
   <button mat-menu-item (click)="mute()" *ngIf="!profile?.mute && profile?.block != true">
-    <mat-icon>do_not_disturb_on</mat-icon>
+    <mat-icon>notifications_off</mat-icon>
     <span>Mute</span>
   </button>
 

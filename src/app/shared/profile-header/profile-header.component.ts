@@ -41,6 +41,14 @@ export class ProfileHeaderComponent {
     });
   }
 
+  getLightningLabel(lud06: string) {
+    if (lud06.indexOf('@') > -1) {
+      return lud06;
+    } else {
+      return lud06;
+    }
+  }
+
   async ngOnInit() {
     if (!this.profile) {
       this.profile = await this.profiles.getProfile(this.pubkey);
