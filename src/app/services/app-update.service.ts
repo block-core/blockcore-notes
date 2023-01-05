@@ -19,7 +19,8 @@ export class AppUpdateService {
         case 'VERSION_READY':
           console.log(`Current app version: ${evt.currentVersion.hash}`);
           console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
-          this.showAppUpdateAlert();
+          // this.showAppUpdateAlert();
+          this.doAppUpdate();
           break;
         case 'VERSION_INSTALLATION_FAILED':
           console.log(`Failed to install app version '${evt.version.hash}': ${evt.error}`);
