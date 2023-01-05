@@ -25,10 +25,11 @@
       </mat-card-content>
     </mat-card>
 
-    <div class="screenshot">
-    </div>
-    <!-- <img class="screenshot" src="/assets/blockcore-notes-screenshot.png" /> -->
 
+    <!-- <img class="screenshot" src="/assets/blockcore-notes-screenshot.png" /> -->
+    <mat-card class="card card-image">
+      <img mat-card-image src="/assets/blockcore-notes-screenshot.png" alt="Photo of a Shiba Inu">
+    </mat-card>
     <mat-card class="card">
       <mat-card-content>
         <h1>Follow your favorite creators</h1>
@@ -46,30 +47,7 @@
         <p>💛🖤</p>
       </mat-card-content>
     </mat-card>
-    <br><br>
-    <mat-card class="card">
-      <mat-card-content>
-        <h1>Read Only Login</h1>
-        <div *ngIf="consent">
-          <div>
-            <p>Want to view the app first or view someone's profile in read-only view?</p>
-            <mat-form-field appearance="fill" class="input-full-width">
-              <mat-icon class="circle" matPrefix>person_add</mat-icon>
-              <mat-label>Public Key</mat-label>
-              <input matInput type="text" autocomplete="off" [(ngModel)]="readOnlyKey" />
-            </mat-form-field>
-            <div><button class="skip-button" (click)="anonymous()" color="primary" mat-raised-button>Go straight in</button></div>
-          </div>
-        </div>
-        <div *ngIf="!consent" class="consent-required warn">You must agree with the notice below to enable login.</div>
-        <br />
-        <!-- <p class="notice">
-          You must use a browser extension to manage your Nostr identities. You can choose to use any third party extension or install the
-          <a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a> (Chrome, Edge, Brave extension) provided by the same team behind Blockcore Notes.
-        </p> -->
-      </mat-card-content>
-    </mat-card>
-    <br><br>
+
     <mat-card class="card warn">
       <mat-card-content>
         <h1 *ngIf="!consent">Your approval is needed</h1>
@@ -92,6 +70,31 @@
         <mat-checkbox color="primary" (change)="persist()" [(ngModel)]="consent">I have read and agree to this notice</mat-checkbox>
       </mat-card-content>
     </mat-card>
+
+    <mat-card class="card">
+      <mat-card-content>
+        <h1>Read Only Login</h1>
+        <div *ngIf="consent">
+          <div>
+            <p>Want to view the app first or view someone's profile in read-only view?</p>
+            <mat-form-field appearance="fill" class="input-full-width">
+              <mat-icon class="circle" matPrefix>person_add</mat-icon>
+              <mat-label>Public Key</mat-label>
+              <input matInput type="text" autocomplete="off" [(ngModel)]="readOnlyKey" />
+            </mat-form-field>
+            <div><button class="skip-button" (click)="anonymous()" color="primary" mat-raised-button>Go straight in</button></div>
+          </div>
+        </div>
+        <div *ngIf="!consent" class="consent-required warn">You must agree with the notice above to enable login.</div>
+        <br />
+        <!-- <p class="notice">
+          You must use a browser extension to manage your Nostr identities. You can choose to use any third party extension or install the
+          <a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a> (Chrome, Edge, Brave extension) provided by the same team behind Blockcore Notes.
+        </p> -->
+      </mat-card-content>
+    </mat-card>
+
+
     <div id="consent-card"></div>
   </div>
 </div>
