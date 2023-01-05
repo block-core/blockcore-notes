@@ -141,6 +141,14 @@
   padding: 0px !important;
 }
 
+@media only screen and (min-width: 1360px) {
+  .card {
+    max-width: 944px;
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+}
+
 @media only screen and (min-width: 1024px) {
   .card {
     margin-right: 11em;
