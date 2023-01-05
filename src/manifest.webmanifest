@@ -7,6 +7,12 @@
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "protocol_handlers": [
+    {
+      "protocol": "web+nostr",
+      "url": "/?nostr=%s"
+    }
+  ],
   "icons": [
     {
       "src": "assets/icons/icon-32x32.png",
