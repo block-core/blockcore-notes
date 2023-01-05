@@ -20,6 +20,7 @@ import { ScrollEvent } from './shared/scroll.directive';
 import { NavigationService } from './services/navigation.service';
 import { NostrProfileDocument } from './services/interfaces';
 import { ThemeService } from './services/theme.service';
+import { NostrProtocolRequest } from './common/NostrProtocolRequest';
 
 @Component({
   selector: 'app-root',
@@ -51,6 +52,25 @@ export class AppComponent {
     public navigationService: NavigationService,
     public theme: ThemeService
   ) {
+    // This must happen in the constructor on app component, or when loading in PWA, it won't
+    // be possible to read the query parameters.
+    const queryParam = globalThis.location.search;
+
+    if (queryParam) {
+      const param = Object.fromEntries(new URLSearchParams(queryParam)) as any;
+      this.appState.params = param;
+
+      if (this.appState.params.nostr) {
+        const protocolRequest = new NostrProtocolRequest();
+        const protocolData = protocolRequest.decode(this.appState.params.nostr);
+
+        if (protocolData && protocolData.scheme && protocolData.address) {
+          const prefix = protocolData.scheme === 'nevent' ? '/e' : '/p';
+          this.router.navigate([prefix, protocolData.address!]);
+        }
+      }
+    }
+
     // appState.title = 'Blockcore Notes';
     this.authService.authInfo$.subscribe(async (auth) => {
       this.authenticated = auth.authenticated();

@@ -104,6 +104,11 @@ export class SettingsComponent {
     ];
   }
 
+  registerHandler(protocol: string, parameter: string) {
+    // navigator.registerProtocolHandler(protocol, `./index.html?${parameter}=%s`);
+    navigator.registerProtocolHandler(protocol, `/?${parameter}=%s`);
+  }
+
   addRelay(): void {
     const dialogRef = this.dialog.open(AddRelayDialog, {
       data: { read: true, write: true },

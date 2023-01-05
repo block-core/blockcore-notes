@@ -39,6 +39,9 @@ export class ApplicationState {
 
   actions: Action[] = [];
 
+  /** Parameters that comes from query string during activation of the extension. */
+  params: any;
+
   isSmallScreen$: Observable<boolean>;
 
   displayLabels$: Observable<boolean>;

@@ -33,7 +33,7 @@
 
         <div class="settings-action-buttons">
           <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
-          <br>
+          <br />
           <button mat-flat-button color="primary" (click)="getRelays()">Append relays from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append relays from app</button
           ><button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
         </div>
@@ -47,13 +47,27 @@
     </ng-template>
     <ng-template matTabContent>
       <div class="page">
-        <mat-form-field class="input-full-width" appearance="outline">
-          <mat-label>Choose mode</mat-label>
-          <mat-select (selectionChange)="theme.darkMode = !theme.darkMode" [value]="theme.darkMode">
-            <mat-option [value]="true">Dark</mat-option>
-            <mat-option [value]="false">Light</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <mat-card>
+          <mat-card-content>
+            <mat-form-field class="input-full-width" appearance="outline">
+              <mat-label>Choose mode</mat-label>
+              <mat-select (selectionChange)="theme.darkMode = !theme.darkMode" [value]="theme.darkMode">
+                <mat-option [value]="true">Dark</mat-option>
+                <mat-option [value]="false">Light</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <br>
+
+        <mat-card>
+          <mat-card-content>
+            <button mat-stroked-button (click)="registerHandler('web+nostr', 'nostr')">Register Protocol Handler</button>
+            <br /><br />
+            <div class="dimmed">Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.</div>
+          </mat-card-content>
+        </mat-card>
       </div>
     </ng-template>
   </mat-tab>
