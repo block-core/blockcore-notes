@@ -20,7 +20,8 @@
             "allowedCommonJsDependencies": [
               "sanitize-html",
               "moment",
-              "browser-level"
+              "browser-level",
+              "qrcode"
             ],
             "outputPath": "dist",
             "index": "src/index.html",
