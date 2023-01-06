@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 // import { relayInit, validateEvent, verifySignature, signEvent, getEventHash, getPublicKey } from 'nostr-tools';
 import { relayInit } from 'nostr-tools';
 import { Subscription } from 'rxjs';
+import { ApplicationState } from '../services/applicationstate.service';
 import { NostrNoteDocument } from '../services/interfaces';
 import { NotesService } from '../services/notes.service';
 
@@ -14,7 +15,7 @@ export class NotesComponent {
   notes: NostrNoteDocument[] = [];
   details = false;
 
-  constructor(private notesService: NotesService) {}
+  constructor(private notesService: NotesService, private appState: ApplicationState) {}
 
   toggleDetails() {
     this.details = !this.details;
@@ -29,6 +30,8 @@ export class NotesComponent {
   }
 
   ngOnInit() {
+    this.appState.title = 'Saved Notes';
+
     this.notesSub = this.notesService.notesChanged$.subscribe(async () => {
       console.log('RELOADING NOTES!!!');
       await this.loadNotes();

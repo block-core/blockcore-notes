@@ -1,0 +1,44 @@
+<mat-tab-group>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">home</mat-icon>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Home</span>
+    </ng-template>
+    <ng-template matTabContent>
+      <app-feed-private></app-feed-private>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Global</span>
+    </ng-template>
+    <ng-template matTabContent>
+      <app-feed-public></app-feed-public>
+    </ng-template>
+  </mat-tab>
+
+  <!-- <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">forum</mat-icon>
+      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Chats</span>
+    </ng-template>
+
+    <div class="page">
+      <h2>To be implemented</h2>
+
+      <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
+    </div>
+  </mat-tab> -->
+
+  <!-- <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">bookmark_border</mat-icon>
+      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Saved</span>
+    </ng-template>
+    <ng-template matTabContent>
+      <app-notes></app-notes>
+    </ng-template>
+  </mat-tab> -->
+</mat-tab-group>

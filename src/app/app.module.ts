@@ -76,6 +76,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { EventActionsComponent } from './shared/event-actions/event-actions.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ChatComponent } from './chat/chat.component';
+import { FeedComponent } from './feed/feed.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +114,8 @@ import { ChatComponent } from './chat/chat.component';
     ProfileImageDialog,
     LicensesComponent,
     EventActionsComponent,
-    ChatComponent
+    ChatComponent,
+    FeedComponent,
   ],
   imports: [
     HttpClientModule,

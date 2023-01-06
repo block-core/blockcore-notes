@@ -98,6 +98,7 @@ body {
   // overflow: hidden;
   overscroll-behavior-y: contain;
   overflow-x: hidden;
+  overflow-y: overlay !important;
   // overflow: scroll !important;
 }
 
@@ -542,6 +543,16 @@ select {
 }
 
 .dark .dimmed {
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+small {
+  font-size: 0.9em;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.dark small {
   font-size: 0.9em;
   color: rgba(255, 255, 255, 0.65);
 }

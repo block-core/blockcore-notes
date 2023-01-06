@@ -14,6 +14,7 @@ import { PeopleComponent } from './people/people.component';
 import { NoteComponent } from './note/note.component';
 import { LicensesComponent } from './about/licenses/licenses.component';
 import { ChatComponent } from './chat/chat.component';
+import { FeedComponent } from './feed/feed.component';
 
 const routes: Routes = [
   {
@@ -24,6 +25,11 @@ const routes: Routes = [
   {
     path: 'connect',
     component: ConnectComponent,
+  },
+  {
+    path: 'feed',
+    component: FeedComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'notes',
