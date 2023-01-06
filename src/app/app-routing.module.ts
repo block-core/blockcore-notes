@@ -13,6 +13,7 @@ import { CirclesComponent } from './circles/circles.component';
 import { PeopleComponent } from './people/people.component';
 import { NoteComponent } from './note/note.component';
 import { LicensesComponent } from './about/licenses/licenses.component';
+import { ChatComponent } from './chat/chat.component';
 import { FeedComponent } from './feed/feed.component';
 
 const routes: Routes = [
@@ -43,6 +44,11 @@ const routes: Routes = [
   {
     path: 'people',
     component: PeopleComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'chat',
+    component: ChatComponent,
     canActivate: [AuthGuard],
   },
   {

@@ -75,6 +75,7 @@ import { LicensesComponent } from './about/licenses/licenses.component';
 import { HttpClientModule } from '@angular/common/http';
 import { EventActionsComponent } from './shared/event-actions/event-actions.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ChatComponent } from './chat/chat.component';
 import { FeedComponent } from './feed/feed.component';
 
 @NgModule({
@@ -113,7 +114,8 @@ import { FeedComponent } from './feed/feed.component';
     ProfileImageDialog,
     LicensesComponent,
     EventActionsComponent,
-    FeedComponent
+    ChatComponent,
+    FeedComponent,
   ],
   imports: [
     HttpClientModule,
