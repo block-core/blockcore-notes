@@ -31,6 +31,8 @@ export class NotesComponent {
 
   ngOnInit() {
     this.appState.title = 'Saved Notes';
+    this.appState.goBack = true;
+    this.appState.actions = [];
 
     this.notesSub = this.notesService.notesChanged$.subscribe(async () => {
       console.log('RELOADING NOTES!!!');
