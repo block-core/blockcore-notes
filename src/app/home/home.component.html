@@ -1,44 +1,56 @@
-<mat-tab-group>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">home</mat-icon>
-      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Home</span>
-    </ng-template>
-    <ng-template matTabContent>
-      <app-feed-private></app-feed-private>
-    </ng-template>
-  </mat-tab>
+<div class="page">
+  <!-- <div class="dashboard-header">
+    <mat-card>
+      <mat-card-content>2300 <small>Followers</small></mat-card-content>
+    </mat-card>
 
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
-      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Global</span>
-    </ng-template>
-    <ng-template matTabContent>
-      <app-feed-public></app-feed-public>
-    </ng-template>
-  </mat-tab>
+    <mat-card>
+      <mat-card-content>500 <small>Following</small></mat-card-content>
+    </mat-card>
 
-  <!-- <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">forum</mat-icon>
-      <span *ngIf="(displayLabels$ | async) === false">&nbsp;Chats</span>
-    </ng-template>
+    <mat-card>
+      <mat-card-content>640 <small>Profiles (Cached)</small></mat-card-content>
+    </mat-card>
 
-    <div class="page">
-      <h2>To be implemented</h2>
+    <mat-card>
+      <mat-card-content>4 <small>Notes (Saved)</small></mat-card-content>
+    </mat-card>
+  </div> -->
 
-      <p>Specification: <a href="https://github.com/nostr-protocol/nips/blob/master/28.md" target="_blank">NIP-28</a></p>
+  <div class="page">
+    <h1 class="marginless">Hi, having fun yet?</h1>
+
+    <p>You can import your existing followers:</p>
+    <button class="follow-button" mat-stroked-button color="primary" (click)="import()">Import following list</button>
+    <br /><br />
+
+    <div *ngIf="defaults$ | async as defaults">
+      <div *ngIf="defaults.length > 0">
+        <p>If you are new to Blockcore Notes, here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>
+
+        <!-- <mat-grid-list gutterSize="1em" [cols]="(appState.isSmallScreen$ | async) ? '1' : '2'" rowHeight="180px">
+        <mat-grid-tile *ngFor="let profile of defaults"> -->
+        <!-- <img [src]="profile.picture">&nbsp;
+          {{ profile.name }}<br>
+          {{ profile.pubkey }}<br><br>
+          <button mat-raised-button color="primary">Follow</button> -->
+        <div class="card-container">
+          <mat-card class="default-card" *ngFor="let profile of defaults" [@fade]="profile.checked">
+            <mat-card-header>
+              <img mat-card-avatar [src]="profile.picture" />
+              <mat-card-title [matTooltip]="profile.pubkey" matTooltipPosition="above">{{ profile.name }}</mat-card-title>
+              <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content class="follow-card-content">
+              <mat-slide-toggle class="follow-toggle" color="primary" (change)="follow(profile)" [(ngModel)]="profile.checked">Follow {{ profile.name }}</mat-slide-toggle>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <!-- </mat-grid-tile>
+      </mat-grid-list> -->
+
+        <!-- <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow All</button> -->
+      </div>
     </div>
-  </mat-tab> -->
-
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">bookmark_border</mat-icon>
-      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Saved</span>
-    </ng-template>
-    <ng-template matTabContent>
-      <app-notes></app-notes>
-    </ng-template>
-  </mat-tab>
-</mat-tab-group>
+  </div>
+</div>

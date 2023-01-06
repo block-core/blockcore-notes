@@ -11,39 +11,6 @@
     <mat-spinner class="loading"></mat-spinner>
   </div>
 
-  <div class="page" *ngIf="profileService.initialized && !hasFollowers">
-    <h1 class="marginless">Hi, having fun yet?</h1>
-
-    <p>You can import your existing followers:</p>
-    <button class="follow-button" mat-stroked-button color="primary" (click)="import()">Import my existing following list</button>
-    <br /><br />
-
-    <p>If you are new to Blockcore Notes, here are some interesting people you can follow. Make your selection and then click the large "Follow" button to get started.</p>
-
-    <mat-grid-list gutterSize="1em" [cols]="(appState.isSmallScreen$ | async) ? '1' : '2'" rowHeight="180px">
-      <mat-grid-tile *ngFor="let profile of defaults">
-        <!-- <img [src]="profile.picture">&nbsp;
-        {{ profile.name }}<br>
-        {{ profile.pubkey }}<br><br>
-        <button mat-raised-button color="primary">Follow</button> -->
-
-        <mat-card class="default-card">
-          <mat-card-header>
-            <img mat-card-avatar [src]="profile.picture" />
-            <mat-card-title>{{ profile.name }}</mat-card-title>
-            <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="more dimmed">{{ profile.pubkey }}</p>
-            <mat-slide-toggle class="example-margin" color="primary" [(ngModel)]="profile.checked">Follow {{ profile.name }}</mat-slide-toggle>
-          </mat-card-content>
-        </mat-card>
-      </mat-grid-tile>
-    </mat-grid-list>
-
-    <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button>
-  </div>
-
   <div class="feed-page" *ngIf="events.length > 0">
     <!-- <mat-accordion class="options">
       <mat-expansion-panel>

@@ -547,6 +547,16 @@ select {
   color: rgba(255, 255, 255, 0.65);
 }
 
+small {
+  font-size: 0.9em;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.dark small {
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.65);
+}
+
 .space {
   margin-top: 0.4em;
   margin-bottom: 0.4em;

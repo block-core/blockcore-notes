@@ -53,6 +53,10 @@ export class ProfileService {
     return this.#profileRequested.asObservable();
   }
 
+  updated() {
+    this.#updated();
+  }
+
   #updated() {
     this.#profilesChanged.next(this.profiles);
     this.#followingChanged.next(this.profiles);
