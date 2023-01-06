@@ -98,7 +98,7 @@ export class ThreadService {
           return data;
         })
       )
-      .pipe(map((data) => data!.filter((events) => events.kind != Kind.Reaction))) // Filter out likes.
+      .pipe(map((data) => data!.filter((events) => events.kind != Kind.Reaction && (events.kind as Number) != 6))) // Filter out likes and reposts.
       .pipe(map((data) => data!.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 
