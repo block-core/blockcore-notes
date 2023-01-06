@@ -169,3 +169,10 @@ header {
 .new-post-button:hover {
   opacity: 0.6;
 }
+
+.search-box {
+  display: inline-block;
+  padding-top: 1em;
+  top: 20px;
+  flex: 1 1 auto;
+}

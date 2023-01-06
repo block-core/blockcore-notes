@@ -39,6 +39,10 @@ export class ApplicationState {
 
   showBackButton = false;
 
+  searchText?: string;
+
+  showSearch = false;
+
   actions: Action[] = [];
 
   /** Parameters that comes from query string during activation of the extension. */

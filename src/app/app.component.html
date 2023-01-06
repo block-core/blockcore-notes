@@ -44,7 +44,7 @@
         <mat-icon>close</mat-icon>
       </button>
       <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="mat-icon-button theme-sidenav-icon">
-        <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode": "light_mode" }}</mat-icon>
+        <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode" : "light_mode" }}</mat-icon>
       </button>
       <header>
         <div class="bio" (click)="openProfile()">
@@ -83,24 +83,39 @@
 
   <mat-sidenav-content>
     <mat-toolbar class="app-header">
-      <button *ngIf="(isHandset$ | async) === true" type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+      <button *ngIf="!appState.showSearch && (isHandset$ | async) === true" type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
       <span></span>
 
-      <button *ngIf="appState.showBackButton" mat-icon-button (click)="goBack()">
+      <button *ngIf="!appState.showSearch && appState.showBackButton" mat-icon-button (click)="goBack()">
         <mat-icon class="arrow-back">arrow_back</mat-icon>
       </button>
 
-      <div class="top-spacer">{{ appState.title }}</div>
+      <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title }}</div>
 
       <!-- <app-language-selector></app-language-selector> -->
+      <ng-template *ngIf="!appState.showSearch">
+        <button *ngFor="let action of appState.actions" (click)="action.click()" mat-icon-button [matTooltip]="action.tooltip">
+          <mat-icon>{{ action.icon }}</mat-icon>
+        </button>
+      </ng-template>
 
-      <button *ngFor="let action of appState.actions" (click)="action.click()" mat-icon-button [matTooltip]="action.tooltip">
-        <mat-icon>{{ action.icon }}</mat-icon>
+      <mat-form-field *ngIf="appState.showSearch" appearance="outline" class="search-box">
+        <mat-icon class="circle" matPrefix>search</mat-icon>
+        <mat-label>Search</mat-label>
+        <input matInput #searchInput type="text" (change)="searchInputChanged()" autocomplete="off" [(ngModel)]="appState.searchText" />
+      </mat-form-field>
+
+      <button *ngIf="appState.showSearch" mat-icon-button (click)="searchVisibility(false)">
+        <mat-icon>close</mat-icon>
       </button>
 
-      <button mat-icon-button (click)="draweraccount.toggle()">
+      <button *ngIf="!appState.showSearch" mat-icon-button (click)="searchVisibility(true)">
+        <mat-icon>search</mat-icon>
+      </button>
+
+      <button *ngIf="!appState.showSearch" mat-icon-button (click)="draweraccount.toggle()">
         <mat-icon>account_circle</mat-icon>
       </button>
     </mat-toolbar>

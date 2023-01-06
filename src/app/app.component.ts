@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { ApplicationState } from './services/applicationstate.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, TitleStrategy } from '@angular/router';
@@ -21,6 +21,7 @@ import { NavigationService } from './services/navigation.service';
 import { NostrProfileDocument } from './services/interfaces';
 import { ThemeService } from './services/theme.service';
 import { NostrProtocolRequest } from './common/NostrProtocolRequest';
+import { SearchService } from './services/search.service';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ import { NostrProtocolRequest } from './common/NostrProtocolRequest';
 export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
   @ViewChild('draweraccount') draweraccount!: MatSidenav;
+  @ViewChild('searchInput') searchInput!: ElementRef;
   authenticated = false;
   bgimagePath = '/assets/profile-bg.png';
   profile: NostrProfileDocument | undefined;
@@ -51,6 +53,7 @@ export class AppComponent {
     private dataService: DataService,
     public profileService: ProfileService,
     public navigationService: NavigationService,
+    private searchService: SearchService,
     public theme: ThemeService
   ) {
     if (!this.visibilityHandler) {
@@ -90,6 +93,23 @@ export class AppComponent {
     this.profileService.profile$.subscribe((profile) => {
       this.profile = profile;
     });
+  }
+
+  searchInputChanged() {
+    if (this.appState.searchText) {
+      this.searchService.search(this.appState.searchText);
+    }
+  }
+
+  searchVisibility(visible: boolean) {
+    this.appState.showSearch = visible;
+    this.appState.searchText = '';
+
+    if (visible) {
+      setTimeout(() => {
+        this.searchInput.nativeElement.focus();
+      });
+    }
   }
 
   async onScroll(event: ScrollEvent) {
