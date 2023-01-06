@@ -8,13 +8,6 @@
   border-radius: 20px;
 }
 
-@media only screen and (max-width: 820px) {
-  .dashboard-header {
-    flex-direction: column;
-    gap: 1em;
-  }
-}
-
 .card-container {
   box-sizing: border-box;
 }
@@ -31,7 +24,7 @@
 .follow-button {
   margin-top: 1em;
   width: 100%;
-  font-size: 1.4em;
+  font-size: 1.2em;
   height: 72px;
   text-align: center;
 }
@@ -43,4 +36,54 @@
 .follow-toggle {
   margin-top: 1em;
   margin-bottom: 1em;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.dashboard-left {
+  flex-grow: 4;
+  flex-shrink: 1;
+  flex-basis: 10%;
+}
+
+.dashboard-right {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 10%;
+}
+
+.lists-card {
+  width: 100%;
+}
+
+.list-selection {
+  margin-top: 2em;
+}
+
+.list-selection button {
+  margin-top: 1em;
+}
+
+@media only screen and (max-width: 920px) {
+  .dashboard {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 820px) {
+  .dashboard-header {
+    flex-direction: column;
+    gap: 1em;
+  }
+}
+
+@media only screen and (max-width: 599px) {
+  .default-card {
+    display: block;
+    width: 100%;
+  }
 }

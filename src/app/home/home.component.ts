@@ -49,6 +49,12 @@ export class HomeComponent {
   publicKey?: string | null;
   subscriptions: Subscription[] = [];
 
+  lists = [
+    { name: 'Nostr', about: 'Influencial nostr developers and community people', pubkey: 'npub15xrwvftyzynahpl5fmpuv9wtkg9q52j8q73saw59u8tmx63ktx8sfclgss', pubkeyhex: 'a186e625641127db87f44ec3c615cbb20a0a2a4707a30eba85e1d7b36a36598f' },
+    { name: 'Bitcoin', about: 'Influencial Bitcoin people', pubkey: 'npub175ag9cus82a0zzpkheaglnudpvsc8q046z82cyz9gmauzlve6r2s4k9fpm', pubkeyhex: 'f53a82e3903abaf10836be7a8fcf8d0b218381f5d08eac104546fbc17d99d0d5' },
+    { name: 'Blockcore', about: 'Follow the Blockcore developers', pubkey: 'npub1zfy0r7x8s3xukajewkmmzxjj3wpfan7apj5y7szz7y740wtf6p5q3tdyy9', pubkeyhex: '1248f1f8c7844dcb765975b7b11a528b829ecfdd0ca84f4042f13d57b969d068' },
+  ];
+
   defaults: DefaultProfile[] = [
     {
       pubkey: 'npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6',
@@ -138,10 +144,6 @@ export class HomeComponent {
     }
   }
 
-  follow2(profile: DefaultProfile) {
-    console.log('follow2');
-  }
-
   ngAfterViewInit() {
     console.log('ngAfterViewInit');
   }
@@ -193,7 +195,7 @@ export class HomeComponent {
     this.details = !this.details;
   }
 
-  import() {
+  import(pubkey: string) {
     // TODO: This is a copy-paste of code in circles, refactor ASAP!
 
     this.snackBar.open('Importing followers process has started', 'Hide', {
@@ -202,7 +204,7 @@ export class HomeComponent {
       verticalPosition: 'bottom',
     });
 
-    let pubkey = this.utilities.ensureHexIdentifier(this.appState.getPublicKey());
+    pubkey = this.utilities.ensureHexIdentifier(pubkey);
 
     // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
     // follow lists and having to process everything multiple times. Just query one by one until

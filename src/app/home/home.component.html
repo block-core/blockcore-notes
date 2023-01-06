@@ -17,40 +17,59 @@
     </mat-card>
   </div> -->
 
-  <div class="page">
-    <h1 class="marginless">Hi, having fun yet?</h1>
+  <div class="dashboard">
+    <div class="dashboard-left">
+      <h1 class="marginless">Hi, having fun yet?</h1>
 
-    <p>You can import your existing followers:</p>
-    <button class="follow-button" mat-stroked-button color="primary" (click)="import()">Import following list</button>
-    <br /><br />
+      <p>You can import your existing followers:</p>
+      <button class="follow-button" mat-flat-button color="primary" (click)="import(this.appState.getPublicKey())">Import your following list</button>
+      <br /><br />
 
-    <div *ngIf="defaults$ | async as defaults">
-      <div *ngIf="defaults.length > 0">
-        <p>If you are new to Blockcore Notes, here are some interesting people you can follow.</p>
+      <div *ngIf="defaults$ | async as defaults">
+        <div *ngIf="defaults.length > 0">
+          <p>If you are new to Blockcore Notes, here are some interesting people you can follow.</p>
 
-        <!-- <mat-grid-list gutterSize="1em" [cols]="(appState.isSmallScreen$ | async) ? '1' : '2'" rowHeight="180px">
+          <!-- <mat-grid-list gutterSize="1em" [cols]="(appState.isSmallScreen$ | async) ? '1' : '2'" rowHeight="180px">
         <mat-grid-tile *ngFor="let profile of defaults"> -->
-        <!-- <img [src]="profile.picture">&nbsp;
+          <!-- <img [src]="profile.picture">&nbsp;
           {{ profile.name }}<br>
           {{ profile.pubkey }}<br><br>
           <button mat-raised-button color="primary">Follow</button> -->
-        <div class="card-container">
-          <mat-card class="default-card" *ngFor="let profile of defaults" [@fade]="profile.checked">
-            <mat-card-header>
-              <img mat-card-avatar [src]="profile.picture" />
-              <mat-card-title [matTooltip]="profile.pubkey" matTooltipPosition="above">{{ profile.name }}</mat-card-title>
-              <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content class="follow-card-content">
-              <mat-slide-toggle class="follow-toggle" color="primary" (change)="follow(profile)" [(ngModel)]="profile.checked">Follow {{ profile.name }}</mat-slide-toggle>
-            </mat-card-content>
-          </mat-card>
-        </div>
-        <!-- </mat-grid-tile>
+          <div class="card-container">
+            <mat-card class="default-card" *ngFor="let profile of defaults" [@fade]="profile.checked">
+              <mat-card-header>
+                <img mat-card-avatar [src]="profile.picture" />
+                <mat-card-title [matTooltip]="profile.pubkey" matTooltipPosition="above">{{ profile.name }}</mat-card-title>
+                <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="follow-card-content">
+                <mat-slide-toggle class="follow-toggle" color="primary" (change)="follow(profile)" [(ngModel)]="profile.checked">Follow {{ profile.name }}</mat-slide-toggle>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <!-- </mat-grid-tile>
       </mat-grid-list> -->
 
-        <!-- <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow All</button> -->
+          <!-- <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow All</button> -->
+        </div>
       </div>
+    </div>
+    <div class="dashboard-right">
+      <mat-card class="lists-card">
+        <mat-card-header>
+          <mat-card-title>Curated Following Lists</mat-card-title>
+          <mat-card-subtitle>Lists of users based upon topics you can add to your following list.</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="list-selection" *ngFor="let list of lists">
+            {{ list.name }}<br />
+            <small>{{ list.about }}</small
+            ><br />
+            <button (click)="import(list.pubkeyhex)" mat-flat-button color="primary">FOLLOW ALL</button>&nbsp;
+            <!-- <button (click)="import(list.pubkeyhex)" mat-button>BLOCK ALL</button> -->
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
 </div>
