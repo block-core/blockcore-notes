@@ -97,7 +97,7 @@ export class ProfileService {
     this.#profileRequested.next(pubkey);
   }
 
-  async downloadRecent(pubkey: string) {
+  downloadRecent(pubkey: string) {
     this.#profileRequested.next(pubkey);
   }
 

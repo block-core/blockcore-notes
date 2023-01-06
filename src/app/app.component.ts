@@ -165,8 +165,10 @@ export class AppComponent {
 
     await this.profileService.populate();
     await this.relayStorage.initialize();
+
     await this.relayService.initialize();
-    await this.relayService.connect();
+    this.relayService.connect();
+
     await this.feedService.initialize();
 
     // This service will perform data cleanup, etc.

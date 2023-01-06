@@ -492,14 +492,15 @@ export class FeedService {
     // this.relayStorage.list();
   }
 
-  async downloadRecent(pubkeys: string[]) {
+  /** Download the recent events by the specified pubkeys and then disconnects the subscription. */
+  downloadRecent(pubkeys: string[]) {
     console.log('DOWNLOAD RECENT FOR:', pubkeys);
     const relay = this.relayService.relays[0];
 
-    const backInTime = moment().subtract(12, 'hours').unix();
+    // const backInTime = moment().subtract(12, 'hours').unix();
 
-    // Start subscribing to our people feeds.
-    const sub = relay.sub([{ kinds: [1], since: backInTime, authors: pubkeys }], {}) as NostrSubscription;
+    // Start subscribing to our people feeds. //  since: backInTime
+    const sub = relay.sub([{ kinds: [1], limit: 1000, authors: pubkeys }], {}) as NostrSubscription;
 
     sub.loading = true;
 
@@ -519,6 +520,7 @@ export class FeedService {
     sub.on('eose', () => {
       // console.log('Initial load of people feed completed.');
       sub.loading = false;
+      sub.unsub();
     });
   }
 

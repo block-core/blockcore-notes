@@ -136,7 +136,7 @@ export class HomeComponent {
   async follow(profile: DefaultProfile) {
     if (profile.checked) {
       await this.profileService.follow(profile.pubkeyhex, undefined, profile as any);
-      await this.feedService.downloadRecent([profile.pubkeyhex]);
+      this.feedService.downloadRecent([profile.pubkeyhex]);
 
       // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
       this.#defaultsChanged.next(this.defaults);
@@ -164,7 +164,7 @@ export class HomeComponent {
   //     await this.profileService.follow(pubKeys[i].pubkeyhex, undefined, pubKeys[i] as any);
   //   }
 
-  //   await this.feedService.downloadRecent(pubKeys.map((p) => p.pubkeyhex));
+  //   this.feedService.downloadRecent(pubKeys.map((p) => p.pubkeyhex));
 
   //   // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
   //   this.cd.detectChanges();

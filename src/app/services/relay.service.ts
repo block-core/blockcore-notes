@@ -19,11 +19,13 @@ import { ApplicationState } from './applicationstate.service';
 export class RelayService {
   /** Default relays that the app has for users without extension. This follows the document structure as extension data. */
   defaultRelays: any = {
-    'wss://relay.nostr.info': { read: true, write: true },
+    // 'wss://relay.damus.io': { read: true, write: false },
     'wss://nostr-pub.wellorder.net': { read: true, write: true },
+    // 'wss://relay.nostr.info': { read: true, write: true },
     'wss://nostr.nordlysln.net': { read: true, write: true },
-    'wss://relay.damus.io': { read: true, write: false },
     'wss://relay.nostr.ch': { read: true, write: true },
+    'wss://nostr.v0l.io': { read: true, write: true },
+    'wss://nostr-relay.wlvs.space': { read: true, write: true },
   };
 
   #table;
@@ -47,6 +49,8 @@ export class RelayService {
   sortOrder: 'asc' | 'desc' = 'asc';
 
   subs: Sub[] = [];
+
+  /** These are relay instances that have connection over WebSocket and holds a reference to database metadata for the relay. */
   relays: NostrRelay[] = [];
 
   #relaysChanged: BehaviorSubject<NostrRelay[]> = new BehaviorSubject<NostrRelay[]>(this.relays);
@@ -188,6 +192,24 @@ export class RelayService {
         this.connect();
       }
     });
+
+    // Every time the list of profiles changes, we will re-sub to have a single subscription against all following:
+    this.profileService.profilesChanged$.subscribe(() => {
+      console.log('profilesChanged$!!!, SUBSCRIBE TO FOLLOWING!');
+      for (let i = 0; i < this.relays.length; i++) {
+        this.subscribeToFollowing(this.relays[i]);
+      }
+    });
+  }
+
+  getActiveRelay(url: string) {
+    const index = this.relays.findIndex((r) => r.url == url);
+
+    if (index == -1) {
+      return null;
+    } else {
+      return this.relays[index];
+    }
   }
 
   /** Add an in-memory instance of relay and get stored metadata for it. */
@@ -340,7 +362,12 @@ export class RelayService {
     await this.relayStorage.delete(url);
 
     const relayIndex = this.relays.findIndex((r) => r.url == url);
-    this.relays.splice(relayIndex, 1);
+    let existingRelayInstance = this.relays.splice(relayIndex, 1);
+
+    // Disconnect from the relay when we delete it.
+    if (existingRelayInstance.length > 0) {
+      existingRelayInstance[0].close();
+    }
 
     this.relaysUpdated();
   }
@@ -378,6 +405,13 @@ export class RelayService {
   }
 
   async #connectToRelay(server: NostrRelayDocument, onConnected: any) {
+    const existingActiveRelay = this.getActiveRelay(server.id);
+
+    // If the relay already exists, just return that and do nothing else.
+    if (existingActiveRelay) {
+      onConnected(existingActiveRelay);
+    }
+
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit(server.id) as NostrRelay;
 
@@ -395,10 +429,15 @@ export class RelayService {
       console.log(`NOTICE FROM ${relay?.url}`);
     });
 
-    relay.connect();
-
     // Keep a reference of the metadata on the relay instance.
     relay.metadata = server;
+
+    try {
+      await relay.connect();
+    } catch (err) {
+      console.log(err);
+      relay.metadata.error = 'Unable to connect.';
+    }
 
     await this.addRelay(relay);
 
@@ -412,40 +451,66 @@ export class RelayService {
       // When finished, trigger an observable that we are connected.
       this.appState.connected(true);
 
-      const authors = this.profileService.profiles.map((p) => p.pubkey);
+      this.subscribeToFollowing(relay);
+    });
+  }
 
-      // Append ourself to the authors list so we receive everything we publish to any relay.
-      authors.push(this.appState.getPublicKey());
+  subscriptions: any = {};
 
-      const backInTime = moment().subtract(120, 'minutes').unix();
+  /** Subscribes to the following on the specific relay. */
+  subscribeToFollowing(relay: Relay) {
+    const authors = this.profileService.profiles.map((p) => p.pubkey);
 
-      // Start subscribing to our people feeds.
-      const sub = relay.sub([{ kinds: [1], since: backInTime, authors: authors }], {}) as NostrSubscription;
+    // Append ourself to the authors list so we receive everything we publish to any relay.
+    authors.push(this.appState.getPublicKey());
 
-      sub.loading = true;
+    // TODO: We must store last time user closed the application and use that as back in time value.
+    // const backInTime = moment().subtract(5, 'days').unix();
 
-      // Keep all subscriptions around so we can close them when needed.
-      this.subs.push(sub);
+    // Start subscribing to our people feeds. // since: backInTime,
+    // TODO: MAYBE WE SHOULD UNSUB AND SUB AGAIN, OR WILL THIS OVERRIDE EXISTING SUB?!
 
-      sub.on('event', (originalEvent: any) => {
-        const event = this.eventService.processEvent(originalEvent);
+    const filters = authors.map((a) => {
+      return { kinds: [1], limit: 500, authors: [a] };
+    });
 
-        if (!event) {
-          return;
-        }
+    const sub = relay.sub(filters, {}) as NostrSubscription;
 
-        this.#persist(event);
-      });
+    // If we are still waiting for "loading" after 30 seconds, retry the subscription.
+    setTimeout(() => {
+      console.log('Subscription Timeout Protection was triggered.', sub.loading);
 
-      sub.on('eose', () => {
-        // console.log('Initial load of people feed completed.');
-        sub.loading = false;
-      });
+      if (sub.loading) {
+        console.log('Unsubbing and restarting subscription.', relay);
+        sub.unsub();
+        this.subscribeToFollowing(relay);
+      }
+    }, 5 * 60 * 1000);
+
+    sub.loading = true;
+
+    // Keep all subscriptions around so we can close them when needed.
+    this.subs.push(sub);
+
+    sub.on('event', (originalEvent: any) => {
+      const event = this.eventService.processEvent(originalEvent);
+
+      if (!event) {
+        return;
+      }
+
+      this.#persist(event);
+    });
+
+    sub.on('eose', () => {
+      console.log('Initial load of people feed completed.');
+      sub.loading = false;
     });
   }
 
   async initialize() {
-    if (this.relays.length === 0) {
+    // If there are no relay metatadata in database, get it from extension or default
+    if (this.relayStorage.items.length === 0) {
       let relays;
 
       try {

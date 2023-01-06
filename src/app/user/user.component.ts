@@ -126,7 +126,7 @@ export class UserComponent {
   async follow() {
     this.profile!.follow = true;
     await this.profiles.follow(this.pubkey!);
-    await this.feedService.downloadRecent([this.pubkey!]);
+    this.feedService.downloadRecent([this.pubkey!]);
   }
 
   tabIndex?: number;

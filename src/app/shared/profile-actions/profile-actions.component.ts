@@ -56,7 +56,7 @@ export class ProfileActionsComponent {
     // If not already following, add a full follow and download recent:
     if (!this.profile.follow) {
       await this.profileService.follow(this.profile.pubkey, circle);
-      await this.feedService.downloadRecent([this.profile.pubkey]);
+      this.feedService.downloadRecent([this.profile.pubkey]);
     } else {
       // If we already follow but just change the circle, do a smaller operation.
       await this.profileService.setCircle(this.profile.pubkey, circle);

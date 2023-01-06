@@ -128,7 +128,7 @@ export class PeopleComponent {
     pubkey = this.utilities.ensureHexIdentifier(pubkey);
 
     await this.profileService.follow(pubkey);
-    await this.feedService.downloadRecent([pubkey]);
+    this.feedService.downloadRecent([pubkey]);
   }
 
   createFollow(): void {

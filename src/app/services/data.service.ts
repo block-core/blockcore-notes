@@ -88,7 +88,6 @@ export class DataService {
 
   downloadProfile(pubkey: string) {
     if (!pubkey) {
-      debugger;
       return;
     }
 
