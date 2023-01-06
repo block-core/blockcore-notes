@@ -43,8 +43,18 @@ export class ProfileComponent {
   async ngOnInit() {
     this.appState.title = 'Edit Profile';
 
+    this.originalProfile = {
+      name: '',
+      pubkey: this.appState.getPublicKey(),
+    } as NostrProfileDocument;
+
     this.subscriptions.push(
       this.profileService.profile$.subscribe((profile) => {
+        if (!profile) {
+          profile = this.defaultProfile();
+        }
+
+        console.log('PROFILE SERVICE:', profile);
         this.originalProfile = profile;
 
         if (this.originalProfile) {
@@ -52,6 +62,21 @@ export class ProfileComponent {
         }
       })
     );
+  }
+
+  defaultProfile(): NostrProfileDocument {
+    return {
+      name: '',
+      about: '',
+      picture: '',
+      nip05: '',
+      lud06: '',
+      display_name: '',
+      website: '',
+      created: Math.floor(Date.now() / 1000),
+      verifications: [],
+      pubkey: this.appState.getPublicKey(),
+    };
   }
 
   cloneProfile() {

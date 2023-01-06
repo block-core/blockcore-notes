@@ -1,14 +1,7 @@
 <app-profile-header *ngIf="profile" [profile]="profile"></app-profile-header>
 
-<!-- <mat-tab-group>
-  <mat-tab label="Profile"> -->
 <div class="page">
   <mat-card>
-    <!-- <mat-card-header>
-      <div mat-card-avatar class="header-image"></div>
-      <mat-card-title>Profile</mat-card-title>
-      <mat-card-subtitle>public meta data</mat-card-subtitle>
-    </mat-card-header> -->
     <mat-card-content *ngIf="profile">
       <p>
         <mat-form-field appearance="outline" class="input-full-width">
@@ -45,9 +38,7 @@
           <input matInput type="text" [(ngModel)]="profile.lud06" placeholder="LNURL..." />
         </mat-form-field>
       </p>
-      <p>
-        Last updated: {{profile.created_at | ago}}
-      </p>
+      <p>Last updated: {{ profile.created_at | ago }}</p>
     </mat-card-content>
     <mat-card-footer align="end">
       <button mat-raised-button (click)="cancelEdit()">Cancel</button>&nbsp;
@@ -55,36 +46,3 @@
     </mat-card-footer>
   </mat-card>
 </div>
-<!-- </mat-tab>
-
-  <mat-tab label="Public key">
-    <div class="page">
-      <mat-card>
-        <mat-card-header>
-          <div mat-card-avatar class="header-image"></div>
-          <mat-card-title>Public key</mat-card-title>
-          <mat-card-subtitle>private data in localstorage</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            <mat-form-field appearance="fill" class="input-full-width">
-              <mat-icon matPrefix>key</mat-icon>
-              <mat-label>Public key</mat-label>
-              <input matInput type="text" autocomplete="off" />
-            </mat-form-field>
-          </p>
-          <p>
-            <mat-form-field appearance="fill" class="input-full-width">
-              <mat-icon matPrefix>key_off</mat-icon>
-              <mat-label>Private key</mat-label>
-              <input matInput type="text" autocomplete="off" />
-            </mat-form-field>
-          </p>
-        </mat-card-content>
-        <mat-card-footer align="end">
-          <button mat-raised-button color="primary">Save</button>
-        </mat-card-footer>
-      </mat-card>
-    </div>
-  </mat-tab>
-</mat-tab-group> -->

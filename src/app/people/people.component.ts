@@ -86,7 +86,7 @@ export class PeopleComponent {
 
   async ngOnInit() {
     this.appState.title = 'People';
-    this.appState.showBackButton = true;
+    this.appState.showBackButton = false;
     this.appState.actions = [
       {
         icon: 'person_add',
