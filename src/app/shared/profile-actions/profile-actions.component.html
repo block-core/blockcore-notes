@@ -68,22 +68,22 @@
 <mat-menu #copyMenu="matMenu">
   <button mat-menu-item (click)="copy(getNpub(profile!.pubkey))">
     <mat-icon>content_copy</mat-icon>
-    <span>Public Key (npub)</span>
+    <span>Identifier (npub)</span>
   </button>
   <button mat-menu-item (click)="copy(profile!.pubkey)">
     <mat-icon>content_copy</mat-icon>
-    <span>Public Key (hex)</span>
+    <span>Identifier (hex)</span>
+  </button>
+  <button mat-menu-item (click)="copyProfileUrl(profile!.pubkey)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Identifier URL (npub)</span>
+  </button>
+  <button disabled="true" mat-menu-item (click)="copyProfileUrl(profile!.pubkey)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Profile URL (nprofile)</span>
   </button>
   <button mat-menu-item (click)="copyProfile()">
     <mat-icon>content_copy</mat-icon>
-    <span>Profile</span>
-  </button>
-  <button mat-menu-item *ngIf="event" (click)="copy(event!.id)">
-    <mat-icon>content_copy</mat-icon>
-    <span>Note ID</span>
-  </button>
-  <button mat-menu-item *ngIf="event" (click)="copyEvent()">
-    <mat-icon>content_copy</mat-icon>
-    <span>Note</span>
+    <span>Profile Data</span>
   </button>
 </mat-menu>

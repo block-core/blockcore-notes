@@ -1,0 +1,50 @@
+<button *ngIf="!fab" class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+  <mat-icon class="action-button-icon">more_vert</mat-icon>
+</button>
+
+<button *ngIf="fab" mat-mini-fab color="primary" [matMenuTriggerFor]="menu">
+  <mat-icon>more_vert</mat-icon>
+</button>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="saveNote()" *ngIf="event && !event.saved">
+    <mat-icon>bookmark_add</mat-icon>
+    <span>Save Note</span>
+  </button>
+
+  <button mat-menu-item (click)="removeNote()" *ngIf="event && event.saved">
+    <mat-icon>bookmark_remove</mat-icon>
+    <span>Remove from Notes</span>
+  </button>
+
+  <button mat-menu-item [matMenuTriggerFor]="copyMenu">
+    <mat-icon>copy_all</mat-icon>
+    <span>Copy</span>
+  </button>
+</mat-menu>
+
+<mat-menu #categories="matMenu">
+  <button *ngFor="let circle of circles" mat-menu-item (click)="follow(circle.id)">
+    <mat-icon [style.color]="circle.color">trip_origin</mat-icon>
+    <span>{{ circle.name }}</span>
+  </button>
+</mat-menu>
+
+<mat-menu #copyMenu="matMenu">
+  <button mat-menu-item *ngIf="event" (click)="copyNoteId(event!.id)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Note ID (nevent)</span>
+  </button>
+  <button mat-menu-item *ngIf="event" (click)="copy(event!.id)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Note ID (hex)</span>
+  </button>
+  <button mat-menu-item *ngIf="event" (click)="copyNoteUrl(event!.id)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Note URL (nevent)</span>
+  </button>
+  <button mat-menu-item *ngIf="event" (click)="copyEvent()">
+    <mat-icon>content_copy</mat-icon>
+    <span>Note Data</span>
+  </button>
+</mat-menu>

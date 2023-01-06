@@ -20,7 +20,7 @@
             <app-event-header [pubkey]="event.pubkey"
               ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
             ></app-event-header>
-            <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
           </div>
 
           <app-content [event]="event"></app-content>
@@ -47,7 +47,7 @@
       <app-event-header [pubkey]="event.pubkey"
         ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
       ></app-event-header>
-      <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+      <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
 
     <app-content [event]="event"></app-content>
@@ -94,7 +94,7 @@
         <app-event-header [pubkey]="event.pubkey"
         ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
           ></app-event-header>
-          <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
+          <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
       </div>
       <app-content [event]="event"></app-content>
       <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->

@@ -66,7 +66,7 @@
         <app-event-header [pubkey]="event.pubkey"
           ><span class="event-date" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
         ></app-event-header>
-        <app-profile-actions [event]="event"></app-profile-actions>
+        <app-event-actions [event]="event"></app-event-actions>
       </div>
       <app-content [event]="event"></app-content>
       <!-- {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span> -->

@@ -73,6 +73,7 @@ import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { ProfileImageDialog } from './shared/profile-image-dialog/profile-image-dialog';
 import { LicensesComponent } from './about/licenses/licenses.component';
 import { HttpClientModule } from '@angular/common/http';
+import { EventActionsComponent } from './shared/event-actions/event-actions.component';
 
 @NgModule({
   declarations: [
@@ -109,6 +110,7 @@ import { HttpClientModule } from '@angular/common/http';
     AddRelayDialog,
     ProfileImageDialog,
     LicensesComponent,
+    EventActionsComponent,
   ],
   imports: [
     HttpClientModule,

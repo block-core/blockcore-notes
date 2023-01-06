@@ -8,7 +8,7 @@
       >Posted: <span class="event-date">{{ note.created_at | ago }}</span
         >, Saved: <span class="event-date">{{ note.saved | ago }}</span>
       </app-event-header>
-      <app-profile-actions [event]="note"></app-profile-actions>
+      <app-event-actions [event]="note"></app-event-actions>
     </div>
     
     <app-content [event]="note"></app-content>

@@ -12,10 +12,10 @@ import { nip19 } from 'nostr-tools';
 import { EventPointer } from 'nostr-tools/nip19';
 
 @Component({
-  selector: 'app-profile-actions',
-  templateUrl: './profile-actions.component.html',
+  selector: 'app-event-actions',
+  templateUrl: './event-actions.component.html',
 })
-export class ProfileActionsComponent {
+export class EventActionsComponent {
   @Input() fab: boolean = false;
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
@@ -73,6 +73,12 @@ export class ProfileActionsComponent {
 
   copyProfileUrl(pubkey: string) {
     this.copy(`web+nostr:npub:${nip19.npubEncode(pubkey)}`);
+  }
+
+  copyNoteId(id: string) {
+    // TODO: Copy the relays where we found this event from.
+    let eventPointer: EventPointer = { id: id };
+    this.copy(nip19.neventEncode(eventPointer));
   }
 
   copyNoteUrl(id: string) {
