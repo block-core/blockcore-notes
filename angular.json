@@ -21,7 +21,8 @@
               "sanitize-html",
               "moment",
               "browser-level",
-              "qrcode"
+              "qrcode",
+              "qs"
             ],
             "outputPath": "dist",
             "index": "src/index.html",
