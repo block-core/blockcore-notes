@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 
 @Component({
   selector: 'app-content',
@@ -20,7 +22,7 @@ export class ContentComponent {
   images: string[] = [];
   static regexp = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif))/g;
 
-  constructor(private profileService: ProfileService, private utilities: Utilities) {}
+  constructor(private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
   async ngOnInit() {
     this.images = [];
@@ -65,6 +67,12 @@ export class ContentComponent {
     }
 
     this.content = content;
+  }
+
+  expandImage(imagePath: string) {
+    this.dialog.open(ProfileImageDialog, {
+      data: { picture: imagePath },
+    });
   }
 
   // TODO: FIX THIS IMMEDIATELY FOR PERFORMANCE!

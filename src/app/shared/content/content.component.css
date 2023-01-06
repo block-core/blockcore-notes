@@ -1,3 +1,10 @@
 .event-image {
-    max-width: 80%;
+  width: 100%;
+  max-width: 480px;
+  display: inline-block;
+  margin-top: 0.2em;
+}
+
+.event-images {
+  text-align: left;
 }
