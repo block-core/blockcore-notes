@@ -17,6 +17,10 @@
         <mat-icon>people</mat-icon>
         <span>People</span>
       </a>
+      <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <mat-icon>chat</mat-icon>
+        <span>Chat</span>
+      </a>
       <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>animation</mat-icon>
         <span>Circles</span>
