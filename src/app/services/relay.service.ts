@@ -461,6 +461,12 @@ export class RelayService {
   subscribeToFollowing(relay: Relay) {
     const authors = this.profileService.profiles.map((p) => p.pubkey);
 
+    // Just skip subscription if we are not following anyone yet.
+    if (authors.length === 0) {
+      console.log('Skipping subscription, zero following.');
+      return;
+    }
+
     // Append ourself to the authors list so we receive everything we publish to any relay.
     authors.push(this.appState.getPublicKey());
 
@@ -482,8 +488,12 @@ export class RelayService {
 
       if (sub.loading) {
         console.log('Unsubbing and restarting subscription.', relay);
-        sub.unsub();
-        this.subscribeToFollowing(relay);
+
+        // Only re-attempt the subscription if we actually have an active connection to this relay.
+        if (relay.status === 1) {
+          sub.unsub();
+          this.subscribeToFollowing(relay);
+        }
       }
     }, 5 * 60 * 1000);
 

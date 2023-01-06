@@ -51,7 +51,7 @@ export class ProfileComponent {
     this.subscriptions.push(
       this.profileService.profile$.subscribe((profile) => {
         if (!profile) {
-          profile = this.defaultProfile();
+          profile = this.defaultProfile(this.appState.getPublicKey());
         }
 
         console.log('PROFILE SERVICE:', profile);
@@ -64,7 +64,7 @@ export class ProfileComponent {
     );
   }
 
-  defaultProfile(): NostrProfileDocument {
+  defaultProfile(pubkey: string): NostrProfileDocument {
     return {
       name: '',
       about: '',
@@ -75,7 +75,7 @@ export class ProfileComponent {
       website: '',
       created: Math.floor(Date.now() / 1000),
       verifications: [],
-      pubkey: this.appState.getPublicKey(),
+      pubkey: pubkey,
     };
   }
 
