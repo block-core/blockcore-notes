@@ -169,6 +169,11 @@ app-profile-actions {
   display: inline;
 }
 
+/** Triggers scrolling if the vertical height is larger then horizontal for profile image popups and window size. */
+.mdc-dialog {
+  max-height: 100vh !important;
+}
+
 .mat-sidenav-content {
   /* Disable scrolling on the content, we want it specific on child element */
   // overflow: hidden !important;
