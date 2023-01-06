@@ -8,7 +8,7 @@ import { CheckForUpdateService } from './services/check-for-update.service';
 import { StorageService } from './services/storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
-import { Observable, map, shareReplay } from 'rxjs';
+import { Observable, map, shareReplay, startWith } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Location } from '@angular/common';
 import { FeedService } from './services/feed.service';
@@ -22,6 +22,7 @@ import { NostrProfileDocument } from './services/interfaces';
 import { ThemeService } from './services/theme.service';
 import { NostrProtocolRequest } from './common/NostrProtocolRequest';
 import { SearchService } from './services/search.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,7 @@ export class AppComponent {
   bgimagePath = '/assets/profile-bg.png';
   profile: NostrProfileDocument | undefined;
   visibilityHandler: any;
+  searchControl: FormControl = new FormControl();
 
   constructor(
     public appState: ApplicationState,
@@ -53,7 +55,7 @@ export class AppComponent {
     private dataService: DataService,
     public profileService: ProfileService,
     public navigationService: NavigationService,
-    private searchService: SearchService,
+    public searchService: SearchService,
     public theme: ThemeService
   ) {
     if (!this.visibilityHandler) {
@@ -173,6 +175,21 @@ export class AppComponent {
 
   async ngOnInit() {
     this.theme.init();
+
+    this.searchControl.valueChanges.subscribe(async (value) => {
+      this.appState.searchText = value;
+
+      if (!value) {
+        return;
+      }
+
+      if (value.length <= 1) {
+        return;
+      }
+
+      await this.searchService.search(value);
+    });
+
     // const testdata = await this.storage.get('123');
     // console.log(testdata);
     // await this.storage.putProfile('123', { about: 'Hi', name: 'Name', picture: '' });

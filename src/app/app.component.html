@@ -101,11 +101,26 @@
         </button>
       </ng-template>
 
-      <mat-form-field *ngIf="appState.showSearch" appearance="outline" class="search-box">
+      <form class="search-box" *ngIf="appState.showSearch">
+        <mat-form-field appearance="outline" class="search-box-input">
+          <mat-label>Search</mat-label>
+          <input matInput #searchInput aria-label="Search" [formControl]="searchControl" [matAutocomplete]="auto" />
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option class="search-result-option" (onSelectionChange)="searchService.open(state)" *ngFor="let state of searchService.results$ | async" [value]="state.id">
+              <span><img class="search-result-image" [src]="state.picture" height="32" /></span>
+              <span *ngIf="state.display_name">{{ state.display_name }}</span>
+              <span>{{ state.name }}</span>
+              <span *ngIf="state.nip05">({{ state.nip05 }})</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+
+      <!-- <mat-form-field *ngIf="appState.showSearch" appearance="outline" class="search-box">
         <mat-icon class="circle" matPrefix>search</mat-icon>
         <mat-label>Search</mat-label>
         <input matInput #searchInput type="text" (change)="searchInputChanged()" autocomplete="off" [(ngModel)]="appState.searchText" />
-      </mat-form-field>
+      </mat-form-field> -->
 
       <button *ngIf="appState.showSearch" mat-icon-button (click)="searchVisibility(false)">
         <mat-icon>close</mat-icon>

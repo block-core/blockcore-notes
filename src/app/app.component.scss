@@ -171,8 +171,28 @@ header {
 }
 
 .search-box {
-  display: inline-block;
   padding-top: 1em;
   top: 20px;
   flex: 1 1 auto;
+  width: 100%;
+}
+
+.search-box-input {
+  width: 100%;
+}
+
+.search-result-option {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row !important;
+  align-items: center !important;
+}
+
+.search-result-image {
+  margin-right: 0.2em;
+  border-radius: 50%;
+}
+
+.search-result-option span {
+  margin-right: 0.4em;
 }

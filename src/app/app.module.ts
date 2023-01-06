@@ -74,6 +74,7 @@ import { ProfileImageDialog } from './shared/profile-image-dialog/profile-image-
 import { LicensesComponent } from './about/licenses/licenses.component';
 import { HttpClientModule } from '@angular/common/http';
 import { EventActionsComponent } from './shared/event-actions/event-actions.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -141,6 +142,7 @@ import { EventActionsComponent } from './shared/event-actions/event-actions.comp
     MatChipsModule,
     MatPaginatorModule,
     MatSlideToggleModule,
+    MatAutocompleteModule,
     PickerModule,
     FormsModule,
     ReactiveFormsModule,

@@ -58,6 +58,10 @@ export class ProfileService {
     this.#followingChanged.next(this.profiles);
   }
 
+  async search(searchText: string) {
+    return await this.filter((p) => p.name.toLowerCase().indexOf(searchText) > -1);
+  }
+
   mutedPublicKeys() {
     return this.profiles.filter((p) => p.mute).map((p) => p.pubkey);
   }
