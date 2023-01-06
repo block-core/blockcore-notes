@@ -105,11 +105,11 @@
       <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title }}</div>
 
       <!-- <app-language-selector></app-language-selector> -->
-      <ng-template *ngIf="!appState.showSearch">
+      <span *ngIf="!appState.showSearch">
         <button *ngFor="let action of appState.actions" (click)="action.click()" mat-icon-button [matTooltip]="action.tooltip">
           <mat-icon>{{ action.icon }}</mat-icon>
         </button>
-      </ng-template>
+      </span>
 
       <form class="search-box" *ngIf="appState.showSearch">
         <mat-form-field appearance="outline" class="search-box-input">
