@@ -20,7 +20,7 @@ export class ContentComponent {
   content?: string;
 
   images: string[] = [];
-  static regexp = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif))/g;
+  static regexp = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/g;
 
   constructor(private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
