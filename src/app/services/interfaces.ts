@@ -89,6 +89,7 @@ export interface NostrProfile {
 
 export interface NostrSubscription extends Sub {
   loading: boolean;
+  timeout: any;
 }
 
 export interface NostrProfileDocument extends NostrProfile {

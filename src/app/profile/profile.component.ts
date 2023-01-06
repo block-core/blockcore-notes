@@ -51,7 +51,7 @@ export class ProfileComponent {
     this.subscriptions.push(
       this.profileService.profile$.subscribe((profile) => {
         if (!profile) {
-          profile = this.defaultProfile(this.appState.getPublicKey());
+          profile = this.profileService.emptyProfile(this.appState.getPublicKey());
         }
 
         console.log('PROFILE SERVICE:', profile);
@@ -62,21 +62,6 @@ export class ProfileComponent {
         }
       })
     );
-  }
-
-  defaultProfile(pubkey: string): NostrProfileDocument {
-    return {
-      name: '',
-      about: '',
-      picture: '',
-      nip05: '',
-      lud06: '',
-      display_name: '',
-      website: '',
-      created: Math.floor(Date.now() / 1000),
-      verifications: [],
-      pubkey: pubkey,
-    };
   }
 
   cloneProfile() {

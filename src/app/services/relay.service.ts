@@ -194,8 +194,8 @@ export class RelayService {
     });
 
     // Every time the list of profiles changes, we will re-sub to have a single subscription against all following:
-    this.profileService.profilesChanged$.subscribe(() => {
-      console.log('profilesChanged$!!!, SUBSCRIBE TO FOLLOWING!');
+    this.profileService.following$.subscribe(() => {
+      console.log('following$!!!, SUBSCRIBE TO FOLLOWING!');
       for (let i = 0; i < this.relays.length; i++) {
         this.subscribeToFollowing(this.relays[i]);
       }
@@ -378,11 +378,14 @@ export class RelayService {
 
       const existingConnection = this.relays.find((r) => r.url == entry.id);
 
+      console.log('FOUND EXISTING CONNECTION:', existingConnection);
+
       // If we are already connected, skip opening connection again.
       if (existingConnection && existingConnection.status == 1) {
         continue;
       }
 
+      console.log('Opening connection to:', entry);
       this.openConnection(entry);
     }
   }
@@ -425,8 +428,8 @@ export class RelayService {
       console.log(`DISCONNECTED! ${relay?.url}`);
     });
 
-    relay.on('notice', () => {
-      console.log(`NOTICE FROM ${relay?.url}`);
+    relay.on('notice', (msg: any) => {
+      console.log(`NOTICE FROM ${relay?.url}: ${msg}`);
     });
 
     // Keep a reference of the metadata on the relay instance.
@@ -459,7 +462,11 @@ export class RelayService {
 
   /** Subscribes to the following on the specific relay. */
   subscribeToFollowing(relay: Relay) {
-    const authors = this.profileService.profiles.map((p) => p.pubkey);
+    const profiles = this.profileService.inMemoryFollowList(this.appState.getPublicKey());
+
+    console.log('PROFILES:', profiles);
+
+    const authors = profiles.map((p) => p.pubkey);
 
     // Just skip subscription if we are not following anyone yet.
     if (authors.length === 0) {
@@ -483,14 +490,17 @@ export class RelayService {
     const sub = relay.sub(filters, {}) as NostrSubscription;
 
     // If we are still waiting for "loading" after 30 seconds, retry the subscription.
-    setTimeout(() => {
+    sub.timeout = setTimeout(() => {
       console.log('Subscription Timeout Protection was triggered.', sub.loading);
 
       if (sub.loading) {
         console.log('Unsubbing and restarting subscription.', relay);
 
+        // Make sure we validate against active relay and not an old reference.
+        let activeRelay = this.getActiveRelay(relay.url);
+
         // Only re-attempt the subscription if we actually have an active connection to this relay.
-        if (relay.status === 1) {
+        if (activeRelay && activeRelay.status === 1) {
           sub.unsub();
           this.subscribeToFollowing(relay);
         }

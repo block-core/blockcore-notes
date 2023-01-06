@@ -4,6 +4,7 @@ import { StorageService } from './storage.service';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
+import { Utilities } from './utilities.service';
 
 @Injectable({
   providedIn: 'root',
@@ -89,7 +90,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private storage: StorageService, private appState: ApplicationState) {
+  constructor(private storage: StorageService, private appState: ApplicationState, private utilities: Utilities) {
     this.table = this.storage.table<NostrProfileDocument>('profile');
   }
 
@@ -143,8 +144,11 @@ export class ProfileService {
 
   /** Populate the observable with profiles which we are following. */
   async populate() {
-    // Get follow-list + self if available.
-    this.profiles = await this.followList(this.appState.getPublicKey());
+    // Load all profiles into memory upon startup.
+    this.profiles = await this.filter(() => {
+      return true;
+    });
+
     this.initialized = true;
     this.#updated();
 
@@ -171,6 +175,14 @@ export class ProfileService {
       return this.filter((value, key) => value.follow == true || value.pubkey == includePubKey);
     } else {
       return this.filter((value, key) => value.follow == true);
+    }
+  }
+
+  inMemoryFollowList(includePubKey?: string) {
+    if (includePubKey) {
+      return this.profiles.filter((p) => p.follow == true || p.pubkey == includePubKey);
+    } else {
+      return this.profiles.filter((p) => p.follow == true);
     }
   }
 
@@ -426,6 +438,21 @@ export class ProfileService {
     }
 
     this.#changed();
+  }
+
+  emptyProfile(pubkey: string): NostrProfileDocument {
+    return {
+      name: this.utilities.getShortenedIdentifier(pubkey),
+      about: '',
+      picture: '/assets/profile.png',
+      nip05: '',
+      lud06: '',
+      display_name: '',
+      website: '',
+      created: Math.floor(Date.now() / 1000),
+      verifications: [],
+      pubkey: pubkey,
+    };
   }
 
   /** Wipes all profiles. */

@@ -68,7 +68,6 @@ export class UserComponent {
     private router: Router
   ) {
     // this.appState.title = 'Blockcore Notes';
-    
 
     // this.subscriptions.push(
     //   this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event) => {
@@ -96,29 +95,30 @@ export class UserComponent {
         this.profile = await this.profiles.getProfile(pubkey);
 
         if (!this.profile) {
-          this.npub = this.utilities.getNostrIdentifier(pubkey);
-          this.profileName = this.utilities.getShortenedIdentifier(pubkey);
-          this.imagePath = '/assets/profile.png';
-
-          // If the user has name in their profile, show that and not pubkey.
+          this.profile = this.profiles.emptyProfile(pubkey);
           this.circle = undefined;
           this.muted = false;
-          this.appState.title = `@${this.npub}`;
-        } else {
-          this.npub = this.utilities.getNostrIdentifier(pubkey);
-          this.profileName = this.profile.name;
+        }
 
+        this.npub = this.utilities.getNostrIdentifier(pubkey);
+
+        if (!this.profile.name) {
+          this.profile.name = this.npub;
+        }
+
+        this.profileName = this.profile.name;
+
+        if (this.profileName)
           if (!this.profile.display_name) {
             this.profile.display_name = this.profileName;
           }
 
-          this.imagePath = this.profile.picture || '/assets/profile.png';
+        this.imagePath = this.profile.picture || '/assets/profile.png';
 
-          // If the user has name in their profile, show that and not pubkey.
-          this.circle = await this.circleService.getCircle(this.profile.circle);
-          this.muted = this.profile.mute;
-          this.appState.title = `@${this.profile.name}`;
-        }
+        // If the user has name in their profile, show that and not pubkey.
+        this.circle = await this.circleService.getCircle(this.profile.circle);
+        this.muted = this.profile.mute;
+        this.appState.title = `@${this.profile.name}`;
       })
     );
   }

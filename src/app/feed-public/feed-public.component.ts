@@ -301,8 +301,8 @@ export class FeedPublicComponent {
       console.log(`DISCONNECTED! ${this.relay?.url}`);
     });
 
-    this.relay.on('notice', () => {
-      console.log(`NOTICE FROM ${this.relay?.url}`);
+    this.relay.on('notice', (msg: any) => {
+      console.log(`NOTICE FROM ${this.relay?.url}: ${msg}`);
     });
 
     this.relay.connect();
