@@ -32,7 +32,7 @@
     <span>Move to Circle</span>
   </button>
 
-  <button mat-menu-item [matMenuTriggerFor]="copyMenu">
+  <button mat-menu-item [matMenuTriggerFor]="copyMenu" (click)="copy(getNpub(profile!.pubkey))">
     <mat-icon>copy_all</mat-icon>
     <span>Copy</span>
   </button>

@@ -17,7 +17,7 @@
     <span>Remove from Notes</span>
   </button>
 
-  <button mat-menu-item [matMenuTriggerFor]="copyMenu">
+  <button mat-menu-item [matMenuTriggerFor]="copyMenu" (click)="copyNoteId(event!.id)">
     <mat-icon>copy_all</mat-icon>
     <span>Copy</span>
   </button>
