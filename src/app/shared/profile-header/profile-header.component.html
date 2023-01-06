@@ -45,7 +45,9 @@
         </div>
 
         <ng-template #tooltipTpl>
-          <img class="qr-code" *ngIf="qr" [src]="qr" />
+          <div class="qr-code-container">
+            <img class="qr-code" *ngIf="qr" [src]="qr" />
+          </div>
         </ng-template>
 
         <span>
