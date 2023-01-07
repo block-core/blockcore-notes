@@ -58,7 +58,9 @@ export class ContentComponent {
       content = content.substring(0, content.indexOf('#[')) + '@' + profile?.name + content.substring(endIndex + 1);
     }
 
-    if (this.profileService.isFollowing(this.event.pubkey)) {
+    const isFollowing = await this.profileService.isFollowing(this.event.pubkey);
+
+    if (isFollowing) {
       const images = [...content.matchAll(ContentComponent.regexp)];
       this.images = images.map((i) => i[0]);
 

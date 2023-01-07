@@ -100,17 +100,17 @@ export class FeedService {
     );
   }
 
-  get muted$(): Observable<NostrEventDocument[]> {
-    return this.events$.pipe(map((data) => data.filter((events) => !this.profileService.mutedPublicKeys().includes(events.pubkey)))).pipe(
-      map((data) => {
-        data.sort((a, b) => {
-          return a.created_at > b.created_at ? -1 : 1;
-        });
+  // get muted$(): Observable<NostrEventDocument[]> {
+  //   return this.events$.pipe(map((data) => data.filter((events) => !this.profileService.mutedPublicKeys().includes(events.pubkey)))).pipe(
+  //     map((data) => {
+  //       data.sort((a, b) => {
+  //         return a.created_at > b.created_at ? -1 : 1;
+  //       });
 
-        return data;
-      })
-    );
-  }
+  //       return data;
+  //     })
+  //   );
+  // }
 
   /** Returns all events except those blocked. Blocked events will never be shown. */
   get events$(): Observable<NostrEventDocument[]> {
@@ -125,7 +125,7 @@ export class FeedService {
           return data;
         })
       )
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
+      // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
   }
 
   constructor(

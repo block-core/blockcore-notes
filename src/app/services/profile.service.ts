@@ -27,8 +27,8 @@ export class ProfileService {
     return await this.db.profiles.where('status').equals(status).toArray();
   }
 
-  async query(query: any) {
-    return await this.db.profiles.where(query);
+  async query(equalityCriterias: { [key: string]: any }) {
+    return await this.db.profiles.where(equalityCriterias).toArray();
   }
 
   // #profile: NostrProfileDocument;
@@ -90,6 +90,18 @@ export class ProfileService {
 
   blockedProfiles() {
     return this.query({ status: ProfileStatus.Block });
+  }
+
+  async blockedPublicKeys() {
+    const profiles = await this.blockedProfiles();
+    return profiles.map((p) => p.pubkey);
+  }
+
+  blockedProfiles$ = liveQuery(() => this.blockedProfiles());
+
+  async mutedPublicKeys() {
+    const profiles = await this.mutedProfiles();
+    return profiles.map((p) => p.pubkey);
   }
 
   // private keys: Map<string, string> = new Map<string, string>();
@@ -231,26 +243,26 @@ export class ProfileService {
 
   async followList(includePubKey?: string) {
     if (includePubKey) {
-      return this.filter((value, key) => value.follow == true || value.pubkey == includePubKey);
+      return this.filter((value, key) => value.status == ProfileStatus.Follow || value.pubkey == includePubKey);
     } else {
-      return this.filter((value, key) => value.follow == true);
+      return this.filter((value, key) => value.status == ProfileStatus.Follow);
     }
   }
 
   inMemoryFollowList(includePubKey?: string) {
     if (includePubKey) {
-      return this.profiles.filter((p) => p.follow == true || p.pubkey == includePubKey);
+      return this.profiles.filter((p) => p.status == ProfileStatus.Follow || p.pubkey == includePubKey);
     } else {
-      return this.profiles.filter((p) => p.follow == true);
+      return this.profiles.filter((p) => p.status == ProfileStatus.Follow);
     }
   }
 
   async publicList() {
-    return this.filter((value, key) => !value.follow && !value.block);
+    return this.filter((value, key) => value.status == ProfileStatus.Public);
   }
 
   async blockList() {
-    return this.filter((value, key) => value.block == true);
+    return this.filter((value, key) => value.status == ProfileStatus.Block);
   }
 
   async #setFollow(pubkey: string, circle?: number, follow?: boolean, existingProfile?: NostrProfileDocument) {
@@ -273,16 +285,16 @@ export class ProfileService {
         website: existingProfile ? existingProfile.website : '',
         verifications: existingProfile ? existingProfile.verifications : [],
         pubkey: pubkey,
-        follow: follow,
+        status: ProfileStatus.Follow,
         circle: circle,
         created: now,
       };
     } else {
-      if (profile.block == true) {
+      if (profile.status == ProfileStatus.Block) {
         throw new Error('You have to unblock a user before you can follow again.');
       }
 
-      profile.follow = follow;
+      profile.status = ProfileStatus.Follow;
       profile.circle = circle;
     }
 
@@ -290,7 +302,6 @@ export class ProfileService {
 
     // If user choose to follow, make sure there are no block.
     if (follow) {
-      profile.block = undefined;
       profile.followed = now;
     }
 
@@ -334,8 +345,7 @@ export class ProfileService {
       return;
     }
 
-    profile.block = true;
-    profile.follow = false;
+    profile.status = ProfileStatus.Block;
 
     // Put it since we got it in the beginning.
     await this.putProfile2(profile);
@@ -348,8 +358,7 @@ export class ProfileService {
       return;
     }
 
-    profile.block = false;
-    profile.follow = follow;
+    profile.status = ProfileStatus.Public;
 
     // Put it since we got it in the beginning.
     await this.putProfile2(profile);
@@ -363,7 +372,7 @@ export class ProfileService {
       return;
     }
 
-    profile.mute = true;
+    profile.status = ProfileStatus.Mute;
 
     // Put it since we got it in the beginning.
     await this.putProfile2(profile);
@@ -377,7 +386,7 @@ export class ProfileService {
       return;
     }
 
-    profile.mute = false;
+    profile.status = ProfileStatus.Follow;
 
     // Put it since we got it in the beginning.
     await this.putProfile2(profile);
@@ -440,14 +449,14 @@ export class ProfileService {
     this.#changed();
   }
 
-  isFollowing(pubkey: string) {
-    const profile = this.#profilesChanged.value.find((p) => p.pubkey === pubkey);
+  async isFollowing(pubkey: string) {
+    const profile = await this.table.get(pubkey);
 
     if (!profile) {
       return false;
     }
 
-    return profile.follow;
+    return profile.status == ProfileStatus.Follow;
   }
 
   /** Update the profile if it already exists, ensuring we don't loose follow and block states. */
@@ -507,20 +516,20 @@ export class ProfileService {
   // }
 
   /** Wipes all non-following profiles, except blocked profiles. */
-  async wipeNonFollow() {
-    const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+  // async wipeNonFollow() {
+  //   const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
 
-    for await (const [key, value] of iterator) {
-      if (!value.block && !value.follow) {
-        await this.table.del(key);
+  //   for await (const [key, value] of iterator) {
+  //     if (!value.block && !value.follow) {
+  //       await this.table.del(key);
 
-        const index = this.#profileIndex(key);
-        this.#profileRemove(index);
-      }
-    }
+  //       const index = this.#profileIndex(key);
+  //       this.#profileRemove(index);
+  //     }
+  //   }
 
-    this.#changed();
-  }
+  //   this.#changed();
+  // }
 
   emptyProfile(pubkey: string): NostrProfileDocument {
     return {

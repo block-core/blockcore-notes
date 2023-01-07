@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument } from './interfaces';
-import { Observable, BehaviorSubject, map, ReplaySubject, filter } from 'rxjs';
+import { Observable, BehaviorSubject, map, ReplaySubject, filter, combineLatest } from 'rxjs';
 import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
 import { EventService } from './event.service';
@@ -62,7 +62,8 @@ export class ThreadService {
           )
         )
         // Don't render the event itself in the before list.
-        .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))))
+        // TODO: FIX FILTER OF BLOCKED!
+        //.pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))))
     );
   }
 
@@ -79,7 +80,8 @@ export class ThreadService {
           })
         )
         // Don't render the event itself in the after list.
-        .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))))
+        // TODO: FIX FILTER OF BLOCKED!
+        // .pipe(map((data) => data.filter((events) => events.id != this.#event?.id && !this.profileService.blockedPublickKeys().includes(events.pubkey))))
     );
   }
 
@@ -99,7 +101,8 @@ export class ThreadService {
         })
       )
       .pipe(map((data) => data!.filter((events) => events.kind != Kind.Reaction && (events.kind as Number) != 6))) // Filter out likes and reposts.
-      .pipe(map((data) => data!.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey))));
+      // TODO: ADD FILTER OF BLOCKED!!
+      // .pipe(map((data) => data!.filter(async (events) => await !this.profileService.blockedPublicKeys().includes(events.pubkey))));
   }
 
   get rootEvents$(): Observable<NostrEventDocument[]> {

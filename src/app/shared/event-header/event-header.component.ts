@@ -18,7 +18,6 @@ export class EventHeaderComponent {
   tooltipName = '';
   profileName = '';
   circle?: Circle;
-  muted? = false;
 
   constructor(private profiles: ProfileService, private circleService: CirclesService, private utilities: Utilities) {}
 
@@ -48,7 +47,5 @@ export class EventHeaderComponent {
     this.profileName = this.profile.name || this.profileName;
 
     this.circle = await this.circleService.getCircle(this.profile.circle);
-
-    this.muted = this.profile.mute;
   }
 }

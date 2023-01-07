@@ -134,7 +134,8 @@ export class RelayService {
           }
         })
       ) // If there is any 'e' tags then skip.
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+      // TODO: FIX FILTER OF BLOCKED!
+      // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
       .pipe(
         map((data) => {
           data.sort((a, b) => {
@@ -168,7 +169,8 @@ export class RelayService {
 
     return this.#filteredEventsChanged
       .asObservable()
-      .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
+      // TODO: FIX FILTER OF BLOCKED!
+      // .pipe(map((data) => data.filter((events) => !this.profileService.blockedPublickKeys().includes(events.pubkey) && !this.profileService.mutedPublicKeys().includes(events.pubkey))))
       .pipe(
         map((data) => {
           data.sort((a, b) => {

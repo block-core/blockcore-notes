@@ -58,7 +58,7 @@ export class SettingsComponent {
   }
 
   async clearProfileCache() {
-    await this.profileService.wipeNonFollow();
+    // await this.profileService.wipeNonFollow();
     this.wipedNonFollow = true;
   }
 

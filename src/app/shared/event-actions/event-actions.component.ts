@@ -54,7 +54,7 @@ export class EventActionsComponent {
     }
 
     // If not already following, add a full follow and download recent:
-    if (!this.profile.follow) {
+    if (this.profile.status != 1) {
       await this.profileService.follow(this.profile.pubkey, circle);
       this.feedService.downloadRecent([this.profile.pubkey]);
     } else {

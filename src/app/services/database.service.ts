@@ -34,7 +34,7 @@ export class DatabaseService extends Dexie {
       relays: 'url',
       events: 'id',
       notes: 'id',
-      profiles: 'pubkey,follow',
+      profiles: 'pubkey,status',
       circles: '++id',
     });
     this.on('populate', () => this.populate());
