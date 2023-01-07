@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { NostrProfile, NostrProfileDocument } from './interfaces';
+import { NostrEventDocument, NostrProfile, NostrProfileDocument } from './interfaces';
 import { StorageService } from './storage.service';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
@@ -10,6 +10,7 @@ import { liveQuery } from 'dexie';
 import { Cacheable } from 'ts-cacheable';
 import { CacheService } from './cache.service';
 import { DataService } from './data.service';
+import { FetchService } from './fetch.service';
 
 @Injectable({
   providedIn: 'root',
@@ -97,7 +98,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: DatabaseService, private storage: StorageService, private dataService: DataService, private appState: ApplicationState, private utilities: Utilities) {
+  constructor(private db: DatabaseService, private storage: StorageService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
     this.table = this.storage.table<NostrProfileDocument>('profile');
   }
 
@@ -114,11 +115,32 @@ export class ProfileService {
       this.table.get(pubkey).then((profile) => {
         if (profile) {
           observer.next(profile);
+          observer.complete();
+          return;
         }
 
-        return this.dataService.downloadNewestProfiles([pubkey]);
+        return this.fetchService.downloadNewestProfiles([pubkey]).pipe(
+          map(async (event: any) => {
+            // const p = profile as NostrEventDocument;
+            const profile = this.utilities.mapProfileEvent(event);
+
+            // Whenever we get here, also persist this profile to database.
+            await this.table.put(profile.pubkey, profile);
+
+            return profile;
+          })
+        );
       });
-    });
+
+      return () => {
+        console.log('FINISHED');
+      };
+    }).pipe(
+      tap((profile) => {
+        console.log('TAPPING ON PROFILE GET:', profile);
+        // this.table.put(profile.pubkey);
+      })
+    );
   }
 
   getProfile2(pubkey: string) {
