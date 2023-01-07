@@ -46,7 +46,7 @@ export class ProfileActionsComponent {
     await this.notesService.deleteNote(this.event.id);
   }
 
-  async follow(circle?: string) {
+  async follow(circle?: number) {
     console.log('FOLLOW:', this.profile);
 
     if (!this.profile) {

@@ -37,6 +37,7 @@
     "qrcode": "^1.5.1",
     "rxjs": "~7.8.0",
     "sanitize-html": "^2.8.1",
+    "ts-cacheable": "^1.0.9",
     "tslib": "^2.4.1",
     "uuid": "^9.0.0",
     "zone.js": "~0.12.0"

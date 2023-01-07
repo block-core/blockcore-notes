@@ -25,22 +25,22 @@ export class DataService {
   constructor(
     private appState: ApplicationState,
     private storage: StorageService,
-    private profileService: ProfileService,
+    // private profileService: ProfileService,
     private feedService: FeedService,
     private validator: DataValidation,
     private eventService: EventService,
     private relayService: RelayService
   ) {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
-    this.profileService.profileRequested$.subscribe(async (pubkey) => {
-      if (!pubkey) {
-        return;
-      }
+    // this.profileService.profileRequested$.subscribe(async (pubkey) => {
+    //   if (!pubkey) {
+    //     return;
+    //   }
 
-      console.log('PROFILE REQUESTED:', pubkey);
+    //   console.log('PROFILE REQUESTED:', pubkey);
 
-      await this.downloadProfile(pubkey);
-    });
+    //   await this.downloadProfile(pubkey);
+    // });
   }
 
   async initialize() {
@@ -59,9 +59,9 @@ export class DataService {
 
     // If at startup we don't have the logged on user profile, queue it up for retreival.
     // When requesting the profile, it will be auto-requested from relays.
-    setTimeout(async () => {
-      await this.profileService.getProfile(this.appState.getPublicKey());
-    }, 2000);
+    // setTimeout(async () => {
+    //   await this.profileService.getProfile(this.appState.getPublicKey());
+    // }, 2000);
   }
 
   // async downloadProfiles() {
@@ -287,7 +287,7 @@ export class DataService {
         profile.created_at = prossedEvent.created_at;
 
         // Persist the profile.
-        await this.profileService.updateProfile(prossedEvent.pubkey, profile);
+        // await this.profileService.updateProfile(prossedEvent.pubkey, profile);
 
         // TODO: Add NIP-05 and nostr.directory verification.
         // const displayName = encodeURIComponent(profile.name);

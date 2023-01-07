@@ -7,6 +7,9 @@ import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
 import { DatabaseService } from './database.service';
 import { liveQuery } from 'dexie';
+import { Cacheable } from 'ts-cacheable';
+import { CacheService } from './cache.service';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +18,8 @@ export class ProfileService {
   private table;
 
   initialized = false;
+
+  cache = new CacheService();
 
   // #profile: NostrProfileDocument;
 
@@ -92,7 +97,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: DatabaseService, private storage: StorageService, private appState: ApplicationState, private utilities: Utilities) {
+  constructor(private db: DatabaseService, private storage: StorageService, private dataService: DataService, private appState: ApplicationState, private utilities: Utilities) {
     this.table = this.storage.table<NostrProfileDocument>('profile');
   }
 
@@ -102,6 +107,22 @@ export class ProfileService {
 
   downloadRecent(pubkey: string) {
     this.#profileRequested.next(pubkey);
+  }
+
+  #getProfile(pubkey: string) {
+    return new Observable((observer) => {
+      this.table.get(pubkey).then((profile) => {
+        if (profile) {
+          observer.next(profile);
+        }
+
+        return this.dataService.downloadNewestProfiles([pubkey]);
+      });
+    });
+  }
+
+  getProfile2(pubkey: string) {
+    return this.cache.get(pubkey, this.#getProfile(pubkey));
   }
 
   // profileDownloadQueue: string[] = [];
@@ -196,7 +217,7 @@ export class ProfileService {
     return this.filter((value, key) => value.block == true);
   }
 
-  async #setFollow(pubkey: string, circle?: string, follow?: boolean, existingProfile?: NostrProfileDocument) {
+  async #setFollow(pubkey: string, circle?: number, follow?: boolean, existingProfile?: NostrProfileDocument) {
     let profile = await this.getProfile(pubkey);
 
     const now = Math.floor(Date.now() / 1000);
@@ -253,11 +274,11 @@ export class ProfileService {
     }
   }
 
-  async follow(pubkey: string, circle?: string, existingProfile?: NostrProfileDocument) {
+  async follow(pubkey: string, circle?: number, existingProfile?: NostrProfileDocument) {
     return this.#setFollow(pubkey, circle, true, existingProfile);
   }
 
-  async setCircle(pubkey: string, circle?: string) {
+  async setCircle(pubkey: string, circle?: number) {
     return this.updateProfileValue(pubkey, (p) => {
       p.circle = circle;
       return p;

@@ -1,7 +1,7 @@
 import { Event, Relay, Sub } from 'nostr-tools';
 
 export interface Circle {
-  id: string;
+  id?: number;
   name: string;
   color: string;
   style: string;
@@ -116,7 +116,7 @@ export interface NostrProfileDocument extends NostrProfile {
   /** Indicates if a user is muted and not displayed in the home feed and notification is shown on replies. */
   mute?: boolean;
 
-  circle?: string;
+  circle?: number;
 
   /** List of domains where the user has been verified, e.g. "@nostr.directory", "@domain.com" */
   verifications: string[];

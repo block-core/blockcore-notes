@@ -28,9 +28,11 @@ export class CirclesComponent {
   following: NostrProfileDocument[] = [];
   searchTerm: any;
 
+  circles: Circle[] = [];
+
   constructor(
     public appState: ApplicationState,
-    private circlesService: CirclesService,
+    public circlesService: CirclesService,
     private storage: StorageService,
     private profile: ProfileService,
     public dialog: MatDialog,
@@ -48,8 +50,6 @@ export class CirclesComponent {
     this.utilities.unsubscribe(this.subscriptions);
   }
 
-  circles: Circle[] = [];
-
   async load() {
     this.loading = true;
     this.circles = await this.circlesService.list();
@@ -57,13 +57,13 @@ export class CirclesComponent {
     this.loading = false;
   }
 
-  async deleteCircle(id: string) {
+  async deleteCircle(id: number) {
     const pubKeys = this.getFollowingInCircle(id).map((f) => f.pubkey);
 
     await this.circlesService.deleteCircle(id);
 
     for (var i = 0; i < pubKeys.length; i++) {
-      await this.profile.setCircle(pubKeys[i], '');
+      await this.profile.setCircle(pubKeys[i], undefined);
     }
 
     await this.load();
@@ -134,9 +134,9 @@ export class CirclesComponent {
     });
   }
 
-  getFollowingInCircle(id: string) {
-    if (id == null || id == '') {
-      return this.following.filter((f) => f.circle == null || f.circle == '');
+  getFollowingInCircle(id?: number) {
+    if (id == null) {
+      return this.following.filter((f) => f.circle == null || f.circle == null);
     } else {
       return this.following.filter((f) => f.circle == id);
     }
@@ -227,6 +227,11 @@ export class CirclesComponent {
         },
       },
     ];
+
+    this.circlesService.circles$.subscribe((circles) => {
+      circles.unshift(CirclesService.DEFAULT);
+      this.circles = circles;
+    });
 
     await this.load();
   }

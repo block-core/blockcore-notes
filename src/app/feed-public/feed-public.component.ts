@@ -80,7 +80,7 @@ export class FeedPublicComponent {
   relay?: Relay;
   initialLoad = true;
 
-  async follow(pubkey: string, circle?: string) {
+  async follow(pubkey: string, circle?: number) {
     await this.profile.follow(pubkey, circle);
   }
 
@@ -91,7 +91,8 @@ export class FeedPublicComponent {
 
     const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
 
-    this.sub = relay.sub([{ kinds: [1], since: fiveMinutesAgo }], {});
+    // Get the last 100 items.
+    this.sub = relay.sub([{ kinds: [1], limit: 100 }], {});
 
     this.events = [];
 
