@@ -34,7 +34,7 @@ export class PeopleComponent {
     public dialog: MatDialog,
     private storage: StorageService,
     private feedService: FeedService,
-    private profileService: ProfileService,
+    public profileService: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router,

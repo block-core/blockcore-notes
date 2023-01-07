@@ -5,7 +5,7 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay, Event } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { NotesService } from '../services/notes.service';
@@ -20,6 +20,7 @@ import { NavigationService } from '../services/navigation.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { DataService } from '../services/data.service';
 
 interface DefaultProfile {
   pubkey: string;
@@ -125,12 +126,75 @@ export class HomeComponent {
     private authService: AuthenticationService,
     private utilities: Utilities,
     private snackBar: MatSnackBar,
+    private dataService: DataService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private feedService: FeedService,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
+  }
+
+  downloadProfiles() {
+    const array = [
+      '00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700',
+      '17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515',
+      '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
+      '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
+      '65594f279a789982b55c02a38c92a99b986f891d2814c5f553d1bbfe3e23853d',
+      '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
+      'a341f45ff9758f570a21b000c17d4e53a3a497c8397f26c0e6d61e5acffc7a98',
+      'd987084c48390a290f5d2a34603ae64f55137d9b4affced8c0eae030eb222a25',
+      'edcd20558f17d99327d841e4582f9b006331ac4010806efa020ef0d40078e6da',
+    ];
+
+    const observable = this.dataService.downloadNewestProfiles(array).subscribe((profile) => {
+      console.log('PROFILE RECEIVED:', profile);
+
+      let doc = profile as NostrEventDocument;
+
+      const index = array.findIndex((a) => a == doc.pubkey);
+
+      if (index > -1) {
+        array.splice(index, 1);
+      }
+
+      if (array.length === 0) {
+        console.log('FOUND ALL!!!!');
+      }
+    });
+
+    setInterval(() => {
+      console.log('observable.closed:', observable.closed);
+    }, 250);
+  }
+
+  subscribeEvents() {
+    const observable = this.dataService.subscribeLatestEvents([1], [], 100).subscribe((event) => {
+      console.log('EVENT RECEIVED:', event);
+    });
+
+    // setInterval(() => {
+    //   console.log('observable.closed:', observable.closed);
+    // }, 2000);
+
+    // setTimeout(() => {
+    //   observable.unsubscribe();
+    // }, 20000);
+  }
+
+  subscribeEvents2() {
+    const observable = this.dataService.subscribeLatestEvents([0, 3], [], 100).subscribe((event) => {
+      console.log('EVENT RECEIVED22:', event);
+    });
+
+    setInterval(() => {
+      console.log('observable.closed22:', observable.closed);
+    }, 2000);
+
+    setTimeout(() => {
+      observable.unsubscribe();
+    }, 20000);
   }
 
   async follow(profile: DefaultProfile) {

@@ -1,5 +1,7 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
-
+||
+<div *ngFor="let profile of profileService.friends$ | async">{{ profile.pubkey }} | {{ profile.name }}</div>
+||
 <div class="feed-page">
   <!-- <p class="search">
     <mat-form-field appearance="fill" class="input-full-width">

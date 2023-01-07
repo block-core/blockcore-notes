@@ -5,6 +5,8 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
+import { DatabaseService } from './database.service';
+import { liveQuery } from 'dexie';
 
 @Injectable({
   providedIn: 'root',
@@ -90,7 +92,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private storage: StorageService, private appState: ApplicationState, private utilities: Utilities) {
+  constructor(private db: DatabaseService, private storage: StorageService, private appState: ApplicationState, private utilities: Utilities) {
     this.table = this.storage.table<NostrProfileDocument>('profile');
   }
 
@@ -322,10 +324,31 @@ export class ProfileService {
     this.putProfile(pubkey, profile);
   }
 
+  friends$ = liveQuery(() => this.listFriends());
+
+  async listFriends() {
+    console.log('LIST FRIENDS!');
+    //
+    // Query the DB using our promise based API.
+    // The end result will magically become
+    // observable.
+    //
+    return await this.db.profiles
+      // .where('follow')
+      // .equals('true')
+      // .between(18, 65)
+      .toArray();
+  }
+
   /** Profiles are upserts, we replace the existing profile and only keep latest. */
   async putProfile(pubkey: string, document: NostrProfileDocument | any) {
     // Remove the pubkey from the document before we persist.
     // delete document.pubkey;
+
+    console.log('SAVING:', document);
+    document.pubkey = pubkey;
+
+    await this.db.profiles.put(document, pubkey);
 
     await this.table.put(pubkey, document);
 

@@ -93,7 +93,7 @@ export interface NostrSubscription extends Sub {
 }
 
 export interface NostrProfileDocument extends NostrProfile {
-  pubkey: string; // Not stored in database, just used when retreiving.
+  pubkey: string;
 
   /** The timestamp when the profile was created. Internal property, not from event. */
   created: number;

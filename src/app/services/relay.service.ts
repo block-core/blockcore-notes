@@ -372,6 +372,10 @@ export class RelayService {
     this.relaysUpdated();
   }
 
+  connectedRelays() {
+    return this.relays.filter((r) => r.status === 1);
+  }
+
   connect() {
     for (var i = 0; i < this.relayStorage.items.length; i++) {
       const entry = this.relayStorage.items[i];

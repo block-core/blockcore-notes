@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate.service';
+import { DatabaseService } from '../services/database.service';
 import { EventService } from '../services/event.service';
 import { FeedService } from '../services/feed.service';
 import { NostrRelay } from '../services/interfaces';
@@ -34,7 +35,8 @@ export class SettingsComponent {
     public appState: ApplicationState,
     private storage: StorageService,
     private profileService: ProfileService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    private db: DatabaseService
   ) {}
 
   toggle() {
@@ -61,9 +63,21 @@ export class SettingsComponent {
   }
 
   async clearDatabase() {
+    this.db
+      .delete()
+      .then(() => {
+        console.log('Database successfully deleted');
+      })
+      .catch((err) => {
+        console.error('Could not delete database');
+      })
+      .finally(() => {
+        // Do what should be done next...
+      });
+
     await this.storage.wipe();
     this.wiped = true;
-    location.reload();
+    // location.reload();
   }
 
   async clearNotesCache() {
