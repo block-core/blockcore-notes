@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrSubscription, NostrRelay, NostrRelayDocument } from './interfaces';
 import { Observable, BehaviorSubject, map } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
-import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
 import { CirclesService } from './circles.service';
 import * as moment from 'moment';
@@ -12,6 +11,9 @@ import { OptionsService } from './options.service';
 import { RelayStorageService } from './relay.storage.service';
 import { AuthenticationService } from './authentication.service';
 import { ApplicationState } from './applicationstate.service';
+import { CacheService } from './cache.service';
+import { liveQuery } from 'dexie';
+import { DatabaseService } from './database.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +29,16 @@ export class Relay2Service {
     'wss://nostr.v0l.io': { read: true, write: true },
     'wss://nostr-relay.wlvs.space': { read: true, write: true },
   };
+
+  private table;
+
+  cache = new CacheService();
+
+  items$ = liveQuery(() => this.list());
+
+  async list() {
+    return await this.table.toArray();
+  }
 
   // #table;
 
@@ -180,7 +192,9 @@ export class Relay2Service {
   //     );
   // }
 
-  constructor(public relayStorage: RelayStorageService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
+  constructor(private db: DatabaseService, public relayStorage: RelayStorageService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
+    this.table = this.db.relays;
+
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
       console.log('VISIBILITY CHANGED:', visible);
@@ -247,7 +261,7 @@ export class Relay2Service {
     }
 
     // Persist the latest NIP11 metadata on the NostrRelayDocument.
-    await this.relayStorage.put(relay.metadata);
+    await this.table.put(relay.metadata.id, relay.metadata);
 
     this.relaysUpdated();
   }

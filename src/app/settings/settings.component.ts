@@ -10,7 +10,6 @@ import { NostrRelay } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { RelayService } from '../services/relay.service';
 import { RelayStorageService } from '../services/relay.storage.service';
-import { StorageService } from '../services/storage.service';
 import { ThemeService } from '../services/theme.service';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
 
@@ -33,7 +32,6 @@ export class SettingsComponent {
     public relayStorage: RelayStorageService,
     public feedService: FeedService,
     public appState: ApplicationState,
-    private storage: StorageService,
     private profileService: ProfileService,
     public theme: ThemeService,
     private db: DatabaseService
@@ -75,9 +73,8 @@ export class SettingsComponent {
         // Do what should be done next...
       });
 
-    await this.storage.wipe();
     this.wiped = true;
-    // location.reload();
+    location.reload();
   }
 
   async clearNotesCache() {

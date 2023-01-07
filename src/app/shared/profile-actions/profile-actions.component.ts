@@ -23,7 +23,7 @@ export class ProfileActionsComponent {
 
   circles: Circle[] = [];
 
-  constructor(private feedService: FeedService, private circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  constructor(private feedService: FeedService, public circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
@@ -159,10 +159,6 @@ export class ProfileActionsComponent {
 
   private circlesSub?: Subscription;
 
-  async loadCircles() {
-    this.circles = await this.circlesService.list();
-  }
-
   async ngOnInit() {
     // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.
 
@@ -174,9 +170,5 @@ export class ProfileActionsComponent {
     } else {
       this.profile = await this.profileService.getProfile(this.pubkey);
     }
-
-    this.circlesSub = this.circlesService.notesChanged$.subscribe(() => {
-      this.loadCircles();
-    });
   }
 }
