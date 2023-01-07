@@ -228,7 +228,7 @@ export class CirclesComponent {
       },
     ];
 
-    this.circlesService.circles$.subscribe((circles) => {
+    this.circlesService.items$.subscribe((circles) => {
       circles.unshift(CirclesService.DEFAULT);
       this.circles = circles;
     });

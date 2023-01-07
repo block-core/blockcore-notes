@@ -4,6 +4,7 @@ import { StorageService } from './storage.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { liveQuery } from 'dexie';
 import { DatabaseService } from './database.service';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,14 @@ export class CirclesService {
 
   private table;
   private table2;
+
+  cache = new CacheService();
+
+  items$ = liveQuery(() => this.listCircles());
+
+  async listCircles() {
+    return await this.db.circles.toArray();
+  }
 
   // Just a basic observable that triggers whenever any profile has changed.
   #circlesChangedSubject: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
@@ -24,8 +33,6 @@ export class CirclesService {
   #changed() {
     this.#circlesChangedSubject.next(undefined);
   }
-
-  circles$ = liveQuery(() => this.listCircles());
 
   constructor(private storage: StorageService, private db: DatabaseService) {
     this.table = this.storage.table<Circle>('circles');
@@ -45,10 +52,6 @@ export class CirclesService {
     }
 
     return items;
-  }
-
-  async listCircles() {
-    return await this.db.circles.toArray();
   }
 
   async list() {

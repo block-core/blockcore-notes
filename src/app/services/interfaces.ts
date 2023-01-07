@@ -107,14 +107,8 @@ export interface NostrProfileDocument extends NostrProfile {
   /** Timestamp when last retrieved. */
   retrieved?: number;
 
-  /** Indicates if the user is following this profile. If not, then the profile can be wiped during cache cleanup. */
-  follow?: boolean;
-
-  /** Indicates if a user is blocked and their content will not be shown. */
-  block?: boolean;
-
-  /** Indicates if a user is muted and not displayed in the home feed and notification is shown on replies. */
-  mute?: boolean;
+  /** The status against this profile, which can be: 0 = public, 1 = follow, 2 = mute, 3 = block */
+  status?: ProfileStatus;
 
   circle?: number;
 
@@ -128,4 +122,11 @@ export interface NostrProfileDocument extends NostrProfile {
 export interface CircleStyle {
   id: string;
   name: string;
+}
+
+export enum ProfileStatus {
+  Public = 0,
+  Follow = 1,
+  Mute = 2,
+  Block = 3,
 }

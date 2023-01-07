@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEventDocument, NostrProfile, NostrProfileDocument } from './interfaces';
+import { NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from './interfaces';
 import { StorageService } from './storage.service';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import * as moment from 'moment';
@@ -7,9 +7,7 @@ import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
 import { DatabaseService } from './database.service';
 import { liveQuery } from 'dexie';
-import { Cacheable } from 'ts-cacheable';
 import { CacheService } from './cache.service';
-import { DataService } from './data.service';
 import { FetchService } from './fetch.service';
 
 @Injectable({
@@ -22,6 +20,17 @@ export class ProfileService {
 
   cache = new CacheService();
 
+  items$ = liveQuery(() => this.list(ProfileStatus.Follow));
+
+  /** Returns a list of profiles based upon status. 0 = public, 1 = follow, 2 = mute, 3 = block */
+  async list(status: ProfileStatus) {
+    return await this.db.profiles.where('status').equals(status).toArray();
+  }
+
+  async query(query: any) {
+    return await this.db.profiles.where(query);
+  }
+
   // #profile: NostrProfileDocument;
 
   /** TODO: Destroy this array when there are zero subscribers left. */
@@ -33,7 +42,7 @@ export class ProfileService {
     // value.follow == true
     return this.#profilesChanged.asObservable().pipe(
       map((data) => {
-        const filtered = data.filter((events) => events.follow == true);
+        const filtered = data.filter((events) => events.status == ProfileStatus.Follow);
         return filtered;
       })
     );
@@ -75,12 +84,12 @@ export class ProfileService {
     return await this.filter((p) => p.name.toLowerCase().indexOf(searchText) > -1);
   }
 
-  mutedPublicKeys() {
-    return this.profiles.filter((p) => p.mute).map((p) => p.pubkey);
+  mutedProfiles() {
+    return this.query({ status: ProfileStatus.Mute });
   }
 
-  blockedPublickKeys() {
-    return this.profiles.filter((p) => p.block).map((p) => p.pubkey);
+  blockedProfiles() {
+    return this.query({ status: ProfileStatus.Block });
   }
 
   // private keys: Map<string, string> = new Map<string, string>();
@@ -145,6 +154,11 @@ export class ProfileService {
 
   getProfile2(pubkey: string) {
     return this.cache.get(pubkey, this.#getProfile(pubkey));
+  }
+
+  async putProfile2(profile: NostrProfileDocument) {
+    this.cache.set(profile.pubkey, profile);
+    await this.table.put(profile.pubkey, profile);
   }
 
   // profileDownloadQueue: string[] = [];
@@ -242,6 +256,8 @@ export class ProfileService {
   async #setFollow(pubkey: string, circle?: number, follow?: boolean, existingProfile?: NostrProfileDocument) {
     let profile = await this.getProfile(pubkey);
 
+    debugger;
+
     const now = Math.floor(Date.now() / 1000);
 
     // This normally should not happen, but we should attempt to retrieve this profile.
@@ -279,7 +295,7 @@ export class ProfileService {
     }
 
     // Put profile since we already got it in the beginning.
-    await this.putProfile(pubkey, profile);
+    await this.putProfile2(profile);
 
     if (!profile.retrieved) {
       await this.downloadProfile(pubkey);
@@ -322,7 +338,7 @@ export class ProfileService {
     profile.follow = false;
 
     // Put it since we got it in the beginning.
-    await this.putProfile(pubkey, profile);
+    await this.putProfile2(profile);
   }
 
   async unblock(pubkey: string, follow?: boolean) {
@@ -336,7 +352,7 @@ export class ProfileService {
     profile.follow = follow;
 
     // Put it since we got it in the beginning.
-    this.putProfile(pubkey, profile);
+    await this.putProfile2(profile);
   }
 
   // TODO: Avoid duplicate code and use the update predicate!
@@ -350,7 +366,7 @@ export class ProfileService {
     profile.mute = true;
 
     // Put it since we got it in the beginning.
-    await this.putProfile(pubkey, profile);
+    await this.putProfile2(profile);
   }
 
   // TODO: Avoid duplicate code and use the update predicate!
@@ -364,7 +380,7 @@ export class ProfileService {
     profile.mute = false;
 
     // Put it since we got it in the beginning.
-    this.putProfile(pubkey, profile);
+    await this.putProfile2(profile);
   }
 
   friends$ = liveQuery(() => this.listFriends());
@@ -384,27 +400,27 @@ export class ProfileService {
   }
 
   /** Profiles are upserts, we replace the existing profile and only keep latest. */
-  async putProfile(pubkey: string, document: NostrProfileDocument | any) {
-    // Remove the pubkey from the document before we persist.
-    // delete document.pubkey;
+  // async putProfile(pubkey: string, document: NostrProfileDocument | any) {
+  //   // Remove the pubkey from the document before we persist.
+  //   // delete document.pubkey;
 
-    console.log('SAVING:', document);
-    document.pubkey = pubkey;
+  //   console.log('SAVING:', document);
+  //   document.pubkey = pubkey;
 
-    await this.db.profiles.put(document, pubkey);
+  //   await this.db.profiles.put(document, pubkey);
 
-    await this.table.put(pubkey, document);
+  //   await this.table.put(pubkey, document);
 
-    const index = this.#profileIndex(pubkey);
+  //   const index = this.#profileIndex(pubkey);
 
-    if (index == -1) {
-      this.profiles.push(document);
-    } else {
-      this.profiles[index] = document;
-    }
+  //   if (index == -1) {
+  //     this.profiles.push(document);
+  //   } else {
+  //     this.profiles[index] = document;
+  //   }
 
-    this.#changed();
-  }
+  //   this.#changed();
+  // }
 
   #profileIndex(pubkey: string) {
     return this.profiles.findIndex((p) => p.pubkey == pubkey);
@@ -455,7 +471,7 @@ export class ProfileService {
     profile!.modified = now;
     profile!.retrieved = now;
 
-    await this.putProfile(pubkey, profile);
+    await this.putProfile2(profile!);
 
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {
@@ -476,7 +492,7 @@ export class ProfileService {
     profile = predicate(profile, profile.pubkey);
 
     // We already updated latest, do a put and not update.
-    await this.putProfile(pubkey, profile);
+    await this.putProfile2(profile);
   }
 
   /** Wipes all non-following profiles. */

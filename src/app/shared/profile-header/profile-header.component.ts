@@ -21,7 +21,6 @@ export class ProfileHeaderComponent {
   tooltip = '';
   tooltipName = '';
   circle?: Circle;
-  muted? = false;
   npub!: string;
   qr?: string;
 
@@ -70,8 +69,6 @@ export class ProfileHeaderComponent {
     // this.profileName = this.profile.name || this.profileName;
 
     this.circle = await this.circleService.getCircle(this.profile.circle);
-
-    this.muted = this.profile.mute;
 
     // Pre-generate the QR value as we had some issues doing it dynamically.
     if (this.profile.lud06) {

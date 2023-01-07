@@ -1,12 +1,12 @@
 <app-profile-header *ngIf="profileName" [profile]="profile"></app-profile-header>
 
-<div class="page" *ngIf="profile && !profile?.follow">
+<div class="page" *ngIf="profile && profile?.status !== 1">
   <p>Data is currently only loaded if you follow this user.</p>
   <p><button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button></p>
 </div>
 
-<mat-tab-group *ngIf="profile?.follow" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
-  <mat-tab label="Notes" *ngIf="profile?.follow">
+<mat-tab-group *ngIf="profile?.status == 1" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
+  <mat-tab label="Notes" *ngIf="profile?.status == 1">
     <span *ngIf="userEvents$ | async as events">
       <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
@@ -60,7 +60,7 @@
 
     <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
-  <mat-tab label="Replies" *ngIf="profile?.follow">
+  <mat-tab label="Replies" *ngIf="profile?.status == 1">
     <span *ngIf="replyEvents$ | async as events">
       <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 

@@ -5,7 +5,7 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { FeedService } from '../services/feed.service';
@@ -29,7 +29,6 @@ export class UserComponent {
   imagePath = '/assets/profile.png';
   profileName = '';
   circle?: Circle;
-  muted? = false;
   initialLoad = true;
 
   userEvents$ = this.feedService.rootEvents$.pipe(
@@ -97,7 +96,6 @@ export class UserComponent {
         if (!this.profile) {
           this.profile = this.profiles.emptyProfile(pubkey);
           this.circle = undefined;
-          this.muted = false;
         }
 
         this.npub = this.utilities.getNostrIdentifier(pubkey);
@@ -117,14 +115,13 @@ export class UserComponent {
 
         // If the user has name in their profile, show that and not pubkey.
         this.circle = await this.circleService.getCircle(this.profile.circle);
-        this.muted = this.profile.mute;
         this.appState.title = `@${this.profile.name}`;
       })
     );
   }
 
   async follow() {
-    this.profile!.follow = true;
+    this.profile!.status = ProfileStatus.Follow;
     await this.profiles.follow(this.pubkey!);
     this.feedService.downloadRecent([this.pubkey!]);
   }

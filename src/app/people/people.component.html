@@ -1,8 +1,8 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 ||
-<div *ngFor="let profile of profileService.friends$ | async">{{ profile.pubkey }} | {{ profile.name }}</div>
+<div *ngFor="let profile of profileService.items$ | async">|||{{ profile.pubkey }} | {{ profile.name }}</div>
 ||
-<div class="feed-page">
+<div class="feed-page" *ngIf="profileService.items$ | async as profiles">
   <!-- <p class="search">
     <mat-form-field appearance="fill" class="input-full-width">
       <mat-label>Search in People</mat-label>
@@ -29,7 +29,7 @@
     <mat-spinner class="loading"></mat-spinner>
   </div>
 
-  <div *ngIf="!loading">
+  <div>
     <!-- <mat-list>
       <mat-list-item *ngFor="let person of people">
         <mat-icon matListItemIcon>folder</mat-icon>

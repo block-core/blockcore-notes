@@ -3,7 +3,7 @@ import { CirclesService } from 'src/app/services/circles.service';
 import { NotesService } from 'src/app/services/notes.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
-import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../../services/interfaces';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
@@ -54,7 +54,7 @@ export class ProfileActionsComponent {
     }
 
     // If not already following, add a full follow and download recent:
-    if (!this.profile.follow) {
+    if (this.profile.status !== ProfileStatus.Follow) {
       await this.profileService.follow(this.profile.pubkey, circle);
       this.feedService.downloadRecent([this.profile.pubkey]);
     } else {
