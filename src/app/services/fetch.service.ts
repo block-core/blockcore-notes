@@ -6,7 +6,6 @@ import { Filter, Relay } from 'nostr-tools';
 import { DataValidation } from './data-validation.service';
 import { ApplicationState } from './applicationstate.service';
 import { timeout, map, merge, Observable, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of } from 'rxjs';
-import { Relay2Service } from './relay2.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +22,7 @@ export class FetchService {
     private appState: ApplicationState,
     // private profileService: ProfileService,
     private eventService: EventService,
-    private relayService: Relay2Service
+    private relayService: RelayService
   ) {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {

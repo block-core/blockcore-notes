@@ -8,7 +8,6 @@ import * as moment from 'moment';
 import { EventService } from './event.service';
 import { DataValidation } from './data-validation.service';
 import { OptionsService } from './options.service';
-import { RelayStorageService } from './relay.storage.service';
 import { AuthenticationService } from './authentication.service';
 import { ApplicationState } from './applicationstate.service';
 import { CacheService } from './cache.service';
@@ -192,7 +191,7 @@ export class RelayService {
   //     );
   // }
 
-  constructor(private db: DatabaseService, public relayStorage: RelayStorageService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
+  constructor(private db: DatabaseService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
     this.table = this.db.relays;
 
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
@@ -564,8 +563,6 @@ export class RelayService {
     }
   }
 }
-
-
 
 // import { Injectable } from '@angular/core';
 // import { NostrEventDocument, NostrSubscription, NostrRelay, NostrRelayDocument } from './interfaces';
