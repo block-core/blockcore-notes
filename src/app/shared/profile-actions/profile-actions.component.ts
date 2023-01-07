@@ -21,8 +21,6 @@ export class ProfileActionsComponent {
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  circles: Circle[] = [];
-
   constructor(private feedService: FeedService, public circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
@@ -150,14 +148,7 @@ export class ProfileActionsComponent {
     await this.profileService.unblock(this.profile.pubkey);
   }
 
-  ngOnDestroy() {
-    // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.
-    if (this.circlesSub) {
-      this.circlesSub.unsubscribe();
-    }
-  }
-
-  private circlesSub?: Subscription;
+  ngOnDestroy() {}
 
   async ngOnInit() {
     // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.

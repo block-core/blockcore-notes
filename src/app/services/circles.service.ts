@@ -15,9 +15,9 @@ export class CirclesService {
 
   cache = new CacheService();
 
-  items$ = liveQuery(() => this.listCircles());
+  items$ = liveQuery(() => this.items());
 
-  async listCircles() {
+  async items() {
     return await this.table2.toArray();
   }
 

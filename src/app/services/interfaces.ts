@@ -52,8 +52,8 @@ export interface NostrRelayDocument {
   id: string;
   read: boolean;
   write: boolean;
-  nip11: any;
-  error: string;
+  nip11?: any;
+  error?: string;
 }
 
 /** OBSOLETE */

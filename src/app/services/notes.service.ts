@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from './interfaces';
-import { StorageService } from './storage.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { DatabaseService } from './database.service';
+import { liveQuery } from 'dexie';
 
 @Injectable({
   providedIn: 'root',
@@ -20,52 +21,48 @@ export class NotesService {
     this.#notesChangedSubject.next(undefined);
   }
 
-  constructor(private storage: StorageService) {
-    this.table = this.storage.table<NostrNoteDocument>('notes');
+  items$ = liveQuery(() => this.items());
+
+  async items() {
+    return await this.table.toArray();
   }
 
-  async #filter(predicate: (value: NostrNoteDocument, key: string) => boolean): Promise<NostrNoteDocument[]> {
-    const iterator = this.table.iterator<string, NostrNoteDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
-    const items = [];
-
-    for await (const [key, value] of iterator) {
-      if (predicate(value, key)) {
-        value.id = key;
-        items.push(value);
-      }
-    }
-
-    return items;
+  constructor(private db: DatabaseService) {
+    this.table = this.db.notes;
   }
 
-  async list() {
-    return this.#filter((value, key) => true);
-  }
+  // async #filter(predicate: (value: NostrNoteDocument, key: string) => boolean): Promise<NostrNoteDocument[]> {
+  //   const iterator = this.table.iterator<string, NostrNoteDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+  //   const items = [];
+
+  //   for await (const [key, value] of iterator) {
+  //     if (predicate(value, key)) {
+  //       value.id = key;
+  //       items.push(value);
+  //     }
+  //   }
+
+  //   return items;
+  // }
+
+  // async list() {
+  //   return this.#filter((value, key) => true);
+  // }
 
   /** Notes are upserts, we replace the existing note and only keep latest. */
   async putNote(document: NostrNoteDocument | any) {
-    const id = document.id;
-
-    // Remove the id from the document before we persist.
-    // delete document.id;
-
-    await this.table.put(id, document);
-
+    await this.table.put(document);
     this.#changed();
   }
 
   async deleteNote(id: string) {
-    await this.table.del(id);
-
+    await this.table.delete(id);
     this.#changed();
   }
 
   /** Wipes all notes. */
   async wipe() {
-    for await (const [key, value] of this.table.iterator({})) {
-      await this.table.del(key);
-    }
-
+    await this.table.clear();
     this.#changed();
   }
 }

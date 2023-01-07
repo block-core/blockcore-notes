@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
-import { Circle, NostrNoteDocument, NostrProfileDocument } from './interfaces';
-
-export interface RelayItem {
-  id?: number;
-  url: string;
-}
+import { Circle, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument } from './interfaces';
 
 export interface EventItem {
   id?: number;
@@ -22,7 +17,7 @@ export interface ProfileItem {
   providedIn: 'root',
 })
 export class DatabaseService extends Dexie {
-  relays!: Table<RelayItem, string>;
+  relays!: Table<NostrRelayDocument, string>;
   events!: Table<EventItem, string>;
   notes!: Table<NostrNoteDocument, string>;
   profiles!: Table<NostrProfileDocument, string>;

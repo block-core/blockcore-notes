@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument } from './interfaces';
 import { Observable, BehaviorSubject, map, ReplaySubject, filter, combineLatest } from 'rxjs';
-import { StorageService } from './storage.service';
 import { ProfileService } from './profile.service';
 import { EventService } from './event.service';
 import { FeedService } from './feed.service';
@@ -122,7 +121,7 @@ export class ThreadService {
 
   // selectedEvent$ = combineLatest(this.selectedEventChanges$, this.eventChanges$).pipe(mergeMap());
 
-  constructor(private storage: StorageService, private eventService: EventService, private profileService: ProfileService, private feedService: FeedService) {
+  constructor(private eventService: EventService, private profileService: ProfileService, private feedService: FeedService) {
     // Whenever the event has changed, we can go grab the parent and the thread itself
     this.#eventChanged.subscribe((event) => {
       if (event == null) {
@@ -183,19 +182,19 @@ export class ThreadService {
     this.#eventChanged.next(this.#event);
 
     // Get the event itself.
-    const event = await this.storage.get<NostrEventDocument>(eventId, 'events');
+    // const event = await this.storage.get<NostrEventDocument>(eventId, 'events');
 
-    if (event) {
-      this.#event = event;
-      this.#eventChanged.next(this.#event);
-    } else {
-      // console.log('DOWNLOADING2:', eventId);
-      // Go grab it from relays.
-      this.feedService.downloadEvent(eventId).subscribe((event) => {
-        // console.log('DOWNLOAD EVENT CALLBACK 2:', event);
-        this.#event = event;
-        this.#eventChanged.next(this.#event);
-      });
-    }
+    // if (event) {
+    //   this.#event = event;
+    //   this.#eventChanged.next(this.#event);
+    // } else {
+    //   // console.log('DOWNLOADING2:', eventId);
+    //   // Go grab it from relays.
+    //   this.feedService.downloadEvent(eventId).subscribe((event) => {
+    //     // console.log('DOWNLOAD EVENT CALLBACK 2:', event);
+    //     this.#event = event;
+    //     this.#eventChanged.next(this.#event);
+    //   });
+    // }
   }
 }
