@@ -77,6 +77,7 @@ import { EventActionsComponent } from './shared/event-actions/event-actions.comp
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ChatComponent } from './chat/chat.component';
 import { FeedComponent } from './feed/feed.component';
+import { WithStatusPipe } from './shared/loading.pipe';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { FeedComponent } from './feed/feed.component';
     AgoPipe,
     Bech32Pipe,
     CircleStylePipe,
+    WithStatusPipe,
     AboutComponent,
     FollowDialog,
     SettingsComponent,

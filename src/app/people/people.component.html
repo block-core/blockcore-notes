@@ -21,6 +21,31 @@
     </mat-expansion-panel>
   </mat-accordion>
 
+  <div *ngIf="items$ | withStatus | async as items">
+    <ng-template [ngIf]="items.value">
+      <mat-card class="events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of items.value; trackBy: trackByFn">
+        <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
+        <div class="events-header">
+          <app-event-header [profile]="profile"
+            ><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon
+          ></app-event-header>
+          <app-profile-actions [profile]="profile"></app-profile-actions>
+        </div>
+        <div class="content clickable">
+          {{ profile.about }}
+        </div>
+      </mat-card>
+    </ng-template>
+    <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+    <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+  </div>
+  <!-- 
+  <div *ngIf="items$ | withLoading | async as items">
+    <ng-template [ngIf]="items.value">Value: {{ items.value }}</ng-template>
+    <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    <ng-template [ngIf]="items.loading">Loading...</ng-template>
+  </div> -->
+
   <div *ngIf="items$ | async as profiles">
     <!-- <div class="centered" style="width: 100%">
       <br />
@@ -28,19 +53,6 @@
     </div> -->
 
     <!-- Count: {{ profiles.length }} -->
-
-    <mat-card class="events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of profiles; trackBy: trackByFn">
-      <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
-      <div class="events-header">
-        <app-event-header [profile]="profile"
-          ><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon
-        ></app-event-header>
-        <app-profile-actions [profile]="profile"></app-profile-actions>
-      </div>
-      <div class="content clickable">
-        {{ profile.about }}
-      </div>
-    </mat-card>
   </div>
 
   <p class="dimmed">People are those you are following. You can use circles to organize your people.</p>
