@@ -7,7 +7,7 @@ import { RelayService } from './relay.service';
 import { Filter, Relay } from 'nostr-tools';
 import { DataValidation } from './data-validation.service';
 import { ApplicationState } from './applicationstate.service';
-import { timeout, map, merge, Observable, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of } from 'rxjs';
+import { timeout, map, merge, Observable, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -106,20 +106,28 @@ export class DataService {
     //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
     // );
 
-    return this.connected$
-      .pipe(take(1))
-      .pipe(
-        tap(() => {
-          debugger;
-          console.log('YEEEEEEEEEEEEEE');
-        })
-      )
-      .pipe(mergeMap(() => this.relayService.connectedRelays()))
-      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
-      .pipe(
-        timeout(requestTimeout),
-        catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
-      );
+    return (
+      this.connected$
+        .pipe(take(1))
+        .pipe(
+          tap(() => {
+            debugger;
+          })
+        )
+        .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
+        // .pipe(
+        //   mergeMap(() => {
+        //     const observables = this.relayService.connectedRelays().map((relay) => this.downloadFromRelay(query, relay));
+        //     return merge([...observables]);
+        //   })
+        // )
+        // .pipe(combineLatestAll())
+        .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+        .pipe(
+          timeout(requestTimeout),
+          catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
+        )
+    );
   }
 
   subscribeLatestEvents(kinds: number[], pubkeys: string[], limit: number) {

@@ -181,6 +181,10 @@ export class HomeComponent {
 
     const observable = this.profileService.getProfile(array[0]).subscribe((profile) => {
       console.log('GOT CACHED PROFILE:', profile);
+
+      debugger;
+      this.profileService.follow(profile.pubkey);
+
     });
 
     // this.profileService.getProfile(array[1]).subscribe((profile) => {

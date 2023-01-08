@@ -131,24 +131,24 @@ export class ProfileService {
     this.#profileRequested.next(pubkey);
   }
 
+  // #getProfile(pubkey: string) {
+  //   return new Observable((observer) => {
+  //     this.table.get(pubkey).then((profile) => {
+  //       if (profile) {
+  //         debugger;
+  //         observer.next(profile);
+  //         observer.complete();
+  //         return;
+  //       }
+
+  //       debugger;
+
+  //       return this.dataService.downloadNewestProfiles([pubkey]);
+  //     });
+  //   });
+  // }
+
   #getProfile(pubkey: string) {
-    return new Observable((observer) => {
-      this.table.get(pubkey).then((profile) => {
-        if (profile) {
-          debugger;
-          observer.next(profile);
-          observer.complete();
-          return;
-        }
-
-        debugger;
-
-        return this.dataService.downloadNewestProfiles([pubkey]);
-      });
-    });
-  }
-
-  #getProfile2(pubkey: string) {
     return new Observable((observer) => {
       this.table
         .get(pubkey)
@@ -161,18 +161,26 @@ export class ProfileService {
 
           debugger;
 
-          return this.dataService.downloadNewestProfiles([pubkey]).pipe(
-            map(async (event: any) => {
-              debugger;
-              // const p = profile as NostrEventDocument;
-              const profile = this.utilities.mapProfileEvent(event);
+          this.dataService
+            .downloadNewestProfiles([pubkey])
+            .pipe(
+              map(async (event: any) => {
+                debugger;
+                // const p = profile as NostrEventDocument;
+                const profile = this.utilities.mapProfileEvent(event);
 
-              // Whenever we get here, also persist this profile to database.
-              await this.table.put(profile);
+                // Whenever we get here, also persist this profile to database.
+                await this.table.put(profile);
 
-              return profile;
-            })
-          );
+                observer.next(profile);
+                observer.complete();
+
+                return profile;
+              })
+            )
+            .subscribe((data) => {
+              console.log('WE MUST OF COURSE SUB TO THIS OBSERVABLE!', data);
+            });
         })
         .catch((err) => {
           debugger;
