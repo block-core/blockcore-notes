@@ -4,21 +4,22 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { liveQuery } from 'dexie';
 import { DatabaseService } from './database.service';
 import { CacheService } from './cache.service';
+import { Utilities } from './utilities.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CirclesService {
-  static DEFAULT: Circle = { name: 'Following', color: '#e91e63', style: '1', public: true, created: Math.floor(Date.now() / 1000) };
+export class CircleService {
+  static DEFAULT: Circle = { id: 0, name: 'Following', color: '#e91e63', style: '1', public: true };
 
-  private table2;
+  private table;
 
   cache = new CacheService();
 
   items$ = liveQuery(() => this.items());
 
   async items() {
-    return await this.table2.toArray();
+    return await this.table.toArray();
   }
 
   // Just a basic observable that triggers whenever any profile has changed.
@@ -32,8 +33,17 @@ export class CirclesService {
     this.#circlesChangedSubject.next(undefined);
   }
 
-  constructor(private db: DatabaseService) {
-    this.table2 = this.db.circles;
+  constructor(private db: DatabaseService, private utilities: Utilities) {
+    this.table = this.db.circles;
+  }
+
+  /** Important to call to ensure we have the default circle added */
+  async initialize() {
+    const defaultCircle = this.table.get(0);
+
+    if (!defaultCircle) {
+      await this.putCircle(CircleService.DEFAULT);
+    }
   }
 
   // async #filter(predicate: (value: Circle, key: string) => boolean): Promise<Circle[]> {
@@ -72,36 +82,30 @@ export class CirclesService {
 
   async getCircle(id?: number) {
     if (!id) {
-      return CirclesService.DEFAULT;
+      return undefined;
     }
 
-    let circle = await this.table2.get(id);
-    // const circle = await this.#get<Circle>(id);
-
-    if (!circle) {
-      circle = CirclesService.DEFAULT;
-      circle.id = id;
-    }
-
-    return circle;
+    return this.table.get(id);
   }
 
-  /** Circles are upserts, we replace the existing circles and only keep latest. */
   async putCircle(document: Circle | any) {
-    document.created = Math.floor(Date.now() / 1000);
-    await this.table2.put(document);
-    // this.#changed();
+    const now = this.utilities.now();
+
+    if (!document.created) {
+      document.created = now;
+    }
+
+    document.modified = now;
+
+    await this.table.put(document);
   }
 
   async deleteCircle(id: number) {
-    await this.table2.delete(id);
-    // this.#changed();
+    await this.table.delete(id);
   }
 
   /** Wipes all circles. */
   async wipe() {
-    this.table2.clear();
-
-    // this.#changed();
+    this.table.clear();
   }
 }

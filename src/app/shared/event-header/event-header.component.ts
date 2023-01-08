@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { CirclesService } from 'src/app/services/circles.service';
+import { CircleService } from 'src/app/services/circle.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
@@ -19,7 +19,7 @@ export class EventHeaderComponent {
   profileName = '';
   circle?: Circle;
 
-  constructor(private profiles: ProfileService, private circleService: CirclesService, private utilities: Utilities) {}
+  constructor(private profiles: ProfileService, private circleService: CircleService, private utilities: Utilities) {}
 
   ngAfterViewInit() {}
 

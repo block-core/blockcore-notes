@@ -20,6 +20,7 @@ import { ThemeService } from './services/theme.service';
 import { NostrProtocolRequest } from './common/NostrProtocolRequest';
 import { SearchService } from './services/search.service';
 import { FormControl } from '@angular/forms';
+import { CircleService } from './services/circle.service';
 
 @Component({
   selector: 'app-root',
@@ -47,6 +48,7 @@ export class AppComponent {
     private breakpointObserver: BreakpointObserver,
     private relayService: RelayService,
     private dataService: DataService,
+    private circleService: CircleService,
     public profileService: ProfileService,
     public navigationService: NavigationService,
     public searchService: SearchService,
@@ -156,6 +158,8 @@ export class AppComponent {
   async initialize() {
     // await this.storage.open();
     // await this.storage.initialize();
+
+    await this.circleService.initialize();
 
     await this.profileService.initialize();
     // await this.relayStorage.initialize();

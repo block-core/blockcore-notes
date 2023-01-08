@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CirclesService } from 'src/app/services/circles.service';
+import { CircleService } from 'src/app/services/circle.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfileDocument } from '../../services/interfaces';
@@ -24,7 +24,7 @@ export class ProfileHeaderComponent {
   npub!: string;
   qr?: string;
 
-  constructor(private profiles: ProfileService, public dialog: MatDialog, private sanitizer: DomSanitizer, private circleService: CirclesService, private utilities: Utilities) {}
+  constructor(private profiles: ProfileService, public dialog: MatDialog, private sanitizer: DomSanitizer, private circleService: CircleService, private utilities: Utilities) {}
 
   async ngAfterViewInit() {}
 

@@ -1,14 +1,9 @@
 import { Injectable } from '@angular/core';
-import { NostrEventDocument, NostrSubscription, NostrRelay, NostrRelayDocument } from './interfaces';
-import { Observable, BehaviorSubject, map } from 'rxjs';
+import { NostrEventDocument, NostrRelay, NostrRelayDocument } from './interfaces';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
-import { ProfileService } from './profile.service';
-import { CirclesService } from './circles.service';
-import * as moment from 'moment';
 import { EventService } from './event.service';
-import { DataValidation } from './data-validation.service';
 import { OptionsService } from './options.service';
-import { AuthenticationService } from './authentication.service';
 import { ApplicationState } from './applicationstate.service';
 import { CacheService } from './cache.service';
 import { liveQuery } from 'dexie';
@@ -352,7 +347,6 @@ export class RelayService {
     const entries = Object.keys(preparedRelays);
 
     for (var i = 0; i < entries.length; i++) {
-      debugger;
       const key = entries[i];
       const val = preparedRelays[key];
       await this.table.put({ url: key, write: val.write, read: val.read });

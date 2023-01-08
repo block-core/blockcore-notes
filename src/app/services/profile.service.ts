@@ -31,6 +31,18 @@ export class ProfileService {
     return await this.table.where(equalityCriterias).toArray();
   }
 
+  blockedProfiles$() {
+    return liveQuery(() => this.list(ProfileStatus.Block));
+  }
+
+  publicProfiles$() {
+    return liveQuery(() => this.list(ProfileStatus.Public));
+  }
+
+  mutedProfiles$() {
+    return liveQuery(() => this.list(ProfileStatus.Mute));
+  }
+
   // #profile: NostrProfileDocument;
 
   /** TODO: Destroy this array when there are zero subscribers left. */
@@ -97,7 +109,7 @@ export class ProfileService {
     return profiles.map((p) => p.pubkey);
   }
 
-  blockedProfiles$ = liveQuery(() => this.blockedProfiles());
+  // blockedProfiles$ = liveQuery(() => this.blockedProfiles());
 
   async mutedPublicKeys() {
     const profiles = await this.mutedProfiles();
@@ -173,6 +185,8 @@ export class ProfileService {
                 await this.table.put(profile);
 
                 observer.next(profile);
+
+                // TODO: We really should not complete this until all .next exceutions have happened.
                 observer.complete();
 
                 return profile;
@@ -311,46 +325,39 @@ export class ProfileService {
   //   return this.filter((value, key) => value.status == ProfileStatus.Block);
   // }
 
-  async #setFollow(pubkey: string, circle?: number, follow?: boolean, existingProfile?: NostrProfileDocument) {
+  async #setStatus(pubkey: string, status: ProfileStatus, circle?: number) {
     let profile = await this.table.get(pubkey);
-    //let profile = await this.getProfile(pubkey);
-
-    debugger;
-
     const now = Math.floor(Date.now() / 1000);
 
-    // This normally should not happen, but we should attempt to retrieve this profile.
     if (!profile) {
-      // Does not already exists, let us retrieve the profile async.
-      profile = {
-        name: existingProfile ? existingProfile.name : '',
-        about: existingProfile ? existingProfile.about : '',
-        picture: existingProfile ? existingProfile.picture : '',
-        nip05: existingProfile ? existingProfile.nip05 : '',
-        lud06: existingProfile ? existingProfile.lud06 : '',
-        display_name: existingProfile ? existingProfile.display_name : '',
-        website: existingProfile ? existingProfile.website : '',
-        verifications: existingProfile ? existingProfile.verifications : [],
-        pubkey: pubkey,
-        status: ProfileStatus.Follow,
-        circle: circle,
-        created: now,
-      };
-    } else {
-      if (profile.status == ProfileStatus.Block) {
-        throw new Error('You have to unblock a user before you can follow again.');
-      }
-
-      profile.status = ProfileStatus.Follow;
-      profile.circle = circle;
+      throw new Error('The profile does not exists.');
     }
 
+    // // This normally should not happen, but we should attempt to retrieve this profile.
+    // if (!profile) {
+    //   // Does not already exists, let us retrieve the profile async.
+    //   profile = {
+    //     name: existingProfile ? existingProfile.name : '',
+    //     about: existingProfile ? existingProfile.about : '',
+    //     picture: existingProfile ? existingProfile.picture : '',
+    //     nip05: existingProfile ? existingProfile.nip05 : '',
+    //     lud06: existingProfile ? existingProfile.lud06 : '',
+    //     display_name: existingProfile ? existingProfile.display_name : '',
+    //     website: existingProfile ? existingProfile.website : '',
+    //     verifications: existingProfile ? existingProfile.verifications : [],
+    //     pubkey: pubkey,
+    //     status: ProfileStatus.Follow,
+    //     circle: circle,
+    //     created: now,
+    //   };
+    // } else {
+    if (profile.status == ProfileStatus.Block) {
+      throw new Error('You have to unblock a user before you can follow again.');
+    }
+
+    profile.status = status;
+    profile.circle = circle;
     profile.modified = now;
-
-    // If user choose to follow, make sure there are no block.
-    if (follow) {
-      profile.followed = now;
-    }
 
     // Put profile since we already got it in the beginning.
     await this.putProfile(profile);
@@ -370,135 +377,109 @@ export class ProfileService {
     // }
   }
 
+  /** Follow can be called without having an existing profile persisted. */
   async follow(pubkey: string, circle?: number, existingProfile?: NostrProfileDocument) {
-    return this.#setFollow(pubkey, circle, true, existingProfile);
+    const profile = await this.getLocalProfile(pubkey);
+    const now = this.utilities.now();
+
+    // If there are no local profile, save empty profile and attempt to get.
+    if (!profile) {
+      if (!existingProfile) {
+        existingProfile = this.emptyProfile(pubkey);
+      }
+
+      existingProfile.followed = now;
+      existingProfile.circle = circle;
+      existingProfile.status = ProfileStatus.Follow;
+
+      // Save directly, don't put in cache.
+      await this.table.put(existingProfile);
+    } else {
+      profile.status = ProfileStatus.Follow;
+      profile.modified = now;
+      profile.followed = now;
+      profile.circle = circle;
+
+      // Put into cache and database.
+      await this.putProfile(profile);
+    }
   }
 
   async setCircle(pubkey: string, circle?: number) {
-    return this.updateProfileValue(pubkey, (p) => {
-      p.circle = circle;
-      return p;
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.circle = circle;
+      return profile;
     });
   }
 
   async unfollow(pubkey: string) {
-    return this.#setFollow(pubkey, undefined, undefined);
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Public;
+      profile.followed = undefined;
+      profile.circle = undefined;
+      return profile;
+    });
   }
 
   async block(pubkey: string) {
-    const profile = await this.table.get(pubkey);
-    // const profile = await this.getProfile(pubkey);
-
-    if (!profile) {
-      return;
-    }
-
-    profile.status = ProfileStatus.Block;
-
-    // Put it since we got it in the beginning.
-    await this.putProfile(profile);
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Block;
+      profile.followed = undefined;
+      profile.circle = undefined;
+      return profile;
+    });
   }
 
-  async unblock(pubkey: string, follow?: boolean) {
-    const profile = await this.table.get(pubkey);
-    // const profile = await this.getProfile(pubkey);
+  // async update(pubkey: string) {
+  //   const profile = await this.getLocalProfile(pubkey);
+  //   const now = moment().unix();
 
-    if (!profile) {
-      return;
-    }
+  //   if (profile) {
+  //     profile.status = ProfileStatus.Public;
+  //     profile.modified = now;
 
-    profile.status = ProfileStatus.Public;
-
-    // Put it since we got it in the beginning.
-    await this.putProfile(profile);
-  }
-
-  // TODO: Avoid duplicate code and use the update predicate!
-  async mute(pubkey: string) {
-    // const profile = await this.getProfile(pubkey);
-    const profile = await this.table.get(pubkey);
-
-    if (!profile) {
-      return;
-    }
-
-    profile.status = ProfileStatus.Mute;
-
-    // Put it since we got it in the beginning.
-    await this.putProfile(profile);
-  }
-
-  // TODO: Avoid duplicate code and use the update predicate!
-  async unmute(pubkey: string, follow?: boolean) {
-    // const profile = await this.getProfile(pubkey);
-    const profile = await this.table.get(pubkey);
-
-    if (!profile) {
-      return;
-    }
-
-    profile.status = ProfileStatus.Follow;
-
-    // Put it since we got it in the beginning.
-    await this.putProfile(profile);
-  }
-
-  friends$ = liveQuery(() => this.listFriends());
-
-  async listFriends() {
-    console.log('LIST FRIENDS!');
-    //
-    // Query the DB using our promise based API.
-    // The end result will magically become
-    // observable.
-    //
-    return await this.db.profiles
-      // .where('follow')
-      // .equals('true')
-      // .between(18, 65)
-      .toArray();
-  }
-
-  /** Profiles are upserts, we replace the existing profile and only keep latest. */
-  // async putProfile(pubkey: string, document: NostrProfileDocument | any) {
-  //   // Remove the pubkey from the document before we persist.
-  //   // delete document.pubkey;
-
-  //   console.log('SAVING:', document);
-  //   document.pubkey = pubkey;
-
-  //   await this.db.profiles.put(document, pubkey);
-
-  //   await this.table.put(pubkey, document);
-
-  //   const index = this.#profileIndex(pubkey);
-
-  //   if (index == -1) {
-  //     this.profiles.push(document);
-  //   } else {
-  //     this.profiles[index] = document;
+  //     return this.putProfile(profile);
   //   }
-
-  //   this.#changed();
   // }
 
-  #profileIndex(pubkey: string) {
-    return this.profiles.findIndex((p) => p.pubkey == pubkey);
+  async unblock(pubkey: string) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Public;
+      return profile;
+    });
   }
 
-  #profileRemove(index: number) {
-    this.profiles.splice(index, 1);
+  async mute(pubkey: string) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Mute;
+      return profile;
+    });
+  }
+
+  async unmute(pubkey: string) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Follow;
+      return profile;
+    });
   }
 
   async deleteProfile(pubkey: string) {
     await this.table.delete(pubkey);
 
     // This shouldn't possibly be -1 for delete?
-    const index = this.#profileIndex(pubkey);
-    this.#profileRemove(index);
+    // const index = this.#profileIndex(pubkey);
+    // this.#profileRemove(index);
 
-    this.#changed();
+    // this.#changed();
   }
+
+  // #profileIndex(pubkey: string) {
+  //   return this.profiles.findIndex((p) => p.pubkey == pubkey);
+  // }
+
+  // #profileRemove(index: number) {
+  //   this.profiles.splice(index, 1);
+  // }
 
   async isFollowing(pubkey: string) {
     const profile = await this.table.get(pubkey);
@@ -511,11 +492,9 @@ export class ProfileService {
   }
 
   /** Update the profile if it already exists, ensuring we don't loose follow and block states. */
-  async updateProfile(pubkey: string, document: NostrProfileDocument | any) {
+  async updateProfile(pubkey: string, document: NostrProfileDocument) {
     let profile = await this.table.get(pubkey);
-    // let profile = await this.getProfile(pubkey);
-
-    const now = Math.floor(Date.now() / 1000);
+    const now = this.utilities.now();
 
     if (!profile) {
       profile = document;
@@ -529,10 +508,11 @@ export class ProfileService {
       profile.picture = document.picture;
     }
 
-    profile!.modified = now;
-    profile!.retrieved = now;
+    profile.modified = now;
+    profile.retrieved = now;
 
-    await this.putProfile(profile!);
+    // Put into cache and database.
+    await this.putProfile(profile);
 
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {
@@ -540,20 +520,19 @@ export class ProfileService {
     }
   }
 
-  async updateProfileValue(pubkey: string, predicate: (value: NostrProfileDocument, key: string) => NostrProfileDocument): Promise<void> {
-    // let profile = await this.getProfile(pubkey);
+  async #updateProfileValues(pubkey: string, predicate: (value: NostrProfileDocument, key?: string) => NostrProfileDocument): Promise<void> {
     let profile = await this.table.get(pubkey);
 
     if (!profile) {
       return undefined;
     }
 
-    profile.modified = Math.floor(Date.now() / 1000);
+    profile.modified = this.utilities.now();
 
     // Update the profile
     profile = predicate(profile, profile.pubkey);
 
-    // We already updated latest, do a put and not update.
+    // Update cache and database.
     await this.putProfile(profile);
   }
 
@@ -592,6 +571,7 @@ export class ProfileService {
       nip05: '',
       lud06: '',
       display_name: '',
+      status: ProfileStatus.Public,
       website: '',
       created: Math.floor(Date.now() / 1000),
       verifications: [],

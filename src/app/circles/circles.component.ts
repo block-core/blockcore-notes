@@ -5,7 +5,7 @@ import { Utilities } from '../services/utilities.service';
 import { DataValidation } from '../services/data-validation.service';
 import { Circle, NostrEvent, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
-import { CirclesService } from '../services/circles.service';
+import { CircleService } from '../services/circle.service';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { v4 as uuidv4 } from 'uuid';
@@ -30,8 +30,8 @@ export class CirclesComponent {
 
   constructor(
     public appState: ApplicationState,
-    public circlesService: CirclesService,
-    private profile: ProfileService,
+    public circleService: CircleService,
+    private profileService: ProfileService,
     public dialog: MatDialog,
     private validator: DataValidation,
     private utilities: Utilities,
@@ -46,23 +46,14 @@ export class CirclesComponent {
     this.utilities.unsubscribe(this.subscriptions);
   }
 
-  async load() {
-    this.loading = true;
-    // this.circles = await this.circlesService.list();
-    // this.following = await this.profile.followList();
-    this.loading = false;
-  }
-
   async deleteCircle(id: number) {
     const pubKeys = this.getFollowingInCircle(id).map((f) => f.pubkey);
 
-    await this.circlesService.deleteCircle(id);
+    await this.circleService.deleteCircle(id);
 
     for (var i = 0; i < pubKeys.length; i++) {
-      await this.profile.setCircle(pubKeys[i], undefined);
+      await this.profileService.setCircle(pubKeys[i], 0);
     }
-
-    await this.load();
   }
 
   countMembers(circle: Circle) {
@@ -132,7 +123,7 @@ export class CirclesComponent {
 
   getFollowingInCircle(id?: number) {
     if (id == null) {
-      return this.following.filter((f) => f.circle == null || f.circle == null);
+      return this.following.filter((f) => f.circle == null || f.circle == 0);
     } else {
       return this.following.filter((f) => f.circle == id);
     }
@@ -202,12 +193,10 @@ export class CirclesComponent {
         return;
       }
 
-      this.circlesService.putCircle({
+      this.circleService.putCircle({
         id: uuidv4(),
         ...result,
       });
-
-      await this.load();
     });
   }
 
@@ -224,11 +213,12 @@ export class CirclesComponent {
       },
     ];
 
-    this.circlesService.items$.subscribe((circles) => {
-      circles.unshift(CirclesService.DEFAULT);
-      this.circles = circles;
-    });
+    this.subscriptions.push(
+      this.circleService.items$.subscribe((circles) => {
+        this.circles = circles;
+      }) as Subscription
+    );
 
-    await this.load();
+    this.subscriptions.push(this.profileService.items$.subscribe((profiles) => (this.following = profiles)) as Subscription);
   }
 }

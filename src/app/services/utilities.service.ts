@@ -27,6 +27,10 @@ export class Utilities {
     }
   }
 
+  now() {
+    return Math.floor(Date.now() / 1000);
+  }
+
   reduceProfile(profile: NostrProfileDocument): NostrProfile {
     return {
       name: profile.name,

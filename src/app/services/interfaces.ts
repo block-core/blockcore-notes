@@ -108,7 +108,7 @@ export interface NostrProfileDocument extends NostrProfile {
   retrieved?: number;
 
   /** The status against this profile, which can be: 0 = public, 1 = follow, 2 = mute, 3 = block */
-  status?: ProfileStatus;
+  status: ProfileStatus;
 
   circle?: number;
 

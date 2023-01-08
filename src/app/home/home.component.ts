@@ -23,7 +23,7 @@ import { DataService } from '../services/data.service';
 
 interface DefaultProfile {
   pubkey: string;
-  pubkeyhex: string;
+  pubkeynpub: string;
   name: string;
   picture: string;
   about: string;
@@ -57,40 +57,40 @@ export class HomeComponent {
 
   defaults: DefaultProfile[] = [
     {
-      pubkey: 'npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6',
-      pubkeyhex: '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
+      pubkeynpub: 'npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6',
+      pubkey: '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
       name: 'fiatjaf',
       picture: 'https://pbs.twimg.com/profile_images/539211568035004416/sBMjPR9q_normal.jpeg',
       about: 'buy my merch at fiatjaf store',
       checked: false,
     },
     {
-      pubkey: 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m',
-      pubkeyhex: '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
+      pubkeynpub: 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m',
+      pubkey: '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
       name: 'jack',
       picture: 'https://pbs.twimg.com/profile_images/1115644092329758721/AFjOr-K8_normal.jpg',
       about: 'bitcoin...twttr/@jack',
       checked: false,
     },
     {
-      pubkey: 'npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s',
-      pubkeyhex: '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
+      pubkeynpub: 'npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s',
+      pubkey: '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
       name: 'jb55',
       picture: 'https://pbs.twimg.com/profile_images/1362882895669436423/Jzsp1Ikr_normal.jpg',
       about: 'damus.io author. bitcoin and nostr dev',
       checked: false,
     },
     {
-      pubkey: 'npub1v4v57fu60zvc9d2uq23cey4fnwvxlzga9q2vta2n6xalu03rs57s0mxwu8',
-      pubkeyhex: '65594f279a789982b55c02a38c92a99b986f891d2814c5f553d1bbfe3e23853d',
+      pubkeynpub: 'npub1v4v57fu60zvc9d2uq23cey4fnwvxlzga9q2vta2n6xalu03rs57s0mxwu8',
+      pubkey: '65594f279a789982b55c02a38c92a99b986f891d2814c5f553d1bbfe3e23853d',
       name: 'hampus',
       picture: 'https://pbs.twimg.com/profile_images/1517505111991504896/9qixSAMn_normal.jpg',
       about: '',
       checked: false,
     },
     {
-      pubkey: 'npub1zl3g38a6qypp6py2z07shggg45cu8qex992xpss7d8zrl28mu52s4cjajh',
-      pubkeyhex: '17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515',
+      pubkeynpub: 'npub1zl3g38a6qypp6py2z07shggg45cu8qex992xpss7d8zrl28mu52s4cjajh',
+      pubkey: '17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515',
       name: 'sondreb',
       picture: 'https://sondreb.com/favicon.png',
       about: 'Developer 🦸‍♂️ of Blockcore Notes and Blockcore Wallet',
@@ -104,7 +104,7 @@ export class HomeComponent {
     return combineLatest([this.#defaultsChanged, this.profileService.following$]).pipe(
       map(([defaultProfiles, followProfiles]) => {
         return defaultProfiles.filter((item) => {
-          if (followProfiles.find((p) => p.pubkey === item.pubkeyhex) != null) {
+          if (followProfiles.find((p) => p.pubkey === item.pubkey) != null) {
             return undefined;
           } else {
             return item;
@@ -179,12 +179,11 @@ export class HomeComponent {
       'edcd20558f17d99327d841e4582f9b006331ac4010806efa020ef0d40078e6da',
     ];
 
-    const observable = this.profileService.getProfile(array[0]).subscribe((profile) => {
+    const observable = this.profileService.getProfile(array[0]).subscribe(async (profile) => {
       console.log('GOT CACHED PROFILE:', profile);
 
       debugger;
-      this.profileService.follow(profile.pubkey);
-
+      await this.profileService.follow(profile.pubkey);
     });
 
     // this.profileService.getProfile(array[1]).subscribe((profile) => {
@@ -249,8 +248,9 @@ export class HomeComponent {
   }
 
   async follow(profile: DefaultProfile) {
+    debugger;
     if (profile.checked) {
-      await this.profileService.follow(profile.pubkeyhex, undefined, profile as any);
+      await this.profileService.follow(profile.pubkey, undefined, profile as any);
       // this.feedService.downloadRecent([profile.pubkeyhex]);
 
       // Perform a detected changes now, since 'profileService.profiles.length' should be updated.

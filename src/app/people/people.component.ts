@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
-import { map, Subscription } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { FollowDialog, FollowDialogData } from '../shared/create-follow-dialog/create-follow-dialog';
@@ -24,6 +24,10 @@ export class PeopleComponent {
   loading = false;
   showBlocked = false;
   showCached = false;
+  showMuted = false;
+
+  items$ = this.profileService.items$;
+
   searchTerm: any;
   constructor(
     public navigation: NavigationService,
@@ -43,14 +47,19 @@ export class PeopleComponent {
   //   await this.load();
   // }
 
-  async optionsUpdated($event: any, type: any) {
+  optionsUpdated($event: any, type: any) {
     if (type == 1) {
       this.showCached = false;
-    } else {
+      this.showMuted = false;
+    } else if (type == 2) {
+      this.showCached = false;
       this.showBlocked = false;
+    } else if (type == 3) {
+      this.showBlocked = false;
+      this.showMuted = false;
     }
 
-    // await this.load();
+    this.load();
   }
 
   ngOnDestroy() {
@@ -62,22 +71,24 @@ export class PeopleComponent {
   sub?: Subscription;
   // profiles: NostrProfileDocument[] = [];
 
-  // async load() {
-  //   this.loading = true;
+  async load() {
+    this.loading = true;
 
-  //   if (this.showBlocked) {
-  //     this.profiles = await this.profileService.blockList();
-  //   } else if (this.showCached) {
-  //     this.profiles = await this.profileService.publicList();
-  //   } else {
-  //     this.profiles = await this.profileService.followList();
-  //   }
+    if (this.showBlocked) {
+      this.items$ = this.profileService.blockedProfiles$();
+    } else if (this.showMuted) {
+      this.items$ = this.profileService.mutedProfiles$();
+    } else if (this.showCached) {
+      this.items$ = this.profileService.publicProfiles$();
+    } else {
+      this.items$ = this.profileService.items$;
+    }
 
-  //   this.loading = false;
-  // }
+    this.loading = false;
+  }
 
   public trackByFn(index: number, item: NostrProfileDocument) {
-    return item.pubkey;
+    return `${item.pubkey}${item.circle}`;
   }
 
   async ngOnInit() {
@@ -92,6 +103,8 @@ export class PeopleComponent {
         },
       },
     ];
+
+    // this.load();
 
     // TODO: Until we changed to using observable (DataService) for all data,
     // we have this basic observable whenever the profiles changes.

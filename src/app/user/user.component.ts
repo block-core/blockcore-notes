@@ -10,7 +10,7 @@ import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
-import { CirclesService } from '../services/circles.service';
+import { CircleService } from '../services/circle.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { map, Observable, of, Subscription } from 'rxjs';
 
@@ -63,7 +63,7 @@ export class UserComponent {
     public options: OptionsService,
     public profiles: ProfileService,
     private validator: DataValidation,
-    private circleService: CirclesService,
+    private circleService: CircleService,
     private utilities: Utilities,
     private router: Router
   ) {
@@ -114,8 +114,9 @@ export class UserComponent {
 
         this.imagePath = this.profile.picture || '/assets/profile.png';
 
-        // If the user has name in their profile, show that and not pubkey.
         this.circle = await this.circleService.getCircle(this.profile.circle);
+        
+        // If the user has name in their profile, show that and not pubkey.
         this.appState.title = `@${this.profile.name}`;
       })
     );

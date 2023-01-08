@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { CirclesService } from 'src/app/services/circles.service';
+import { CircleService } from 'src/app/services/circle.service';
 import { NotesService } from 'src/app/services/notes.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
@@ -20,7 +20,7 @@ export class ProfileActionsComponent {
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  constructor(public circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  constructor(public circleService: CircleService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
