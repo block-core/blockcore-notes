@@ -54,7 +54,7 @@ export class CirclesComponent {
   async deleteCircle(id: number) {
     const pubKeys = this.getFollowingInCircle(id).map((f) => f.pubkey);
 
-    await this.circleService.deleteCircle(id);
+    await this.circleService.delete(id);
 
     for (var i = 0; i < pubKeys.length; i++) {
       await this.profileService.setCircle(pubKeys[i], 0);
@@ -198,7 +198,7 @@ export class CirclesComponent {
         return;
       }
 
-      this.circleService.putCircle({
+      this.circleService.put({
         id: uuidv4(),
         ...result,
       });

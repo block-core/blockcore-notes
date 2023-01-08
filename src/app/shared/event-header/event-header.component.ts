@@ -46,6 +46,6 @@ export class EventHeaderComponent {
     // If the user has name in their profile, show that and not pubkey.
     this.profileName = this.profile.name || this.profileName;
 
-    this.circle = await this.circleService.getCircle(this.profile.circle);
+    this.circle = await this.circleService.get(this.profile.circle);
   }
 }

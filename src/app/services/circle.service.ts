@@ -24,17 +24,6 @@ export class CircleService {
     return await this.table.toArray();
   }
 
-  // Just a basic observable that triggers whenever any profile has changed.
-  #circlesChangedSubject: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
-
-  get notesChanged$(): Observable<void> {
-    return this.#circlesChangedSubject.asObservable();
-  }
-
-  #changed() {
-    this.#circlesChangedSubject.next(undefined);
-  }
-
   constructor(private db: DatabaseService, private utilities: Utilities) {
     this.table = this.db.circles;
   }
@@ -44,7 +33,7 @@ export class CircleService {
     const defaultCircle = await this.table.get(0);
 
     if (!defaultCircle) {
-      await this.putCircle(CircleService.DEFAULT);
+      await this.put(CircleService.DEFAULT);
     }
 
     // Cache the circle so we can lookup quickly.
@@ -53,41 +42,7 @@ export class CircleService {
     });
   }
 
-  // async #filter(predicate: (value: Circle, key: string) => boolean): Promise<Circle[]> {
-  //   const iterator = this.table.iterator<string, Circle>({ keyEncoding: 'utf8', valueEncoding: 'json' });
-
-  //   // Add default that cannot be removed. It is where people go when group is deleted or when none is picked or could be found (matched).
-  //   const items = [CirclesService.DEFAULT];
-
-  //   for await (const [key, value] of iterator) {
-  //     if (predicate(value, key)) {
-  //       items.push(value);
-  //     }
-  //   }
-
-  //   return items;
-  // }
-
-  // async list() {
-  //   return this.#filter((value, key) => true);
-  // }
-
-  // async #get<T>(id: string): Promise<T | undefined> {
-  //   try {
-  //     const entry = await this.table.get<string, T>(id, { keyEncoding: 'utf8', valueEncoding: 'json' });
-  //     return entry;
-  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //   } catch (err: any) {
-  //     if (err.code === 'LEVEL_NOT_FOUND') {
-  //       return undefined;
-  //     } else {
-  //       console.log('HERE?!?!?');
-  //       throw err;
-  //     }
-  //   }
-  // }
-
-  async getCircle(id?: number) {
+  async get(id?: number) {
     if (id == null) {
       return undefined;
     }
@@ -96,11 +51,11 @@ export class CircleService {
     if (this.circles.length > 0) {
       return this.circles.find((c) => c.id == id);
     } else {
-      return this.table.get(id);
+      return await this.table.get(id);
     }
   }
 
-  async putCircle(document: Circle | any) {
+  async put(document: Circle | any) {
     const now = this.utilities.now();
 
     if (!document.created) {
@@ -108,11 +63,10 @@ export class CircleService {
     }
 
     document.modified = now;
-
     await this.table.put(document);
   }
 
-  async deleteCircle(id: number) {
+  async delete(id: number) {
     await this.table.delete(id);
   }
 

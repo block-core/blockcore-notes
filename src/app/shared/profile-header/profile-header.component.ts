@@ -68,7 +68,7 @@ export class ProfileHeaderComponent {
     // If the user has name in their profile, show that and not pubkey.
     // this.profileName = this.profile.name || this.profileName;
 
-    this.circle = await this.circleService.getCircle(this.profile.circle);
+    this.circle = await this.circleService.get(this.profile.circle);
 
     // Pre-generate the QR value as we had some issues doing it dynamically.
     if (this.profile.lud06) {

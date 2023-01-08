@@ -116,7 +116,7 @@ export class UserComponent {
 
           this.imagePath = this.profile.picture || '/assets/profile.png';
 
-          this.circle = await this.circleService.getCircle(this.profile.circle);
+          this.circle = await this.circleService.get(this.profile.circle);
 
           // If the user has name in their profile, show that and not pubkey.
           this.appState.title = `@${this.profile.name}`;
