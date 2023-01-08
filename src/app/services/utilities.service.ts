@@ -44,11 +44,18 @@ export class Utilities {
     } as NostrProfile;
   }
 
-  mapProfileEvent(event: NostrEventDocument): NostrProfileDocument {
-    const jsonParsed = JSON.parse(event.content) as NostrProfileDocument;
-    const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
-    profile.pubkey = event.pubkey;
-    return profile;
+  mapProfileEvent(event: NostrEventDocument): NostrProfileDocument | undefined {
+    try {
+      const jsonParsed = JSON.parse(event.content) as NostrProfileDocument;
+      const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
+      profile.pubkey = event.pubkey;
+      return profile;
+    } catch (err) {
+      debugger;
+      console.warn(err);
+    }
+
+    return undefined;
   }
 
   getNostrIdentifier(pubkey: string) {

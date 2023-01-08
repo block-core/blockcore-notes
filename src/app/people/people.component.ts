@@ -88,7 +88,7 @@ export class PeopleComponent {
   }
 
   public trackByFn(index: number, item: NostrProfileDocument) {
-    return `${item.pubkey}${item.circle}`;
+    return `${item.pubkey}${item.modified}`;
   }
 
   async ngOnInit() {
@@ -135,7 +135,6 @@ export class PeopleComponent {
     }
 
     pubkey = this.utilities.ensureHexIdentifier(pubkey);
-
     await this.profileService.follow(pubkey);
     // this.feedService.downloadRecent([pubkey]);
   }

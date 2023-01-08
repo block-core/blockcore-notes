@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from './interfaces';
-import { BehaviorSubject, from, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, from, map, Observable, tap, shareReplay } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
@@ -135,9 +135,9 @@ export class ProfileService {
     this.table = db.profiles;
   }
 
-  async downloadProfile(pubkey: string) {
-    this.#profileRequested.next(pubkey);
-  }
+  // async downloadProfile(pubkey: string) {
+  //   this.#profileRequested.next(pubkey);
+  // }
 
   downloadRecent(pubkey: string) {
     this.#profileRequested.next(pubkey);
@@ -160,58 +160,51 @@ export class ProfileService {
   //   });
   // }
 
-  #getProfile(pubkey: string) {
-    return new Observable((observer) => {
-      this.table
-        .get(pubkey)
-        .then((profile) => {
-          if (profile) {
-            observer.next(profile);
-            observer.complete();
-            return;
-          }
+  getProfileOrDownload(pubkey: string) {
+    return (
+      new Observable((observer) => {
+        this.table
+          .get(pubkey)
+          .then((profile) => {
+            if (profile) {
+              observer.next(profile);
+              observer.complete();
+              return;
+            }
 
-          debugger;
+            debugger;
 
-          this.dataService
-            .downloadNewestProfiles([pubkey])
-            .pipe(
-              map(async (event: any) => {
+            this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
+              // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
+              const p = await profile;
+
+              if (p) {
+                this.updateProfile(p.pubkey, p);
+              } else {
+                console.log('NULL PROFILE!!');
                 debugger;
-                // const p = profile as NostrEventDocument;
-                const profile = this.utilities.mapProfileEvent(event);
-
-                // Whenever we get here, also persist this profile to database.
-                await this.table.put(profile);
-
-                observer.next(profile);
-
-                // TODO: We really should not complete this until all .next exceutions have happened.
-                observer.complete();
-
-                return profile;
-              })
-            )
-            .subscribe((data) => {
-              console.log('WE MUST OF COURSE SUB TO THIS OBSERVABLE!', data);
+              }
             });
-        })
-        .catch((err) => {
-          debugger;
-          console.warn('FAILED TO GET PROFILE:', err);
-        })
-        .finally(() => {
-          console.log('FINALLY IN DB GET!');
-        });
+          })
+          .catch((err) => {
+            debugger;
+            console.warn('FAILED TO GET PROFILE:', err);
+          })
+          .finally(() => {
+            console.log('FINALLY IN DB GET!');
+          });
 
-      return () => {
-        console.log('FINISHED');
-      };
-    }).pipe(
-      tap((profile) => {
-        console.log('TAPPING ON PROFILE GET:', profile);
-        // this.table.put(profile.pubkey);
+        return () => {
+          console.log('FINISHED');
+        };
       })
+        // .pipe(shareReplay()) // TODO: Investigate if this helps us get reply from the same observable if subscribed twice.
+        .pipe(
+          tap((profile) => {
+            console.log('TAPPING ON PROFILE GET:', profile);
+            // this.table.put(profile.pubkey);
+          })
+        )
     );
   }
 
@@ -220,7 +213,7 @@ export class ProfileService {
   }
 
   getProfile(pubkey: string) {
-    return this.cache.get(pubkey, this.#getProfile(pubkey));
+    return this.cache.get(pubkey, this.getProfileOrDownload(pubkey));
   }
 
   async putProfile(profile: NostrProfileDocument) {
@@ -394,6 +387,19 @@ export class ProfileService {
 
       // Save directly, don't put in cache.
       await this.table.put(existingProfile);
+
+      // Now retrieve this profile
+      this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
+        // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
+        const p = await profile;
+
+        if (p) {
+          this.updateProfile(p.pubkey, p);
+        } else {
+          console.log('NULL PROFILE!!');
+          debugger;
+        }
+      });
     } else {
       profile.status = ProfileStatus.Follow;
       profile.modified = now;
@@ -503,6 +509,7 @@ export class ProfileService {
       profile.about = document.about;
       profile.nip05 = document.nip05;
       profile.lud06 = document.lud06;
+      profile.lud16 = document.lud16;
       profile.website = document.website;
       profile.display_name = document.display_name;
       profile.picture = document.picture;
