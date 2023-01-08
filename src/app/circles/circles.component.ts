@@ -13,7 +13,7 @@ import { ImportFollowDialog, ImportFollowDialogData } from './import-follow-dial
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from '../services/authentication.service';
 import { copyToClipboard } from '../shared/utilities';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-circles',
@@ -26,7 +26,12 @@ export class CirclesComponent {
   following: NostrProfileDocument[] = [];
   searchTerm: any;
 
-  circles: Circle[] = [];
+  items: Circle[] = [];
+  items$ = this.circleService.items$.pipe(
+    tap((items) => {
+      this.items = items;
+    })
+  );
 
   constructor(
     public appState: ApplicationState,
@@ -98,13 +103,13 @@ export class CirclesComponent {
   }
 
   private getPublicPublicKeys() {
-    console.log(this.circles);
+    console.log(this.items);
     console.log(this.following);
 
     const items: string[] = [];
 
-    for (let i = 0; i < this.circles.length; i++) {
-      const circle = this.circles[i];
+    for (let i = 0; i < this.items.length; i++) {
+      const circle = this.items[i];
 
       if (circle.public) {
         const profiles = this.getFollowingInCircle(circle.id);
@@ -212,12 +217,6 @@ export class CirclesComponent {
         },
       },
     ];
-
-    this.subscriptions.push(
-      this.circleService.items$.subscribe((circles) => {
-        this.circles = circles;
-      }) as Subscription
-    );
 
     this.subscriptions.push(this.profileService.items$.subscribe((profiles) => (this.following = profiles)) as Subscription);
   }
