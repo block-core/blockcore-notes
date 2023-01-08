@@ -21,12 +21,13 @@ export class RelayService {
   /** Default relays that the app has for users without extension. This follows the document structure as extension data. */
   defaultRelays: any = {
     // 'wss://relay.damus.io': { read: true, write: false },
-    'wss://nostr-pub.wellorder.net': { read: true, write: true },
     // 'wss://relay.nostr.info': { read: true, write: true },
-    'wss://nostr.nordlysln.net': { read: true, write: true },
-    'wss://relay.nostr.ch': { read: true, write: true },
-    'wss://nostr.v0l.io': { read: true, write: true },
-    'wss://nostr-relay.wlvs.space': { read: true, write: true },
+    // 'wss://nostr-pub.wellorder.net': { read: true, write: true },
+    // 'wss://nostr.nordlysln.net': { read: true, write: true },
+    // 'wss://relay.nostr.ch': { read: true, write: true },
+    // 'wss://nostr.v0l.io': { read: true, write: true },
+    // 'wss://nostr-relay.wlvs.space': { read: true, write: true },
+    'wss://nostrex.fly.dev': { read: true, write: true },
   };
 
   private table;
@@ -350,16 +351,17 @@ export class RelayService {
     const entries = Object.keys(preparedRelays);
 
     for (var i = 0; i < entries.length; i++) {
+      debugger;
       const key = entries[i];
       const val = preparedRelays[key];
-      await this.table.put({ id: key, write: val.write, read: val.read });
+      await this.table.put({ url: key, write: val.write, read: val.read });
     }
 
     this.relaysUpdated();
   }
 
   async appendRelay(url: string, read: boolean, write: boolean) {
-    await this.table.put({ id: url, read: read, write: write });
+    await this.table.put({ url: url, read: read, write: write });
     this.relaysUpdated();
   }
 
@@ -392,7 +394,7 @@ export class RelayService {
     for (var i = 0; i < items.length; i++) {
       const entry = items[i];
 
-      const existingConnection = this.relays.find((r) => r.url == entry.id);
+      const existingConnection = this.relays.find((r) => r.url == entry.url);
 
       console.log('FOUND EXISTING CONNECTION:', existingConnection);
 
@@ -424,7 +426,7 @@ export class RelayService {
   }
 
   async #connectToRelay(server: NostrRelayDocument, onConnected: any) {
-    const existingActiveRelay = this.getActiveRelay(server.id);
+    const existingActiveRelay = this.getActiveRelay(server.url);
 
     // If the relay already exists, just return that and do nothing else.
     if (existingActiveRelay) {
@@ -432,7 +434,7 @@ export class RelayService {
     }
 
     // const relay = relayInit('wss://relay.nostr.info');
-    const relay = relayInit(server.id) as NostrRelay;
+    const relay = relayInit(server.url) as NostrRelay;
 
     relay.on('connect', () => {
       // console.log(`connected to ${relay?.url}`);

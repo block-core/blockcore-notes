@@ -49,7 +49,7 @@ export interface NostrRelay extends Relay {
 }
 
 export interface NostrRelayDocument {
-  id: string;
+  url: string;
   read: boolean;
   write: boolean;
   nip11?: any;
