@@ -164,6 +164,7 @@ header {
   bottom: 2em;
   left: 2.9em;
   cursor: pointer;
+  transition: opacity 250ms ease;
 }
 
 .new-post-button:hover {
