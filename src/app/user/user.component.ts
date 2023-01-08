@@ -92,32 +92,35 @@ export class UserComponent {
         }
 
         this.pubkey = pubkey;
-        // this.profile = await this.profiles.getProfile(pubkey);
 
-        if (!this.profile) {
-          this.profile = this.profiles.emptyProfile(pubkey);
-          this.circle = undefined;
-        }
+        this.profiles.getProfile(pubkey).subscribe(async (profile) => {
+          this.profile = profile;
 
-        this.npub = this.utilities.getNostrIdentifier(pubkey);
-
-        if (!this.profile.name) {
-          this.profile.name = this.npub;
-        }
-
-        this.profileName = this.profile.name;
-
-        if (this.profileName)
-          if (!this.profile.display_name) {
-            this.profile.display_name = this.profileName;
+          if (!this.profile) {
+            this.profile = this.profiles.emptyProfile(pubkey);
+            this.circle = undefined;
           }
 
-        this.imagePath = this.profile.picture || '/assets/profile.png';
+          this.npub = this.utilities.getNostrIdentifier(pubkey);
 
-        this.circle = await this.circleService.getCircle(this.profile.circle);
-        
-        // If the user has name in their profile, show that and not pubkey.
-        this.appState.title = `@${this.profile.name}`;
+          if (!this.profile.name) {
+            this.profile.name = this.npub;
+          }
+
+          this.profileName = this.profile.name;
+
+          if (this.profileName)
+            if (!this.profile.display_name) {
+              this.profile.display_name = this.profileName;
+            }
+
+          this.imagePath = this.profile.picture || '/assets/profile.png';
+
+          this.circle = await this.circleService.getCircle(this.profile.circle);
+
+          // If the user has name in their profile, show that and not pubkey.
+          this.appState.title = `@${this.profile.name}`;
+        });
       })
     );
   }

@@ -14,6 +14,8 @@ export class CircleService {
 
   private table;
 
+  circles: Circle[] = [];
+
   cache = new CacheService();
 
   items$ = from(liveQuery(() => this.items()));
@@ -44,6 +46,11 @@ export class CircleService {
     if (!defaultCircle) {
       await this.putCircle(CircleService.DEFAULT);
     }
+
+    // Cache the circle so we can lookup quickly.
+    this.items$.subscribe((circles) => {
+      this.circles = circles;
+    });
   }
 
   // async #filter(predicate: (value: Circle, key: string) => boolean): Promise<Circle[]> {
@@ -81,11 +88,16 @@ export class CircleService {
   // }
 
   async getCircle(id?: number) {
-    if (!id) {
+    if (id == null) {
       return undefined;
     }
 
-    return this.table.get(id);
+    // Use the cache if loaded already.
+    if (this.circles.length > 0) {
+      return this.circles.find((c) => c.id == id);
+    } else {
+      return this.table.get(id);
+    }
   }
 
   async putCircle(document: Circle | any) {
