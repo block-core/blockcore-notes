@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
 import { DataValidation } from '../services/data-validation.service';
-import { Circle, NostrEvent, NostrProfileDocument } from '../services/interfaces';
+import { Circle, NostrEvent, NostrEventDocument, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { CircleService } from '../services/circle.service';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from '../services/authentication.service';
 import { copyToClipboard } from '../shared/utilities';
 import { Subscription, tap } from 'rxjs';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-circles',
@@ -42,6 +43,7 @@ export class CirclesComponent {
     private utilities: Utilities,
     private authService: AuthenticationService,
     private router: Router,
+    private dataService: DataService,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private ngZone: NgZone
@@ -156,6 +158,32 @@ export class CirclesComponent {
       });
 
       let pubkey = this.utilities.ensureHexIdentifier(result.pubkey);
+
+      this.dataService.downloadNewestEvents([pubkey], [3]).subscribe((event) => {
+        const nostrEvent = event as NostrEventDocument;
+        const publicKeys = nostrEvent.tags.map((t) => t[1]);
+
+        for (let i = 0; i < publicKeys.length; i++) {
+          const publicKey = publicKeys[i];
+
+          this.profileService.follow(publicKey);
+
+          // const profile = await this.profile.getProfile(publicKey);
+
+          // // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+          // if (profile) {
+          //   await this.profile.follow(publicKeys[i], profile.circle);
+          // } else {
+          //   await this.profile.follow(publicKeys[i]);
+          // }
+        }
+
+        // await this.load();
+
+        // this.ngZone.run(() => {
+        //   this.cd.detectChanges();
+        // });
+      });
 
       // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
       // follow lists and having to process everything multiple times. Just query one by one until

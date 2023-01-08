@@ -45,6 +45,11 @@ export class Utilities {
   }
 
   mapProfileEvent(event: NostrEventDocument): NostrProfileDocument | undefined {
+    // If a timeout is received, the event content will be: "The query timed out before it could complete: [{"kinds":[0],"authors":["edcd205..."]}]."
+    if (typeof event === 'string') {
+      return undefined;
+    }
+
     try {
       const jsonParsed = JSON.parse(event.content) as NostrProfileDocument;
       const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;

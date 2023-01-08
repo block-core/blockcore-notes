@@ -101,8 +101,13 @@ export class DataService {
 
   /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
   downloadNewestProfileEvents(pubkeys: string[], requestTimeout = 10000) {
+    return this.downloadNewestEvents(pubkeys, [0], requestTimeout);
+  }
+
+  /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
+  downloadNewestEvents(pubkeys: string[], kinds: number[], requestTimeout = 10000) {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
-    const query = [{ kinds: [0], authors: pubkeys }];
+    const query = [{ kinds: kinds, authors: pubkeys }];
     const totalEvents: NostrEventDocument[] = [];
 
     return this.connected$
