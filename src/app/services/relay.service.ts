@@ -22,12 +22,12 @@ export class RelayService {
   defaultRelays: any = {
     // 'wss://relay.damus.io': { read: true, write: false },
     // 'wss://relay.nostr.info': { read: true, write: true },
-    // 'wss://nostr-pub.wellorder.net': { read: true, write: true },
-    // 'wss://nostr.nordlysln.net': { read: true, write: true },
-    // 'wss://relay.nostr.ch': { read: true, write: true },
-    // 'wss://nostr.v0l.io': { read: true, write: true },
-    // 'wss://nostr-relay.wlvs.space': { read: true, write: true },
-    'wss://nostrex.fly.dev': { read: true, write: true },
+    'wss://nostr-pub.wellorder.net': { read: true, write: true },
+    'wss://nostr.nordlysln.net': { read: true, write: true },
+    'wss://relay.nostr.ch': { read: true, write: true },
+    'wss://nostr.v0l.io': { read: true, write: true },
+    'wss://nostr-relay.wlvs.space': { read: true, write: true },
+    // 'wss://nostrex.fly.dev': { read: true, write: true },
   };
 
   private table;
@@ -252,6 +252,7 @@ export class RelayService {
         const content = await rawResponse.json();
 
         relay.metadata.nip11 = content;
+        relay.metadata.error = undefined;
       } else {
         relay.metadata.error = `Unable to get NIP-11 data. Status: ${rawResponse.statusText}`;
       }

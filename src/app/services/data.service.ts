@@ -93,8 +93,27 @@ export class DataService {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
     const query = [{ kinds: [0], authors: pubkeys }];
 
+    debugger;
+
+    // return this.connected$.pipe(take(1));
+
+    console.log(this.relayService.connectedRelays());
+
+    // return this.relayService.connectedRelays()
+    // .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+    // .pipe(
+    //   timeout(requestTimeout),
+    //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
+    // );
+
     return this.connected$
       .pipe(take(1))
+      .pipe(
+        tap(() => {
+          debugger;
+          console.log('YEEEEEEEEEEEEEE');
+        })
+      )
       .pipe(mergeMap(() => this.relayService.connectedRelays()))
       .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
       .pipe(

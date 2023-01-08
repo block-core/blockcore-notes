@@ -24,6 +24,10 @@ export class FetchService {
     private eventService: EventService,
     private relayService: RelayService
   ) {
+    this.connected$.subscribe(() => {
+      console.log('Yes we have connection!');
+    });
+
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {
     //   if (!pubkey) {
@@ -96,14 +100,39 @@ export class FetchService {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
     const query = [{ kinds: [0], authors: pubkeys }];
 
-    return this.connected$
-      .pipe(take(1))
-      .pipe(mergeMap(() => this.relayService.connectedRelays()))
-      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
-      .pipe(
-        timeout(requestTimeout),
-        catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
-      );
+    return (
+      this.connected$
+        .pipe(
+          tap((res) => console.log('HTTP response:', res)),
+          take(1)
+        )
+        // .pipe(
+        //   tap(() => {
+        //     debugger;
+        //     console.log('CONNECTED!!');
+        //   })
+        // )
+        .pipe(
+          tap((res) => console.log('HTTP response:', res)),
+          mergeMap(() => {
+            debugger;
+            const relays = this.relayService.connectedRelays();
+            return relays;
+          })
+        )
+        .pipe(
+          tap((res) => console.log('HTTP response:', res)),
+          mergeMap((relay) => {
+            debugger;
+            return this.downloadFromRelay(query, relay);
+          })
+        )
+        .pipe(
+          tap((res) => console.log('HTTP response:', res)),
+          timeout(requestTimeout),
+          catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
+        )
+    );
   }
 
   subscribeLatestEvents(kinds: number[], pubkeys: string[], limit: number) {

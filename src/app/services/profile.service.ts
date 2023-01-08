@@ -8,6 +8,7 @@ import { DatabaseService } from './database.service';
 import { liveQuery } from 'dexie';
 import { CacheService } from './cache.service';
 import { FetchService } from './fetch.service';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root',
@@ -118,7 +119,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: DatabaseService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
+  constructor(private db: DatabaseService, private dataService: DataService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
     this.table = db.profiles;
   }
 
@@ -134,23 +135,52 @@ export class ProfileService {
     return new Observable((observer) => {
       this.table.get(pubkey).then((profile) => {
         if (profile) {
+          debugger;
           observer.next(profile);
           observer.complete();
           return;
         }
 
-        return this.fetchService.downloadNewestProfiles([pubkey]).pipe(
-          map(async (event: any) => {
-            // const p = profile as NostrEventDocument;
-            const profile = this.utilities.mapProfileEvent(event);
+        debugger;
 
-            // Whenever we get here, also persist this profile to database.
-            await this.table.put(profile);
-
-            return profile;
-          })
-        );
+        return this.dataService.downloadNewestProfiles([pubkey]);
       });
+    });
+  }
+
+  #getProfile2(pubkey: string) {
+    return new Observable((observer) => {
+      this.table
+        .get(pubkey)
+        .then((profile) => {
+          if (profile) {
+            observer.next(profile);
+            observer.complete();
+            return;
+          }
+
+          debugger;
+
+          return this.dataService.downloadNewestProfiles([pubkey]).pipe(
+            map(async (event: any) => {
+              debugger;
+              // const p = profile as NostrEventDocument;
+              const profile = this.utilities.mapProfileEvent(event);
+
+              // Whenever we get here, also persist this profile to database.
+              await this.table.put(profile);
+
+              return profile;
+            })
+          );
+        })
+        .catch((err) => {
+          debugger;
+          console.warn('FAILED TO GET PROFILE:', err);
+        })
+        .finally(() => {
+          console.log('FINALLY IN DB GET!');
+        });
 
       return () => {
         console.log('FINISHED');
