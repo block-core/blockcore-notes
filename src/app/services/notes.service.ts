@@ -28,7 +28,7 @@ export class NotesService {
   }
 
   /** List of events for the current view, which might not be persisted. */
-  currentViewNotes: NostrEventDocument[] = [];
+  // currentViewNotes: NostrEventDocument[] = [];
 
   constructor(private db: DatabaseService) {
     this.table = this.db.notes;

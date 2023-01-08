@@ -7,15 +7,11 @@
 
 <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Notes">
-    <div *ngIf="events$ | withStatus | async as items" class="feed-page">
+    <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
-        <div class="page" *ngIf="items.value.length === 0">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
           <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
-          <p>
-            <em>(Options to load older notes will come in the future)</em>
-            <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
-          </p>
-        </div>
+        </div> -->
 
         <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
           <div class="events-header">

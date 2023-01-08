@@ -35,11 +35,26 @@ export class UserComponent {
   events: NostrEventDocument[] = [];
   #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
   get events$(): Observable<NostrEventDocument[]> {
-    return this.#eventsChanged
-      .asObservable()
-      .pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))))
-      .pipe(map((x) => x.slice(0, this.eventsCount)));
+    return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
   }
+
+  rootEvents$ = this.events$
+    .pipe(
+      map((data) => {
+        return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length == 0);
+      })
+    )
+    .pipe(map((x) => x.slice(0, this.eventsCount)));
+
+  replyEvents$ = this.events$
+    .pipe(
+      map((data) => {
+        return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length > 0);
+      })
+    )
+    .pipe(map((x) => x.slice(0, this.eventsCount)));
+
+  // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
 
   // get events$(): Observable<NostrEventDocument[]> {
   //   return this.#eventsChanged.asObservable().pipe(
@@ -89,17 +104,6 @@ export class UserComponent {
   //   })
   // );
 
-  replyEvents$ = of(this.notes).pipe(
-    map((data) => {
-      // debugger;
-      if (!this.pubkey) {
-        return;
-      }
-
-      return data.filter((n) => n.pubkey == this.pubkey);
-    })
-  );
-
   subscriptions: Subscription[] = [];
 
   profileSubscription?: Subscription;
@@ -131,13 +135,22 @@ export class UserComponent {
   tabIndex?: number;
 
   onTabChanged(event: MatTabChangeEvent) {
+    // Reset the events count when changing tabs.
     this.router.navigate([], { queryParams: { t: event.index }, replaceUrl: true });
+
+    this.eventsCount = 5;
+    this.#changed();
+  }
+
+  #changed() {
+    this.#eventsChanged.next(this.events);
   }
 
   eventsCount = 5;
 
   showMore() {
     this.eventsCount += 5;
+    this.#changed();
   }
 
   ngOnInit() {
@@ -210,19 +223,15 @@ export class UserComponent {
         });
 
         this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {
-          console.log('EVENT:', event);
-
-          const existingIndex = this.notesService.currentViewNotes.findIndex((e) => e.id == event.id);
+          const existingIndex = this.events.findIndex((e) => e.id == event.id);
 
           if (existingIndex !== -1) {
             return;
           }
 
-          this.notesService.currentViewNotes.unshift(event);
-          // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-
           this.events.unshift(event);
-          this.#eventsChanged.next(this.events);
+          // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+          this.#changed();
 
           // this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
 
