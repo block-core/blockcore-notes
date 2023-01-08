@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from './interfaces';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { DatabaseService } from './database.service';
 import { liveQuery } from 'dexie';
 
@@ -21,7 +21,7 @@ export class NotesService {
     this.#notesChangedSubject.next(undefined);
   }
 
-  items$ = liveQuery(() => this.items());
+  items$ = from(liveQuery(() => this.items()));
 
   async items() {
     return await this.table.toArray();

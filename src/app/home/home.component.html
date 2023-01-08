@@ -34,6 +34,7 @@
       <br /><br />
 
       <div *ngIf="defaults$ | async as defaults">
+
         <div *ngIf="defaults.length > 0">
           <p>If you are new to Blockcore Notes, here are some interesting people you can follow.</p>
 
@@ -44,7 +45,7 @@
           {{ profile.pubkey }}<br><br>
           <button mat-raised-button color="primary">Follow</button> -->
           <div class="card-container">
-            <mat-card class="default-card" *ngFor="let profile of defaults" [@fade]="profile.checked">
+            <mat-card class="default-card" *ngFor="let profile of defaults; trackBy: trackByProfile" [@fade]="profile.checked">
               <mat-card-header>
                 <img mat-card-avatar [src]="profile.picture" />
                 <mat-card-title [matTooltip]="profile.pubkey" matTooltipPosition="above">{{ profile.name }}</mat-card-title>

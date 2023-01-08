@@ -101,9 +101,10 @@ export class HomeComponent {
   #defaultsChanged: BehaviorSubject<DefaultProfile[]> = new BehaviorSubject<DefaultProfile[]>(this.defaults);
 
   get defaults$(): Observable<DefaultProfile[]> {
-    return combineLatest([this.#defaultsChanged, this.profileService.following$]).pipe(
+    return combineLatest([this.#defaultsChanged, this.profileService.items$]).pipe(
       map(([defaultProfiles, followProfiles]) => {
         return defaultProfiles.filter((item) => {
+          debugger;
           if (followProfiles.find((p) => p.pubkey === item.pubkey) != null) {
             return undefined;
           } else {
@@ -248,14 +249,14 @@ export class HomeComponent {
   }
 
   async follow(profile: DefaultProfile) {
-    debugger;
     if (profile.checked) {
-      await this.profileService.follow(profile.pubkey, undefined, profile as any);
+      await this.profileService.follow(profile.pubkey, 0, profile as any);
+
       // this.feedService.downloadRecent([profile.pubkeyhex]);
 
       // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
       this.#defaultsChanged.next(this.defaults);
-      this.profileService.updated();
+      // this.profileService.updated();
     }
   }
 
@@ -293,6 +294,10 @@ export class HomeComponent {
 
   public trackByFn(index: number, item: NostrEvent) {
     return item.id;
+  }
+
+  public trackByProfile(index: number, item: DefaultProfile) {
+    return `${item.pubkey}${item.checked}`;
   }
 
   public trackByNoteId(index: number, item: NostrNoteDocument) {

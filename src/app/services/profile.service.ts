@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from './interfaces';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, from, map, Observable, tap } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
@@ -20,7 +20,7 @@ export class ProfileService {
 
   cache = new CacheService();
 
-  items$ = liveQuery(() => this.list(ProfileStatus.Follow));
+  items$ = from(liveQuery(() => this.list(ProfileStatus.Follow)));
 
   /** Returns a list of profiles based upon status. 0 = public, 1 = follow, 2 = mute, 3 = block */
   async list(status: ProfileStatus) {
@@ -32,15 +32,15 @@ export class ProfileService {
   }
 
   blockedProfiles$() {
-    return liveQuery(() => this.list(ProfileStatus.Block));
+    return from(liveQuery(() => this.list(ProfileStatus.Block)));
   }
 
   publicProfiles$() {
-    return liveQuery(() => this.list(ProfileStatus.Public));
+    return from(liveQuery(() => this.list(ProfileStatus.Public)));
   }
 
   mutedProfiles$() {
-    return liveQuery(() => this.list(ProfileStatus.Mute));
+    return from(liveQuery(() => this.list(ProfileStatus.Mute)));
   }
 
   // #profile: NostrProfileDocument;
@@ -378,7 +378,7 @@ export class ProfileService {
   }
 
   /** Follow can be called without having an existing profile persisted. */
-  async follow(pubkey: string, circle?: number, existingProfile?: NostrProfileDocument) {
+  async follow(pubkey: string, circle: number = 0, existingProfile?: NostrProfileDocument) {
     const profile = await this.getLocalProfile(pubkey);
     const now = this.utilities.now();
 

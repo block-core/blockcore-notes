@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Circle } from './interfaces';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { liveQuery } from 'dexie';
 import { DatabaseService } from './database.service';
 import { CacheService } from './cache.service';
@@ -16,7 +16,7 @@ export class CircleService {
 
   cache = new CacheService();
 
-  items$ = liveQuery(() => this.items());
+  items$ = from(liveQuery(() => this.items()));
 
   async items() {
     return await this.table.toArray();
@@ -39,7 +39,7 @@ export class CircleService {
 
   /** Important to call to ensure we have the default circle added */
   async initialize() {
-    const defaultCircle = this.table.get(0);
+    const defaultCircle = await this.table.get(0);
 
     if (!defaultCircle) {
       await this.putCircle(CircleService.DEFAULT);

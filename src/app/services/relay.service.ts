@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrRelay, NostrRelayDocument } from './interfaces';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, from } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event.service';
 import { OptionsService } from './options.service';
@@ -29,7 +29,7 @@ export class RelayService {
 
   cache = new CacheService();
 
-  items$ = liveQuery(() => this.list());
+  items$ = from(liveQuery(() => this.list()));
 
   async list() {
     return await this.table.toArray();
