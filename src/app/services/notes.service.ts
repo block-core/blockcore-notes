@@ -27,6 +27,9 @@ export class NotesService {
     return await this.table.toArray();
   }
 
+  /** List of events for the current view, which might not be persisted. */
+  currentViewNotes: NostrEventDocument[] = [];
+
   constructor(private db: DatabaseService) {
     this.table = this.db.notes;
   }

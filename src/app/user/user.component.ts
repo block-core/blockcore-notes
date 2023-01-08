@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
@@ -12,8 +12,9 @@ import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
 import { CircleService } from '../services/circle.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { map, Observable, of, Subscription } from 'rxjs';
+import { map, Observable, of, Subscription, tap } from 'rxjs';
 import { DataService } from '../services/data.service';
+import { NotesService } from '../services/notes.service';
 
 @Component({
   selector: 'app-user',
@@ -31,28 +32,43 @@ export class UserComponent {
   circle?: Circle;
   initialLoad = true;
 
-  userEvents$!: any;
-  replyEvents$!: any;
+  // userEvents$!: any;
+  // replyEvents$!: any;
 
-  // userEvents$ = this.feedService.rootEvents$.pipe(
+  userEvents$ = of(this.notesService.currentViewNotes).pipe(
+    map((data) => {
+      debugger;
+      return data.sort((a, b) => {
+        debugger;
+        return a.created_at > b.created_at ? 1 : -1;
+      });
+    })
+  );
+  //.pipe(map((objs) => objs.map((c) => c.created_at).sort((a, b) => (a > b ? 1 : -1)))); //.pipe(map((bands) => [...bands].sort((a, b) => (a.created_at > b.created_at ? 1 : -1))));
+  // this.titles$ = item.pipe(map(objs => objs.map(c => c.title).sort((a, b) => a.localCompare(b))))
+  // tap((results) => {
+  //   return results.sort((x, y) => (x.created_at < y.created_at ? -1 : 1)); // https://stackoverflow.com/a/50276301
+  // })
+  // .pipe(
   //   map((data) => {
+  //     debugger;
   //     if (!this.pubkey) {
   //       return;
   //     }
-
   //     return data.filter((n) => n.pubkey == this.pubkey);
   //   })
   // );
 
-  // replyEvents$ = this.feedService.replyEvents$.pipe(
-  //   map((data) => {
-  //     if (!this.pubkey) {
-  //       return;
-  //     }
+  replyEvents$ = of(this.notesService.currentViewNotes).pipe(
+    map((data) => {
+      // debugger;
+      if (!this.pubkey) {
+        return;
+      }
 
-  //     return data.filter((n) => n.pubkey == this.pubkey);
-  //   })
-  // );
+      return data.filter((n) => n.pubkey == this.pubkey);
+    })
+  );
 
   subscriptions: Subscription[] = [];
 
@@ -71,7 +87,9 @@ export class UserComponent {
     private validator: DataValidation,
     private circleService: CircleService,
     private utilities: Utilities,
-    private router: Router
+    public notesService: NotesService,
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   async follow() {
@@ -151,6 +169,21 @@ export class UserComponent {
 
         this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {
           console.log('EVENT:', event);
+
+          const existingIndex = this.notesService.currentViewNotes.findIndex((e) => e.id == event.id);
+
+          if (existingIndex !== -1) {
+            return;
+          }
+
+          this.notesService.currentViewNotes.unshift(event);
+          this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+
+          // this.ngZone.run(() => {
+          //   this.notesService.currentViewNotes.push(event);
+          // });
+
+          // console.log('LENGTH:', this.notesService.currentViewNotes.length);
         });
       })
     );
