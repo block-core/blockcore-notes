@@ -6,7 +6,6 @@ import { Filter, Relay } from 'nostr-tools';
 import { DataValidation } from './data-validation.service';
 import { ApplicationState } from './applicationstate.service';
 import { timeout, map, merge, Observable, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of } from 'rxjs';
-import { Relay2Service } from './relay2.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +22,7 @@ export class FetchService {
     private appState: ApplicationState,
     // private profileService: ProfileService,
     private eventService: EventService,
-    private relayService: Relay2Service
+    private relayService: RelayService
   ) {
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {
@@ -97,14 +96,32 @@ export class FetchService {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
     const query = [{ kinds: [0], authors: pubkeys }];
 
-    return this.connected$
-      .pipe(take(1))
-      .pipe(mergeMap(() => this.relayService.connectedRelays()))
-      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
-      .pipe(
-        timeout(requestTimeout),
-        catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
-      );
+    debugger;
+
+    return (
+      this.connected$
+        .pipe(take(1))
+        .pipe(
+          tap(() => {
+            console.log('TAPPING!');
+            debugger;
+          })
+        )
+        // .pipe(mergeMap(() => this.relayService.connectedRelays()))
+        .pipe(
+          map(() => {
+            // Create all observables from the connected relays.
+            const observables = this.relayService.connectedRelays().map((relay) => this.downloadFromRelay(query, relay));
+            return merge([...observables]);
+          })
+        )
+        //.pipe(merge([this.relayService.connectedRelays()]))
+        //.pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+        .pipe(
+          timeout(requestTimeout),
+          catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
+        )
+    );
   }
 
   subscribeLatestEvents(kinds: number[], pubkeys: string[], limit: number) {

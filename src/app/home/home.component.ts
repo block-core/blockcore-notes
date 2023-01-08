@@ -182,21 +182,21 @@ export class HomeComponent {
       'edcd20558f17d99327d841e4582f9b006331ac4010806efa020ef0d40078e6da',
     ];
 
-    this.profileService.getProfile2(array[0]).subscribe((profile) => {
+    const observable = this.profileService.getProfile2(array[0]).subscribe((profile) => {
       console.log('GOT CACHED PROFILE:', profile);
     });
 
-    this.profileService.getProfile2(array[1]).subscribe((profile) => {
-      console.log('GOT CACHED PROFILE:', profile);
-    });
+    // this.profileService.getProfile2(array[1]).subscribe((profile) => {
+    //   console.log('GOT CACHED PROFILE:', profile);
+    // });
 
-    this.profileService.getProfile2(array[2]).subscribe((profile) => {
-      console.log('GOT CACHED PROFILE:', profile);
-    });
+    // this.profileService.getProfile2(array[2]).subscribe((profile) => {
+    //   console.log('GOT CACHED PROFILE:', profile);
+    // });
 
-    this.profileService.getProfile2(array[3]).subscribe((profile) => {
-      console.log('GOT CACHED PROFILE:', profile);
-    });
+    // this.profileService.getProfile2(array[3]).subscribe((profile) => {
+    //   console.log('GOT CACHED PROFILE:', profile);
+    // });
 
     // const observable = this.profileService.getProfile2(array[0]).dataService.downloadNewestProfiles(array).subscribe((profile) => {
     //   console.log('PROFILE RECEIVED:', profile);
@@ -214,9 +214,9 @@ export class HomeComponent {
     //   }
     // });
 
-    // setInterval(() => {
-    //   console.log('observable.closed:', observable.closed);
-    // }, 2000);
+    setInterval(() => {
+      console.log('observable.closed:', observable.closed);
+    }, 2000);
   }
 
   subscribeEvents() {

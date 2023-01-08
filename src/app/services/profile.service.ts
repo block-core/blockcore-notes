@@ -17,6 +17,7 @@ import { FetchService } from './fetch.service';
 })
 export class ProfileService {
   private table;
+  private table2;
 
   initialized = false;
 
@@ -99,7 +100,11 @@ export class ProfileService {
   }
 
   constructor(private db: DatabaseService, private storage: StorageService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
+    this.table2 = db.profiles;
     this.table = this.storage.table<NostrProfileDocument>('profile');
+
+    // this.table2.get();
+    // this.table.get()
   }
 
   async downloadProfile(pubkey: string) {
@@ -112,24 +117,38 @@ export class ProfileService {
 
   #getProfile(pubkey: string) {
     return new Observable((observer) => {
-      this.table.get(pubkey).then((profile) => {
+      this.table2.get(pubkey).then((profile) => {
+        debugger;
+
         if (profile) {
-          observer.next(profile);
-          observer.complete();
-          return;
+          // observer.next(profile);
+          // observer.complete();
+          // return;
         }
 
-        return this.fetchService.downloadNewestProfiles([pubkey]).pipe(
-          map(async (event: any) => {
-            // const p = profile as NostrEventDocument;
-            const profile = this.utilities.mapProfileEvent(event);
+        this.fetchService
+          .downloadNewestProfiles([pubkey])
+          .pipe(
+            map(async (event: any) => {
+              debugger;
+              // const p = profile as NostrEventDocument;
+              const profile = this.utilities.mapProfileEvent(event);
 
-            // Whenever we get here, also persist this profile to database.
-            await this.table.put(profile.pubkey, profile);
+              // Whenever we get here, also persist this profile to database.
+              await this.table2.put(profile);
 
-            return profile;
-          })
-        );
+              debugger;
+
+              observer.next(profile);
+              observer.complete();
+
+              return profile;
+            })
+          )
+          .subscribe((data) => {
+            debugger;
+            console.log('SUBSCRIBED TO!! YEH!!', data);
+          });
       });
 
       return () => {
