@@ -10,7 +10,7 @@
     <span *ngIf="userEvents$ | async as events">
       <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
-      <div class="page" *ngIf="events.length === 0">
+      <div class="page" *ngIf="events === 0">
         <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
         <p>
           <em>(Options to load older notes will come in the future)</em>
@@ -34,7 +34,7 @@
           </mat-expansion-panel>
         </mat-accordion> -->
 
-        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
+        <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
           <div class="events-header">
             <app-event-header [pubkey]="event.pubkey"
               ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -43,8 +43,7 @@
           </div>
 
           <app-content [event]="event"></app-content>
-          <!-- <div class="content clickable">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
-        </mat-card>
+        </mat-card> -->
       </div>
     </span>
 
@@ -64,7 +63,7 @@
     <span *ngIf="replyEvents$ | async as events">
       <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
-      <div class="page" *ngIf="events.length === 0">
+      <div class="page" *ngIf="events === 0">
         <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
         <p>
           <em>(Options to load older notes will come in the future)</em>
@@ -88,7 +87,8 @@
         </mat-expansion-panel>
       </mat-accordion> -->
 
-        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
+        <!-- TODO ENABLE THIS!! -->
+        <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
           <div class="events-header">
             <app-event-header [pubkey]="event.pubkey"
               ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -96,8 +96,7 @@
             <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
           </div>
           <app-content [event]="event"></app-content>
-          <!-- <div class="content clickable">Reply: {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
-        </mat-card>
+        </mat-card> -->
       </div>
     </span></mat-tab
   >

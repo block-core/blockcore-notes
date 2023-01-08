@@ -14,7 +14,6 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { OptionsService } from '../services/options.service';
-import { FeedService } from '../services/feed.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { NavigationService } from '../services/navigation.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -129,7 +128,6 @@ export class HomeComponent {
     private dataService: DataService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
-    private feedService: FeedService,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
@@ -182,19 +180,19 @@ export class HomeComponent {
       'edcd20558f17d99327d841e4582f9b006331ac4010806efa020ef0d40078e6da',
     ];
 
-    this.profileService.getProfile2(array[0]).subscribe((profile) => {
+    this.profileService.getProfile(array[0]).subscribe((profile) => {
       console.log('GOT CACHED PROFILE:', profile);
     });
 
-    this.profileService.getProfile2(array[1]).subscribe((profile) => {
+    this.profileService.getProfile(array[1]).subscribe((profile) => {
       console.log('GOT CACHED PROFILE:', profile);
     });
 
-    this.profileService.getProfile2(array[2]).subscribe((profile) => {
+    this.profileService.getProfile(array[2]).subscribe((profile) => {
       console.log('GOT CACHED PROFILE:', profile);
     });
 
-    this.profileService.getProfile2(array[3]).subscribe((profile) => {
+    this.profileService.getProfile(array[3]).subscribe((profile) => {
       console.log('GOT CACHED PROFILE:', profile);
     });
 
@@ -250,7 +248,7 @@ export class HomeComponent {
   async follow(profile: DefaultProfile) {
     if (profile.checked) {
       await this.profileService.follow(profile.pubkeyhex, undefined, profile as any);
-      this.feedService.downloadRecent([profile.pubkeyhex]);
+      // this.feedService.downloadRecent([profile.pubkeyhex]);
 
       // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
       this.#defaultsChanged.next(this.defaults);
@@ -323,29 +321,29 @@ export class HomeComponent {
     // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
     // follow lists and having to process everything multiple times. Just query one by one until
     // we find the list. Until then, we simply grab the first relay only.
-    this.subscriptions.push(
-      this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-        const publicKeys = contacts.tags.map((t) => t[1]);
+    // this.subscriptions.push(
+    //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
+    //     const publicKeys = contacts.tags.map((t) => t[1]);
 
-        for (let i = 0; i < publicKeys.length; i++) {
-          const publicKey = publicKeys[i];
-          const profile = await this.profileService.getProfile(publicKey);
+    //     for (let i = 0; i < publicKeys.length; i++) {
+    //       const publicKey = publicKeys[i];
+    //       const profile = await this.profileService.getProfile(publicKey);
 
-          // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-          if (profile) {
-            await this.profileService.follow(publicKeys[i], profile.circle);
-          } else {
-            await this.profileService.follow(publicKeys[i]);
-          }
-        }
+    //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+    //       if (profile) {
+    //         await this.profileService.follow(publicKeys[i], profile.circle);
+    //       } else {
+    //         await this.profileService.follow(publicKeys[i]);
+    //       }
+    //     }
 
-        this.router.navigateByUrl('/people');
+    //     this.router.navigateByUrl('/people');
 
-        // this.ngZone.run(() => {
-        //   this.cd.detectChanges();
-        // });
-      })
-    );
+    //     // this.ngZone.run(() => {
+    //     //   this.cd.detectChanges();
+    //     // });
+    //   })
+    // );
   }
 
   fetchProfiles(relay: Relay, authors: string[]) {

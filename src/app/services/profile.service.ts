@@ -163,6 +163,10 @@ export class ProfileService {
     );
   }
 
+  async getLocalProfile(pubkey: string) {
+    return this.table.get(pubkey);
+  }
+
   getProfile(pubkey: string) {
     return this.cache.get(pubkey, this.#getProfile(pubkey));
   }
@@ -211,6 +215,11 @@ export class ProfileService {
   //     }
   //   }
   // }
+
+  /** Load all the following users into memory and cache. */
+  async initialize() {
+    // TODO!!
+  }
 
   /** Populate the observable with profiles which we are following. */
   // async populate() {
@@ -444,7 +453,7 @@ export class ProfileService {
   }
 
   async deleteProfile(pubkey: string) {
-    await this.table.del(pubkey);
+    await this.table.delete(pubkey);
 
     // This shouldn't possibly be -1 for delete?
     const index = this.#profileIndex(pubkey);

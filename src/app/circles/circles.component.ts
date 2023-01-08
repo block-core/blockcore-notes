@@ -5,7 +5,6 @@ import { Utilities } from '../services/utilities.service';
 import { DataValidation } from '../services/data-validation.service';
 import { Circle, NostrEvent, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
-import { StorageService } from '../services/storage.service';
 import { CirclesService } from '../services/circles.service';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +12,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ImportFollowDialog, ImportFollowDialogData } from './import-follow-dialog/import-follow-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from '../services/authentication.service';
-import { FeedService } from '../services/feed.service';
 import { copyToClipboard } from '../shared/utilities';
 import { Subscription } from 'rxjs';
 
@@ -33,10 +31,8 @@ export class CirclesComponent {
   constructor(
     public appState: ApplicationState,
     public circlesService: CirclesService,
-    private storage: StorageService,
     private profile: ProfileService,
     public dialog: MatDialog,
-    private feedService: FeedService,
     private validator: DataValidation,
     private utilities: Utilities,
     private authService: AuthenticationService,
@@ -52,8 +48,8 @@ export class CirclesComponent {
 
   async load() {
     this.loading = true;
-    this.circles = await this.circlesService.list();
-    this.following = await this.profile.followList();
+    // this.circles = await this.circlesService.list();
+    // this.following = await this.profile.followList();
     this.loading = false;
   }
 
@@ -98,29 +94,29 @@ export class CirclesComponent {
       // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
       // follow lists and having to process everything multiple times. Just query one by one until
       // we find the list. Until then, we simply grab the first relay only.
-      this.subscriptions.push(
-        this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-          const publicKeys = contacts.tags.map((t) => t[1]);
+      // this.subscriptions.push(
+      //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
+      //     const publicKeys = contacts.tags.map((t) => t[1]);
 
-          for (let i = 0; i < publicKeys.length; i++) {
-            const publicKey = publicKeys[i];
-            const profile = await this.profile.getProfile(publicKey);
+      //     for (let i = 0; i < publicKeys.length; i++) {
+      //       const publicKey = publicKeys[i];
+      //       const profile = await this.profile.getProfile(publicKey);
 
-            // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-            if (profile) {
-              await this.profile.follow(publicKeys[i], profile.circle);
-            } else {
-              await this.profile.follow(publicKeys[i]);
-            }
-          }
+      //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+      //       if (profile) {
+      //         await this.profile.follow(publicKeys[i], profile.circle);
+      //       } else {
+      //         await this.profile.follow(publicKeys[i]);
+      //       }
+      //     }
 
-          await this.load();
+      //     await this.load();
 
-          this.ngZone.run(() => {
-            this.cd.detectChanges();
-          });
-        })
-      );
+      //     this.ngZone.run(() => {
+      //       this.cd.detectChanges();
+      //     });
+      //   })
+      // );
     });
   }
 
@@ -185,7 +181,7 @@ export class CirclesComponent {
   async publishFollowList() {
     const publicPublicKeys = this.getPublicPublicKeys();
 
-    await this.feedService.publishContacts(publicPublicKeys);
+    // await this.feedService.publishContacts(publicPublicKeys);
 
     this.snackBar.open(`A total of ${publicPublicKeys.length} was added to your public following list`, 'Hide', {
       duration: 2000,

@@ -6,13 +6,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { ApplicationState } from './applicationstate.service';
 import { Event } from 'nostr-tools';
-import { FeedService } from './feed.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  constructor(private router: Router, public dialog: MatDialog, private appState: ApplicationState, private feedService: FeedService) {}
+  constructor(private router: Router, public dialog: MatDialog, private appState: ApplicationState) {}
 
   #showMore: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
   showMore$ = this.#showMore.asObservable();
@@ -76,7 +75,7 @@ export class NavigationService {
         tags: [],
       };
 
-      await this.feedService.publish(event);
+      // await this.feedService.publish(event);
     });
   }
 }

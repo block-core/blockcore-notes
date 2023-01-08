@@ -8,12 +8,11 @@ import { DataValidation } from '../services/data-validation.service';
 import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
-import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
 import { CirclesService } from '../services/circles.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { map, Subscription } from 'rxjs';
+import { map, Observable, of, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -31,25 +30,28 @@ export class UserComponent {
   circle?: Circle;
   initialLoad = true;
 
-  userEvents$ = this.feedService.rootEvents$.pipe(
-    map((data) => {
-      if (!this.pubkey) {
-        return;
-      }
+  userEvents$!: any;
+  replyEvents$!: any;
 
-      return data.filter((n) => n.pubkey == this.pubkey);
-    })
-  );
+  // userEvents$ = this.feedService.rootEvents$.pipe(
+  //   map((data) => {
+  //     if (!this.pubkey) {
+  //       return;
+  //     }
 
-  replyEvents$ = this.feedService.replyEvents$.pipe(
-    map((data) => {
-      if (!this.pubkey) {
-        return;
-      }
+  //     return data.filter((n) => n.pubkey == this.pubkey);
+  //   })
+  // );
 
-      return data.filter((n) => n.pubkey == this.pubkey);
-    })
-  );
+  // replyEvents$ = this.feedService.replyEvents$.pipe(
+  //   map((data) => {
+  //     if (!this.pubkey) {
+  //       return;
+  //     }
+
+  //     return data.filter((n) => n.pubkey == this.pubkey);
+  //   })
+  // );
 
   subscriptions: Subscription[] = [];
 
@@ -59,7 +61,6 @@ export class UserComponent {
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
     public options: OptionsService,
-    public feedService: FeedService,
     public profiles: ProfileService,
     private validator: DataValidation,
     private circleService: CirclesService,
@@ -91,7 +92,7 @@ export class UserComponent {
         }
 
         this.pubkey = pubkey;
-        this.profile = await this.profiles.getProfile(pubkey);
+        // this.profile = await this.profiles.getProfile(pubkey);
 
         if (!this.profile) {
           this.profile = this.profiles.emptyProfile(pubkey);
@@ -123,7 +124,7 @@ export class UserComponent {
   async follow() {
     this.profile!.status = ProfileStatus.Follow;
     await this.profiles.follow(this.pubkey!);
-    this.feedService.downloadRecent([this.pubkey!]);
+    // this.feedService.downloadRecent([this.pubkey!]);
   }
 
   tabIndex?: number;

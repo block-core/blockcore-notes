@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 // import { relayInit, validateEvent, verifySignature, signEvent, getEventHash, getPublicKey } from 'nostr-tools';
-import { relayInit } from 'nostr-tools';
 import { Subscription } from 'rxjs';
 import { ApplicationState } from '../services/applicationstate.service';
 import { NostrNoteDocument } from '../services/interfaces';
@@ -42,6 +41,6 @@ export class NotesComponent {
   }
 
   async loadNotes() {
-    this.notes = await this.notesService.list();
+    // this.notes = await this.notesService.list();
   }
 }

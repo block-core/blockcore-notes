@@ -7,13 +7,11 @@ import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
-import { StorageService } from '../services/storage.service';
 import { map, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { FollowDialog, FollowDialogData } from '../shared/create-follow-dialog/create-follow-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FeedService } from '../services/feed.service';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
@@ -32,8 +30,6 @@ export class PeopleComponent {
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     public dialog: MatDialog,
-    private storage: StorageService,
-    private feedService: FeedService,
     public profileService: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
@@ -128,7 +124,7 @@ export class PeopleComponent {
     pubkey = this.utilities.ensureHexIdentifier(pubkey);
 
     await this.profileService.follow(pubkey);
-    this.feedService.downloadRecent([pubkey]);
+    // this.feedService.downloadRecent([pubkey]);
   }
 
   createFollow(): void {

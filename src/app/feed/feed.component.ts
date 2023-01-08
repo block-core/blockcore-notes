@@ -14,7 +14,6 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { OptionsService } from '../services/options.service';
-import { FeedService } from '../services/feed.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { NavigationService } from '../services/navigation.service';
 
@@ -37,7 +36,6 @@ export class FeedComponent {
     private utilities: Utilities,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
-    private feedService: FeedService,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?

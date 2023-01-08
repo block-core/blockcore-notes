@@ -52,7 +52,7 @@ export class ProfileHeaderComponent {
 
   async ngOnInit() {
     if (!this.profile) {
-      this.profile = await this.profiles.getProfile(this.pubkey);
+      this.profile = await this.profiles.getLocalProfile(this.pubkey);
       this.npub = this.utilities.getNostrIdentifier(this.pubkey);
 
       if (!this.profile) {

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { FeedService } from './feed.service';
 
 export interface Options {
   hideSpam?: boolean;

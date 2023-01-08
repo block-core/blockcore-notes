@@ -49,7 +49,7 @@ export class ContentComponent {
         return;
       }
 
-      const profile = await this.profileService.getProfile(publicKey);
+      const profile = await this.profileService.getLocalProfile(publicKey);
 
       if (!profile) {
         return;

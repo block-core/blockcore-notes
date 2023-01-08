@@ -5,15 +5,12 @@ import { Router, TitleStrategy } from '@angular/router';
 import { AuthenticationService } from './services/authentication.service';
 import { AppUpdateService } from './services/app-update.service';
 import { CheckForUpdateService } from './services/check-for-update.service';
-import { StorageService } from './services/storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 import { Observable, map, shareReplay, startWith } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Location } from '@angular/common';
-import { FeedService } from './services/feed.service';
 import { RelayService } from './services/relay.service';
-import { RelayStorageService } from './services/relay.storage.service';
 import { DataService } from './services/data.service';
 import { ProfileService } from './services/profile.service';
 import { ScrollEvent } from './shared/scroll.directive';
@@ -41,7 +38,6 @@ export class AppComponent {
 
   constructor(
     public appState: ApplicationState,
-    private storage: StorageService,
     public authService: AuthenticationService,
     private router: Router,
     public appUpdateService: AppUpdateService,
@@ -49,8 +45,6 @@ export class AppComponent {
     public dialog: MatDialog,
     private location: Location,
     private breakpointObserver: BreakpointObserver,
-    private relayStorage: RelayStorageService,
-    private feedService: FeedService,
     private relayService: RelayService,
     private dataService: DataService,
     public profileService: ProfileService,
@@ -160,16 +154,16 @@ export class AppComponent {
 
   /** Run initialize whenever user has been authenticated. */
   async initialize() {
-    await this.storage.open();
-    await this.storage.initialize();
+    // await this.storage.open();
+    // await this.storage.initialize();
 
-    await this.profileService.populate();
-    await this.relayStorage.initialize();
+    await this.profileService.initialize();
+    // await this.relayStorage.initialize();
 
     await this.relayService.initialize();
     this.relayService.connect();
 
-    await this.feedService.initialize();
+    // await this.feedService.initialize();
 
     // This service will perform data cleanup, etc.
     await this.dataService.initialize();
