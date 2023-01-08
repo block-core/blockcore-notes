@@ -12,7 +12,7 @@ import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
 import { CircleService } from '../services/circle.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { map, Observable, of, Subscription, tap } from 'rxjs';
+import { map, Observable, of, Subscription, tap, BehaviorSubject } from 'rxjs';
 import { DataService } from '../services/data.service';
 import { NotesService } from '../services/notes.service';
 
@@ -32,18 +32,48 @@ export class UserComponent {
   circle?: Circle;
   initialLoad = true;
 
+  events: NostrEventDocument[] = [];
+  #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
+  get events$(): Observable<NostrEventDocument[]> {
+    return this.#eventsChanged
+      .asObservable()
+      .pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))))
+      .pipe(map((x) => x.slice(0, this.eventsCount)));
+  }
+
+  // get events$(): Observable<NostrEventDocument[]> {
+  //   return this.#eventsChanged.asObservable().pipe(
+  //     map((data) => {
+  //       data.sort((a, b) => {
+  //         return a.created_at > b.created_at ? -1 : 1;
+  //       });
+
+  //       return data;
+  //     })
+  //   );
+  // }
+
   // userEvents$!: any;
   // replyEvents$!: any;
 
-  userEvents$ = of(this.notesService.currentViewNotes).pipe(
-    map((data) => {
-      debugger;
-      return data.sort((a, b) => {
-        debugger;
-        return a.created_at > b.created_at ? 1 : -1;
-      });
-    })
-  );
+  notes: NostrEventDocument[] = [];
+
+  userEvents$ = of(this.notes);
+  // .pipe(
+  //   map((data) => {
+  //     // debugger;
+  //     return data.sort((a, b) => {
+  //       debugger;
+  //       return a.created_at > b.created_at ? 1 : -1;
+  //     });
+  //   })
+  // )
+  // .pipe(map((x) => x.slice(0, this.eventsCount)));
+
+  // get eventsView$(): Observable<NostrEventDocument[]> {
+  //   return this.feedService.events$.pipe(map((x) => x.slice(0, this.eventsCount)));
+  // }
+
   //.pipe(map((objs) => objs.map((c) => c.created_at).sort((a, b) => (a > b ? 1 : -1)))); //.pipe(map((bands) => [...bands].sort((a, b) => (a.created_at > b.created_at ? 1 : -1))));
   // this.titles$ = item.pipe(map(objs => objs.map(c => c.title).sort((a, b) => a.localCompare(b))))
   // tap((results) => {
@@ -59,7 +89,7 @@ export class UserComponent {
   //   })
   // );
 
-  replyEvents$ = of(this.notesService.currentViewNotes).pipe(
+  replyEvents$ = of(this.notes).pipe(
     map((data) => {
       // debugger;
       if (!this.pubkey) {
@@ -104,10 +134,22 @@ export class UserComponent {
     this.router.navigate([], { queryParams: { t: event.index }, replaceUrl: true });
   }
 
+  eventsCount = 5;
+
+  showMore() {
+    this.eventsCount += 5;
+  }
+
   ngOnInit() {
     // setInterval(() => {
     //   console.log('Closed:', this.feedSubscription?.closed);
     // }, 50);
+
+    this.subscriptions.push(
+      this.navigation.showMore$.subscribe(() => {
+        this.showMore();
+      })
+    );
 
     this.appState.showBackButton = true;
     this.appState.actions = [];
@@ -177,7 +219,33 @@ export class UserComponent {
           }
 
           this.notesService.currentViewNotes.unshift(event);
-          this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+          // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+
+          this.events.unshift(event);
+          this.#eventsChanged.next(this.events);
+
+          // this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
+
+          // this.ngZone.run(() => {
+          //   // this.notesService.currentViewNotes.push(event);
+          //   this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
+          //   console.log(this.notes);
+          // });
+
+          // this.ite
+          //   .of(this.notesService.currentViewNotes)
+          //   // .pipe(
+          //   //   map((data) => {
+          //   //     // debugger;
+          //   //     return data.sort((a, b) => {
+          //   //       debugger;
+          //   //       return a.created_at > b.created_at ? 1 : -1;
+          //   //     });
+          //   //   })
+          //   // )
+          //   .pipe(map((x) => x.slice(0, this.eventsCount)));
+
+          // x.slice(0, this.eventsCount);
 
           // this.ngZone.run(() => {
           //   this.notesService.currentViewNotes.push(event);

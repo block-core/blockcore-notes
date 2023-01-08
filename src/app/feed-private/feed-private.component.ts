@@ -51,7 +51,7 @@ export class FeedPrivateComponent {
     console.log('ngAfterContentInit');
   }
 
-  eventsCount = 10;
+  eventsCount = 5;
 
   showMore() {
     this.eventsCount += 10;
