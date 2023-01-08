@@ -30,7 +30,7 @@ export class CacheService {
         tap({
           next: (val) => {
             // on next 11, etc.
-            console.log('on next', val);
+            // console.log('on next', val);
             this.set(key, val, maxAge);
           },
           error: (error) => {
@@ -38,7 +38,7 @@ export class CacheService {
             this.inFlightObservables.delete(key);
             throwError(() => error);
           },
-          complete: () => console.log('on complete'),
+          complete: () => {},
         })
       );
     } else {

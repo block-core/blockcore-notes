@@ -388,17 +388,13 @@ export class RelayService {
 
     for (var i = 0; i < items.length; i++) {
       const entry = items[i];
-
       const existingConnection = this.relays.find((r) => r.url == entry.url);
-
-      console.log('FOUND EXISTING CONNECTION:', existingConnection);
 
       // If we are already connected, skip opening connection again.
       if (existingConnection && existingConnection.status == 1) {
         continue;
       }
 
-      console.log('Opening connection to:', entry);
       this.openConnection(entry);
     }
   }

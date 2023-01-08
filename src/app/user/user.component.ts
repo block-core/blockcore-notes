@@ -13,6 +13,7 @@ import { NavigationService } from '../services/navigation.service';
 import { CircleService } from '../services/circle.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { map, Observable, of, Subscription } from 'rxjs';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-user',
@@ -55,6 +56,10 @@ export class UserComponent {
 
   subscriptions: Subscription[] = [];
 
+  profileSubscription?: Subscription;
+
+  feedSubscription?: Subscription;
+
   constructor(
     public navigation: NavigationService,
     public appState: ApplicationState,
@@ -62,19 +67,32 @@ export class UserComponent {
     private cd: ChangeDetectorRef,
     public options: OptionsService,
     public profiles: ProfileService,
+    private dataService: DataService,
     private validator: DataValidation,
     private circleService: CircleService,
     private utilities: Utilities,
     private router: Router
-  ) {
-    // this.appState.title = 'Blockcore Notes';
+  ) {}
 
-    // this.subscriptions.push(
-    //   this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event) => {
-    //     console.log('ROUTING EVENT:', event);
-    //     console.log('ROUTING EVENT:', this.router);
-    //   })
-    // );
+  async follow() {
+    this.profile!.status = ProfileStatus.Follow;
+    await this.profiles.follow(this.pubkey!);
+    // this.feedService.downloadRecent([this.pubkey!]);
+  }
+
+  tabIndex?: number;
+
+  onTabChanged(event: MatTabChangeEvent) {
+    this.router.navigate([], { queryParams: { t: event.index }, replaceUrl: true });
+  }
+
+  ngOnInit() {
+    // setInterval(() => {
+    //   console.log('Closed:', this.feedSubscription?.closed);
+    // }, 50);
+
+    this.appState.showBackButton = true;
+    this.appState.actions = [];
 
     this.subscriptions.push(
       this.activatedRoute.queryParams.subscribe(async (params) => {
@@ -87,13 +105,22 @@ export class UserComponent {
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const pubkey: any = params.get('id');
 
+        // Whenever the user changes, unsubsribe the profile observable (which normally should be completed, but for safety).
+        if (this.profileSubscription) {
+          this.profileSubscription.unsubscribe();
+        }
+
+        if (this.feedSubscription) {
+          this.feedSubscription.unsubscribe();
+        }
+
         if (!pubkey) {
           return;
         }
 
         this.pubkey = pubkey;
 
-        this.profiles.getProfile(pubkey).subscribe(async (profile) => {
+        this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
           this.profile = profile;
 
           if (!this.profile) {
@@ -121,25 +148,12 @@ export class UserComponent {
           // If the user has name in their profile, show that and not pubkey.
           this.appState.title = `@${this.profile.name}`;
         });
+
+        this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {
+          console.log('EVENT:', event);
+        });
       })
     );
-  }
-
-  async follow() {
-    this.profile!.status = ProfileStatus.Follow;
-    await this.profiles.follow(this.pubkey!);
-    // this.feedService.downloadRecent([this.pubkey!]);
-  }
-
-  tabIndex?: number;
-
-  onTabChanged(event: MatTabChangeEvent) {
-    this.router.navigate([], { queryParams: { t: event.index }, replaceUrl: true });
-  }
-
-  ngOnInit() {
-    this.appState.showBackButton = true;
-    this.appState.actions = [];
 
     // if (this.pubkey) {
     // console.log('PIPING EVENTS...');
@@ -177,5 +191,13 @@ export class UserComponent {
 
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);
+
+    if (this.profileSubscription) {
+      this.profileSubscription.unsubscribe();
+    }
+
+    if (this.feedSubscription) {
+      this.feedSubscription.unsubscribe();
+    }
   }
 }

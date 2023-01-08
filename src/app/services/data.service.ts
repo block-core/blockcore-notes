@@ -30,6 +30,10 @@ export class DataService {
     //   console.log('PROFILE REQUESTED:', pubkey);
     //   await this.downloadProfile(pubkey);
     // });
+
+    this.connected$.subscribe((status) => {
+      console.log('DataService: Yes we have connection!', status);
+    });
   }
 
   async initialize() {
@@ -87,7 +91,11 @@ export class DataService {
   }
 
   // Observable that can be merged with to avoid performing calls unless we have connected to relays.
-  connected$ = this.appState.connected$.pipe(map((status) => status === true));
+  connected$ = this.appState.connected$.pipe(map((status) => status === true)).pipe(
+    tap((status) => {
+      console.log('STATUS:', status);
+    })
+  );
 
   /** Creates an observable that will attempt to get newest profile entry across all relays and perform multiple callbacks if newer is found. */
   downloadNewestProfiles(pubkeys: string[], requestTimeout = 10000) {
@@ -106,38 +114,50 @@ export class DataService {
 
   /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
   downloadNewestEvents(pubkeys: string[], kinds: number[], requestTimeout = 10000) {
+    return this.downloadNewestEventsByQuery([{ kinds: kinds, authors: pubkeys }]);
+  }
+
+  /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
+  downloadNewestEventsByQuery(query: any, requestTimeout = 10000) {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
-    const query = [{ kinds: kinds, authors: pubkeys }];
     const totalEvents: NostrEventDocument[] = [];
+    // TODO: Figure out if we end up having memory leak with this totalEvents array.
 
-    return this.connected$
-      .pipe(take(1))
-      .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
-      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
-      .pipe(
-        filter((data) => {
-          // This logic is to ensure we don't care about receiving the same data more than once, unless the data is newer.
-          const existingEventIndex = totalEvents.findIndex((e) => e.id === data.id);
-          if (existingEventIndex > -1) {
-            const existingEvent = totalEvents[existingEventIndex];
+    return (
+      this.connected$
+        // .pipe(take(1))
+        .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
+        .pipe(
+          tap(() => {
+            console.log('tapping...');
+          })
+        )
+        .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+        .pipe(
+          filter((data) => {
+            // This logic is to ensure we don't care about receiving the same data more than once, unless the data is newer.
+            const existingEventIndex = totalEvents.findIndex((e) => e.id === data.id);
+            if (existingEventIndex > -1) {
+              const existingEvent = totalEvents[existingEventIndex];
 
-            // Verify if newer, then replace
-            if (existingEvent.created_at < data.created_at) {
-              totalEvents[existingEventIndex] = data;
+              // Verify if newer, then replace
+              if (existingEvent.created_at < data.created_at) {
+                totalEvents[existingEventIndex] = data;
+                return true;
+              }
+            } else {
+              totalEvents.push(data);
               return true;
             }
-          } else {
-            totalEvents.push(data);
-            return true;
-          }
 
-          return false;
-        })
-      )
-      .pipe(
-        timeout(requestTimeout),
-        catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
-      );
+            return false;
+          })
+        )
+    );
+    // .pipe(
+    //   timeout(requestTimeout),
+    //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
+    // );
   }
 
   subscribeLatestEvents(kinds: number[], pubkeys: string[], limit: number) {

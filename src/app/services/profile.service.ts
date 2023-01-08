@@ -201,7 +201,7 @@ export class ProfileService {
         // .pipe(shareReplay()) // TODO: Investigate if this helps us get reply from the same observable if subscribed twice.
         .pipe(
           tap((profile) => {
-            console.log('TAPPING ON PROFILE GET:', profile);
+            // console.log('TAPPING ON PROFILE GET:', profile);
             // this.table.put(profile.pubkey);
           })
         )
