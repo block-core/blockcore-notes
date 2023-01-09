@@ -172,8 +172,6 @@ export class ProfileService {
               return;
             }
 
-            debugger;
-
             this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
               // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
               const p = await profile;

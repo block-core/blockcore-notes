@@ -25,15 +25,23 @@ export class EventHeaderComponent {
 
   async ngOnInit() {
     if (!this.profile) {
-      this.profile = await this.profiles.getLocalProfile(this.pubkey);
-      this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
+      this.profiles.getProfile(this.pubkey).subscribe(async (profile) => {
+        this.profile = profile;
+        await this.updateProfileDetails();
+      });
 
-      if (!this.profile) {
-        return;
-      }
+      // this.profile = await this.profiles.getLocalProfile(this.pubkey);
+      this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
     } else {
       this.pubkey = this.profile.pubkey;
       this.profileName = this.utilities.getNostrIdentifier(this.profile.pubkey);
+      await this.updateProfileDetails();
+    }
+  }
+
+  async updateProfileDetails() {
+    if (!this.profile) {
+      return;
     }
 
     if (this.profile.picture) {
@@ -41,6 +49,7 @@ export class EventHeaderComponent {
     }
 
     this.tooltip = this.profile.about;
+
     this.tooltipName = this.profileName;
 
     // If the user has name in their profile, show that and not pubkey.
