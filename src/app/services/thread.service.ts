@@ -226,7 +226,8 @@ export class ThreadService {
 
     if (event.kind == 1) {
       thread.children.push({ id: event.id, date: event.created_at });
-      // thread.children.sort((e: ThreadEntryChild) => e.date);
+      thread.children.sort((a: ThreadEntryChild, b: ThreadEntryChild) => a.date - b.date);
+
     } else if (event.kind == 7) {
       if (event.content == '' || event.content == '+') {
         if (!thread.reactions[EmojiEnum['👍']]) {

@@ -1,4 +1,4 @@
 <ng-template [ngIf]="threadEntry">
-  {{ threadEntry.boosts }}🔁
+  <span *ngIf="threadEntry.boosts">{{ threadEntry.boosts }}🔁</span>
   <span *ngFor="let item of threadEntry!.reactions | keyvalue"> {{ item.key }}{{ item.value }} </span>
 </ng-template>

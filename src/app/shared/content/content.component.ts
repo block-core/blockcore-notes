@@ -12,6 +12,7 @@ import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog
 })
 export class ContentComponent {
   @Input() event?: NostrEventDocument;
+  @Input() displayRepliesTo: boolean = true;
 
   profileName = '';
   tooltip = '';
