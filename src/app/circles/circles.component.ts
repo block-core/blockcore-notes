@@ -159,7 +159,7 @@ export class CirclesComponent {
 
       let pubkey = this.utilities.ensureHexIdentifier(result.pubkey);
 
-      this.dataService.downloadNewestEvents([pubkey], [3]).subscribe((event) => {
+      this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
         const nostrEvent = event as NostrEventDocument;
         const publicKeys = nostrEvent.tags.map((t) => t[1]);
 

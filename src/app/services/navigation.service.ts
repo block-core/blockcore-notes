@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { NostrEvent, NostrEventDocument, NostrProfileDocument } from './interfaces';
+import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrThreadEventDocument } from './interfaces';
 import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
@@ -19,6 +19,7 @@ export class NavigationService {
   /** Used to keep a quick reference to the active event that is has clicked on and want to view more details on. */
   currentEvent?: NostrEventDocument;
   currentProfile?: NostrProfileDocument;
+  currentThread: NostrThreadEventDocument[] = [];
 
   showMore() {
     this.#showMore.next();

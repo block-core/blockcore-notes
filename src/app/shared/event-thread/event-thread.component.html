@@ -1,0 +1,13 @@
+<div class="thread-event" *ngFor="let entry of threadEntry?.children">
+  <span *ngIf="thread.getEvent(entry) as event">
+    <div class="events-header">
+      <app-event-header [pubkey]="event.pubkey"
+        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+      ></app-event-header>
+      <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+    </div>
+    <app-content [event]="event"></app-content>
+    <app-event-reactions [threadEntry]="thread.getTreeEntry(entry)"></app-event-reactions>
+    <app-event-thread [threadEntry]="thread.getTreeEntry(entry)"> </app-event-thread>
+  </span>
+</div>

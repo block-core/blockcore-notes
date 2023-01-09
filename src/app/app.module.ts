@@ -78,6 +78,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ChatComponent } from './chat/chat.component';
 import { FeedComponent } from './feed/feed.component';
 import { WithStatusPipe } from './shared/loading.pipe';
+import { EventThreadComponent } from './shared/event-thread/event-thread.component';
+import { EventReactionsComponent } from './shared/event-reactions/event-reactions.component';
 
 @NgModule({
   declarations: [
@@ -118,6 +120,8 @@ import { WithStatusPipe } from './shared/loading.pipe';
     EventActionsComponent,
     ChatComponent,
     FeedComponent,
+    EventThreadComponent,
+    EventReactionsComponent
   ],
   imports: [
     HttpClientModule,

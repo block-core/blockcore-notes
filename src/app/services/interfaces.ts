@@ -67,6 +67,28 @@ export interface NostrEventDocument extends Event {
   tagsCut: boolean;
 }
 
+export interface NostrThreadEventDocument extends Event {
+  replies: NostrThreadEventDocument[];
+}
+
+export interface ThreadEntryChild {
+  id: string;
+  date: number;
+}
+
+export interface ThreadEntry {
+  id: string;
+  children: string[];
+  // children: ThreadEntryChild[];
+  reactions: { [key: string]: [] };
+  boosts: number;
+}
+
+export enum EmojiEnum {
+  [`👍`] = `👍`,
+  [`👎`] = `👎`,
+}
+
 export interface NostrNoteDocument extends NostrEventDocument {
   /** The timestamp when the note was saved. */
   saved: number;

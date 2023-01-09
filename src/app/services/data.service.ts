@@ -112,9 +112,16 @@ export class DataService {
     return this.downloadNewestEvents(pubkeys, [0], requestTimeout);
   }
 
-  /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
+  downloadNewestContactsEvents(pubkeys: string[], requestTimeout = 10000) {
+    return this.downloadNewestEvents(pubkeys, [3], requestTimeout);
+  }
+
   downloadNewestEvents(pubkeys: string[], kinds: number[], requestTimeout = 10000) {
     return this.downloadNewestEventsByQuery([{ kinds: kinds, authors: pubkeys }]);
+  }
+
+  downloadEventsByTags(query: any[], requestTimeout = 10000) {
+    return this.downloadEventsByQuery(query);
   }
 
   /** Download a single event from all relays. */
@@ -196,6 +203,12 @@ export class DataService {
     // );
   }
 
+  downloadEventsByQuery(query: any[], requestTimeout = 10000) {
+    return this.connected$
+      .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
+      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)));
+  }
+
   subscribeLatestEvents(kinds: number[], pubkeys: string[], limit: number) {
     // Make individual filters on the subscription so we will get limit for each individual pubkey.
     let filters: Filter[] = pubkeys.map((a) => {
@@ -206,10 +219,7 @@ export class DataService {
       filters = [{ kinds: kinds, limit: limit }];
     }
 
-    return this.connected$
-      .pipe(take(1))
-      .pipe(mergeMap(() => this.relayService.connectedRelays()))
-      .pipe(mergeMap((relay) => this.subscribeToRelay(filters, relay)));
+    return this.connected$.pipe(mergeMap(() => this.relayService.connectedRelays())).pipe(mergeMap((relay) => this.subscribeToRelay(filters, relay)));
   }
 
   subscribeToRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
@@ -290,35 +300,35 @@ export class DataService {
   //   });
   // }
 
-  downloadProfile(pubkey: string) {
-    if (!pubkey) {
-      return;
-    }
+  // downloadProfile(pubkey: string) {
+  //   if (!pubkey) {
+  //     return;
+  //   }
 
-    console.log('profileQueue.length1:', JSON.stringify(this.profileQueue));
+  //   console.log('profileQueue.length1:', JSON.stringify(this.profileQueue));
 
-    // Skip if array already includes this pubkey.
-    if (this.profileQueue.includes(pubkey)) {
-      return;
-    }
+  //   // Skip if array already includes this pubkey.
+  //   if (this.profileQueue.includes(pubkey)) {
+  //     return;
+  //   }
 
-    console.log(this);
-    console.log('ADD DOWNLOAD PROFILE:', pubkey);
-    this.profileQueue.push(pubkey);
+  //   console.log(this);
+  //   console.log('ADD DOWNLOAD PROFILE:', pubkey);
+  //   this.profileQueue.push(pubkey);
 
-    console.log('profileQueue.length2:', JSON.stringify(this.profileQueue));
+  //   console.log('profileQueue.length2:', JSON.stringify(this.profileQueue));
 
-    this.processProfilesQueue();
+  //   this.processProfilesQueue();
 
-    // Wait some CPU cycles for potentially more profiles before we process.
-    // setTimeout(() => {
-    //   console.log('processProfilesQueue!!!', this.profileQueue.length);
-    //   this.processProfilesQueue();
-    // }, 1000);
+  //   // Wait some CPU cycles for potentially more profiles before we process.
+  //   // setTimeout(() => {
+  //   //   console.log('processProfilesQueue!!!', this.profileQueue.length);
+  //   //   this.processProfilesQueue();
+  //   // }, 1000);
 
-    // TODO: Loop all relays until we find the profile.
-    // return this.fetchProfiles(this.relays[0], [pubkey]);
-  }
+  //   // TODO: Loop all relays until we find the profile.
+  //   // return this.fetchProfiles(this.relays[0], [pubkey]);
+  // }
 
   fetchProfiles(relay: Relay, authors: string[]) {
     if (!authors || authors.length === 0) {
