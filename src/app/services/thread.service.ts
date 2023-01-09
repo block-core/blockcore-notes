@@ -9,8 +9,8 @@ import { Kind } from 'nostr-tools';
   providedIn: 'root',
 })
 export class ThreadService {
-  #event: NostrEventDocument | null = null;
-  #eventChanged: BehaviorSubject<NostrEventDocument | null> = new BehaviorSubject<NostrEventDocument | null>(this.#event);
+  event: NostrEventDocument | null = null;
+  #eventChanged: BehaviorSubject<NostrEventDocument | null> = new BehaviorSubject<NostrEventDocument | null>(this.event);
   event$ = this.#eventChanged.asObservable();
 
   #root: NostrEventDocument | null = null;
@@ -37,14 +37,14 @@ export class ThreadService {
         map((data) =>
           data.filter((events) => {
             // console.log(this.#event);
-            const eTags = this.eventService.eTags(this.#event);
+            const eTags = this.eventService.eTags(this.event);
 
             // Skip all replies that are directly on root.
             if (eTags.length < 2) {
               return false;
             }
 
-            const replyTag = this.eventService.replyEventId(this.#event);
+            const replyTag = this.eventService.replyEventId(this.event);
 
             // console.log('REPLAY TAG ON SELECTED EVENT:', replyTag);
             // console.log('EVENTS ID:', events.id);
@@ -162,7 +162,7 @@ export class ThreadService {
     });
   }
 
-  async changeSelectedEvent(eventId: string) {
+  async changeSelectedEvent(eventId?: string, event?: NostrEventDocument) {
     this.hasLoaded = false;
 
     this.#root = null;
@@ -172,8 +172,15 @@ export class ThreadService {
     this.#events = null;
     this.#eventsChanged.next(this.#events);
 
-    this.#event = null;
-    this.#eventChanged.next(this.#event);
+    if (event) {
+      this.event = event;
+      this.#eventChanged.next(this.event);
+    } else {
+      this.event = null;
+      this.#eventChanged.next(this.event);
+
+      // TODO: Get event based upon ID.
+    }
 
     // Get the event itself.
     // const event = await this.storage.get<NostrEventDocument>(eventId, 'events');

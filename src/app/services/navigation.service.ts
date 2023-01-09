@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { NostrEventDocument, NostrProfileDocument } from './interfaces';
+import { NostrEvent, NostrEventDocument, NostrProfileDocument } from './interfaces';
 import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
@@ -16,11 +16,17 @@ export class NavigationService {
   #showMore: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
   showMore$ = this.#showMore.asObservable();
 
+  /** Used to keep a quick reference to the active event that is has clicked on and want to view more details on. */
+  currentEvent?: NostrEventDocument;
+  currentProfile?: NostrProfileDocument;
+
   showMore() {
     this.#showMore.next();
   }
 
   openEvent($event: any, event: NostrEventDocument) {
+    this.currentEvent = event;
+
     const paths = $event.composedPath();
 
     if (!paths || paths.length == 0) {
@@ -39,6 +45,8 @@ export class NavigationService {
   }
 
   openProfile($event: any, event: NostrProfileDocument) {
+    this.currentProfile = event;
+
     const paths = $event.composedPath();
 
     if (!paths || paths.length == 0) {

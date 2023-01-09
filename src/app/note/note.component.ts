@@ -34,26 +34,22 @@ export class NoteComponent {
   // TODO: Nasty code, just fix it, quick hack before bed.
   likes(event: NostrEventDocument) {
     // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
-
     // eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
     //   const eTag = e.tags.find((p) => p[0] === 'e');
     //   const eTagValue = eTag![1];
     //   return eTagValue != '-';
     // });
-
     // return eventsWithSingleeTag.length;
   }
 
   // TODO: Nasty code, just fix it, quick hack before bed.
   dislikes(event: NostrEventDocument) {
     // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
-
     // eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
     //   const eTag = e.tags.find((p) => p[0] === 'e');
     //   const eTagValue = eTag![1];
     //   return eTagValue == '-';
     // });
-
     // return eventsWithSingleeTag.length;
   }
 
@@ -104,6 +100,13 @@ export class NoteComponent {
   }
 
   ngOnInit() {
+    console.log('CURRENT EVENT:', this.navigation.currentEvent);
+
+    if (this.navigation.currentEvent) {
+      this.id = this.navigation.currentEvent.id;
+      this.thread.changeSelectedEvent(undefined, this.navigation.currentEvent);
+    }
+
     console.log('NG INIT ON NOTE:');
     // this.appState.title = 'Blockcore Notes';
 
@@ -146,18 +149,25 @@ export class NoteComponent {
         return;
       }
 
-      if (this.appState.connectedChanged.value === true) {
-        setTimeout(() => {
-          this.thread.changeSelectedEvent(id);
-          this.id = id;
-        }, 0);
+      if (this.thread.event && this.thread.event.id == id) {
+        this.id = id;
+        return;
       } else {
-        // POOR MANS WAIT... this is not suppose to be needed, but appears to help sometimes.
-        setTimeout(() => {
-          this.thread.changeSelectedEvent(id);
-          this.id = id;
-        }, 4000);
+        this.thread.changeSelectedEvent(id);
+        this.id = id;
       }
+
+      // if (this.appState.connectedChanged.value === true) {
+      //   setTimeout(() => {
+      //     this.thread.changeSelectedEvent(id);
+      //   }, 0);
+      // } else {
+      //   // POOR MANS WAIT... this is not suppose to be needed, but appears to help sometimes.
+      //   setTimeout(() => {
+      //     this.thread.changeSelectedEvent(id);
+      //     this.id = id;
+      //   }, 4000);
+      // }
     });
   }
 
