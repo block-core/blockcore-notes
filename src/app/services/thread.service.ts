@@ -218,16 +218,15 @@ export class ThreadService {
       thread = this.threadIds[existingThreadIndex];
     }
 
-    const existingThreadChildIndex = thread.children.findIndex((t: string) => t === event.id);
+    const existingThreadChildIndex = thread.children.findIndex((t: ThreadEntryChild) => t.id === event.id);
 
     if (existingThreadChildIndex > -1) {
       return;
     }
 
     if (event.kind == 1) {
-      thread.children.push(event.id);
+      thread.children.push({ id: event.id, date: event.created_at });
       // thread.children.sort((e: ThreadEntryChild) => e.date);
-
     } else if (event.kind == 7) {
       if (event.content == '' || event.content == '+') {
         if (!thread.reactions[EmojiEnum['👍']]) {
