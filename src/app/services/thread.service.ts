@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, map, ReplaySubject, filter, combineLatest 
 import { ProfileService } from './profile.service';
 import { EventService } from './event.service';
 import { Kind } from 'nostr-tools';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root',
@@ -115,7 +116,7 @@ export class ThreadService {
 
   // selectedEvent$ = combineLatest(this.selectedEventChanges$, this.eventChanges$).pipe(mergeMap());
 
-  constructor(private eventService: EventService, private profileService: ProfileService) {
+  constructor(private eventService: EventService, private profileService: ProfileService, private dataService: DataService) {
     // Whenever the event has changed, we can go grab the parent and the thread itself
     this.#eventChanged.subscribe((event) => {
       if (event == null) {
@@ -179,7 +180,12 @@ export class ThreadService {
       this.event = null;
       this.#eventChanged.next(this.event);
 
-      // TODO: Get event based upon ID.
+      if (eventId) {
+        this.dataService.downloadEvent(eventId!).subscribe((event) => {
+          this.event = event;
+          this.#eventChanged.next(this.event);
+        });
+      }
     }
 
     // Get the event itself.

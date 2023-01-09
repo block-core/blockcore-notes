@@ -117,7 +117,43 @@ export class DataService {
     return this.downloadNewestEventsByQuery([{ kinds: kinds, authors: pubkeys }]);
   }
 
-  /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
+  /** Download a single event from all relays. */
+  downloadEvent(id: string, requestTimeout = 5000) {
+    return this.downloadEventByQuery([{ ids: [id] }], requestTimeout);
+  }
+
+  downloadEventByQuery(query: any, requestTimeout = 10000) {
+    let event: any;
+
+    return (
+      this.connected$
+        // .pipe(take(1))
+        .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
+        .pipe(
+          tap(() => {
+            console.log('tapping...');
+          })
+        )
+        .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+        .pipe(
+          filter((data) => {
+            // Only trigger the reply once.
+            if (!event) {
+              event = data;
+              return true;
+            } else {
+              return false;
+            }
+          })
+        )
+    );
+    // .pipe(
+    //   timeout(requestTimeout),
+    //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
+    // );
+  }
+
+  /** Creates an observable that will attempt to get newest events across all relays and perform multiple callbacks if newer is found. */
   downloadNewestEventsByQuery(query: any, requestTimeout = 10000) {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
     const totalEvents: NostrEventDocument[] = [];
@@ -176,6 +212,30 @@ export class DataService {
       .pipe(mergeMap((relay) => this.subscribeToRelay(filters, relay)));
   }
 
+  subscribeToRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
+    return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
+      const sub = relay.sub(filters, {}) as NostrSubscription;
+
+      sub.on('event', (originalEvent: any) => {
+        const event = this.eventService.processEvent(originalEvent);
+
+        if (!event) {
+          return;
+        }
+
+        observer.next(event);
+      });
+
+      sub.on('eose', () => {});
+
+      return () => {
+        console.log('subscribeToRelay:finished:unsub');
+        // When the observable is finished, this return function is called.
+        sub.unsub();
+      };
+    });
+  }
+
   downloadFromRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([...filters], {}) as NostrSubscription;
@@ -202,57 +262,33 @@ export class DataService {
     });
   }
 
-  subscribeToRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
-    return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
-      const sub = relay.sub(filters, {}) as NostrSubscription;
+  // downloadFromRelay2(query: any, relay: NostrRelay): Observable<NostrEventDocument[]> {
+  //   return new Observable<NostrEventDocument[]>((observer: Observer<NostrEventDocument[]>) => {
+  //     const totalEvents: NostrEventDocument[] = [];
 
-      sub.on('event', (originalEvent: any) => {
-        const event = this.eventService.processEvent(originalEvent);
+  //     const sub = relay.sub([query], {}) as NostrSubscription;
 
-        if (!event) {
-          return;
-        }
+  //     sub.on('event', (originalEvent: any) => {
+  //       // console.log('downloadFromRelayIndex: event', id);
+  //       const event = this.eventService.processEvent(originalEvent);
+  //       // console.log('downloadFromRelayIndex: event', event);
 
-        observer.next(event);
-      });
+  //       if (!event) {
+  //         return;
+  //       }
 
-      sub.on('eose', () => {});
+  //       totalEvents.unshift(event);
+  //       observer.next(totalEvents);
+  //       // sub.unsub();
+  //     });
 
-      return () => {
-        console.log('subscribeToRelay:finished:unsub');
-        // When the observable is finished, this return function is called.
-        sub.unsub();
-      };
-    });
-  }
-
-  downloadFromRelay2(query: any, relay: NostrRelay): Observable<NostrEventDocument[]> {
-    return new Observable<NostrEventDocument[]>((observer: Observer<NostrEventDocument[]>) => {
-      const totalEvents: NostrEventDocument[] = [];
-
-      const sub = relay.sub([query], {}) as NostrSubscription;
-
-      sub.on('event', (originalEvent: any) => {
-        // console.log('downloadFromRelayIndex: event', id);
-        const event = this.eventService.processEvent(originalEvent);
-        // console.log('downloadFromRelayIndex: event', event);
-
-        if (!event) {
-          return;
-        }
-
-        totalEvents.unshift(event);
-        observer.next(totalEvents);
-        // sub.unsub();
-      });
-
-      sub.on('eose', () => {
-        // console.log('downloadFromRelayIndex: eose', id);
-        observer.complete();
-        sub.unsub();
-      });
-    });
-  }
+  //     sub.on('eose', () => {
+  //       // console.log('downloadFromRelayIndex: eose', id);
+  //       observer.complete();
+  //       sub.unsub();
+  //     });
+  //   });
+  // }
 
   downloadProfile(pubkey: string) {
     if (!pubkey) {
