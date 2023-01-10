@@ -1,25 +1,41 @@
 <app-profile-header *ngIf="profileName" [profile]="profile"></app-profile-header>
 
-<div class="page" *ngIf="profile && !profile?.follow">
+<!-- <div class="page" *ngIf="profile && profile?.status !== 1">
   <p>Data is currently only loaded if you follow this user.</p>
   <p><button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button></p>
-</div>
+</div> -->
 
-<mat-tab-group *ngIf="profile?.follow" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
-  <mat-tab label="Notes" *ngIf="profile?.follow">
-    <span *ngIf="userEvents$ | async as events">
-      <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
+<mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
+  <mat-tab label="Notes">
+    <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
+        </div> -->
 
-      <div class="page" *ngIf="events.length === 0">
-        <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
-        <p>
-          <em>(Options to load older notes will come in the future)</em>
-          <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
-        </p>
-      </div>
+        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"
+              ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+            ></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
 
-      <div class="feed-page">
-        <!-- <mat-accordion class="options">
+          <app-content [event]="event"></app-content>
+        </mat-card>
+
+        <!-- <div class="show-more centered">
+          <button mat-button (click)="showMore()">Show more...</button>
+        </div> -->
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    </div>
+
+    <!-- <span *ngIf="userEvents$ | async as events"> -->
+    <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
+    <!-- <div class="feed-page"> -->
+    <!-- <mat-accordion class="options">
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>Options</mat-panel-title>
@@ -34,7 +50,7 @@
           </mat-expansion-panel>
         </mat-accordion> -->
 
-        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
+    <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
           <div class="events-header">
             <app-event-header [pubkey]="event.pubkey"
               ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -43,10 +59,9 @@
           </div>
 
           <app-content [event]="event"></app-content>
-          <!-- <div class="content clickable">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
-        </mat-card>
-      </div>
-    </span>
+        </mat-card> -->
+    <!-- </div>
+    </span> -->
 
     <!-- <mat-list>
       <div mat-subheader>Latest 100 Events</div>
@@ -60,20 +75,45 @@
 
     <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
-  <mat-tab label="Replies" *ngIf="profile?.follow">
-    <span *ngIf="replyEvents$ | async as events">
-      <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
+  <mat-tab label="Replies">
+    <div *ngIf="replyEvents$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
+          <p>
+            <em>(Options to load older notes will come in the future)</em>
+            <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
+          </p>
+        </div>
 
-      <div class="page" *ngIf="events.length === 0">
+        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"
+              ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+            ></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
+
+          <app-content [event]="event"></app-content>
+        </mat-card>
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    </div>
+
+    <!-- <span *ngIf="replyEvents$ | async as events"> -->
+    <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
+
+    <!-- <div class="page" *ngIf="events === 0">
         <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
         <p>
-          <em>(Options to load older notes will come in the future)</em>
-          <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
-        </p>
+          <em>(Options to load older notes will come in the future)</em> -->
+    <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
+    <!-- </p>
       </div>
 
-      <div class="feed-page">
-        <!-- <mat-accordion class="options">
+      <div class="feed-page"> -->
+    <!-- <mat-accordion class="options">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>Options</mat-panel-title>
@@ -88,7 +128,8 @@
         </mat-expansion-panel>
       </mat-accordion> -->
 
-        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
+    <!-- TODO ENABLE THIS!! -->
+    <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
           <div class="events-header">
             <app-event-header [pubkey]="event.pubkey"
               ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
@@ -96,11 +137,10 @@
             <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
           </div>
           <app-content [event]="event"></app-content>
-          <!-- <div class="content clickable">Reply: {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
-        </mat-card>
-      </div>
-    </span></mat-tab
-  >
+        </mat-card> -->
+    <!-- </div>
+    </span> -->
+  </mat-tab>
   <!-- <mat-tab label="Likes">
     <div class="page">
       <h2>To be implemented</h2>

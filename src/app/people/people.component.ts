@@ -7,13 +7,11 @@ import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
-import { StorageService } from '../services/storage.service';
-import { map, Subscription } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { FollowDialog, FollowDialogData } from '../shared/create-follow-dialog/create-follow-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FeedService } from '../services/feed.service';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
@@ -26,15 +24,17 @@ export class PeopleComponent {
   loading = false;
   showBlocked = false;
   showCached = false;
+  showMuted = false;
+
+  items$ = this.profileService.items$;
+
   searchTerm: any;
   constructor(
     public navigation: NavigationService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     public dialog: MatDialog,
-    private storage: StorageService,
-    private feedService: FeedService,
-    private profileService: ProfileService,
+    public profileService: ProfileService,
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router,
@@ -47,14 +47,19 @@ export class PeopleComponent {
   //   await this.load();
   // }
 
-  async optionsUpdated($event: any, type: any) {
+  optionsUpdated($event: any, type: any) {
     if (type == 1) {
       this.showCached = false;
-    } else {
+      this.showMuted = false;
+    } else if (type == 2) {
+      this.showCached = false;
       this.showBlocked = false;
+    } else if (type == 3) {
+      this.showBlocked = false;
+      this.showMuted = false;
     }
 
-    await this.load();
+    this.load();
   }
 
   ngOnDestroy() {
@@ -64,24 +69,26 @@ export class PeopleComponent {
   }
 
   sub?: Subscription;
-  profiles: NostrProfileDocument[] = [];
+  // profiles: NostrProfileDocument[] = [];
 
   async load() {
     this.loading = true;
 
     if (this.showBlocked) {
-      this.profiles = await this.profileService.blockList();
+      this.items$ = this.profileService.blockedProfiles$();
+    } else if (this.showMuted) {
+      this.items$ = this.profileService.mutedProfiles$();
     } else if (this.showCached) {
-      this.profiles = await this.profileService.publicList();
+      this.items$ = this.profileService.publicProfiles$();
     } else {
-      this.profiles = await this.profileService.followList();
+      this.items$ = this.profileService.items$;
     }
 
     this.loading = false;
   }
 
   public trackByFn(index: number, item: NostrProfileDocument) {
-    return item.pubkey;
+    return `${item.pubkey}${item.modified}`;
   }
 
   async ngOnInit() {
@@ -97,24 +104,26 @@ export class PeopleComponent {
       },
     ];
 
+    // this.load();
+
     // TODO: Until we changed to using observable (DataService) for all data,
     // we have this basic observable whenever the profiles changes.
-    this.sub = this.profileService.profilesChanged$.subscribe(async () => {
-      await this.load();
-    });
+    // this.sub = this.profileService.profilesChanged$.subscribe(async () => {
+    //   await this.load();
+    // });
   }
 
-  async search() {
-    const text: string = this.searchTerm;
+  // async search() {
+  //   const text: string = this.searchTerm;
 
-    // First load the current list.
-    await this.load();
+  //   // First load the current list.
+  //   await this.load();
 
-    if (text == 'undefined' || text == null || text == '') {
-    } else {
-      this.profiles = this.profiles.filter((item: NostrProfileDocument) => item.name?.indexOf(text) > -1 || item.pubkey?.indexOf(text) > -1 || item.about?.indexOf(text) > -1 || item.nip05?.indexOf(text) > -1);
-    }
-  }
+  //   if (text == 'undefined' || text == null || text == '') {
+  //   } else {
+  //     this.profiles = this.profiles.filter((item: NostrProfileDocument) => item.name?.indexOf(text) > -1 || item.pubkey?.indexOf(text) > -1 || item.about?.indexOf(text) > -1 || item.nip05?.indexOf(text) > -1);
+  //   }
+  // }
 
   async addFollow(pubkey: string) {
     if (pubkey.startsWith('nsec')) {
@@ -126,9 +135,8 @@ export class PeopleComponent {
     }
 
     pubkey = this.utilities.ensureHexIdentifier(pubkey);
-
     await this.profileService.follow(pubkey);
-    this.feedService.downloadRecent([pubkey]);
+    // this.feedService.downloadRecent([pubkey]);
   }
 
   createFollow(): void {

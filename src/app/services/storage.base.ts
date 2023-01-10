@@ -1,84 +1,84 @@
-import { StorageService } from './storage.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+// import { StorageService } from './storage.service';
+// import { BehaviorSubject, Observable } from 'rxjs';
 
-export class StorageBase<T> {
-  protected table;
+// export class StorageBase<T> {
+//   protected table;
 
-  items: T[] = [];
+//   items: T[] = [];
 
-  // Just a basic observable that triggers whenever any profile has changed.
-  #changedSubject: BehaviorSubject<T[]> = new BehaviorSubject<T[]>(this.items);
+//   // Just a basic observable that triggers whenever any profile has changed.
+//   #changedSubject: BehaviorSubject<T[]> = new BehaviorSubject<T[]>(this.items);
 
-  get items$(): Observable<T[]> {
-    return this.#changedSubject.asObservable();
-  }
+//   get items$(): Observable<T[]> {
+//     return this.#changedSubject.asObservable();
+//   }
 
-  constructor(type: string, private storage: StorageService) {
-    this.table = this.storage.table<T>(type);
-  }
+//   constructor(type: string, private storage: StorageService) {
+//     this.table = this.storage.table<T>(type);
+//   }
 
-  #changed() {
-    this.#changedSubject.next(this.items);
-  }
+//   #changed() {
+//     this.#changedSubject.next(this.items);
+//   }
 
-  async #filter(predicate: (value: T, key: string) => boolean): Promise<T[]> {
-    const iterator = this.table.iterator<string, T>({ keyEncoding: 'utf8', valueEncoding: 'json' });
-    const results = [];
+//   async #filter(predicate: (value: T, key: string) => boolean): Promise<T[]> {
+//     const iterator = this.table.iterator<string, T>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+//     const results = [];
 
-    for await (const [key, value] of iterator) {
-      if (predicate(value, key)) {
-        results.push(value);
-      }
-    }
+//     for await (const [key, value] of iterator) {
+//       if (predicate(value, key)) {
+//         results.push(value);
+//       }
+//     }
 
-    return results;
-  }
+//     return results;
+//   }
 
-  /** Populate the observable with items which we are following. */
-  async initialize() {
-    this.items = await this.list();
-    this.#changed();
-  }
+//   /** Populate the observable with items which we are following. */
+//   async initialize() {
+//     this.items = await this.list();
+//     this.#changed();
+//   }
 
-  async list() {
-    return this.#filter((value, key) => true);
-  }
+//   async list() {
+//     return this.#filter((value, key) => true);
+//   }
 
-  /** Items are upserts, we replace the existing item and only keep latest. */
-  async put(document: T | any) {
-    const id = document.id;
+//   /** Items are upserts, we replace the existing item and only keep latest. */
+//   async put(document: T | any) {
+//     const id = document.id;
 
-    await this.table.put(id, document);
+//     await this.table.put(id, document);
 
-    const index = this.items.findIndex((i: any) => i.id == id);
+//     const index = this.items.findIndex((i: any) => i.id == id);
 
-    if (index === -1) {
-      this.items.push(document);
-    } else {
-      this.items[index] = document;
-    }
+//     if (index === -1) {
+//       this.items.push(document);
+//     } else {
+//       this.items[index] = document;
+//     }
 
-    this.#changed();
-  }
+//     this.#changed();
+//   }
 
-  /** Delete a single item */
-  async delete(id: string) {
-    await this.table.del(id);
+//   /** Delete a single item */
+//   async delete(id: string) {
+//     await this.table.del(id);
 
-    const index = this.items.findIndex((i: any) => i.id == id);
-    this.items.splice(index, 1);
+//     const index = this.items.findIndex((i: any) => i.id == id);
+//     this.items.splice(index, 1);
 
-    this.#changed();
-  }
+//     this.#changed();
+//   }
 
-  /** Wipes all items. */
-  async wipe() {
-    for await (const [key, value] of this.table.iterator({})) {
-      await this.table.del(key);
-    }
+//   /** Wipes all items. */
+//   async wipe() {
+//     for await (const [key, value] of this.table.iterator({})) {
+//       await this.table.del(key);
+//     }
 
-    this.items = [];
+//     this.items = [];
 
-    this.#changed();
-  }
-}
+//     this.#changed();
+//   }
+// }

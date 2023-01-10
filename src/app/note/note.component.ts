@@ -5,7 +5,6 @@ import { Utilities } from '../services/utilities.service';
 import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrEventDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
-import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { ThreadService } from '../services/thread.service';
 import { NavigationService } from '../services/navigation.service';
@@ -24,7 +23,6 @@ export class NoteComponent {
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
     public options: OptionsService,
-    public feedService: FeedService,
     public navigation: NavigationService,
     public profiles: ProfileService,
     public thread: ThreadService,
@@ -35,37 +33,33 @@ export class NoteComponent {
 
   // TODO: Nasty code, just fix it, quick hack before bed.
   likes(event: NostrEventDocument) {
-    let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
-
-    eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
-      const eTag = e.tags.find((p) => p[0] === 'e');
-      const eTagValue = eTag![1];
-      return eTagValue != '-';
-    });
-
-    return eventsWithSingleeTag.length;
+    // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
+    // eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
+    //   const eTag = e.tags.find((p) => p[0] === 'e');
+    //   const eTagValue = eTag![1];
+    //   return eTagValue != '-';
+    // });
+    // return eventsWithSingleeTag.length;
   }
 
   // TODO: Nasty code, just fix it, quick hack before bed.
   dislikes(event: NostrEventDocument) {
-    let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
-
-    eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
-      const eTag = e.tags.find((p) => p[0] === 'e');
-      const eTagValue = eTag![1];
-      return eTagValue == '-';
-    });
-
-    return eventsWithSingleeTag.length;
+    // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
+    // eventsWithSingleeTag = eventsWithSingleeTag.filter((e) => {
+    //   const eTag = e.tags.find((p) => p[0] === 'e');
+    //   const eTagValue = eTag![1];
+    //   return eTagValue == '-';
+    // });
+    // return eventsWithSingleeTag.length;
   }
 
   replies(event: NostrEventDocument) {
-    const eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind != 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
-    return eventsWithSingleeTag.length;
+    // const eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind != 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
+    // return eventsWithSingleeTag.length;
   }
 
   filteredThread() {
-    return this.feedService.thread.filter((p) => p.kind != 7);
+    // return this.feedService.thread.filter((p) => p.kind != 7);
   }
 
   repliesTo(event: NostrEventDocument) {
@@ -106,6 +100,13 @@ export class NoteComponent {
   }
 
   ngOnInit() {
+    console.log('CURRENT EVENT:', this.navigation.currentEvent);
+
+    if (this.navigation.currentEvent) {
+      this.id = this.navigation.currentEvent.id;
+      this.thread.changeSelectedEvent(undefined, this.navigation.currentEvent);
+    }
+
     console.log('NG INIT ON NOTE:');
     // this.appState.title = 'Blockcore Notes';
 
@@ -148,18 +149,25 @@ export class NoteComponent {
         return;
       }
 
-      if (this.appState.connectedChanged.value === true) {
-        setTimeout(() => {
-          this.thread.changeSelectedEvent(id);
-          this.id = id;
-        }, 0);
+      if (this.thread.event && this.thread.event.id == id) {
+        this.id = id;
+        return;
       } else {
-        // POOR MANS WAIT... this is not suppose to be needed, but appears to help sometimes.
-        setTimeout(() => {
-          this.thread.changeSelectedEvent(id);
-          this.id = id;
-        }, 4000);
+        this.thread.changeSelectedEvent(id);
+        this.id = id;
       }
+
+      // if (this.appState.connectedChanged.value === true) {
+      //   setTimeout(() => {
+      //     this.thread.changeSelectedEvent(id);
+      //   }, 0);
+      // } else {
+      //   // POOR MANS WAIT... this is not suppose to be needed, but appears to help sometimes.
+      //   setTimeout(() => {
+      //     this.thread.changeSelectedEvent(id);
+      //     this.id = id;
+      //   }, 4000);
+      // }
     });
   }
 

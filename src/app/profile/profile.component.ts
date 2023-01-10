@@ -9,7 +9,6 @@ import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/inte
 import { ProfileService } from '../services/profile.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { FeedService } from '../services/feed.service';
 import { DataService } from '../services/data.service';
 
 @Component({
@@ -36,8 +35,7 @@ export class ProfileComponent {
     private sanitizer: DomSanitizer,
     private profileService: ProfileService,
     private dataService: DataService,
-    private activatedRoute: ActivatedRoute,
-    private feedService: FeedService
+    private activatedRoute: ActivatedRoute
   ) {}
 
   async ngOnInit() {
@@ -93,7 +91,7 @@ export class ProfileComponent {
       tags: [],
     };
 
-    await this.feedService.publish(event, false); // Don't persist this locally.
+    // await this.feedService.publish(event, false); // Don't persist this locally.
 
     this.profile!.created_at = event.created_at;
 

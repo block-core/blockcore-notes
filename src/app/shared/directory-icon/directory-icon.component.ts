@@ -16,7 +16,7 @@ export class DirectoryIconComponent {
 
   async ngOnInit() {
     if (!this.profile) {
-      this.profile = await this.profiles.getProfile(this.pubkey);
+      this.profile = await this.profiles.getLocalProfile(this.pubkey);
     }
 
     if (!this.profile) {

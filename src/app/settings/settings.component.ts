@@ -3,13 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate.service';
+import { DatabaseService } from '../services/database.service';
 import { EventService } from '../services/event.service';
-import { FeedService } from '../services/feed.service';
 import { NostrRelay } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { RelayService } from '../services/relay.service';
-import { RelayStorageService } from '../services/relay.storage.service';
-import { StorageService } from '../services/storage.service';
 import { ThemeService } from '../services/theme.service';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
 
@@ -26,16 +24,7 @@ export class SettingsComponent {
   wipedNotes = false;
   open = false;
 
-  constructor(
-    public relayService: RelayService,
-    public dialog: MatDialog,
-    public relayStorage: RelayStorageService,
-    public feedService: FeedService,
-    public appState: ApplicationState,
-    private storage: StorageService,
-    private profileService: ProfileService,
-    public theme: ThemeService
-  ) {}
+  constructor(public relayService: RelayService, public dialog: MatDialog, public appState: ApplicationState, private profileService: ProfileService, public theme: ThemeService, private db: DatabaseService) {}
 
   toggle() {
     if (this.open) {
@@ -56,18 +45,29 @@ export class SettingsComponent {
   }
 
   async clearProfileCache() {
-    await this.profileService.wipeNonFollow();
+    // await this.profileService.wipeNonFollow();
     this.wipedNonFollow = true;
   }
 
   async clearDatabase() {
-    await this.storage.wipe();
+    this.db
+      .delete()
+      .then(() => {
+        console.log('Database successfully deleted');
+      })
+      .catch((err) => {
+        console.error('Could not delete database');
+      })
+      .finally(() => {
+        // Do what should be done next...
+      });
+
     this.wiped = true;
     location.reload();
   }
 
   async clearNotesCache() {
-    await this.feedService.wipe();
+    // await this.feedService.wipe();
     this.wipedNotes = true;
   }
 
@@ -93,15 +93,7 @@ export class SettingsComponent {
   ngOnInit() {
     this.appState.title = 'Settings';
     this.appState.showBackButton = true;
-    this.appState.actions = [
-      {
-        icon: 'add_circle',
-        tooltip: 'Add Relay',
-        click: () => {
-          this.addRelay();
-        },
-      },
-    ];
+    this.appState.actions = [];
   }
 
   registerHandler(protocol: string, parameter: string) {

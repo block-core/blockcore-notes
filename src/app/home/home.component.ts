@@ -5,7 +5,7 @@ import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay, Event } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { NotesService } from '../services/notes.service';
@@ -14,16 +14,17 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { OptionsService } from '../services/options.service';
-import { FeedService } from '../services/feed.service';
 import { AuthenticationService } from '../services/authentication.service';
 import { NavigationService } from '../services/navigation.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { DataService } from '../services/data.service';
+import { DatabaseService } from '../services/database.service';
 
 interface DefaultProfile {
   pubkey: string;
-  pubkeyhex: string;
+  pubkeynpub: string;
   name: string;
   picture: string;
   about: string;
@@ -57,40 +58,40 @@ export class HomeComponent {
 
   defaults: DefaultProfile[] = [
     {
-      pubkey: 'npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6',
-      pubkeyhex: '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
+      pubkeynpub: 'npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6',
+      pubkey: '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
       name: 'fiatjaf',
       picture: 'https://pbs.twimg.com/profile_images/539211568035004416/sBMjPR9q_normal.jpeg',
       about: 'buy my merch at fiatjaf store',
       checked: false,
     },
     {
-      pubkey: 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m',
-      pubkeyhex: '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
+      pubkeynpub: 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m',
+      pubkey: '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
       name: 'jack',
       picture: 'https://pbs.twimg.com/profile_images/1115644092329758721/AFjOr-K8_normal.jpg',
       about: 'bitcoin...twttr/@jack',
       checked: false,
     },
     {
-      pubkey: 'npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s',
-      pubkeyhex: '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
+      pubkeynpub: 'npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s',
+      pubkey: '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
       name: 'jb55',
       picture: 'https://pbs.twimg.com/profile_images/1362882895669436423/Jzsp1Ikr_normal.jpg',
       about: 'damus.io author. bitcoin and nostr dev',
       checked: false,
     },
     {
-      pubkey: 'npub1v4v57fu60zvc9d2uq23cey4fnwvxlzga9q2vta2n6xalu03rs57s0mxwu8',
-      pubkeyhex: '65594f279a789982b55c02a38c92a99b986f891d2814c5f553d1bbfe3e23853d',
+      pubkeynpub: 'npub1v4v57fu60zvc9d2uq23cey4fnwvxlzga9q2vta2n6xalu03rs57s0mxwu8',
+      pubkey: '65594f279a789982b55c02a38c92a99b986f891d2814c5f553d1bbfe3e23853d',
       name: 'hampus',
       picture: 'https://pbs.twimg.com/profile_images/1517505111991504896/9qixSAMn_normal.jpg',
       about: '',
       checked: false,
     },
     {
-      pubkey: 'npub1zl3g38a6qypp6py2z07shggg45cu8qex992xpss7d8zrl28mu52s4cjajh',
-      pubkeyhex: '17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515',
+      pubkeynpub: 'npub1zl3g38a6qypp6py2z07shggg45cu8qex992xpss7d8zrl28mu52s4cjajh',
+      pubkey: '17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515',
       name: 'sondreb',
       picture: 'https://sondreb.com/favicon.png',
       about: 'Developer 🦸‍♂️ of Blockcore Notes and Blockcore Wallet',
@@ -101,10 +102,11 @@ export class HomeComponent {
   #defaultsChanged: BehaviorSubject<DefaultProfile[]> = new BehaviorSubject<DefaultProfile[]>(this.defaults);
 
   get defaults$(): Observable<DefaultProfile[]> {
-    return combineLatest([this.#defaultsChanged, this.profileService.following$]).pipe(
+    return combineLatest([this.#defaultsChanged, this.profileService.items$]).pipe(
       map(([defaultProfiles, followProfiles]) => {
         return defaultProfiles.filter((item) => {
-          if (followProfiles.find((p) => p.pubkey === item.pubkeyhex) != null) {
+          debugger;
+          if (followProfiles.find((p) => p.pubkey === item.pubkey) != null) {
             return undefined;
           } else {
             return item;
@@ -115,6 +117,7 @@ export class HomeComponent {
   }
 
   constructor(
+    private db: DatabaseService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     public options: OptionsService,
@@ -125,22 +128,137 @@ export class HomeComponent {
     private authService: AuthenticationService,
     private utilities: Utilities,
     private snackBar: MatSnackBar,
+    private dataService: DataService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
-    private feedService: FeedService,
     private ngZone: NgZone
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
 
+  downloadProfiles() {
+    const array = [
+      '00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700',
+      '17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515',
+      '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
+      '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
+      '65594f279a789982b55c02a38c92a99b986f891d2814c5f553d1bbfe3e23853d',
+      '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
+      'a341f45ff9758f570a21b000c17d4e53a3a497c8397f26c0e6d61e5acffc7a98',
+      'd987084c48390a290f5d2a34603ae64f55137d9b4affced8c0eae030eb222a25',
+      'edcd20558f17d99327d841e4582f9b006331ac4010806efa020ef0d40078e6da',
+    ];
+
+    const observable = this.dataService.downloadNewestProfiles(array).subscribe((profile) => {
+      console.log('PROFILE RECEIVED:', profile);
+
+      // let doc = profile as NostrEventDocument;
+      // const index = array.findIndex((a) => a == doc.pubkey);
+
+      // if (index > -1) {
+      //   array.splice(index, 1);
+      // }
+
+      // if (array.length === 0) {
+      //   console.log('FOUND ALL!!!!');
+      // }
+    });
+
+    setInterval(() => {
+      console.log('observable.closed:', observable.closed);
+    }, 250);
+  }
+
+  downloadProfiles2() {
+    const array = [
+      '00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700',
+      '17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515',
+      '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245',
+      '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d',
+      '65594f279a789982b55c02a38c92a99b986f891d2814c5f553d1bbfe3e23853d',
+      '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2',
+      'a341f45ff9758f570a21b000c17d4e53a3a497c8397f26c0e6d61e5acffc7a98',
+      'd987084c48390a290f5d2a34603ae64f55137d9b4affced8c0eae030eb222a25',
+      'edcd20558f17d99327d841e4582f9b006331ac4010806efa020ef0d40078e6da',
+    ];
+
+    const observable = this.profileService.getProfile(array[0]).subscribe(async (profile) => {
+      console.log('GOT CACHED PROFILE:', profile);
+
+      debugger;
+      await this.profileService.follow(profile.pubkey);
+    });
+
+    // this.profileService.getProfile(array[1]).subscribe((profile) => {
+    //   console.log('GOT CACHED PROFILE:', profile);
+    // });
+
+    // this.profileService.getProfile(array[2]).subscribe((profile) => {
+    //   console.log('GOT CACHED PROFILE:', profile);
+    // });
+
+    // this.profileService.getProfile(array[3]).subscribe((profile) => {
+    //   console.log('GOT CACHED PROFILE:', profile);
+    // });
+
+    // const observable = this.profileService.getProfile2(array[0]).dataService.downloadNewestProfiles(array).subscribe((profile) => {
+    //   console.log('PROFILE RECEIVED:', profile);
+
+    //   let doc = profile as NostrEventDocument;
+
+    //   const index = array.findIndex((a) => a == doc.pubkey);
+
+    //   if (index > -1) {
+    //     array.splice(index, 1);
+    //   }
+
+    //   if (array.length === 0) {
+    //     console.log('FOUND ALL!!!!');
+    //   }
+    // });
+
+    setInterval(() => {
+      console.log('observable.closed:', observable.closed);
+    }, 2000);
+  }
+
+  subscribeEvents() {
+    const observable = this.dataService.subscribeLatestEvents([1], [], 100).subscribe((event) => {
+      console.log('EVENT RECEIVED:', event);
+    });
+
+    // setInterval(() => {
+    //   console.log('observable.closed:', observable.closed);
+    // }, 2000);
+
+    // setTimeout(() => {
+    //   observable.unsubscribe();
+    // }, 20000);
+  }
+
+  subscribeEvents2() {
+    const observable = this.dataService.subscribeLatestEvents([0, 3], [], 100).subscribe((event) => {
+      console.log('EVENT RECEIVED22:', event);
+    });
+
+    setInterval(() => {
+      console.log('observable.closed22:', observable.closed);
+    }, 2000);
+
+    setTimeout(() => {
+      observable.unsubscribe();
+    }, 20000);
+  }
+
   async follow(profile: DefaultProfile) {
     if (profile.checked) {
-      await this.profileService.follow(profile.pubkeyhex, undefined, profile as any);
-      this.feedService.downloadRecent([profile.pubkeyhex]);
+      await this.profileService.follow(profile.pubkey, 0, profile as any);
+
+      // this.feedService.downloadRecent([profile.pubkeyhex]);
 
       // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
       this.#defaultsChanged.next(this.defaults);
-      this.profileService.updated();
+      // this.profileService.updated();
     }
   }
 
@@ -180,6 +298,10 @@ export class HomeComponent {
     return item.id;
   }
 
+  public trackByProfile(index: number, item: DefaultProfile) {
+    return `${item.pubkey}${item.checked}`;
+  }
+
   public trackByNoteId(index: number, item: NostrNoteDocument) {
     return item.id;
   }
@@ -195,6 +317,22 @@ export class HomeComponent {
     this.details = !this.details;
   }
 
+  async clearDatabase() {
+    this.db
+      .delete()
+      .then(() => {
+        console.log('Database successfully deleted');
+      })
+      .catch((err) => {
+        console.error('Could not delete database');
+      })
+      .finally(() => {
+        // Do what should be done next...
+      });
+
+    location.reload();
+  }
+
   import(pubkey: string) {
     // TODO: This is a copy-paste of code in circles, refactor ASAP!
 
@@ -206,32 +344,42 @@ export class HomeComponent {
 
     pubkey = this.utilities.ensureHexIdentifier(pubkey);
 
+    this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
+      const nostrEvent = event as NostrEventDocument;
+      const publicKeys = nostrEvent.tags.map((t) => t[1]);
+
+      for (let i = 0; i < publicKeys.length; i++) {
+        const publicKey = publicKeys[i];
+        this.profileService.follow(publicKey);
+      }
+    });
+
     // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
     // follow lists and having to process everything multiple times. Just query one by one until
     // we find the list. Until then, we simply grab the first relay only.
-    this.subscriptions.push(
-      this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-        const publicKeys = contacts.tags.map((t) => t[1]);
+    // this.subscriptions.push(
+    //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
+    //     const publicKeys = contacts.tags.map((t) => t[1]);
 
-        for (let i = 0; i < publicKeys.length; i++) {
-          const publicKey = publicKeys[i];
-          const profile = await this.profileService.getProfile(publicKey);
+    //     for (let i = 0; i < publicKeys.length; i++) {
+    //       const publicKey = publicKeys[i];
+    //       const profile = await this.profileService.getProfile(publicKey);
 
-          // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-          if (profile) {
-            await this.profileService.follow(publicKeys[i], profile.circle);
-          } else {
-            await this.profileService.follow(publicKeys[i]);
-          }
-        }
+    //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+    //       if (profile) {
+    //         await this.profileService.follow(publicKeys[i], profile.circle);
+    //       } else {
+    //         await this.profileService.follow(publicKeys[i]);
+    //       }
+    //     }
 
-        this.router.navigateByUrl('/people');
+    //     this.router.navigateByUrl('/people');
 
-        // this.ngZone.run(() => {
-        //   this.cd.detectChanges();
-        // });
-      })
-    );
+    //     // this.ngZone.run(() => {
+    //     //   this.cd.detectChanges();
+    //     // });
+    //   })
+    // );
   }
 
   fetchProfiles(relay: Relay, authors: string[]) {

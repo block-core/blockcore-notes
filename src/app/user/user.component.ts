@@ -1,19 +1,20 @@
-import { ChangeDetectorRef, Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
-import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
-import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
-import { CirclesService } from '../services/circles.service';
+import { CircleService } from '../services/circle.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { map, Subscription } from 'rxjs';
+import { map, Observable, of, Subscription, tap, BehaviorSubject } from 'rxjs';
+import { DataService } from '../services/data.service';
+import { NotesService } from '../services/notes.service';
 
 @Component({
   selector: 'app-user',
@@ -29,30 +30,85 @@ export class UserComponent {
   imagePath = '/assets/profile.png';
   profileName = '';
   circle?: Circle;
-  muted? = false;
   initialLoad = true;
 
-  userEvents$ = this.feedService.rootEvents$.pipe(
-    map((data) => {
-      if (!this.pubkey) {
-        return;
-      }
+  events: NostrEventDocument[] = [];
+  #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
+  get events$(): Observable<NostrEventDocument[]> {
+    return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
+  }
 
-      return data.filter((n) => n.pubkey == this.pubkey);
-    })
-  );
+  rootEvents$ = this.events$
+    .pipe(
+      map((data) => {
+        return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length == 0);
+      })
+    )
+    .pipe(map((x) => x.slice(0, this.eventsCount)));
 
-  replyEvents$ = this.feedService.replyEvents$.pipe(
-    map((data) => {
-      if (!this.pubkey) {
-        return;
-      }
+  replyEvents$ = this.events$
+    .pipe(
+      map((data) => {
+        return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length > 0);
+      })
+    )
+    .pipe(map((x) => x.slice(0, this.eventsCount)));
 
-      return data.filter((n) => n.pubkey == this.pubkey);
-    })
-  );
+  // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
+
+  // get events$(): Observable<NostrEventDocument[]> {
+  //   return this.#eventsChanged.asObservable().pipe(
+  //     map((data) => {
+  //       data.sort((a, b) => {
+  //         return a.created_at > b.created_at ? -1 : 1;
+  //       });
+
+  //       return data;
+  //     })
+  //   );
+  // }
+
+  // userEvents$!: any;
+  // replyEvents$!: any;
+
+  notes: NostrEventDocument[] = [];
+
+  userEvents$ = of(this.notes);
+  // .pipe(
+  //   map((data) => {
+  //     // debugger;
+  //     return data.sort((a, b) => {
+  //       debugger;
+  //       return a.created_at > b.created_at ? 1 : -1;
+  //     });
+  //   })
+  // )
+  // .pipe(map((x) => x.slice(0, this.eventsCount)));
+
+  // get eventsView$(): Observable<NostrEventDocument[]> {
+  //   return this.feedService.events$.pipe(map((x) => x.slice(0, this.eventsCount)));
+  // }
+
+  //.pipe(map((objs) => objs.map((c) => c.created_at).sort((a, b) => (a > b ? 1 : -1)))); //.pipe(map((bands) => [...bands].sort((a, b) => (a.created_at > b.created_at ? 1 : -1))));
+  // this.titles$ = item.pipe(map(objs => objs.map(c => c.title).sort((a, b) => a.localCompare(b))))
+  // tap((results) => {
+  //   return results.sort((x, y) => (x.created_at < y.created_at ? -1 : 1)); // https://stackoverflow.com/a/50276301
+  // })
+  // .pipe(
+  //   map((data) => {
+  //     debugger;
+  //     if (!this.pubkey) {
+  //       return;
+  //     }
+  //     return data.filter((n) => n.pubkey == this.pubkey);
+  //   })
+  // );
 
   subscriptions: Subscription[] = [];
+
+  profileSubscription?: Subscription;
+
+  feedSubscription?: Subscription;
 
   constructor(
     public navigation: NavigationService,
@@ -60,21 +116,56 @@ export class UserComponent {
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
     public options: OptionsService,
-    public feedService: FeedService,
     public profiles: ProfileService,
+    private dataService: DataService,
     private validator: DataValidation,
-    private circleService: CirclesService,
+    private circleService: CircleService,
     private utilities: Utilities,
-    private router: Router
-  ) {
-    // this.appState.title = 'Blockcore Notes';
+    public notesService: NotesService,
+    private router: Router,
+    private ngZone: NgZone
+  ) {}
 
-    // this.subscriptions.push(
-    //   this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event) => {
-    //     console.log('ROUTING EVENT:', event);
-    //     console.log('ROUTING EVENT:', this.router);
-    //   })
-    // );
+  async follow() {
+    this.profile!.status = ProfileStatus.Follow;
+    await this.profiles.follow(this.pubkey!);
+    // this.feedService.downloadRecent([this.pubkey!]);
+  }
+
+  tabIndex?: number;
+
+  onTabChanged(event: MatTabChangeEvent) {
+    // Reset the events count when changing tabs.
+    this.router.navigate([], { queryParams: { t: event.index }, replaceUrl: true });
+
+    this.eventsCount = 5;
+    this.#changed();
+  }
+
+  #changed() {
+    this.#eventsChanged.next(this.events);
+  }
+
+  eventsCount = 5;
+
+  showMore() {
+    this.eventsCount += 5;
+    this.#changed();
+  }
+
+  ngOnInit() {
+    // setInterval(() => {
+    //   console.log('Closed:', this.feedSubscription?.closed);
+    // }, 50);
+
+    this.subscriptions.push(
+      this.navigation.showMore$.subscribe(() => {
+        this.showMore();
+      })
+    );
+
+    this.appState.showBackButton = true;
+    this.appState.actions = [];
 
     this.subscriptions.push(
       this.activatedRoute.queryParams.subscribe(async (params) => {
@@ -87,57 +178,92 @@ export class UserComponent {
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const pubkey: any = params.get('id');
 
+        // Whenever the user changes, unsubsribe the profile observable (which normally should be completed, but for safety).
+        if (this.profileSubscription) {
+          this.profileSubscription.unsubscribe();
+        }
+
+        if (this.feedSubscription) {
+          this.feedSubscription.unsubscribe();
+        }
+
         if (!pubkey) {
           return;
         }
 
         this.pubkey = pubkey;
-        this.profile = await this.profiles.getProfile(pubkey);
 
-        if (!this.profile) {
-          this.profile = this.profiles.emptyProfile(pubkey);
-          this.circle = undefined;
-          this.muted = false;
-        }
+        this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
+          this.profile = profile;
 
-        this.npub = this.utilities.getNostrIdentifier(pubkey);
-
-        if (!this.profile.name) {
-          this.profile.name = this.npub;
-        }
-
-        this.profileName = this.profile.name;
-
-        if (this.profileName)
-          if (!this.profile.display_name) {
-            this.profile.display_name = this.profileName;
+          if (!this.profile) {
+            this.profile = this.profiles.emptyProfile(pubkey);
+            this.circle = undefined;
           }
 
-        this.imagePath = this.profile.picture || '/assets/profile.png';
+          this.npub = this.utilities.getNostrIdentifier(pubkey);
 
-        // If the user has name in their profile, show that and not pubkey.
-        this.circle = await this.circleService.getCircle(this.profile.circle);
-        this.muted = this.profile.mute;
-        this.appState.title = `@${this.profile.name}`;
+          if (!this.profile.name) {
+            this.profile.name = this.npub;
+          }
+
+          this.profileName = this.profile.name;
+
+          if (this.profileName)
+            if (!this.profile.display_name) {
+              this.profile.display_name = this.profileName;
+            }
+
+          this.imagePath = this.profile.picture || '/assets/profile.png';
+
+          this.circle = await this.circleService.get(this.profile.circle);
+
+          // If the user has name in their profile, show that and not pubkey.
+          this.appState.title = `@${this.profile.name}`;
+        });
+
+        this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {
+          const existingIndex = this.events.findIndex((e) => e.id == event.id);
+
+          if (existingIndex !== -1) {
+            return;
+          }
+
+          this.events.unshift(event);
+          // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+          this.#changed();
+
+          // this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
+
+          // this.ngZone.run(() => {
+          //   // this.notesService.currentViewNotes.push(event);
+          //   this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
+          //   console.log(this.notes);
+          // });
+
+          // this.ite
+          //   .of(this.notesService.currentViewNotes)
+          //   // .pipe(
+          //   //   map((data) => {
+          //   //     // debugger;
+          //   //     return data.sort((a, b) => {
+          //   //       debugger;
+          //   //       return a.created_at > b.created_at ? 1 : -1;
+          //   //     });
+          //   //   })
+          //   // )
+          //   .pipe(map((x) => x.slice(0, this.eventsCount)));
+
+          // x.slice(0, this.eventsCount);
+
+          // this.ngZone.run(() => {
+          //   this.notesService.currentViewNotes.push(event);
+          // });
+
+          // console.log('LENGTH:', this.notesService.currentViewNotes.length);
+        });
       })
     );
-  }
-
-  async follow() {
-    this.profile!.follow = true;
-    await this.profiles.follow(this.pubkey!);
-    this.feedService.downloadRecent([this.pubkey!]);
-  }
-
-  tabIndex?: number;
-
-  onTabChanged(event: MatTabChangeEvent) {
-    this.router.navigate([], { queryParams: { t: event.index }, replaceUrl: true });
-  }
-
-  ngOnInit() {
-    this.appState.showBackButton = true;
-    this.appState.actions = [];
 
     // if (this.pubkey) {
     // console.log('PIPING EVENTS...');
@@ -175,5 +301,13 @@ export class UserComponent {
 
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);
+
+    if (this.profileSubscription) {
+      this.profileSubscription.unsubscribe();
+    }
+
+    if (this.feedSubscription) {
+      this.feedSubscription.unsubscribe();
+    }
   }
 }

@@ -10,7 +10,6 @@ import { ProfileService } from '../services/profile.service';
 import { SettingsService } from '../services/settings.service';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { FeedService } from '../services/feed.service';
 import { OptionsService } from '../services/options.service';
 import { NavigationService } from '../services/navigation.service';
 import { ScrollEvent } from '../shared/scroll.directive';
@@ -30,7 +29,6 @@ export class FeedPrivateComponent {
     private cd: ChangeDetectorRef,
     public options: OptionsService,
     public profileService: ProfileService,
-    public feedService: FeedService,
     private validator: DataValidation,
     private utilities: Utilities,
     private router: Router,
@@ -41,9 +39,9 @@ export class FeedPrivateComponent {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
 
-  get eventsView$(): Observable<NostrEventDocument[]> {
-    return this.feedService.events$.pipe(map((x) => x.slice(0, this.eventsCount)));
-  }
+  // get eventsView$(): Observable<NostrEventDocument[]> {
+  //   return this.feedService.events$.pipe(map((x) => x.slice(0, this.eventsCount)));
+  // }
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit');
@@ -53,7 +51,7 @@ export class FeedPrivateComponent {
     console.log('ngAfterContentInit');
   }
 
-  eventsCount = 10;
+  eventsCount = 5;
 
   showMore() {
     this.eventsCount += 10;
@@ -133,7 +131,6 @@ export class FeedPrivateComponent {
   //   await this.load();
   // }
 
-
   subscriptions: Subscription[] = [];
   hasFollowers = false;
 
@@ -147,8 +144,8 @@ export class FeedPrivateComponent {
       })
     );
 
-    const followList = await this.profileService.followList();
-    this.hasFollowers = followList.length > 0;
+    // const followList = await this.profileService.followList();
+    // this.hasFollowers = followList.length > 0;
 
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc

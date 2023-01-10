@@ -252,6 +252,7 @@ mat-sidenav-content mat-toolbar {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a3a5a7c2;
+  border: 4px solid transparent;
 }
 
 .marginless {
@@ -266,7 +267,7 @@ mat-sidenav-content mat-toolbar {
 .current-event {
   display: flex;
   flex-direction: column;
-  margin-bottom: 2em;
+  margin-bottom: 0;
   // margin-left: 2em;
   background-color: transparent !important;
   border: 0 !important;
@@ -274,7 +275,7 @@ mat-sidenav-content mat-toolbar {
 
 @media only screen and (max-width: 599px) {
   .current-event {
-    margin-bottom: 1em;
+    margin-bottom: 0;
     // margin-left: 1em;
   }
 }
@@ -313,7 +314,7 @@ mat-sidenav-content mat-toolbar {
 .events {
   margin-top: 1em;
   padding: 1em;
-  margin-bottom: 1em;
+  margin-bottom: 0;
   border-radius: 10px !important;
 }
 

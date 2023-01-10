@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { CirclesService } from 'src/app/services/circles.service';
+import { CircleService } from 'src/app/services/circle.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
@@ -18,23 +18,30 @@ export class EventHeaderComponent {
   tooltipName = '';
   profileName = '';
   circle?: Circle;
-  muted? = false;
 
-  constructor(private profiles: ProfileService, private circleService: CirclesService, private utilities: Utilities) {}
+  constructor(private profiles: ProfileService, private circleService: CircleService, private utilities: Utilities) {}
 
   ngAfterViewInit() {}
 
   async ngOnInit() {
     if (!this.profile) {
-      this.profile = await this.profiles.getProfile(this.pubkey);
       this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
 
-      if (!this.profile) {
-        return;
-      }
+      this.profiles.getProfile(this.pubkey).subscribe(async (profile) => {
+        this.profile = profile;
+        await this.updateProfileDetails();
+      });
+      // this.profile = await this.profiles.getLocalProfile(this.pubkey);
     } else {
       this.pubkey = this.profile.pubkey;
-      this.profileName = this.utilities.getNostrIdentifier(this.profile.pubkey);
+      // this.profileName = this.utilities.getNostrIdentifier(this.profile.pubkey);
+      await this.updateProfileDetails();
+    }
+  }
+
+  async updateProfileDetails() {
+    if (!this.profile) {
+      return;
     }
 
     if (this.profile.picture) {
@@ -44,11 +51,9 @@ export class EventHeaderComponent {
     this.tooltip = this.profile.about;
     this.tooltipName = this.profileName;
 
-    // If the user has name in their profile, show that and not pubkey.
-    this.profileName = this.profile.name || this.profileName;
+    // Set profile name to display_name, or name, or re-use existing profilename (should be npub)
+    this.profileName = this.profile.display_name || this.profile.name || this.profileName;
 
-    this.circle = await this.circleService.getCircle(this.profile.circle);
-
-    this.muted = this.profile.mute;
+    this.circle = await this.circleService.get(this.profile.circle);
   }
 }

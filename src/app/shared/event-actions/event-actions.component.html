@@ -23,13 +23,6 @@
   </button>
 </mat-menu>
 
-<mat-menu #categories="matMenu">
-  <button *ngFor="let circle of circles" mat-menu-item (click)="follow(circle.id)">
-    <mat-icon [style.color]="circle.color">trip_origin</mat-icon>
-    <span>{{ circle.name }}</span>
-  </button>
-</mat-menu>
-
 <mat-menu #copyMenu="matMenu">
   <button mat-menu-item *ngIf="event" (click)="copyNoteId(event!.id)">
     <mat-icon>content_copy</mat-icon>

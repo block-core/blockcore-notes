@@ -1,13 +1,10 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { CirclesService } from 'src/app/services/circles.service';
+import { Component, Input } from '@angular/core';
 import { NotesService } from 'src/app/services/notes.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
-import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
-import { Subscription } from 'rxjs';
+import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
-import { FeedService } from 'src/app/services/feed.service';
 import { nip19 } from 'nostr-tools';
 import { EventPointer } from 'nostr-tools/nip19';
 
@@ -21,9 +18,7 @@ export class EventActionsComponent {
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  circles: Circle[] = [];
-
-  constructor(private feedService: FeedService, private circlesService: CirclesService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  constructor(private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
@@ -46,7 +41,7 @@ export class EventActionsComponent {
     await this.notesService.deleteNote(this.event.id);
   }
 
-  async follow(circle?: string) {
+  async follow(circle?: number) {
     console.log('FOLLOW:', this.profile);
 
     if (!this.profile) {
@@ -54,9 +49,9 @@ export class EventActionsComponent {
     }
 
     // If not already following, add a full follow and download recent:
-    if (!this.profile.follow) {
+    if (this.profile.status != 1) {
       await this.profileService.follow(this.profile.pubkey, circle);
-      this.feedService.downloadRecent([this.profile.pubkey]);
+      // this.feedService.downloadRecent([this.profile.pubkey]);
     } else {
       // If we already follow but just change the circle, do a smaller operation.
       await this.profileService.setCircle(this.profile.pubkey, circle);
@@ -156,33 +151,18 @@ export class EventActionsComponent {
     await this.profileService.unblock(this.profile.pubkey);
   }
 
-  ngOnDestroy() {
-    // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.
-    if (this.circlesSub) {
-      this.circlesSub.unsubscribe();
-    }
-  }
-
-  private circlesSub?: Subscription;
-
-  async loadCircles() {
-    this.circles = await this.circlesService.list();
-  }
+  ngOnDestroy() {}
 
   async ngOnInit() {
     // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.
 
     if (this.event) {
       this.pubkey = this.event.pubkey;
-      this.profile = await this.profileService.getProfile(this.pubkey);
+      // this.profile = await this.profileService.getProfile(this.pubkey);
     } else if (this.profile) {
       this.pubkey = this.profile.pubkey;
     } else {
-      this.profile = await this.profileService.getProfile(this.pubkey);
+      // this.profile = await this.profileService.getProfile(this.pubkey);
     }
-
-    this.circlesSub = this.circlesService.notesChanged$.subscribe(() => {
-      this.loadCircles();
-    });
   }
 }

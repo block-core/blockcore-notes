@@ -1,7 +1,7 @@
 import { Event, Relay, Sub } from 'nostr-tools';
 
 export interface Circle {
-  id: string;
+  id?: number;
   name: string;
   color: string;
   style: string;
@@ -49,11 +49,11 @@ export interface NostrRelay extends Relay {
 }
 
 export interface NostrRelayDocument {
-  id: string;
+  url: string;
   read: boolean;
   write: boolean;
-  nip11: any;
-  error: string;
+  nip11?: any;
+  error?: string;
 }
 
 /** OBSOLETE */
@@ -65,6 +65,28 @@ export interface NostrEvent extends Event {
 export interface NostrEventDocument extends Event {
   contentCut: boolean;
   tagsCut: boolean;
+}
+
+export interface NostrThreadEventDocument extends Event {
+  replies: NostrThreadEventDocument[];
+}
+
+export interface ThreadEntryChild {
+  id: string;
+  date: number;
+}
+
+export interface ThreadEntry {
+  id: string;
+  // children: string[];
+  children: ThreadEntryChild[];
+  reactions: { [key: string]: [] };
+  boosts: number;
+}
+
+export enum EmojiEnum {
+  [`👍`] = `👍`,
+  [`👎`] = `👎`,
 }
 
 export interface NostrNoteDocument extends NostrEventDocument {
@@ -80,7 +102,11 @@ export interface NostrProfile {
   /** https://github.com/nostr-protocol/nips/blob/master/05.md */
   nip05: string;
 
-  lud06: string;
+  /** LNURL */
+  lud06?: string;
+
+  /** LN Alias */
+  lud16?: string;
 
   display_name: string;
 
@@ -93,7 +119,7 @@ export interface NostrSubscription extends Sub {
 }
 
 export interface NostrProfileDocument extends NostrProfile {
-  pubkey: string; // Not stored in database, just used when retreiving.
+  pubkey: string;
 
   /** The timestamp when the profile was created. Internal property, not from event. */
   created: number;
@@ -107,16 +133,10 @@ export interface NostrProfileDocument extends NostrProfile {
   /** Timestamp when last retrieved. */
   retrieved?: number;
 
-  /** Indicates if the user is following this profile. If not, then the profile can be wiped during cache cleanup. */
-  follow?: boolean;
+  /** The status against this profile, which can be: 0 = public, 1 = follow, 2 = mute, 3 = block */
+  status: ProfileStatus;
 
-  /** Indicates if a user is blocked and their content will not be shown. */
-  block?: boolean;
-
-  /** Indicates if a user is muted and not displayed in the home feed and notification is shown on replies. */
-  mute?: boolean;
-
-  circle?: string;
+  circle?: number;
 
   /** List of domains where the user has been verified, e.g. "@nostr.directory", "@domain.com" */
   verifications: string[];
@@ -128,4 +148,11 @@ export interface NostrProfileDocument extends NostrProfile {
 export interface CircleStyle {
   id: string;
   name: string;
+}
+
+export enum ProfileStatus {
+  Public = 0,
+  Follow = 1,
+  Mute = 2,
+  Block = 3,
 }

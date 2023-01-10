@@ -1,14 +1,13 @@
 <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
 
 <div class="feed-page">
-  <div class="root-event events" *ngIf="thread.root$ | async as event">
+  <!-- <div class="root-event events" *ngIf="thread.root$ | async as event">
     <span>
       <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
       <app-event-header [pubkey]="event.pubkey"
         ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
       ></app-event-header>
       <app-content [event]="event"></app-content>
-      <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
     </span>
   </div>
 
@@ -24,70 +23,30 @@
           </div>
 
           <app-content [event]="event"></app-content>
-          <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
         </span>
       </mat-card>
     </div>
-  </ng-template>
-  <!-- <div *ngIf="!thread.before$">NO ITEMS!</div> -->
-  <!-- </span> -->
-  <!-- <div class="parent-events events" *ngFor="let event of filteredThread(); trackBy: trackByFn">
-    <span *ngIf="event.kind != 7">
-      <app-profile-actions [event]="event" [pubkey]="event.pubkey"></app-profile-actions>
-      <app-event-header [pubkey]="event.pubkey"
-        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-      ></app-event-header>
-
-      <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div>
-    </span>
-  </div> -->
+  </ng-template> -->
 
   <div class="current-event events noclick" *ngIf="thread.event$ | async as event">
     <div class="events-header">
       <app-event-header [pubkey]="event.pubkey"
-        ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
+        ><span class="event-date" [matTooltip]="event.created_at.toString()">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
       ></app-event-header>
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
 
-    <app-content [event]="event"></app-content>
-    <!-- <div class="content">
-      {{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span><br />
-      <br /><span *ngIf="repliesTo(event) as replies" class="dimmed"
-        >
-        <span *ngIf="replies.length > 0">Replying to </span>
-        <app-reply-list [keys]="replies" ></app-reply-list>
-      </span>
-      <br />
-    </div> -->
+    <app-content class="thread-content" [event]="event"></app-content>
+    <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions>
   </div>
+
+  <app-event-thread [threadEntry]="thread.getTreeEntry(thread.threadId)"> </app-event-thread>
 </div>
 <mat-divider></mat-divider>
 
-<!-- <div class="page" *ngIf="!thread.events$">
-  <h3 class="marginless">Loading thread... this can take some seconds.</h3>
-</div> -->
+<!-- <mat-progress-bar *ngIf="!thread.hasLoaded" mode="indeterminate"></mat-progress-bar> -->
 
-<!-- <div *ngIf="!thread.after$">NO ITEMS!</div> -->
-
-<mat-progress-bar *ngIf="!thread.hasLoaded" mode="indeterminate"></mat-progress-bar>
-
-<div class="feed-page" *ngIf="thread.after$ | async as events">
-  <!-- <mat-accordion class="options">
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>Options</mat-panel-title>
-              <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
-            </mat-expansion-panel-header>
-            <p>
-              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
-              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
-  
-            </p>
-          </mat-expansion-panel>
-        </mat-accordion> -->
-
+<!-- <div class="feed-page" *ngIf="thread.after$ | async as events">
   <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
     <span>
       <div class="events-header">
@@ -97,7 +56,6 @@
         <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
       </div>
       <app-content [event]="event"></app-content>
-      <!-- <div class="content">{{ event.content }}<span *ngIf="event.contentCut">... (message was truncated)</span></div> -->
     </span>
   </mat-card>
-</div>
+</div> -->

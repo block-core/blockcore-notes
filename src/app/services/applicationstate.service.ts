@@ -54,10 +54,14 @@ export class ApplicationState {
 
   connected$: Observable<boolean>;
 
-  connectedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  connected = false;
 
-  connected(status: boolean) {
+  connectedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.connected);
+
+  updateConnectionStatus(status: boolean) {
+    this.connected = status;
     this.connectedChanged.next(status);
+    // }
   }
 
   visibility$: Observable<boolean>;

@@ -77,6 +77,10 @@ import { EventActionsComponent } from './shared/event-actions/event-actions.comp
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ChatComponent } from './chat/chat.component';
 import { FeedComponent } from './feed/feed.component';
+import { WithStatusPipe } from './shared/loading.pipe';
+import { EventThreadComponent } from './shared/event-thread/event-thread.component';
+import { EventReactionsComponent } from './shared/event-reactions/event-reactions.component';
+import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 
 @NgModule({
   declarations: [
@@ -91,6 +95,7 @@ import { FeedComponent } from './feed/feed.component';
     AgoPipe,
     Bech32Pipe,
     CircleStylePipe,
+    WithStatusPipe,
     AboutComponent,
     FollowDialog,
     SettingsComponent,
@@ -116,6 +121,8 @@ import { FeedComponent } from './feed/feed.component';
     EventActionsComponent,
     ChatComponent,
     FeedComponent,
+    EventThreadComponent,
+    EventReactionsComponent
   ],
   imports: [
     HttpClientModule,
@@ -151,6 +158,7 @@ import { FeedComponent } from './feed/feed.component';
     FormsModule,
     ReactiveFormsModule,
     LayoutModule,
+    NgxLoadingButtonsModule,
     MatSnackBarModule,
     MatProgressBarModule,
     MatDialogModule,

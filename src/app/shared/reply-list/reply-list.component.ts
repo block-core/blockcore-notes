@@ -27,14 +27,14 @@ export class ReplyListComponent {
 
       let profile = await this.profileService.getProfile(key);
 
-      if (!profile) {
-        profile = {
-          pubkey: key,
-          name: this.utilities.getShortenedIdentifier(key),
-        } as NostrProfileDocument;
-      }
+      // if (!profile) {
+      //   profile = {
+      //     pubkey: key,
+      //     name: this.utilities.getShortenedIdentifier(key),
+      //   } as NostrProfileDocument;
+      // }
 
-      this.profiles.push(profile);
+      // this.profiles.push(profile);
     }
   }
 }

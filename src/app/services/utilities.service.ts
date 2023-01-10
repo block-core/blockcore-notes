@@ -4,7 +4,8 @@ import * as secp from '@noble/secp256k1';
 import { bech32 } from '@scure/base';
 import { Subscription } from 'rxjs';
 import { copyToClipboard } from '../shared/utilities';
-import { NostrProfileDocument, NostrProfile } from './interfaces';
+import { DataValidation } from './data-validation.service';
+import { NostrProfileDocument, NostrProfile, NostrEvent, NostrEventDocument } from './interfaces';
 
 export function sleep(durationInMillisecond: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, durationInMillisecond));
@@ -14,7 +15,7 @@ export function sleep(durationInMillisecond: number): Promise<void> {
   providedIn: 'root',
 })
 export class Utilities {
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private snackBar: MatSnackBar, private validator: DataValidation) {}
 
   unsubscribe(subscriptions: Subscription[]) {
     if (!subscriptions) {
@@ -24,6 +25,10 @@ export class Utilities {
     for (let i = 0; i < subscriptions.length; i++) {
       subscriptions[i].unsubscribe();
     }
+  }
+
+  now() {
+    return Math.floor(Date.now() / 1000);
   }
 
   reduceProfile(profile: NostrProfileDocument): NostrProfile {
@@ -37,6 +42,25 @@ export class Utilities {
       // display_name: profile.display_name,
       // website: profile.website
     } as NostrProfile;
+  }
+
+  mapProfileEvent(event: NostrEventDocument): NostrProfileDocument | undefined {
+    // If a timeout is received, the event content will be: "The query timed out before it could complete: [{"kinds":[0],"authors":["edcd205..."]}]."
+    if (typeof event === 'string') {
+      return undefined;
+    }
+
+    try {
+      const jsonParsed = JSON.parse(event.content) as NostrProfileDocument;
+      const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
+      profile.pubkey = event.pubkey;
+      return profile;
+    } catch (err) {
+      debugger;
+      console.warn(err);
+    }
+
+    return undefined;
   }
 
   getNostrIdentifier(pubkey: string) {

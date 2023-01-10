@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
-import { NostrProfile, NostrProfileDocument } from './interfaces';
-import { StorageService } from './storage.service';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from './interfaces';
+import { BehaviorSubject, from, map, Observable, tap, shareReplay } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
+import { DatabaseService } from './database.service';
+import { liveQuery } from 'dexie';
+import { CacheService } from './cache.service';
+import { FetchService } from './fetch.service';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +17,31 @@ export class ProfileService {
   private table;
 
   initialized = false;
+
+  cache = new CacheService();
+
+  items$ = from(liveQuery(() => this.list(ProfileStatus.Follow)));
+
+  /** Returns a list of profiles based upon status. 0 = public, 1 = follow, 2 = mute, 3 = block */
+  async list(status: ProfileStatus) {
+    return await this.table.where('status').equals(status).toArray();
+  }
+
+  async query(equalityCriterias: { [key: string]: any }) {
+    return await this.table.where(equalityCriterias).toArray();
+  }
+
+  blockedProfiles$() {
+    return from(liveQuery(() => this.list(ProfileStatus.Block)));
+  }
+
+  publicProfiles$() {
+    return from(liveQuery(() => this.list(ProfileStatus.Public)));
+  }
+
+  mutedProfiles$() {
+    return from(liveQuery(() => this.list(ProfileStatus.Mute)));
+  }
 
   // #profile: NostrProfileDocument;
 
@@ -25,7 +54,7 @@ export class ProfileService {
     // value.follow == true
     return this.#profilesChanged.asObservable().pipe(
       map((data) => {
-        const filtered = data.filter((events) => events.follow == true);
+        const filtered = data.filter((events) => events.status == ProfileStatus.Follow);
         return filtered;
       })
     );
@@ -63,16 +92,28 @@ export class ProfileService {
     this.#followingChanged.next(this.profiles);
   }
 
-  async search(searchText: string) {
-    return await this.filter((p) => p.name.toLowerCase().indexOf(searchText) > -1);
+  // async search(searchText: string) {
+  //   return await this.filter((p) => p.name.toLowerCase().indexOf(searchText) > -1);
+  // }
+
+  mutedProfiles() {
+    return this.query({ status: ProfileStatus.Mute });
   }
 
-  mutedPublicKeys() {
-    return this.profiles.filter((p) => p.mute).map((p) => p.pubkey);
+  blockedProfiles() {
+    return this.query({ status: ProfileStatus.Block });
   }
 
-  blockedPublickKeys() {
-    return this.profiles.filter((p) => p.block).map((p) => p.pubkey);
+  async blockedPublicKeys() {
+    const profiles = await this.blockedProfiles();
+    return profiles.map((p) => p.pubkey);
+  }
+
+  // blockedProfiles$ = liveQuery(() => this.blockedProfiles());
+
+  async mutedPublicKeys() {
+    const profiles = await this.mutedProfiles();
+    return profiles.map((p) => p.pubkey);
   }
 
   // private keys: Map<string, string> = new Map<string, string>();
@@ -90,289 +131,374 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private storage: StorageService, private appState: ApplicationState, private utilities: Utilities) {
-    this.table = this.storage.table<NostrProfileDocument>('profile');
+  constructor(private db: DatabaseService, private dataService: DataService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
+    this.table = db.profiles;
   }
 
-  async downloadProfile(pubkey: string) {
-    this.#profileRequested.next(pubkey);
-  }
+  // async downloadProfile(pubkey: string) {
+  //   this.#profileRequested.next(pubkey);
+  // }
 
   downloadRecent(pubkey: string) {
     this.#profileRequested.next(pubkey);
   }
 
+  // #getProfile(pubkey: string) {
+  //   return new Observable((observer) => {
+  //     this.table.get(pubkey).then((profile) => {
+  //       if (profile) {
+  //         debugger;
+  //         observer.next(profile);
+  //         observer.complete();
+  //         return;
+  //       }
+
+  //       debugger;
+
+  //       return this.dataService.downloadNewestProfiles([pubkey]);
+  //     });
+  //   });
+  // }
+
+  getProfileOrDownload(pubkey: string) {
+    return (
+      new Observable((observer) => {
+        this.table
+          .get(pubkey)
+          .then((profile) => {
+            if (profile) {
+              observer.next(profile);
+              observer.complete();
+              return;
+            }
+
+            this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
+              // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
+              const p = await profile;
+
+              if (p) {
+                this.updateProfile(p.pubkey, p);
+              } else {
+                console.log('NULL PROFILE!!');
+                debugger;
+              }
+            });
+          })
+          .catch((err) => {
+            debugger;
+            console.warn('FAILED TO GET PROFILE:', err);
+          })
+          .finally(() => {
+            console.log('FINALLY IN DB GET!');
+          });
+
+        return () => {
+          console.log('FINISHED');
+        };
+      })
+        // .pipe(shareReplay()) // TODO: Investigate if this helps us get reply from the same observable if subscribed twice.
+        .pipe(
+          tap((profile) => {
+            // console.log('TAPPING ON PROFILE GET:', profile);
+            // this.table.put(profile.pubkey);
+          })
+        )
+    );
+  }
+
+  async getLocalProfile(pubkey: string) {
+    return this.table.get(pubkey);
+  }
+
+  getProfile(pubkey: string) {
+    return this.cache.get(pubkey, this.getProfileOrDownload(pubkey));
+  }
+
+  async putProfile(profile: NostrProfileDocument) {
+    this.cache.set(profile.pubkey, profile);
+    await this.table.put(profile);
+  }
+
   // profileDownloadQueue: string[] = [];
 
   /** Will attempt to get the profile from local storage, if not available will attempt to get from relays. */
-  async getProfile(pubkey: string) {
-    const profile = await this.#get<NostrProfileDocument>(pubkey);
+  // async getProfile(pubkey: string) {
+  //   const profile = await this.#get<NostrProfileDocument>(pubkey);
 
-    if (!profile) {
-      await this.downloadProfile(pubkey);
+  //   if (!profile) {
+  //     await this.downloadProfile(pubkey);
 
-      // if (!this.profileDownloadQueue.find((p) => p === pubkey)) {
-      //   // Register this profile in queue for downloading
-      //   this.profileDownloadQueue.unshift(pubkey);
-      // }
+  //     // if (!this.profileDownloadQueue.find((p) => p === pubkey)) {
+  //     //   // Register this profile in queue for downloading
+  //     //   this.profileDownloadQueue.unshift(pubkey);
+  //     // }
 
-      return;
-    }
+  //     return;
+  //   }
 
-    profile.pubkey = pubkey;
-    return profile;
-  }
+  //   profile.pubkey = pubkey;
+  //   return profile;
+  // }
 
-  async #get<T>(id: string): Promise<T | undefined> {
-    if (!id) {
-      return;
-    }
+  // async #get<T>(id: string): Promise<T | undefined> {
+  //   if (!id) {
+  //     return;
+  //   }
 
-    try {
-      const entry = await this.table.get<string, T>(id, { keyEncoding: 'utf8', valueEncoding: 'json' });
-      return entry;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      if (err.code === 'LEVEL_NOT_FOUND') {
-        return undefined;
-      } else {
-        console.log('HERE?!?!?');
-        throw err;
-      }
-    }
+  //   try {
+  //     const entry = await this.table.get<string, T>(id, { keyEncoding: 'utf8', valueEncoding: 'json' });
+  //     return entry;
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   } catch (err: any) {
+  //     if (err.code === 'LEVEL_NOT_FOUND') {
+  //       return undefined;
+  //     } else {
+  //       console.log('HERE?!?!?');
+  //       throw err;
+  //     }
+  //   }
+  // }
+
+  /** Load all the following users into memory and cache. */
+  async initialize() {
+    // TODO!!
   }
 
   /** Populate the observable with profiles which we are following. */
-  async populate() {
-    // Load all profiles into memory upon startup.
-    this.profiles = await this.filter(() => {
-      return true;
-    });
+  // async populate() {
+  //   // Load all profiles into memory upon startup.
+  //   this.profiles = await this.filter(() => {
+  //     return true;
+  //   });
 
-    this.initialized = true;
-    this.#updated();
+  //   this.initialized = true;
+  //   this.#updated();
 
-    const profile = this.profiles.find((p) => p.pubkey === this.appState.getPublicKey());
-    this.userProfileUpdated(profile);
-  }
+  //   const profile = this.profiles.find((p) => p.pubkey === this.appState.getPublicKey());
+  //   this.userProfileUpdated(profile);
+  // }
 
-  private async filter(predicate: (value: NostrProfileDocument, key: string) => boolean): Promise<NostrProfileDocument[]> {
-    const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
-    const items = [];
+  // private async filter(predicate: (value: NostrProfileDocument, key: string) => boolean): Promise<NostrProfileDocument[]> {
+  //   const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+  //   const items = [];
 
-    for await (const [key, value] of iterator) {
-      if (predicate(value, key)) {
-        // value.pubkey = key;
-        items.push(value);
-      }
-    }
+  //   for await (const [key, value] of iterator) {
+  //     if (predicate(value, key)) {
+  //       // value.pubkey = key;
+  //       items.push(value);
+  //     }
+  //   }
 
-    return items;
-  }
+  //   return items;
+  // }
 
-  async followList(includePubKey?: string) {
-    if (includePubKey) {
-      return this.filter((value, key) => value.follow == true || value.pubkey == includePubKey);
-    } else {
-      return this.filter((value, key) => value.follow == true);
-    }
-  }
+  // async followList(includePubKey?: string) {
+  //   if (includePubKey) {
+  //     return this.filter((value, key) => value.status == ProfileStatus.Follow || value.pubkey == includePubKey);
+  //   } else {
+  //     return this.filter((value, key) => value.status == ProfileStatus.Follow);
+  //   }
+  // }
 
-  inMemoryFollowList(includePubKey?: string) {
-    if (includePubKey) {
-      return this.profiles.filter((p) => p.follow == true || p.pubkey == includePubKey);
-    } else {
-      return this.profiles.filter((p) => p.follow == true);
-    }
-  }
+  // inMemoryFollowList(includePubKey?: string) {
+  //   if (includePubKey) {
+  //     return this.profiles.filter((p) => p.status == ProfileStatus.Follow || p.pubkey == includePubKey);
+  //   } else {
+  //     return this.profiles.filter((p) => p.status == ProfileStatus.Follow);
+  //   }
+  // }
 
-  async publicList() {
-    return this.filter((value, key) => !value.follow && !value.block);
-  }
+  // async publicList() {
+  //   return this.filter((value, key) => value.status == ProfileStatus.Public);
+  // }
 
-  async blockList() {
-    return this.filter((value, key) => value.block == true);
-  }
+  // async blockList() {
+  //   return this.filter((value, key) => value.status == ProfileStatus.Block);
+  // }
 
-  async #setFollow(pubkey: string, circle?: string, follow?: boolean, existingProfile?: NostrProfileDocument) {
-    let profile = await this.getProfile(pubkey);
-
+  async #setStatus(pubkey: string, status: ProfileStatus, circle?: number) {
+    let profile = await this.table.get(pubkey);
     const now = Math.floor(Date.now() / 1000);
 
-    // This normally should not happen, but we should attempt to retrieve this profile.
     if (!profile) {
-      // Does not already exists, let us retrieve the profile async.
-      profile = {
-        name: existingProfile ? existingProfile.name : '',
-        about: existingProfile ? existingProfile.about : '',
-        picture: existingProfile ? existingProfile.picture : '',
-        nip05: existingProfile ? existingProfile.nip05 : '',
-        lud06: existingProfile ? existingProfile.lud06 : '',
-        display_name: existingProfile ? existingProfile.display_name : '',
-        website: existingProfile ? existingProfile.website : '',
-        verifications: existingProfile ? existingProfile.verifications : [],
-        pubkey: pubkey,
-        follow: follow,
-        circle: circle,
-        created: now,
-      };
-    } else {
-      if (profile.block == true) {
-        throw new Error('You have to unblock a user before you can follow again.');
-      }
-
-      profile.follow = follow;
-      profile.circle = circle;
+      throw new Error('The profile does not exists.');
     }
 
+    // // This normally should not happen, but we should attempt to retrieve this profile.
+    // if (!profile) {
+    //   // Does not already exists, let us retrieve the profile async.
+    //   profile = {
+    //     name: existingProfile ? existingProfile.name : '',
+    //     about: existingProfile ? existingProfile.about : '',
+    //     picture: existingProfile ? existingProfile.picture : '',
+    //     nip05: existingProfile ? existingProfile.nip05 : '',
+    //     lud06: existingProfile ? existingProfile.lud06 : '',
+    //     display_name: existingProfile ? existingProfile.display_name : '',
+    //     website: existingProfile ? existingProfile.website : '',
+    //     verifications: existingProfile ? existingProfile.verifications : [],
+    //     pubkey: pubkey,
+    //     status: ProfileStatus.Follow,
+    //     circle: circle,
+    //     created: now,
+    //   };
+    // } else {
+    if (profile.status == ProfileStatus.Block) {
+      throw new Error('You have to unblock a user before you can follow again.');
+    }
+
+    profile.status = status;
+    profile.circle = circle;
     profile.modified = now;
 
-    // If user choose to follow, make sure there are no block.
-    if (follow) {
-      profile.block = undefined;
-      profile.followed = now;
-    }
-
     // Put profile since we already got it in the beginning.
-    await this.putProfile(pubkey, profile);
+    await this.putProfile(profile);
 
-    if (!profile.retrieved) {
-      await this.downloadProfile(pubkey);
-    } else {
-      const now = moment();
-      const date = moment.unix(profile.retrieved);
-      var hours = now.diff(date, 'hours');
+    // if (!profile.retrieved) {
+    //   await this.downloadProfile(pubkey);
+    // } else {
+    //   const now = moment();
+    //   const date = moment.unix(profile.retrieved);
+    //   var hours = now.diff(date, 'hours');
 
-      // If it is more than 12 hours since we got the profile and user changed follow/unfollow/circle, we'll
-      // go grab new data if available.
-      if (hours > 12) {
-        await this.downloadProfile(pubkey);
+    //   // If it is more than 12 hours since we got the profile and user changed follow/unfollow/circle, we'll
+    //   // go grab new data if available.
+    //   if (hours > 12) {
+    //     await this.downloadProfile(pubkey);
+    //   }
+    // }
+  }
+
+  /** Follow can be called without having an existing profile persisted. */
+  async follow(pubkey: string, circle: number = 0, existingProfile?: NostrProfileDocument) {
+    const profile = await this.getLocalProfile(pubkey);
+    const now = this.utilities.now();
+
+    // If there are no local profile, save empty profile and attempt to get.
+    if (!profile) {
+      if (!existingProfile) {
+        existingProfile = this.emptyProfile(pubkey);
       }
+
+      existingProfile.followed = now;
+      existingProfile.circle = circle;
+      existingProfile.status = ProfileStatus.Follow;
+
+      // Save directly, don't put in cache.
+      await this.table.put(existingProfile);
+
+      // Now retrieve this profile
+      this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
+        // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
+        const p = await profile;
+
+        if (p) {
+          this.updateProfile(p.pubkey, p);
+        } else {
+          console.log('NULL PROFILE!!');
+          debugger;
+        }
+      });
+    } else {
+      profile.status = ProfileStatus.Follow;
+      profile.modified = now;
+      profile.followed = now;
+      profile.circle = circle;
+
+      // Put into cache and database.
+      await this.putProfile(profile);
     }
   }
 
-  async follow(pubkey: string, circle?: string, existingProfile?: NostrProfileDocument) {
-    return this.#setFollow(pubkey, circle, true, existingProfile);
-  }
-
-  async setCircle(pubkey: string, circle?: string) {
-    return this.updateProfileValue(pubkey, (p) => {
-      p.circle = circle;
-      return p;
+  async setCircle(pubkey: string, circle?: number) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.circle = circle;
+      return profile;
     });
   }
 
   async unfollow(pubkey: string) {
-    return this.#setFollow(pubkey, undefined, undefined);
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Public;
+      profile.followed = undefined;
+      profile.circle = undefined;
+      return profile;
+    });
   }
 
   async block(pubkey: string) {
-    const profile = await this.getProfile(pubkey);
-
-    if (!profile) {
-      return;
-    }
-
-    profile.block = true;
-    profile.follow = false;
-
-    // Put it since we got it in the beginning.
-    await this.putProfile(pubkey, profile);
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Block;
+      profile.followed = undefined;
+      profile.circle = undefined;
+      return profile;
+    });
   }
 
-  async unblock(pubkey: string, follow?: boolean) {
-    const profile = await this.getProfile(pubkey);
+  // async update(pubkey: string) {
+  //   const profile = await this.getLocalProfile(pubkey);
+  //   const now = moment().unix();
 
-    if (!profile) {
-      return;
-    }
+  //   if (profile) {
+  //     profile.status = ProfileStatus.Public;
+  //     profile.modified = now;
 
-    profile.block = false;
-    profile.follow = follow;
+  //     return this.putProfile(profile);
+  //   }
+  // }
 
-    // Put it since we got it in the beginning.
-    this.putProfile(pubkey, profile);
+  async unblock(pubkey: string) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Public;
+      return profile;
+    });
   }
 
-  // TODO: Avoid duplicate code and use the update predicate!
   async mute(pubkey: string) {
-    const profile = await this.getProfile(pubkey);
-
-    if (!profile) {
-      return;
-    }
-
-    profile.mute = true;
-
-    // Put it since we got it in the beginning.
-    await this.putProfile(pubkey, profile);
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Mute;
+      return profile;
+    });
   }
 
-  // TODO: Avoid duplicate code and use the update predicate!
-  async unmute(pubkey: string, follow?: boolean) {
-    const profile = await this.getProfile(pubkey);
-
-    if (!profile) {
-      return;
-    }
-
-    profile.mute = false;
-
-    // Put it since we got it in the beginning.
-    this.putProfile(pubkey, profile);
-  }
-
-  /** Profiles are upserts, we replace the existing profile and only keep latest. */
-  async putProfile(pubkey: string, document: NostrProfileDocument | any) {
-    // Remove the pubkey from the document before we persist.
-    // delete document.pubkey;
-
-    await this.table.put(pubkey, document);
-
-    const index = this.#profileIndex(pubkey);
-
-    if (index == -1) {
-      this.profiles.push(document);
-    } else {
-      this.profiles[index] = document;
-    }
-
-    this.#changed();
-  }
-
-  #profileIndex(pubkey: string) {
-    return this.profiles.findIndex((p) => p.pubkey == pubkey);
-  }
-
-  #profileRemove(index: number) {
-    this.profiles.splice(index, 1);
+  async unmute(pubkey: string) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.status = ProfileStatus.Follow;
+      return profile;
+    });
   }
 
   async deleteProfile(pubkey: string) {
-    await this.table.del(pubkey);
+    await this.table.delete(pubkey);
 
     // This shouldn't possibly be -1 for delete?
-    const index = this.#profileIndex(pubkey);
-    this.#profileRemove(index);
+    // const index = this.#profileIndex(pubkey);
+    // this.#profileRemove(index);
 
-    this.#changed();
+    // this.#changed();
   }
 
-  isFollowing(pubkey: string) {
-    const profile = this.#profilesChanged.value.find((p) => p.pubkey === pubkey);
+  // #profileIndex(pubkey: string) {
+  //   return this.profiles.findIndex((p) => p.pubkey == pubkey);
+  // }
+
+  // #profileRemove(index: number) {
+  //   this.profiles.splice(index, 1);
+  // }
+
+  async isFollowing(pubkey: string) {
+    const profile = await this.table.get(pubkey);
 
     if (!profile) {
       return false;
     }
 
-    return profile.follow;
+    return profile.status == ProfileStatus.Follow;
   }
 
   /** Update the profile if it already exists, ensuring we don't loose follow and block states. */
-  async updateProfile(pubkey: string, document: NostrProfileDocument | any) {
-    let profile = await this.getProfile(pubkey);
-
-    const now = Math.floor(Date.now() / 1000);
+  async updateProfile(pubkey: string, document: NostrProfileDocument) {
+    let profile = await this.table.get(pubkey);
+    const now = this.utilities.now();
 
     if (!profile) {
       profile = document;
@@ -381,15 +507,17 @@ export class ProfileService {
       profile.about = document.about;
       profile.nip05 = document.nip05;
       profile.lud06 = document.lud06;
+      profile.lud16 = document.lud16;
       profile.website = document.website;
       profile.display_name = document.display_name;
       profile.picture = document.picture;
     }
 
-    profile!.modified = now;
-    profile!.retrieved = now;
+    profile.modified = now;
+    profile.retrieved = now;
 
-    await this.putProfile(pubkey, profile);
+    // Put into cache and database.
+    await this.putProfile(profile);
 
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {
@@ -397,20 +525,20 @@ export class ProfileService {
     }
   }
 
-  async updateProfileValue(pubkey: string, predicate: (value: NostrProfileDocument, key: string) => NostrProfileDocument): Promise<void> {
-    let profile = await this.getProfile(pubkey);
+  async #updateProfileValues(pubkey: string, predicate: (value: NostrProfileDocument, key?: string) => NostrProfileDocument): Promise<void> {
+    let profile = await this.table.get(pubkey);
 
     if (!profile) {
       return undefined;
     }
 
-    profile.modified = Math.floor(Date.now() / 1000);
+    profile.modified = this.utilities.now();
 
     // Update the profile
     profile = predicate(profile, profile.pubkey);
 
-    // We already updated latest, do a put and not update.
-    await this.putProfile(pubkey, profile);
+    // Update cache and database.
+    await this.putProfile(profile);
   }
 
   /** Wipes all non-following profiles. */
@@ -425,20 +553,20 @@ export class ProfileService {
   // }
 
   /** Wipes all non-following profiles, except blocked profiles. */
-  async wipeNonFollow() {
-    const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
+  // async wipeNonFollow() {
+  //   const iterator = this.table.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
 
-    for await (const [key, value] of iterator) {
-      if (!value.block && !value.follow) {
-        await this.table.del(key);
+  //   for await (const [key, value] of iterator) {
+  //     if (!value.block && !value.follow) {
+  //       await this.table.del(key);
 
-        const index = this.#profileIndex(key);
-        this.#profileRemove(index);
-      }
-    }
+  //       const index = this.#profileIndex(key);
+  //       this.#profileRemove(index);
+  //     }
+  //   }
 
-    this.#changed();
-  }
+  //   this.#changed();
+  // }
 
   emptyProfile(pubkey: string): NostrProfileDocument {
     return {
@@ -448,6 +576,7 @@ export class ProfileService {
       nip05: '',
       lud06: '',
       display_name: '',
+      status: ProfileStatus.Public,
       website: '',
       created: Math.floor(Date.now() / 1000),
       verifications: [],
@@ -457,12 +586,8 @@ export class ProfileService {
 
   /** Wipes all profiles. */
   async wipe() {
-    for await (const [key, value] of this.table.iterator({})) {
-      await this.table.del(key);
-    }
-
+    await this.table.clear();
     this.profiles = [];
-
     this.#changed();
   }
 }

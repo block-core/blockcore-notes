@@ -37,7 +37,9 @@ export class SearchService {
       // this.resetSearch();
       // this.router.navigate(['/p', event.data]);
     } else {
-      const result = await this.profileService.search(searchText.toLowerCase());
+      // TODO: FIX SEARCH!!
+      // const result = await this.profileService.search(searchText.toLowerCase());
+      const result = null;
 
       console.log('SEARCH RESULTS:', result);
 

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CirclesService } from 'src/app/services/circles.service';
+import { CircleService } from 'src/app/services/circle.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfileDocument } from '../../services/interfaces';
@@ -21,11 +21,10 @@ export class ProfileHeaderComponent {
   tooltip = '';
   tooltipName = '';
   circle?: Circle;
-  muted? = false;
   npub!: string;
   qr?: string;
 
-  constructor(private profiles: ProfileService, public dialog: MatDialog, private sanitizer: DomSanitizer, private circleService: CirclesService, private utilities: Utilities) {}
+  constructor(private profiles: ProfileService, public dialog: MatDialog, private sanitizer: DomSanitizer, private circleService: CircleService, private utilities: Utilities) {}
 
   async ngAfterViewInit() {}
 
@@ -53,7 +52,7 @@ export class ProfileHeaderComponent {
 
   async ngOnInit() {
     if (!this.profile) {
-      this.profile = await this.profiles.getProfile(this.pubkey);
+      this.profile = await this.profiles.getLocalProfile(this.pubkey);
       this.npub = this.utilities.getNostrIdentifier(this.pubkey);
 
       if (!this.profile) {
@@ -69,9 +68,7 @@ export class ProfileHeaderComponent {
     // If the user has name in their profile, show that and not pubkey.
     // this.profileName = this.profile.name || this.profileName;
 
-    this.circle = await this.circleService.getCircle(this.profile.circle);
-
-    this.muted = this.profile.mute;
+    this.circle = await this.circleService.get(this.profile.circle);
 
     // Pre-generate the QR value as we had some issues doing it dynamically.
     if (this.profile.lud06) {
