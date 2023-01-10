@@ -20,3 +20,17 @@
 .events-videos {
   text-align: left;
 }
+
+@media only screen and (max-width: 599px) {
+  .event-video {
+    width: 100vw !important;
+    height: 50vh !important;
+    margin-left: -1.6em;
+  }
+
+  .event-image {
+    width: 100vw !important;
+    margin-left: -1.6em;
+    max-width: max-content;
+  }
+}
