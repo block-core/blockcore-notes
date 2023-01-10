@@ -20,6 +20,14 @@ export class ProfileService {
 
   cache = new CacheService();
 
+  item: NostrProfileDocument | undefined = undefined;
+
+  #itemChanged: BehaviorSubject<NostrProfileDocument | undefined> = new BehaviorSubject<NostrProfileDocument | undefined>(this.item);
+
+  get item$(): Observable<NostrProfileDocument | undefined> {
+    return this.#itemChanged.asObservable();
+  }
+
   items$ = from(liveQuery(() => this.list(ProfileStatus.Follow)));
 
   /** Returns a list of profiles based upon status. 0 = public, 1 = follow, 2 = mute, 3 = block */
@@ -90,6 +98,15 @@ export class ProfileService {
   #updated() {
     this.#profilesChanged.next(this.profiles);
     this.#followingChanged.next(this.profiles);
+  }
+
+  #updatedItem() {
+    this.#itemChanged.next(this.item);
+  }
+
+  setItem(item: NostrProfileDocument) {
+    this.item = item;
+    this.#updatedItem();
   }
 
   // async search(searchText: string) {
@@ -217,6 +234,7 @@ export class ProfileService {
   async putProfile(profile: NostrProfileDocument) {
     this.cache.set(profile.pubkey, profile);
     await this.table.put(profile);
+    this.#updatedItem();
   }
 
   // profileDownloadQueue: string[] = [];
@@ -519,9 +537,6 @@ export class ProfileService {
 
     // Put into cache and database.
     await this.putProfile(profile);
-
-    // Update the cache as well.
-    this.cache.set(profile.pubkey, profile);
 
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {

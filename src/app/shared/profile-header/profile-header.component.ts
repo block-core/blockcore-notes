@@ -23,7 +23,7 @@ export class ProfileHeaderComponent {
   npub!: string;
   qr?: string;
 
-  constructor(private profiles: ProfileService, public dialog: MatDialog, private circleService: CircleService, public utilities: Utilities) {}
+  constructor(public profileService: ProfileService, public dialog: MatDialog, private circleService: CircleService, public utilities: Utilities) {}
 
   async ngAfterViewInit() {}
 
@@ -51,7 +51,7 @@ export class ProfileHeaderComponent {
 
   async ngOnInit() {
     if (!this.profile) {
-      this.profile = await this.profiles.getLocalProfile(this.pubkey);
+      this.profile = await this.profileService.getLocalProfile(this.pubkey);
       this.npub = this.utilities.getNostrIdentifier(this.pubkey);
 
       if (!this.profile) {
@@ -61,6 +61,8 @@ export class ProfileHeaderComponent {
       this.pubkey = this.profile.pubkey;
       this.npub = this.utilities.getNostrIdentifier(this.profile.pubkey);
     }
+
+    this.profileService.setItem(this.profile);
 
     this.tooltip = this.profile.about;
 
