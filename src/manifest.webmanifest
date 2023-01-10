@@ -7,6 +7,9 @@
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "protocol_handlers": [
     {
       "protocol": "web+nostr",
