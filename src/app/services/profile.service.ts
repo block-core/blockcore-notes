@@ -109,9 +109,32 @@ export class ProfileService {
     this.#updatedItem();
   }
 
-  // async search(searchText: string) {
-  //   return await this.filter((p) => p.name.toLowerCase().indexOf(searchText) > -1);
-  // }
+  async search(searchText: string) {
+    // this.table.filter((x) => x.name.toLowerCase().indexOf(searchText) > -1).toArray();
+    return this.table
+      .filter((profile) => {
+        let index = profile.name?.toLocaleLowerCase().indexOf(searchText);
+
+        if (index > -1) {
+          return true;
+        }
+
+        index = profile.display_name?.toLocaleLowerCase().indexOf(searchText);
+
+        if (index > -1) {
+          return true;
+        }
+
+        index = profile.about?.toLocaleLowerCase().indexOf(searchText);
+
+        if (index > -1) {
+          return true;
+        }
+
+        return false;
+      })
+      .toArray();
+  }
 
   mutedProfiles() {
     return this.query({ status: ProfileStatus.Mute });

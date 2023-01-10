@@ -119,7 +119,7 @@
             <mat-option class="search-result-option" (onSelectionChange)="searchService.open(state)" *ngFor="let state of searchService.results$ | async" [value]="state.id">
               <span><img class="search-result-image" [src]="state.picture" height="32" /></span>
               <span *ngIf="state.display_name">{{ state.display_name }}</span>
-              <span>{{ state.name }}</span>
+              <span *ngIf="!state.display_name">{{ state.name }}</span>
               <span *ngIf="state.nip05">({{ state.nip05 }})</span>
             </mat-option>
           </mat-autocomplete>
