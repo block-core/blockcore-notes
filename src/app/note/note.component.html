@@ -36,8 +36,8 @@
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
 
-    <app-content [event]="event"></app-content>
-    <app-event-reactions [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions>
+    <app-content class="thread-content" [event]="event"></app-content>
+    <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions>
   </div>
 
   <app-event-thread [threadEntry]="thread.getTreeEntry(thread.threadId)"> </app-event-thread>

@@ -326,6 +326,16 @@ export class HomeComponent {
 
     pubkey = this.utilities.ensureHexIdentifier(pubkey);
 
+    this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
+      const nostrEvent = event as NostrEventDocument;
+      const publicKeys = nostrEvent.tags.map((t) => t[1]);
+
+      for (let i = 0; i < publicKeys.length; i++) {
+        const publicKey = publicKeys[i];
+        this.profileService.follow(publicKey);
+      }
+    });
+
     // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
     // follow lists and having to process everything multiple times. Just query one by one until
     // we find the list. Until then, we simply grab the first relay only.

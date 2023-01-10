@@ -5,11 +5,12 @@
       <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Home</span>
     </ng-template>
     <ng-template matTabContent>
+      <div class="page">(UNDER CONSTRUCTION... access events through <a routerLink="/people">user profiles</a> right now.)</div>
       <app-feed-private></app-feed-private>
     </ng-template>
   </mat-tab>
 
-  <mat-tab>
+  <!-- <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon">speaker_notes</mat-icon>
       <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Global</span>
@@ -17,7 +18,7 @@
     <ng-template matTabContent>
       <app-feed-public></app-feed-public>
     </ng-template>
-  </mat-tab>
+  </mat-tab> -->
 
   <!-- <mat-tab>
     <ng-template mat-tab-label>

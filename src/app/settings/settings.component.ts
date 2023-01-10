@@ -93,15 +93,7 @@ export class SettingsComponent {
   ngOnInit() {
     this.appState.title = 'Settings';
     this.appState.showBackButton = true;
-    this.appState.actions = [
-      {
-        icon: 'add_circle',
-        tooltip: 'Add Relay',
-        click: () => {
-          this.addRelay();
-        },
-      },
-    ];
+    this.appState.actions = [];
   }
 
   registerHandler(protocol: string, parameter: string) {

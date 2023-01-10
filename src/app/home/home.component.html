@@ -34,16 +34,9 @@
       <br /><br />
 
       <div *ngIf="defaults$ | async as defaults">
-
         <div *ngIf="defaults.length > 0">
           <p>If you are new to Blockcore Notes, here are some interesting people you can follow.</p>
 
-          <!-- <mat-grid-list gutterSize="1em" [cols]="(appState.isSmallScreen$ | async) ? '1' : '2'" rowHeight="180px">
-        <mat-grid-tile *ngFor="let profile of defaults"> -->
-          <!-- <img [src]="profile.picture">&nbsp;
-          {{ profile.name }}<br>
-          {{ profile.pubkey }}<br><br>
-          <button mat-raised-button color="primary">Follow</button> -->
           <div class="card-container">
             <mat-card class="default-card" *ngFor="let profile of defaults; trackBy: trackByProfile" [@fade]="profile.checked">
               <mat-card-header>
@@ -56,10 +49,6 @@
               </mat-card-content>
             </mat-card>
           </div>
-          <!-- </mat-grid-tile>
-      </mat-grid-list> -->
-
-          <!-- <button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow All</button> -->
         </div>
       </div>
     </div>
