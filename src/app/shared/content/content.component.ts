@@ -21,11 +21,15 @@ export class ContentComponent {
   profiles: NostrProfileDocument[] = [];
   content?: string;
 
-  images: string[] = [];
+  images: SafeResourceUrl[] = [];
   videos: SafeResourceUrl[] = [];
 
   static regexpImage = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/g;
+  // static regexpThisIsTheWay = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif))/gsim;
   static regexpVideo = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/gim;
+  static regexpThisIsTheWay = /(?:thisistheway.gif)/g;
+  // static regexpWords = /\b(?:\w|-)+\b/g;
+
   // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
 
   constructor(private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
@@ -68,7 +72,15 @@ export class ContentComponent {
 
     if (isFollowing) {
       const images = [...content.matchAll(ContentComponent.regexpImage)];
-      this.images = images.map((i) => i[0]);
+      this.images = images.map((i) => this.utilities.sanitizeUrl(i[0]));
+
+      const thisisthewayMatch = [...content.matchAll(ContentComponent.regexpThisIsTheWay)];
+      console.log(thisisthewayMatch);
+
+      if (thisisthewayMatch) {
+        const thisistheway = thisisthewayMatch.map((i) => this.utilities.sanitizeUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
+        this.images.push(...thisistheway);
+      }
 
       const videos = [...content.matchAll(ContentComponent.regexpVideo)];
       this.videos = videos.map((i) => this.utilities.sanitizeUrl(`https://www.youtube.com/embed/${i[1]}`));
@@ -76,12 +88,13 @@ export class ContentComponent {
       // Remove the image links from the text.
       content = content.replaceAll(ContentComponent.regexpImage, '');
       content = content.replaceAll(ContentComponent.regexpVideo, '');
+      content = content.replaceAll(ContentComponent.regexpThisIsTheWay, '');
     }
 
     this.content = content;
   }
 
-  expandImage(imagePath: string) {
+  expandImage(imagePath: SafeResourceUrl) {
     this.dialog.open(ProfileImageDialog, {
       data: { picture: imagePath },
     });

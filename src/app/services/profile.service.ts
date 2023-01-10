@@ -206,11 +206,11 @@ export class ProfileService {
             console.warn('FAILED TO GET PROFILE:', err);
           })
           .finally(() => {
-            console.log('FINALLY IN DB GET!');
+            // console.log('FINALLY IN DB GET!');
           });
 
         return () => {
-          console.log('FINISHED');
+          // console.log('FINISHED');
         };
       })
         // .pipe(shareReplay()) // TODO: Investigate if this helps us get reply from the same observable if subscribed twice.
@@ -232,6 +232,10 @@ export class ProfileService {
   }
 
   async putProfile(profile: NostrProfileDocument) {
+    if (profile.status == null) {
+      profile.status = 0;
+    }
+
     this.cache.set(profile.pubkey, profile);
     await this.table.put(profile);
     this.#updatedItem();

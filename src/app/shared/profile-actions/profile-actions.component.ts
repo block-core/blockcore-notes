@@ -164,15 +164,10 @@ export class ProfileActionsComponent {
   ngOnDestroy() {}
 
   async ngOnInit() {
-    // TODO: THIS IS ABSOLUTELY NOT OPTIMAL! .. every rendering creates subs.
-
     if (this.event) {
       this.pubkey = this.event.pubkey;
-      // this.profile = await this.profileService.getProfile(this.pubkey);
     } else if (this.profile) {
       this.pubkey = this.profile.pubkey;
-    } else {
-      // this.profile = await this.profileService.getProfile(this.pubkey);
     }
   }
 }

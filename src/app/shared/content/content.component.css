@@ -13,6 +13,8 @@
   width: 100%;
   display: inline-block;
   margin-top: 0.2em;
+  min-height: 320px;
+  height: 480px;
 }
 
 .events-videos {

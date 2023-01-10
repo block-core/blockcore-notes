@@ -30,10 +30,6 @@ export class DataService {
     //   console.log('PROFILE REQUESTED:', pubkey);
     //   await this.downloadProfile(pubkey);
     // });
-
-    this.connected$.subscribe((status) => {
-      console.log('DataService: Yes we have connection!', status);
-    });
   }
 
   async initialize() {
@@ -91,11 +87,7 @@ export class DataService {
   }
 
   // Observable that can be merged with to avoid performing calls unless we have connected to relays.
-  connected$ = this.appState.connected$.pipe(map((status) => status === true)).pipe(
-    tap((status) => {
-      console.log('STATUS:', status);
-    })
-  );
+  connected$ = this.appState.connected$.pipe(map((status) => status === true));
 
   /** Creates an observable that will attempt to get newest profile entry across all relays and perform multiple callbacks if newer is found. */
   downloadNewestProfiles(pubkeys: string[], requestTimeout = 10000) {
@@ -136,11 +128,6 @@ export class DataService {
       this.connected$
         // .pipe(take(1))
         .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
-        .pipe(
-          tap(() => {
-            console.log('tapping...');
-          })
-        )
         .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
         .pipe(
           filter((data) => {
@@ -170,11 +157,6 @@ export class DataService {
       this.connected$
         // .pipe(take(1))
         .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
-        .pipe(
-          tap(() => {
-            console.log('tapping...');
-          })
-        )
         .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
         .pipe(
           filter((data) => {
@@ -265,7 +247,7 @@ export class DataService {
       });
 
       return () => {
-        console.log('downloadFromRelay:finished:unsub');
+        // console.log('downloadFromRelay:finished:unsub');
         // When the observable is finished, this return function is called.
         sub.unsub();
       };

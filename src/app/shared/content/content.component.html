@@ -5,7 +5,7 @@
   </div>
 
   <div class="event-videos" *ngIf="videos && videos.length > 0">
-    <iframe id="ytplayer" class="event-image" type="text/html" width="640" height="360" *ngFor="let video of videos" [src]="video" frameborder="0"></iframe>
+    <iframe id="ytplayer" class="event-video" type="text/html" *ngFor="let video of videos" [src]="video" frameborder="0"></iframe>
   </div>
 
   <!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->

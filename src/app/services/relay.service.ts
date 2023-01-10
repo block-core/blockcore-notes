@@ -192,8 +192,6 @@ export class RelayService {
 
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
-      console.log('VISIBILITY CHANGED:', visible);
-
       if (visible) {
         this.connect();
       }

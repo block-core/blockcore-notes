@@ -24,10 +24,6 @@ export class FetchService {
     private eventService: EventService,
     private relayService: RelayService
   ) {
-    this.connected$.subscribe(() => {
-      console.log('Yes we have connection!');
-    });
-
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {
     //   if (!pubkey) {
@@ -186,7 +182,7 @@ export class FetchService {
       });
 
       return () => {
-        console.log('downloadFromRelay:finished:unsub');
+        // console.log('downloadFromRelay:finished:unsub');
         // When the observable is finished, this return function is called.
         sub.unsub();
       };
