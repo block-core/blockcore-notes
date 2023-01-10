@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DomSanitizer } from '@angular/platform-browser';
 import * as secp from '@noble/secp256k1';
 import { bech32 } from '@scure/base';
 import { Subscription } from 'rxjs';
@@ -15,7 +16,7 @@ export function sleep(durationInMillisecond: number): Promise<void> {
   providedIn: 'root',
 })
 export class Utilities {
-  constructor(private snackBar: MatSnackBar, private validator: DataValidation) {}
+  constructor(private snackBar: MatSnackBar, private validator: DataValidation, private sanitizer: DomSanitizer) {}
 
   unsubscribe(subscriptions: Subscription[]) {
     if (!subscriptions) {
@@ -122,5 +123,15 @@ export class Utilities {
 
   keyToHex(publicKey: Uint8Array) {
     return secp.utils.bytesToHex(publicKey);
+  }
+
+  sanitize(url: string) {
+    const clean = this.sanitizer.bypassSecurityTrustUrl(url);
+    return clean;
+  }
+
+  sanitizeUrl(url: string) {
+    const clean = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    return clean;
   }
 }

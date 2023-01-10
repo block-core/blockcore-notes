@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer } from '@angular/platform-browser';
 import { CircleService } from 'src/app/services/circle.service';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
@@ -24,7 +23,7 @@ export class ProfileHeaderComponent {
   npub!: string;
   qr?: string;
 
-  constructor(private profiles: ProfileService, public dialog: MatDialog, private sanitizer: DomSanitizer, private circleService: CircleService, private utilities: Utilities) {}
+  constructor(private profiles: ProfileService, public dialog: MatDialog, private circleService: CircleService, public utilities: Utilities) {}
 
   async ngAfterViewInit() {}
 
@@ -92,10 +91,5 @@ export class ProfileHeaderComponent {
     const values = nip05.split('@');
     const url = `https://${values[1]}/.well-known/nostr.json?name=${values[0]}`;
     return url;
-  }
-
-  sanitize(url: string) {
-    const clean = this.sanitizer.bypassSecurityTrustUrl(url);
-    return clean;
   }
 }

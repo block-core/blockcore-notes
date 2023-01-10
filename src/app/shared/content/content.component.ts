@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Utilities } from 'src/app/services/utilities.service';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
@@ -21,7 +22,11 @@ export class ContentComponent {
   content?: string;
 
   images: string[] = [];
-  static regexp = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/g;
+  videos: SafeResourceUrl[] = [];
+
+  static regexpImage = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/g;
+  static regexpVideo = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/gim;
+  // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
 
   constructor(private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
@@ -62,11 +67,15 @@ export class ContentComponent {
     const isFollowing = await this.profileService.isFollowing(this.event.pubkey);
 
     if (isFollowing) {
-      const images = [...content.matchAll(ContentComponent.regexp)];
+      const images = [...content.matchAll(ContentComponent.regexpImage)];
       this.images = images.map((i) => i[0]);
 
+      const videos = [...content.matchAll(ContentComponent.regexpVideo)];
+      this.videos = videos.map((i) => this.utilities.sanitizeUrl(`https://www.youtube.com/embed/${i[1]}`));
+
       // Remove the image links from the text.
-      content = content.replaceAll(ContentComponent.regexp, '');
+      content = content.replaceAll(ContentComponent.regexpImage, '');
+      content = content.replaceAll(ContentComponent.regexpVideo, '');
     }
 
     this.content = content;
