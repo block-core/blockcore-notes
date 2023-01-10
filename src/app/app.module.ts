@@ -80,6 +80,7 @@ import { FeedComponent } from './feed/feed.component';
 import { WithStatusPipe } from './shared/loading.pipe';
 import { EventThreadComponent } from './shared/event-thread/event-thread.component';
 import { EventReactionsComponent } from './shared/event-reactions/event-reactions.component';
+import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 
 @NgModule({
   declarations: [
@@ -157,6 +158,7 @@ import { EventReactionsComponent } from './shared/event-reactions/event-reaction
     FormsModule,
     ReactiveFormsModule,
     LayoutModule,
+    NgxLoadingButtonsModule,
     MatSnackBarModule,
     MatProgressBarModule,
     MatDialogModule,

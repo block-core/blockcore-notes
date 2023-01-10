@@ -461,7 +461,7 @@ export class RelayService {
       console.log('Connected to:', relay.url);
 
       // When finished, trigger an observable that we are connected.
-      this.appState.connected(true);
+      this.appState.updateConnectionStatus(true);
 
       // this.subscribeToFollowing(relay);
     });
