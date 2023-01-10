@@ -181,7 +181,7 @@ export class AppComponent {
         return;
       }
 
-      this.profileService.updateProfile(p.pubkey, p);
+      await this.profileService.updateProfile(p.pubkey, p);
     });
   }
 

@@ -519,6 +519,9 @@ export class ProfileService {
     // Put into cache and database.
     await this.putProfile(profile);
 
+    // Update the cache as well.
+    this.cache.set(profile.pubkey, profile);
+
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {
       this.userProfileUpdated(profile);

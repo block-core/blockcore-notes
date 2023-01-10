@@ -140,8 +140,7 @@
         <mat-icon>search</mat-icon>
       </button>
 
-      <button *ngIf="!appState.connected" [mtBasicSpinner]="true" [hideText]="true" mat-icon-button>
-      </button>
+      <button *ngIf="!appState.connected" [mtBasicSpinner]="true" mat-icon-button></button>
 
       <button *ngIf="!appState.showSearch" mat-icon-button (click)="draweraccount.toggle()">
         <mat-icon>account_circle</mat-icon>
