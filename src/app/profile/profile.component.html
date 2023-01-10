@@ -5,8 +5,15 @@
     <mat-card-content *ngIf="profile">
       <p>
         <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>badge</mat-icon>
+          <mat-label>Display Name</mat-label>
+          <input matInput type="text" [(ngModel)]="profile.display_name" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
           <mat-icon matPrefix>alternate_email</mat-icon>
-          <mat-label>Name</mat-label>
+          <mat-label>Username</mat-label>
           <input matInput type="text" [(ngModel)]="profile.name" />
         </mat-form-field>
       </p>
@@ -36,6 +43,13 @@
           <mat-icon matPrefix>currency_bitcoin</mat-icon>
           <mat-label>Bitcoin Payment Link (LUD06)</mat-label>
           <input matInput type="text" [(ngModel)]="profile.lud06" placeholder="LNURL..." />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>currency_bitcoin</mat-icon>
+          <mat-label>Bitcoin Identity Identifier (LUD16)</mat-label>
+          <input matInput type="text" [(ngModel)]="profile.lud16" placeholder="satoshi@bitcoin.org" />
         </mat-form-field>
       </p>
       <p>Last updated: {{ profile.created_at | ago }}</p>
