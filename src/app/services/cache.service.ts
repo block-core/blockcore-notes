@@ -12,7 +12,7 @@ export class CacheService {
 
   get(key: string, fallback?: Observable<any>, maxAge?: number): Observable<any> | Subject<any> {
     if (this.hasValidCachedValue(key)) {
-      console.log(`%cGetting from cache ${key}`, 'color: green');
+      // console.log(`%cGetting from cache ${key}`, 'color: green');
       return of(this.cache.get(key)!.value);
     }
 
@@ -24,7 +24,7 @@ export class CacheService {
       return this.inFlightObservables.get(key)!;
     } else if (fallback && fallback instanceof Observable) {
       this.inFlightObservables.set(key, new Subject());
-      console.log(`%c Calling api for ${key}`, 'color: purple');
+      // console.log(`%c Calling api for ${key}`, 'color: purple');
 
       return fallback.pipe(
         tap({
