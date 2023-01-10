@@ -23,30 +23,36 @@
             </span>
           </span>
         </h2>
-        <div class="profile-labels" (click)="copy(npub)">
+        <div class="profile-labels">
           <div class="profile-labels-left"><mat-icon class="profile-icon">key</mat-icon></div>
-          <div class="profile-labels-middle dimmed">@{{ profile.name }}</div>
+          <div class="profile-labels-middle dimmed" (click)="copy(npub)">@{{ profile.name }}</div>
+          <div class="profile-labels-right"></div>
         </div>
-        <div class="profile-labels" *ngIf="profile.nip05" (click)="copy(getWellKnownLink(profile.nip05))">
+        <div class="profile-labels" *ngIf="profile.nip05">
           <div class="profile-labels-left"><mat-icon class="profile-icon">verified</mat-icon></div>
-          <div class="profile-labels-middle dimmed">{{ profile.nip05 }}</div>
+          <div class="profile-labels-middle dimmed" (click)="copy(getWellKnownLink(profile.nip05))">{{ profile.nip05 }}</div>
+          <div class="profile-labels-right"></div>
         </div>
         <div class="profile-labels" *ngIf="profile.website">
           <div class="profile-labels-left"><mat-icon class="profile-icon">link</mat-icon></div>
           <div class="profile-labels-middle dimmed">
             <a class="dimmed lightning-link" *ngIf="profile.website" [href]="utilities.sanitize(profile.website)" target="_blank">{{ profile.website }}</a>
           </div>
+          <div class="profile-labels-right"></div>
         </div>
         <div class="profile-labels" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
           <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
           <div class="profile-labels-middle dimmed">
-            <a class="dimmed lightning-link" *ngIf="profile.lud06" [href]="utilities.sanitize('lightning:' + profile.lud06)">{{ getLightningLabel(profile.lud06) }}</a>
+            <!-- <a class="dimmed lightning-link" (click)="toggleLn()" *ngIf="profile.lud16 && paymentVersion == 'lud16'" [href]="utilities.sanitize('lightning:' + profile.lud16)">{{ profile.lud16 }}</a> -->
+            <a class="dimmed lightning-link" *ngIf="profile.lud06 && paymentVersion == 'lud06'" [href]="utilities.sanitize('lightning:' + profile.lud06)">{{ getLightningLabel(profile.lud06) }}</a>
           </div>
+          <div class="profile-labels-right"></div>
         </div>
 
         <ng-template #tooltipTpl>
           <div class="qr-code-container">
-            <img class="qr-code" *ngIf="qr" [src]="qr" />
+            <!-- <img class="qr-code" *ngIf="qr16 && paymentVersion == 'lud16'" [src]="qr16" /> -->
+            <img class="qr-code" *ngIf="qr06 && paymentVersion == 'lud06'" [src]="qr06" />
           </div>
         </ng-template>
 

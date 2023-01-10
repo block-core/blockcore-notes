@@ -22,14 +22,15 @@
 
 .profile-labels {
   display: flex;
+  width: auto;
   gap: 0.4em;
   justify-content: center;
 }
 
-.profile-labels:hover {
+/* .profile-labels:hover {
   cursor: pointer;
   opacity: 0.6;
-}
+} */
 
 .profile-labels-left {
   flex: 0 1 auto;
@@ -37,9 +38,18 @@
 }
 
 .profile-labels-middle {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.profile-labels-middle:hover {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.profile-labels-right {
+  flex: 1 2 auto;
 }
 
 .action-button {

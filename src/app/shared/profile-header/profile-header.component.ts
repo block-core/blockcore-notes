@@ -21,7 +21,8 @@ export class ProfileHeaderComponent {
   tooltipName = '';
   circle?: Circle;
   npub!: string;
-  qr?: string;
+  qr06?: string;
+  qr16?: string;
 
   constructor(public profileService: ProfileService, public dialog: MatDialog, private circleService: CircleService, public utilities: Utilities) {}
 
@@ -49,6 +50,18 @@ export class ProfileHeaderComponent {
     }
   }
 
+  paymentVersion = 'lud06';
+
+  // toggleLn() {
+  //   if (!this.profile) {
+  //     return;
+  //   }
+
+  //   if (this.profile.lud16 && this.profile.lud06) {
+  //     this.paymentVersion = this.paymentVersion == 'lud06' ? 'lud06' : 'lud16';
+  //   }
+  // }
+
   async ngOnInit() {
     if (!this.profile) {
       this.profile = await this.profileService.getLocalProfile(this.pubkey);
@@ -73,12 +86,24 @@ export class ProfileHeaderComponent {
 
     // Pre-generate the QR value as we had some issues doing it dynamically.
     if (this.profile.lud06) {
-      this.qr = await QRCode.toDataURL('lightning:' + this.profile.lud06, {
+      this.qr06 = await QRCode.toDataURL('lightning:' + this.profile.lud06, {
         errorCorrectionLevel: 'L',
         margin: 2,
         scale: 5,
       });
     }
+
+    if (this.profile.lud16) {
+      this.qr16 = await QRCode.toDataURL('lightning:' + this.profile.lud16, {
+        errorCorrectionLevel: 'L',
+        margin: 2,
+        scale: 5,
+      });
+    }
+
+    // if (this.profile.lud16) {
+    //   this.paymentVersion = 'lud16';
+    // }
   }
 
   copy(text: string) {
