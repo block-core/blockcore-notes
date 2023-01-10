@@ -10,17 +10,6 @@ import { liveQuery } from 'dexie';
 export class NotesService {
   private table;
 
-  // Just a basic observable that triggers whenever any profile has changed.
-  #notesChangedSubject: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
-
-  get notesChanged$(): Observable<void> {
-    return this.#notesChangedSubject.asObservable();
-  }
-
-  #changed() {
-    this.#notesChangedSubject.next(undefined);
-  }
-
   items$ = from(liveQuery(() => this.items()));
 
   async items() {
@@ -55,17 +44,14 @@ export class NotesService {
   /** Notes are upserts, we replace the existing note and only keep latest. */
   async putNote(document: NostrNoteDocument | any) {
     await this.table.put(document);
-    this.#changed();
   }
 
   async deleteNote(id: string) {
     await this.table.delete(id);
-    this.#changed();
   }
 
   /** Wipes all notes. */
   async wipe() {
     await this.table.clear();
-    this.#changed();
   }
 }

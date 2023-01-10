@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 // import { relayInit, validateEvent, verifySignature, signEvent, getEventHash, getPublicKey } from 'nostr-tools';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { ApplicationState } from '../services/applicationstate.service';
 import { NostrNoteDocument } from '../services/interfaces';
 import { NotesService } from '../services/notes.service';
@@ -10,9 +10,13 @@ import { NotesService } from '../services/notes.service';
   templateUrl: './notes.component.html',
 })
 export class NotesComponent {
-  notesSub?: Subscription;
-  notes: NostrNoteDocument[] = [];
   details = false;
+  items: NostrNoteDocument[] = [];
+  items$ = this.notesService.items$.pipe(
+    tap((items) => {
+      this.items = items;
+    })
+  );
 
   constructor(private notesService: NotesService, private appState: ApplicationState) {}
 
@@ -20,27 +24,9 @@ export class NotesComponent {
     this.details = !this.details;
   }
 
-  ngOnDestroy() {
-    if (this.notesSub) {
-      this.notesSub.unsubscribe();
-    }
-
-    console.log('NOTES DESTROYED!!');
-  }
-
   ngOnInit() {
     this.appState.title = 'Saved Notes';
     this.appState.goBack = true;
     this.appState.actions = [];
-
-    this.notesSub = this.notesService.notesChanged$.subscribe(async () => {
-      console.log('RELOADING NOTES!!!');
-      await this.loadNotes();
-      console.log('DONE NOTES!!!');
-    });
-  }
-
-  async loadNotes() {
-    // this.notes = await this.notesService.list();
   }
 }

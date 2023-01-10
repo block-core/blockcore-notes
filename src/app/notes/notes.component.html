@@ -1,29 +1,31 @@
-<mat-progress-bar *ngIf="!notes" mode="indeterminate"></mat-progress-bar>
-
-<div class="feed-page">
-  <div *ngIf="notes.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.<br /></div>
-  <mat-card class="events" *ngFor="let note of notes">
-    <div class="events-header">
-      <app-event-header [pubkey]="note.pubkey"
-      >Posted: <span class="event-date">{{ note.created_at | ago }}</span
-        >, Saved: <span class="event-date">{{ note.saved | ago }}</span>
-      </app-event-header>
-      <app-event-actions [event]="note"></app-event-actions>
-    </div>
-    
-    <app-content [event]="note"></app-content>
-    <!-- <div class="content">
-      {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
-      <div *ngIf="details">
-        <br />
-        <span *ngFor="let tag of note.tags" class="dimmed">TAG: {{ tag }}</span>
+<div class="feed-page" *ngIf="items$ | withStatus | async as items">
+  <ng-template [ngIf]="items.value">
+    <div *ngIf="items.value.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.<br /></div>
+    <mat-card class="events" *ngFor="let note of items.value">
+      <div class="events-header">
+        <app-event-header [pubkey]="note.pubkey"
+          >Posted: <span class="event-date">{{ note.created_at | ago }}</span
+          >, Saved: <span class="event-date">{{ note.saved | ago }}</span>
+        </app-event-header>
+        <app-event-actions [event]="note"></app-event-actions>
       </div>
-    </div> -->
-    <!-- <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-      <mat-icon class="expand-button-icon">expand_more</mat-icon>
-    </button>
-    <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-      <mat-icon class="expand-button-icon">expand_less</mat-icon>
-    </button> -->
-  </mat-card>
+
+      <app-content [event]="note"></app-content>
+      <!-- <div class="content">
+        {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
+        <div *ngIf="details">
+          <br />
+          <span *ngFor="let tag of note.tags" class="dimmed">TAG: {{ tag }}</span>
+        </div>
+      </div> -->
+      <!-- <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+        <mat-icon class="expand-button-icon">expand_more</mat-icon>
+      </button>
+      <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
+        <mat-icon class="expand-button-icon">expand_less</mat-icon>
+      </button> -->
+    </mat-card>
+  </ng-template>
+  <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+  <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
 </div>

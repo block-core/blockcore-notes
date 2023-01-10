@@ -20,6 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DataService } from '../services/data.service';
+import { DatabaseService } from '../services/database.service';
 
 interface DefaultProfile {
   pubkey: string;
@@ -116,6 +117,7 @@ export class HomeComponent {
   }
 
   constructor(
+    private db: DatabaseService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     public options: OptionsService,
@@ -313,6 +315,22 @@ export class HomeComponent {
 
   toggleDetails() {
     this.details = !this.details;
+  }
+
+  async clearDatabase() {
+    this.db
+      .delete()
+      .then(() => {
+        console.log('Database successfully deleted');
+      })
+      .catch((err) => {
+        console.error('Could not delete database');
+      })
+      .finally(() => {
+        // Do what should be done next...
+      });
+
+    location.reload();
   }
 
   import(pubkey: string) {
