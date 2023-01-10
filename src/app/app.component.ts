@@ -171,6 +171,18 @@ export class AppComponent {
 
     // This service will perform data cleanup, etc.
     await this.dataService.initialize();
+
+    // Download the profile of the user.
+    await this.dataService.downloadNewestProfiles([this.appState.getPublicKey()]).subscribe(async (profile) => {
+      // TODO: Figure out why we get promises from this observable.
+      const p = await profile;
+
+      if (!p) {
+        return;
+      }
+
+      this.profileService.updateProfile(p.pubkey, p);
+    });
   }
 
   async ngOnInit() {
