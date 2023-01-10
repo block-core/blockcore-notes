@@ -130,7 +130,7 @@ export class CirclesComponent {
   async publishFollowList() {
     const publicPublicKeys = this.getPublicPublicKeys();
 
-    // await this.feedService.publishContacts(publicPublicKeys);
+    await this.dataService.publishContacts(publicPublicKeys);
 
     this.snackBar.open(`A total of ${publicPublicKeys.length} was added to your public following list`, 'Hide', {
       duration: 2000,

@@ -4,7 +4,7 @@ import { ProfileService } from './profile.service';
 import * as moment from 'moment';
 import { EventService } from './event.service';
 import { RelayService } from './relay.service';
-import { Filter, Relay } from 'nostr-tools';
+import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature } from 'nostr-tools';
 import { DataValidation } from './data-validation.service';
 import { ApplicationState } from './applicationstate.service';
 import { timeout, map, merge, Observable, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter } from 'rxjs';
@@ -426,5 +426,67 @@ export class DataService {
     // setTimeout(async () => {
     //   await this.cleanProfiles();
     // }, this.cleanProfileInterval);
+  }
+
+  async publishContacts(pubkeys: string[]) {
+    const mappedContacts = pubkeys.map((c) => {
+      return ['p', c];
+    });
+
+    let originalEvent: Event = {
+      kind: 3,
+      created_at: Math.floor(Date.now() / 1000),
+      content: '',
+      pubkey: this.appState.getPublicKey(),
+      tags: mappedContacts,
+    };
+
+    originalEvent.id = getEventHash(originalEvent);
+
+    const gt = globalThis as any;
+
+    // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
+    const signedEvent = await gt.nostr.signEvent(originalEvent);
+    originalEvent = signedEvent;
+
+    // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
+    // We must do this before we run nostr-tools validate and signature validation.
+    const event = this.eventService.processEvent(originalEvent as NostrEventDocument);
+
+    let ok = validateEvent(originalEvent);
+
+    if (!ok) {
+      throw new Error('The event is not valid. Cannot publish.');
+    }
+
+    let veryOk = await verifySignature(originalEvent as any); // Required .id and .sig, which we know has been added at this stage.
+
+    if (!veryOk) {
+      throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
+    }
+
+    if (!event) {
+      return;
+    }
+
+    console.log('PUBLISH EVENT:', originalEvent);
+
+    // First we persist our own event like would normally happen if we receive this event.
+    // await this.#persist(event);
+
+    for (let i = 0; i < this.relayService.relays.length; i++) {
+      const relay = this.relayService.relays[i];
+
+      let pub = relay.publish(event);
+      pub.on('ok', () => {
+        console.log(`${relay.url} has accepted our event`);
+      });
+      pub.on('seen', () => {
+        console.log(`we saw the event on ${relay.url}`);
+      });
+      pub.on('failed', (reason: any) => {
+        console.log(`failed to publish to ${relay.url}: ${reason}`);
+      });
+    }
   }
 }
