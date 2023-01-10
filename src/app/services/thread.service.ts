@@ -11,16 +11,16 @@ import { NavigationService } from './navigation.service';
   providedIn: 'root',
 })
 export class ThreadService {
-  event: NostrEventDocument | null = null;
-  #eventChanged: BehaviorSubject<NostrEventDocument | null> = new BehaviorSubject<NostrEventDocument | null>(this.event);
+  event: NostrEventDocument | undefined = undefined;
+  #eventChanged: BehaviorSubject<NostrEventDocument | undefined> = new BehaviorSubject<NostrEventDocument | undefined>(this.event);
   event$ = this.#eventChanged.asObservable();
 
-  #root: NostrEventDocument | null = null;
-  #rootChanged: BehaviorSubject<NostrEventDocument | null> = new BehaviorSubject<NostrEventDocument | null>(this.#root);
+  #root: NostrEventDocument | undefined = undefined;
+  #rootChanged: BehaviorSubject<NostrEventDocument | undefined> = new BehaviorSubject<NostrEventDocument | undefined>(this.#root);
   root$ = this.#rootChanged.asObservable();
 
-  #events: NostrEventDocument[] | null = [];
-  #eventsChanged: BehaviorSubject<NostrEventDocument[] | null> = new BehaviorSubject<NostrEventDocument[] | null>(this.#events);
+  #events: NostrEventDocument[] | undefined = [];
+  #eventsChanged: BehaviorSubject<NostrEventDocument[] | undefined> = new BehaviorSubject<NostrEventDocument[] | undefined>(this.#events);
 
   hasLoaded = false;
 
@@ -38,7 +38,10 @@ export class ThreadService {
       .pipe(
         map((data) =>
           data.filter((events) => {
-            // console.log(this.#event);
+            if (!this.event) {
+              return false;
+            }
+
             const eTags = this.eventService.eTags(this.event);
 
             // Skip all replies that are directly on root.
@@ -134,7 +137,7 @@ export class ThreadService {
         //   this.#rootChanged.next(this.#root);
         // });
       } else {
-        this.#root = null;
+        this.#root = undefined;
         // Reset the root if the current event does not have one.
         this.#rootChanged.next(this.#root);
       }
@@ -227,7 +230,6 @@ export class ThreadService {
     if (event.kind == 1) {
       thread.children.push({ id: event.id, date: event.created_at });
       thread.children.sort((a: ThreadEntryChild, b: ThreadEntryChild) => a.date - b.date);
-
     } else if (event.kind == 7) {
       if (event.content == '' || event.content == '+') {
         if (!thread.reactions[EmojiEnum['👍']]) {
@@ -308,37 +310,43 @@ export class ThreadService {
     return tags[0][1];
   }
 
+  loadEventThread(eventId: string) {
+    this.navigationService.currentThread = [];
+    this.threadEvents = [];
+    this.threadIds = [];
+    this.threadId = eventId;
+
+    this.dataService.downloadEventsByTags([{ ['#e']: [eventId] }]).subscribe((event) => {
+      this.buildTree(event, eventId);
+    });
+  }
+
   async changeSelectedEvent(eventId?: string, event?: NostrEventDocument) {
     this.hasLoaded = false;
 
-    this.#root = null;
+    this.#root = undefined;
     this.#rootChanged.next(this.#root);
 
     // Reset so UI doesn't show previous events.
-    this.#events = null;
+    this.#events = undefined;
     this.#eventsChanged.next(this.#events);
 
     if (event) {
       this.event = event;
       this.#eventChanged.next(this.event);
+
+      this.loadEventThread(event.id!);
     } else {
-      this.event = null;
+      this.event = undefined;
       this.#eventChanged.next(this.event);
 
       if (eventId) {
-        this.dataService.downloadEvent(eventId!).subscribe((event) => {
+        this.dataService.downloadEvent(eventId).subscribe((event) => {
           this.event = event;
           this.#eventChanged.next(this.event);
         });
 
-        this.navigationService.currentThread = [];
-        this.threadEvents = [];
-        this.threadIds = [];
-        this.threadId = eventId;
-
-        this.dataService.downloadEventsByTags([{ ['#e']: [eventId] }]).subscribe((event) => {
-          this.buildTree(event, eventId);
-        });
+        this.loadEventThread(eventId);
       }
     }
 

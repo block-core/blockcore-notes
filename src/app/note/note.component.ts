@@ -149,13 +149,15 @@ export class NoteComponent {
         return;
       }
 
-      if (this.thread.event && this.thread.event.id == id) {
-        this.id = id;
-        return;
-      } else {
-        this.thread.changeSelectedEvent(id);
-        this.id = id;
-      }
+      this.thread.changeSelectedEvent(id);
+
+      // if (this.thread.event && this.thread.event.id == id) {
+      //   this.id = id;
+      //   return;
+      // } else {
+      //   this.thread.changeSelectedEvent(id);
+      //   this.id = id;
+      // }
 
       // if (this.appState.connectedChanged.value === true) {
       //   setTimeout(() => {

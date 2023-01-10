@@ -17,6 +17,7 @@ import { EventPointer } from 'nostr-tools/nip19';
 })
 export class ProfileActionsComponent {
   @Input() fab: boolean = false;
+  @Input() showFollow: boolean = false;
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;

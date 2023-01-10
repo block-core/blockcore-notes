@@ -25,7 +25,9 @@ export class ReplyListComponent {
         continue;
       }
 
-      let profile = await this.profileService.getProfile(key);
+      this.profileService.getProfile(key).subscribe((p) => {
+        this.profiles.push(p);
+      });
 
       // if (!profile) {
       //   profile = {

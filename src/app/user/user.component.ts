@@ -166,6 +166,7 @@ export class UserComponent {
 
     this.appState.showBackButton = true;
     this.appState.actions = [];
+    this.appState.title = '';
 
     this.subscriptions.push(
       this.activatedRoute.queryParams.subscribe(async (params) => {
@@ -192,6 +193,7 @@ export class UserComponent {
         }
 
         this.pubkey = pubkey;
+        this.appState.title = this.utilities.getShortenedIdentifier(pubkey);
 
         this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
           this.profile = profile;
@@ -208,6 +210,7 @@ export class UserComponent {
           }
 
           this.profileName = this.profile.name;
+          this.appState.title = this.profileName;
 
           if (this.profileName)
             if (!this.profile.display_name) {
