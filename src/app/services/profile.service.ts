@@ -511,6 +511,7 @@ export class ProfileService {
       profile.website = document.website;
       profile.display_name = document.display_name;
       profile.picture = document.picture;
+      profile.created_at = document.created_at;
     }
 
     profile.modified = now;

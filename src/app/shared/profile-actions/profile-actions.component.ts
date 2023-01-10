@@ -13,6 +13,7 @@ import { EventPointer } from 'nostr-tools/nip19';
 @Component({
   selector: 'app-profile-actions',
   templateUrl: './profile-actions.component.html',
+  styleUrls: ['./profile-actions.component.css'],
 })
 export class ProfileActionsComponent {
   @Input() fab: boolean = false;
@@ -44,8 +45,6 @@ export class ProfileActionsComponent {
   }
 
   async follow(circle?: number) {
-    console.log('FOLLOW:', this.profile);
-
     if (!this.profile) {
       return;
     }
@@ -58,6 +57,10 @@ export class ProfileActionsComponent {
       // If we already follow but just change the circle, do a smaller operation.
       await this.profileService.setCircle(this.profile.pubkey, circle);
     }
+
+    this.profileService.getProfile(this.profile.pubkey).subscribe((profile) => {
+      this.profile = profile;
+    });
   }
 
   getNpub(hex: string) {
