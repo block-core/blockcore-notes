@@ -2,7 +2,7 @@
   <div class="profile-page-header" *ngIf="profileService.item$ | async as profile">
     <div class="profile-page-header-left">
       <img *ngIf="profile?.status == 1" (click)="showProfileImage()" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" [src]="imagePath" />
-      <img *ngIf="profile?.status != 1" (click)="showProfileImage()" class="profile-image-large" matTooltipPosition="above" [src]="imagePath" />
+      <img *ngIf="profile?.status != 1" (click)="showProfileImage()" class="profile-image-large profile-image-follow" matTooltipPosition="above" [src]="imagePath" />
     </div>
     <div class="profile-page-header-middle">
       <div class="profile-button-container">
