@@ -138,6 +138,14 @@ h3 {
   padding: 1em 1em 0 1em;
 }
 
+.no-lines {
+  border-left: 2px solid transparent !important;
+}
+
+.lines {
+  border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
+}
+
 /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
 @media only screen and (max-width: 599px) {
   body {

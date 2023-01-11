@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { OptionsService } from 'src/app/services/options.service';
 import { ThreadService } from 'src/app/services/thread.service';
 import { Circle, ThreadEntry } from '../../services/interfaces';
 
@@ -16,7 +17,7 @@ export class EventReactionsComponent {
   profileName = '';
   circle?: Circle;
 
-  constructor(public thread: ThreadService) {}
+  constructor(public thread: ThreadService, public optionsService: OptionsService) {}
 
   ngAfterViewInit() {}
 

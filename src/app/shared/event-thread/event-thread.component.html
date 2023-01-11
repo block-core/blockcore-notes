@@ -1,4 +1,4 @@
-<div class="thread-event" [ngClass]="{'no-lines': !showLines}" *ngFor="let entry of threadEntry?.children">
+<div class="thread-event" [ngClass]="{ 'no-lines': !optionsService.options.showLines, lines: optionsService.options.showLines }" *ngFor="let entry of threadEntry?.children">
   <span *ngIf="thread.getEvent(entry.id) as event">
     <div class="events-header">
       <app-event-header [pubkey]="event.pubkey"
@@ -6,8 +6,8 @@
       ></app-event-header>
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
-    <app-content class="thread-content" [ngClass]="{'no-lines': !showLines}" [displayRepliesTo]="false" [event]="event"></app-content>
+    <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.options.showLines, lines: optionsService.options.showLines }" [displayRepliesTo]="false" [event]="event"></app-content>
     <app-event-reactions [threadEntry]="thread.getTreeEntry(entry.id)"></app-event-reactions>
-    <app-event-thread [showLines]="showLines" [threadEntry]="thread.getTreeEntry(entry.id)"> </app-event-thread>
+    <app-event-thread [threadEntry]="thread.getTreeEntry(entry.id)"> </app-event-thread>
   </span>
 </div>

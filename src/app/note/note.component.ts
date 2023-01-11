@@ -22,7 +22,7 @@ export class NoteComponent {
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
-    public options: OptionsService,
+    public optionsService: OptionsService,
     public navigation: NavigationService,
     public profiles: ProfileService,
     public thread: ThreadService,
@@ -99,8 +99,6 @@ export class NoteComponent {
     return eTags[0][1];
   }
 
-  showLines = true;
-
   ngOnInit() {
     console.log('CURRENT EVENT:', this.navigation.currentEvent);
 
@@ -175,29 +173,29 @@ export class NoteComponent {
     });
   }
 
-  optionsUpdated() {
-    // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
-    // Parse existing content.
-    // this.events = this.validator.filterEvents(this.events);
-  }
+  // optionsUpdated() {
+  //   // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
+  //   // Parse existing content.
+  //   // this.events = this.validator.filterEvents(this.events);
+  // }
 
-  activeOptions() {
-    let options = '';
+  // activeOptions() {
+  //   let options = '';
 
-    if (this.options.options.hideSpam) {
-      options += ' Spam: Filtered';
-    } else {
-      options += ' Spam: Allowed';
-    }
+  //   if (this.options.options.hideSpam) {
+  //     options += ' Spam: Filtered';
+  //   } else {
+  //     options += ' Spam: Allowed';
+  //   }
 
-    if (this.options.options.hideInvoice) {
-      options += ' Invoices: Hidden';
-    } else {
-      options += ' Invoices: Displayed';
-    }
+  //   if (this.options.options.hideInvoice) {
+  //     options += ' Invoices: Hidden';
+  //   } else {
+  //     options += ' Invoices: Displayed';
+  //   }
 
-    return options;
-  }
+  //   return options;
+  // }
 
   public trackByFn(index: number, item: NostrEvent) {
     return item.id;
