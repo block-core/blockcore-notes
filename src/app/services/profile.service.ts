@@ -9,6 +9,7 @@ import { liveQuery } from 'dexie';
 import { CacheService } from './cache.service';
 import { FetchService } from './fetch.service';
 import { DataService } from './data.service';
+import { dexieToRx } from '../shared/utilities';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,7 @@ export class ProfileService {
     return this.#itemChanged.asObservable();
   }
 
-  items$ = from(liveQuery(() => this.list(ProfileStatus.Follow)));
+  items$ = dexieToRx(liveQuery(() => this.list(ProfileStatus.Follow)));
 
   /** Returns a list of profiles based upon status. 0 = public, 1 = follow, 2 = mute, 3 = block */
   async list(status: ProfileStatus) {
@@ -40,15 +41,15 @@ export class ProfileService {
   }
 
   blockedProfiles$() {
-    return from(liveQuery(() => this.list(ProfileStatus.Block)));
+    return dexieToRx(liveQuery(() => this.list(ProfileStatus.Block)));
   }
 
   publicProfiles$() {
-    return from(liveQuery(() => this.list(ProfileStatus.Public)));
+    return dexieToRx(liveQuery(() => this.list(ProfileStatus.Public)));
   }
 
   mutedProfiles$() {
-    return from(liveQuery(() => this.list(ProfileStatus.Mute)));
+    return dexieToRx(liveQuery(() => this.list(ProfileStatus.Mute)));
   }
 
   // #profile: NostrProfileDocument;

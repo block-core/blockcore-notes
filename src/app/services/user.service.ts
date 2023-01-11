@@ -16,7 +16,7 @@
 
 //   cache = new CacheService();
 
-//   items$ = from(liveQuery(() => this.items()));
+//   items$ = liveQuery(() => this.items());
 
 //   async items() {
 //     return await this.table.toArray();

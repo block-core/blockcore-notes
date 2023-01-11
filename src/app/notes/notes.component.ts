@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 // import { relayInit, validateEvent, verifySignature, signEvent, getEventHash, getPublicKey } from 'nostr-tools';
-import { Subscription, tap } from 'rxjs';
+import { Observable, Subscription, tap } from 'rxjs';
 import { ApplicationState } from '../services/applicationstate.service';
 import { NostrNoteDocument } from '../services/interfaces';
 import { NotesService } from '../services/notes.service';
@@ -12,7 +12,7 @@ import { NotesService } from '../services/notes.service';
 export class NotesComponent {
   details = false;
   items: NostrNoteDocument[] = [];
-  items$ = this.notesService.items$.pipe(
+  items$ = (this.notesService.items$ as Observable<NostrNoteDocument[]>).pipe(
     tap((items) => {
       this.items = items;
     })

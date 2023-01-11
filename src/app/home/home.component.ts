@@ -35,16 +35,16 @@ interface DefaultProfile {
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  animations: [
-    trigger('fade', [
-      transition('void => active', [
-        // using status here for transition
-        style({ opacity: 0 }),
-        animate(250, style({ opacity: 1 })),
-      ]),
-      transition('* => void', [animate(250, style({ opacity: 0 }))]),
-    ]),
-  ],
+  // animations: [
+  //   trigger('fade', [
+  //     transition('void => active', [
+  //       // using status here for transition
+  //       style({ opacity: 0 }),
+  //       animate(250, style({ opacity: 1 })),
+  //     ]),
+  //     transition('* => void', [animate(250, style({ opacity: 0 }))]),
+  //   ]),
+  // ],
 })
 export class HomeComponent {
   publicKey?: string | null;
@@ -99,22 +99,23 @@ export class HomeComponent {
     },
   ];
 
-  #defaultsChanged: BehaviorSubject<DefaultProfile[]> = new BehaviorSubject<DefaultProfile[]>(this.defaults);
+  // #defaultsChanged: BehaviorSubject<DefaultProfile[]> = new BehaviorSubject<DefaultProfile[]>(this.defaults);
 
-  get defaults$(): Observable<DefaultProfile[]> {
-    return combineLatest([this.#defaultsChanged, this.profileService.items$]).pipe(
-      map(([defaultProfiles, followProfiles]) => {
-        return defaultProfiles.filter((item) => {
-          debugger;
-          if (followProfiles.find((p) => p.pubkey === item.pubkey) != null) {
-            return undefined;
-          } else {
-            return item;
-          }
-        });
-      })
-    );
-  }
+  // THIS CAUSED MASSIVE MEMORY LEAK!!
+  // get defaults$(): Observable<DefaultProfile[]> {
+  //   return combineLatest([this.#defaultsChanged, this.profileService.items$]).pipe(
+  //     map(([defaultProfiles, followProfiles]) => {
+  //       return defaultProfiles.filter((item) => {
+  //         debugger;
+  //         if (followProfiles.find((p) => p.pubkey === item.pubkey) != null) {
+  //           return undefined;
+  //         } else {
+  //           return item;
+  //         }
+  //       });
+  //     })
+  //   );
+  // }
 
   constructor(
     private db: DatabaseService,
@@ -217,9 +218,9 @@ export class HomeComponent {
     //   }
     // });
 
-    setInterval(() => {
-      console.log('observable.closed:', observable.closed);
-    }, 2000);
+    // setInterval(() => {
+    //   console.log('observable.closed:', observable.closed);
+    // }, 2000);
   }
 
   subscribeEvents() {
@@ -241,13 +242,13 @@ export class HomeComponent {
       console.log('EVENT RECEIVED22:', event);
     });
 
-    setInterval(() => {
-      console.log('observable.closed22:', observable.closed);
-    }, 2000);
+    // setInterval(() => {
+    //   console.log('observable.closed22:', observable.closed);
+    // }, 2000);
 
-    setTimeout(() => {
-      observable.unsubscribe();
-    }, 20000);
+    // setTimeout(() => {
+    //   observable.unsubscribe();
+    // }, 20000);
   }
 
   async follow(profile: DefaultProfile) {
@@ -257,17 +258,9 @@ export class HomeComponent {
       // this.feedService.downloadRecent([profile.pubkeyhex]);
 
       // Perform a detected changes now, since 'profileService.profiles.length' should be updated.
-      this.#defaultsChanged.next(this.defaults);
+      // this.#defaultsChanged.next(this.defaults);
       // this.profileService.updated();
     }
-  }
-
-  ngAfterViewInit() {
-    console.log('ngAfterViewInit');
-  }
-
-  ngAfterContentInit() {
-    console.log('ngAfterContentInit');
   }
 
   // async follow() {

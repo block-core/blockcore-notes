@@ -8,6 +8,7 @@ import { ApplicationState } from './applicationstate.service';
 import { CacheService } from './cache.service';
 import { liveQuery } from 'dexie';
 import { DatabaseService } from './database.service';
+import { dexieToRx } from '../shared/utilities';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +30,7 @@ export class RelayService {
 
   cache = new CacheService();
 
-  items$ = from(liveQuery(() => this.list()));
+  items$ = dexieToRx(liveQuery(() => this.list()));
 
   async list() {
     return await this.table.toArray();

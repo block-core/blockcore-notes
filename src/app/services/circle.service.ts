@@ -5,6 +5,7 @@ import { liveQuery } from 'dexie';
 import { DatabaseService } from './database.service';
 import { CacheService } from './cache.service';
 import { Utilities } from './utilities.service';
+import { dexieToRx } from '../shared/utilities';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class CircleService {
 
   cache = new CacheService();
 
-  items$ = from(liveQuery(() => this.items()));
+  items$ = dexieToRx(liveQuery(() => this.items()));
 
   async items() {
     return await this.table.toArray();

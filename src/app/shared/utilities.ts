@@ -1,3 +1,16 @@
+import * as Rx from "rxjs";
+import Dexie, { liveQuery, Observable } from "dexie";
+
+export function dexieToRx<T>(o: Observable<T>): Rx.Observable<T> {
+  return new Rx.Observable<T>(observer => {
+    const subscription = o.subscribe({
+      next: value => observer.next(value),
+      error: error => observer.error(error)
+    });
+    return () => subscription.unsubscribe();
+  });
+}
+
 export function copyToClipboard(content: string) {
   var textArea = document.createElement('textarea') as any;
 

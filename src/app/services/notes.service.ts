@@ -3,6 +3,7 @@ import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocume
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { DatabaseService } from './database.service';
 import { liveQuery } from 'dexie';
+import { dexieToRx } from '../shared/utilities';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ import { liveQuery } from 'dexie';
 export class NotesService {
   private table;
 
-  items$ = from(liveQuery(() => this.items()));
+  items$ = dexieToRx(liveQuery(() => this.items()));
 
   async items() {
     return await this.table.toArray();
