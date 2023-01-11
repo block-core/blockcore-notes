@@ -8,7 +8,6 @@ import { ProfileService } from '../services/profile.service';
 import { CircleService } from '../services/circle.service';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { v4 as uuidv4 } from 'uuid';
 import { ImportFollowDialog, ImportFollowDialogData } from './import-follow-dialog/import-follow-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthenticationService } from '../services/authentication.service';
@@ -226,10 +225,7 @@ export class CirclesComponent {
         return;
       }
 
-      this.circleService.put({
-        id: uuidv4(),
-        ...result,
-      });
+      this.circleService.put(result);
     });
   }
 
