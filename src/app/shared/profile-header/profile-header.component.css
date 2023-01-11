@@ -38,19 +38,24 @@
 }
 
 .profile-labels-middle {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.profile-labels-middle:hover {
+/* .profile-labels-middle:hover {
+  cursor: pointer;
+  opacity: 0.6;
+} */
+
+.hoverable:hover {
   cursor: pointer;
   opacity: 0.6;
 }
 
-.profile-labels-right {
+/* .profile-labels-right {
   flex: 1 2 auto;
-}
+} */
 
 .action-button {
   margin-top: 0 !important;
