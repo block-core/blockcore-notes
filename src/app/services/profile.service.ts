@@ -434,6 +434,8 @@ export class ProfileService {
       existingProfile.circle = circle;
       existingProfile.status = ProfileStatus.Follow;
 
+      console.log('Created new empty profile: ', existingProfile);
+
       // Save directly, don't put in cache.
       await this.table.put(existingProfile);
 
@@ -441,6 +443,8 @@ export class ProfileService {
       this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
         // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
         const p = await profile;
+
+        console.log('Downloaded profile: ', p);
 
         if (p) {
           this.updateProfile(p.pubkey, p);

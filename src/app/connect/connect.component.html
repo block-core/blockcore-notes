@@ -63,7 +63,7 @@
               <mat-label>Public Key</mat-label>
               <input matInput type="text" autocomplete="off" [(ngModel)]="readOnlyKey" />
             </mat-form-field>
-            <div><button class="skip-button" (click)="anonymous()" color="primary" mat-raised-button>Go straight in</button></div>
+            <div><button class="skip-button" (click)="anonymous(readOnlyKey)" color="primary" mat-raised-button>Go straight in</button></div>
           </div>
         </div>
         <div *ngIf="!consent" class="consent-required warn">You must agree with the notice below to enable login.</div>

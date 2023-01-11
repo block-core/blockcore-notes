@@ -62,8 +62,8 @@ export class ConnectComponent {
     // element.scrollBy({top: 500, left: 0, behavior: 'smooth'})
   }
 
-  async anonymous() {
-    const userInfo = await this.authService.anonymous();
+  async anonymous(readOnlyKey?: string) {
+    const userInfo = await this.authService.anonymous(readOnlyKey);
 
     if (userInfo.authenticated()) {
       this.router.navigateByUrl('/');
