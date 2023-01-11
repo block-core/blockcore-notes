@@ -2,5 +2,8 @@
   margin-left: 1em;
   padding-left: 1em;
   /* border-left: 2px solid rgba(255, 255, 255, 0.15) !important; */
-  padding-bottom: 0.4em;
+  padding-bottom: 0.4em; 
+}
+.thread-reaction {
+  margin-right: 0.75em;
 }
