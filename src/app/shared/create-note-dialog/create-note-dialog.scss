@@ -8,20 +8,36 @@
   z-index: 3;
 }
 
-.emoji {
+.toolbar {
+display: flex;
+margin-bottom: 5px;
+margin-top: 3px;
+}
+
+.toolbar-icon {
   cursor: pointer;
 }
 
-.emoji:hover {
-  color: #fff;
+.toolbar-icon:hover {
+  color: #9c27b0;
 }
 
 .maximize-button {
   cursor: pointer;
   // float: left !important;
   margin-right: auto;
+  color: #d87fe7;
+}
+
+.maximize-button:hover {
+  color: #9c27b0;
 }
 
 .note-input {
   // height: 40vh !important;
 }
+
+.margin-right{
+  margin-right: 5px;
+}
+
