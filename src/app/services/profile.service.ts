@@ -113,6 +113,11 @@ export class ProfileService {
     // this.table.filter((x) => x.name.toLowerCase().indexOf(searchText) > -1).toArray();
     return this.table
       .filter((profile) => {
+        if (profile.status == 3) {
+          // Filter out blocked results.
+          return false;
+        }
+
         let index = profile.name?.toLocaleLowerCase().indexOf(searchText);
 
         if (index > -1) {
