@@ -1,10 +1,5 @@
 <app-profile-header></app-profile-header>
 
-<!-- <div class="page" *ngIf="profile && profile?.status !== 1">
-  <p>Data is currently only loaded if you follow this user.</p>
-  <p><button class="follow-button" mat-raised-button color="primary" (click)="follow()">Follow</button></p>
-</div> -->
-
 <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Notes">
     <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
@@ -31,59 +26,12 @@
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
       <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
     </div>
-
-    <!-- <span *ngIf="userEvents$ | async as events"> -->
-    <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
-    <!-- <div class="feed-page"> -->
-    <!-- <mat-accordion class="options">
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>Options</mat-panel-title>
-              <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
-            </mat-expansion-panel-header>
-            <p>
-              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
-              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-              <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
-  
-            </p>
-          </mat-expansion-panel>
-        </mat-accordion> -->
-
-    <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
-          <div class="events-header">
-            <app-event-header [pubkey]="event.pubkey"
-              ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-            ></app-event-header>
-            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-          </div>
-
-          <app-content [event]="event"></app-content>
-        </mat-card> -->
-    <!-- </div>
-    </span> -->
-
-    <!-- <mat-list>
-      <div mat-subheader>Latest 100 Events</div>
-      <mat-list-item *ngFor="let event of events; trackBy: trackByFn">
-        <mat-icon matListItemIcon>text_snippet</mat-icon> -->
-    <!-- <div matListItemTitle>{{ event.pubkey }} - {{ event.kind }}-{{ event.id }}</div> -->
-    <!-- <div matListItemTitle>{{ event.content }}</div>
-        <div matListItemLine>{{ event.created_at | ago }}</div>
-      </mat-list-item>
-    </mat-list> -->
-
-    <!-- <div *ngFor="let event of events; trackBy: trackByFn">{{event.content}}</div> -->
   </mat-tab>
   <mat-tab label="Replies">
     <div *ngIf="replyEvents$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
         <div class="page" *ngIf="items.value.length === 0">
-          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
-          <p>
-            <em>(Options to load older notes will come in the future)</em>
-            <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
-          </p>
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
         </div>
 
         <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
@@ -100,46 +48,6 @@
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
       <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
     </div>
-
-    <!-- <span *ngIf="replyEvents$ | async as events"> -->
-    <!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
-
-    <!-- <div class="page" *ngIf="events === 0">
-        <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
-        <p>
-          <em>(Options to load older notes will come in the future)</em> -->
-    <!-- <button mat-raised-button color="primary">Load history from last week</button> -->
-    <!-- </p>
-      </div>
-
-      <div class="feed-page"> -->
-    <!-- <mat-accordion class="options">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Options</mat-panel-title>
-            <mat-panel-description>{{ activeOptions() }}</mat-panel-description>
-          </mat-expansion-panel-header>
-          <p>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.paused">Pause feed</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider" [(ngModel)]="settings.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
-
-          </p>
-        </mat-expansion-panel>
-      </mat-accordion> -->
-
-    <!-- TODO ENABLE THIS!! -->
-    <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
-          <div class="events-header">
-            <app-event-header [pubkey]="event.pubkey"
-              ><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-            ></app-event-header>
-            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-          </div>
-          <app-content [event]="event"></app-content>
-        </mat-card> -->
-    <!-- </div>
-    </span> -->
   </mat-tab>
   <!-- <mat-tab label="Likes">
     <div class="page">
