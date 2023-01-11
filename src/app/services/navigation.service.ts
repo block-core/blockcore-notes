@@ -6,12 +6,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { ApplicationState } from './applicationstate.service';
 import { Event } from 'nostr-tools';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  constructor(private router: Router, public dialog: MatDialog, private appState: ApplicationState) {}
+  constructor(private router: Router, public dialog: MatDialog, private appState: ApplicationState, private dataService: DataService) {}
 
   #showMore: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
   showMore$ = this.#showMore.asObservable();
@@ -83,6 +84,14 @@ export class NavigationService {
         pubkey: this.appState.getPublicKey(),
         tags: [],
       };
+
+      // TODO: We should likely save this event locally to ensure user don't loose their posts
+      // if all of the network is down.
+      const signedEvent = await this.dataService.signEvent(event);
+
+      await this.dataService.publishEvent(signedEvent);
+
+      this.router.navigate(['/e', signedEvent.id]);
 
       // await this.feedService.publish(event);
     });
