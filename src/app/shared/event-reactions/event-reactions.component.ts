@@ -5,6 +5,7 @@ import { Circle, ThreadEntry } from '../../services/interfaces';
 @Component({
   selector: 'app-event-reactions',
   templateUrl: './event-reactions.component.html',
+  styleUrls: ['./event-reactions.component.css'],
 })
 export class EventReactionsComponent {
   @Input() threadEntry?: ThreadEntry | undefined;
