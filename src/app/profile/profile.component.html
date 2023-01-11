@@ -40,6 +40,13 @@
       </p>
       <p>
         <mat-form-field appearance="outline" class="input-full-width">
+          <mat-icon matPrefix>public</mat-icon>
+          <mat-label>Website</mat-label>
+          <input matInput type="text" [(ngModel)]="profile.website" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="outline" class="input-full-width">
           <mat-icon matPrefix>currency_bitcoin</mat-icon>
           <mat-label>Bitcoin Payment Link (LUD06)</mat-label>
           <input matInput type="text" [(ngModel)]="profile.lud06" placeholder="LNURL..." />
