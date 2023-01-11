@@ -38,6 +38,7 @@ export class SearchService {
       // this.router.navigate(['/p', event.data]);
     } else {
       const result = await this.profileService.search(searchText.toLowerCase());
+      result.sort((a, b) => (a.status > b.status ? -1 : 1));
       this.updateResults(result);
     }
   }
