@@ -38,7 +38,7 @@
       <div class="profile-labels" *ngIf="profile.website">
         <div class="profile-labels-left"><mat-icon class="profile-icon">link</mat-icon></div>
         <div class="profile-labels-middle dimmed">
-          <a class="dimmed lightning-link" *ngIf="profile.website" [href]="utilities.sanitize(profile.website)" target="_blank">{{ profile.website }}</a>
+          <a class="dimmed lightning-link hoverable" *ngIf="profile.website" [href]="utilities.sanitize(profile.website)" target="_blank">{{ profile.website }}</a>
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
