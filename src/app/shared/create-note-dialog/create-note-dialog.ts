@@ -27,6 +27,15 @@ export class NoteDialog {
     this.isEmojiPickerVisible = false;
   }
 
+  // public addLink() {
+  //   if (this.data.note == '') {
+  //     this.data.note = `${this.data.note}${"[title](url)"}`;
+  //   }
+  //   else {
+  //     this.data.note = `${this.data.note}${" [title](url)"}`;
+  //   }
+  // }
+
   largeSize = false;
 
   toggleSize() {
