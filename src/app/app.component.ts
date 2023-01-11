@@ -161,7 +161,7 @@ export class AppComponent {
 
     await this.circleService.initialize();
 
-    await this.profileService.initialize();
+    await this.profileService.initialize(this.appState.getPublicKey());
     // await this.relayStorage.initialize();
 
     await this.relayService.initialize();

@@ -105,7 +105,7 @@ export class ProfileService {
     this.#itemChanged.next(this.item);
   }
 
-  setItem(item: NostrProfileDocument) {
+  setItem(item?: NostrProfileDocument) {
     this.item = item;
     this.#updatedItem();
   }
@@ -265,6 +265,10 @@ export class ProfileService {
       profile.status = 0;
     }
 
+    // We should do this only once when first observing the profile, but for data migration we'll do it
+    // on every save. This is more optimal than on every rendering.
+    profile.npub = this.utilities.getNostrIdentifier(profile.pubkey);
+
     this.cache.set(profile.pubkey, profile);
     await this.table.put(profile);
     this.#updatedItem();
@@ -310,9 +314,10 @@ export class ProfileService {
   //   }
   // }
 
-  /** Load all the following users into memory and cache. */
-  async initialize() {
-    // TODO!!
+  async initialize(pubkey: string) {
+    // Load the logged on user profile and have it immediately available.
+    const profile = await this.getLocalProfile(pubkey);
+    this.userProfileUpdated(profile);
   }
 
   /** Populate the observable with profiles which we are following. */
@@ -435,6 +440,8 @@ export class ProfileService {
       existingProfile.status = ProfileStatus.Follow;
 
       console.log('Created new empty profile: ', existingProfile);
+
+      existingProfile.npub = this.utilities.getNostrIdentifier(existingProfile.pubkey);
 
       // Save directly, don't put in cache.
       await this.table.put(existingProfile);
@@ -626,6 +633,7 @@ export class ProfileService {
 
   emptyProfile(pubkey: string): NostrProfileDocument {
     return {
+      npub: this.utilities.getNostrIdentifier(pubkey),
       name: this.utilities.getShortenedIdentifier(pubkey),
       about: '',
       picture: '/assets/profile.png',

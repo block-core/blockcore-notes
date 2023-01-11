@@ -1,79 +1,77 @@
 <div class="profile-page">
   <div class="profile-page-header" *ngIf="profileService.item$ | async as profile">
     <div class="profile-page-header-left">
-      <img *ngIf="profile?.status == 1" (click)="showProfileImage()" class="profile-image-large profile-image-follow" [style.borderColor]="circle?.color" [src]="imagePath" />
+      <img *ngIf="profile?.status == 1" (click)="showProfileImage()" class="profile-image-large profile-image-follow" [style.borderColor]="circleService.getSync(profile.circle)?.color" [src]="imagePath" />
       <img *ngIf="profile?.status != 1" (click)="showProfileImage()" class="profile-image-large profile-image-follow" matTooltipPosition="above" [src]="imagePath" />
     </div>
     <div class="profile-page-header-middle">
       <div class="profile-button-container">
         <app-profile-actions [showFollow]="true" [fab]="false" [profile]="profile"></app-profile-actions>
       </div>
-
-      <span *ngIf="profile">
-        <h2 class="profile-name" [matTooltip]="npub" matTooltipPosition="above">
-          <span *ngIf="profile.display_name">
-            {{ profile.display_name }}
-          </span>
-          <span *ngIf="!profile.display_name">
-            <span *ngIf="profile.name">
-              {{ profile.name }}
-            </span>
-            <span *ngIf="!profile.name">
-              {{ npub }}
-            </span>
-          </span>
-        </h2>
-        <div class="profile-labels">
-          <div class="profile-labels-left"><mat-icon class="profile-icon">key</mat-icon></div>
-          <div class="profile-labels-middle dimmed">
-            <span class="hoverable" (click)="copy(npub)">@{{ profile.name }}</span>
-          </div>
-          <!-- <div class="profile-labels-right"></div> -->
-        </div>
-        <div class="profile-labels" *ngIf="profile.nip05">
-          <div class="profile-labels-left"><mat-icon class="profile-icon">verified</mat-icon></div>
-          <div class="profile-labels-middle dimmed">
-            <span class="hoverable" (click)="copy(getWellKnownLink(profile.nip05))">{{ profile.nip05 }}</span>
-          </div>
-          <!-- <div class="profile-labels-right"></div> -->
-        </div>
-        <div class="profile-labels" *ngIf="profile.website">
-          <div class="profile-labels-left"><mat-icon class="profile-icon">link</mat-icon></div>
-          <div class="profile-labels-middle dimmed">
-            <a class="dimmed lightning-link" *ngIf="profile.website" [href]="utilities.sanitize(profile.website)" target="_blank">{{ profile.website }}</a>
-          </div>
-          <!-- <div class="profile-labels-right"></div> -->
-        </div>
-        <div class="profile-labels" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
-          <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
-          <div class="profile-labels-middle dimmed">
-            <!-- <a class="dimmed lightning-link" (click)="toggleLn()" *ngIf="profile.lud16 && paymentVersion == 'lud16'" [href]="utilities.sanitize('lightning:' + profile.lud16)">{{ profile.lud16 }}</a> -->
-            <a class="dimmed lightning-link hoverable" *ngIf="profile.lud06 && paymentVersion == 'lud06'" [href]="utilities.sanitize('lightning:' + profile.lud06)">{{ getLightningLabel(profile.lud06) }}</a>
-          </div>
-          <!-- <div class="profile-labels-right"></div> -->
-        </div>
-
-        <ng-template #tooltipTpl>
-          <div class="qr-code-container">
-            <!-- <img class="qr-code" *ngIf="qr16 && paymentVersion == 'lud16'" [src]="qr16" /> -->
-            <img class="qr-code" *ngIf="qr06 && paymentVersion == 'lud06'" [src]="qr06" />
-          </div>
-        </ng-template>
-
-        <span>
-          <p class="wrap linebreaks" *ngIf="profile.about">{{ profile.about }}</p>
+      <h2 class="profile-name" [matTooltip]="npub" matTooltipPosition="above">
+        <span *ngIf="profile.display_name">
+          {{ profile.display_name }}
         </span>
+        <span *ngIf="!profile.display_name">
+          <span *ngIf="profile.name">
+            {{ profile.name }}
+          </span>
+          <span *ngIf="!profile.display_name && !profile.name">
+            {{ profile.npub }}
+          </span>
+        </span>
+      </h2>
+      <div class="profile-labels">
+        <div class="profile-labels-left"><mat-icon class="profile-icon">key</mat-icon></div>
+        <div class="profile-labels-middle dimmed">
+          <span class="hoverable" (click)="copy(npub)">@{{ profile.name }}</span>
+        </div>
+        <!-- <div class="profile-labels-right"></div> -->
+      </div>
+      <div class="profile-labels" *ngIf="profile.nip05">
+        <div class="profile-labels-left"><mat-icon class="profile-icon">verified</mat-icon></div>
+        <div class="profile-labels-middle dimmed">
+          <span class="hoverable" (click)="copy(getWellKnownLink(profile.nip05))">{{ displayNIP05(profile.nip05) }}</span>
+        </div>
+        <!-- <div class="profile-labels-right"></div> -->
+      </div>
+      <div class="profile-labels" *ngIf="profile.website">
+        <div class="profile-labels-left"><mat-icon class="profile-icon">link</mat-icon></div>
+        <div class="profile-labels-middle dimmed">
+          <a class="dimmed lightning-link" *ngIf="profile.website" [href]="utilities.sanitize(profile.website)" target="_blank">{{ profile.website }}</a>
+        </div>
+        <!-- <div class="profile-labels-right"></div> -->
+      </div>
+      <div class="profile-labels" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
+        <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
+        <div class="profile-labels-middle dimmed">
+          <!-- <a class="dimmed lightning-link" (click)="toggleLn()" *ngIf="profile.lud16 && paymentVersion == 'lud16'" [href]="utilities.sanitize('lightning:' + profile.lud16)">{{ profile.lud16 }}</a> -->
+          <a class="dimmed lightning-link hoverable" *ngIf="profile.lud06 && paymentVersion == 'lud06'" [href]="utilities.sanitize('lightning:' + profile.lud06)">{{ getLightningLabel(profile.lud06) }}</a>
+        </div>
+        <!-- <div class="profile-labels-right"></div> -->
+      </div>
 
-        <div>
-          <!-- <a mat-mini-fab [matMenuTriggerFor]="menu"><mat-icon>notifications</mat-icon></a> -->
+      <ng-template #tooltipTpl>
+        <div class="qr-code-container">
+          <!-- <img class="qr-code" *ngIf="qr16 && paymentVersion == 'lud16'" [src]="qr16" /> -->
+          <img class="qr-code" *ngIf="qr06 && paymentVersion == 'lud06'" [src]="qr06" />
+        </div>
+      </ng-template>
 
-          <!-- <button class="profile-button" *ngIf="profile.lud06"> -->
-          <!-- <a class="profile-button" *ngIf="profile.lud06" [href]="sanitize('lightning:' + profile.lud06)">
+      <span>
+        <p class="wrap linebreaks" *ngIf="profile.about">{{ profile.about }}</p>
+      </span>
+
+      <div>
+        <!-- <a mat-mini-fab [matMenuTriggerFor]="menu"><mat-icon>notifications</mat-icon></a> -->
+
+        <!-- <button class="profile-button" *ngIf="profile.lud06"> -->
+        <!-- <a class="profile-button" *ngIf="profile.lud06" [href]="sanitize('lightning:' + profile.lud06)">
             <mat-icon class="profile-button-icon">⚡️</mat-icon>
           </a> -->
-          <!-- </button> -->
+        <!-- </button> -->
 
-          <!-- <button class="profile-button">
+        <!-- <button class="profile-button">
             <mat-icon class="profile-button-icon">⚡️</mat-icon>
           </button>
 
@@ -81,30 +79,29 @@
             <mat-icon class="action-button-icon">animation</mat-icon>
           </button> -->
 
-          <!-- <button class="profile-button">
+        <!-- <button class="profile-button">
             <mat-icon class="action-button-icon">more_vert</mat-icon>
           </button> -->
 
-          <!-- <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+        <!-- <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon class="action-button-icon">more_vert</mat-icon>
           </button> -->
 
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item>
-              <mat-icon>notifications_off</mat-icon>
-              <span>Mute</span>
-            </button>
-            <button mat-menu-item>
-              <mat-icon>notifications_paused</mat-icon>
-              <span>Remove from Notes</span>
-            </button>
-            <button mat-menu-item>
-              <mat-icon>notifications</mat-icon>
-              <span>Remove from Notes</span>
-            </button>
-          </mat-menu>
-        </div>
-      </span>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>notifications_off</mat-icon>
+            <span>Mute</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>notifications_paused</mat-icon>
+            <span>Remove from Notes</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>notifications</mat-icon>
+            <span>Remove from Notes</span>
+          </button>
+        </mat-menu>
+      </div>
     </div>
     <!-- <div class="profile-page-header-right"> -->
     <!-- <div class="profile-button-container" *ngIf="profile.lud06">

@@ -40,9 +40,19 @@ export class Utilities {
       nip05: profile.nip05,
       lud06: profile.lud06,
       display_name: profile.display_name,
-      website: profile.website
+      website: profile.website,
       // TODO: Consider adding support for these in the future depending on how the community of Nostr grows and adopts these fields.
     } as NostrProfile;
+  }
+
+  getProfileDisplayName(profile: NostrProfileDocument) {
+    if (profile.display_name) {
+      return profile.display_name;
+    } else if (profile.name) {
+      return profile.name;
+    } else {
+      return profile.npub;
+    }
   }
 
   mapProfileEvent(event: NostrEventDocument): NostrProfileDocument | undefined {

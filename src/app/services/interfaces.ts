@@ -119,6 +119,10 @@ export interface NostrSubscription extends Sub {
 }
 
 export interface NostrProfileDocument extends NostrProfile {
+  /** The npub encoded public key. */
+  npub: string;
+
+  /** The public key in hex encoding. */
   pubkey: string;
 
   /** The timestamp when the profile was created. Internal property, not from event. */

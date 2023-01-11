@@ -196,6 +196,7 @@ export class UserComponent {
         this.appState.title = this.utilities.getShortenedIdentifier(pubkey);
 
         this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
+          this.profiles.setItem(profile);
           this.profile = profile;
 
           if (!this.profile) {
@@ -203,26 +204,16 @@ export class UserComponent {
             this.circle = undefined;
           }
 
-          this.npub = this.utilities.getNostrIdentifier(pubkey);
+          // this.npub = this.utilities.getNostrIdentifier(pubkey);
 
-          if (!this.profile.name) {
-            this.profile.name = this.npub;
-          }
+          // if (!this.profile.name) {
+          //   this.profile.name = this.npub;
+          // }
 
-          this.profileName = this.profile.name;
-          this.appState.title = this.profileName;
-
-          if (this.profileName)
-            if (!this.profile.display_name) {
-              this.profile.display_name = this.profileName;
-            }
-
+          // this.profileName = this.profile.name;
+          this.appState.title = this.utilities.getProfileDisplayName(this.profile);
           this.imagePath = this.profile.picture || '/assets/profile.png';
-
           this.circle = await this.circleService.get(this.profile.circle);
-
-          // If the user has name in their profile, show that and not pubkey.
-          this.appState.title = `@${this.profile.name}`;
         });
 
         this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {

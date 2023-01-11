@@ -6,6 +6,7 @@ import { Utilities } from 'src/app/services/utilities.service';
 import { Circle, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog, ProfileImageDialogData } from '../profile-image-dialog/profile-image-dialog';
 import * as QRCode from 'qrcode';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile-header',
@@ -14,7 +15,7 @@ import * as QRCode from 'qrcode';
 })
 export class ProfileHeaderComponent {
   @Input() pubkey: string = '';
-  @Input() profile?: NostrProfileDocument;
+  // @Input() profile?: NostrProfileDocument;
 
   static defaultProfileImage = '/assets/profile.png';
   tooltip = '';
@@ -24,13 +25,21 @@ export class ProfileHeaderComponent {
   qr06?: string;
   qr16?: string;
 
-  constructor(public profileService: ProfileService, public dialog: MatDialog, private circleService: CircleService, public utilities: Utilities) {}
+  constructor(public profileService: ProfileService, public dialog: MatDialog, public circleService: CircleService, public utilities: Utilities) {}
 
   async ngAfterViewInit() {}
 
+  // get item() {
+  //   if (this.profile) {
+  //     return this.profile;
+  //   } else {
+  //     return this.profileService.item;
+  //   }
+  // }
+
   get imagePath() {
-    if (this.profile?.picture) {
-      return this.profile.picture;
+    if (this.profileService.item!.picture) {
+      return this.profileService.item!.picture;
     }
 
     return ProfileHeaderComponent.defaultProfileImage;
@@ -62,48 +71,52 @@ export class ProfileHeaderComponent {
   //   }
   // }
 
+  // async getCircle(id: number) {
+  //   return this.circleService.get(id);
+  // }
+
   async ngOnInit() {
-    if (!this.profile) {
-      this.profile = await this.profileService.getLocalProfile(this.pubkey);
-      this.npub = this.utilities.getNostrIdentifier(this.pubkey);
-
-      if (!this.profile) {
-        return;
-      }
-    } else {
-      this.pubkey = this.profile.pubkey;
-      this.npub = this.utilities.getNostrIdentifier(this.profile.pubkey);
-    }
-
-    this.profileService.setItem(this.profile);
-
-    this.tooltip = this.profile.about;
-
+    // if (!this.profile) {
+    //   this.profile = await this.profileService.getLocalProfile(this.pubkey);
+    //   this.npub = this.utilities.getNostrIdentifier(this.pubkey);
+    //   if (!this.profile) {
+    //     return;
+    //   }
+    // } else {
+    //   this.pubkey = this.profile.pubkey;
+    //   this.npub = this.utilities.getNostrIdentifier(this.profile.pubkey);
+    // }
+    // this.profileService.setItem(this.profile);
+    // this.tooltip = this.profile.about;
     // If the user has name in their profile, show that and not pubkey.
     // this.profileName = this.profile.name || this.profileName;
-
-    this.circle = await this.circleService.get(this.profile.circle);
-
+    // this.circle = await this.circleService.get(this.profile.circle);
     // Pre-generate the QR value as we had some issues doing it dynamically.
-    if (this.profile.lud06) {
-      this.qr06 = await QRCode.toDataURL('lightning:' + this.profile.lud06, {
-        errorCorrectionLevel: 'L',
-        margin: 2,
-        scale: 5,
-      });
-    }
-
-    if (this.profile.lud16) {
-      this.qr16 = await QRCode.toDataURL('lightning:' + this.profile.lud16, {
-        errorCorrectionLevel: 'L',
-        margin: 2,
-        scale: 5,
-      });
-    }
-
+    // if (this.profile.lud06) {
+    //   this.qr06 = await QRCode.toDataURL('lightning:' + this.profile.lud06, {
+    //     errorCorrectionLevel: 'L',
+    //     margin: 2,
+    //     scale: 5,
+    //   });
+    // }
+    // if (this.profile.lud16) {
+    //   this.qr16 = await QRCode.toDataURL('lightning:' + this.profile.lud16, {
+    //     errorCorrectionLevel: 'L',
+    //     margin: 2,
+    //     scale: 5,
+    //   });
+    // }
     // if (this.profile.lud16) {
     //   this.paymentVersion = 'lud16';
     // }
+  }
+
+  displayNIP05(nip05: string) {
+    if (nip05.startsWith('_@')) {
+      return nip05.substring(2);
+    }
+
+    return nip05;
   }
 
   copy(text: string) {

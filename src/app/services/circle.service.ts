@@ -43,6 +43,14 @@ export class CircleService {
     });
   }
 
+  getSync(id?: number) {
+    if (this.circles.length > 0) {
+      return this.circles.find((c) => c.id == id);
+    }
+
+    return undefined;
+  }
+
   async get(id?: number) {
     if (id == null) {
       return undefined;

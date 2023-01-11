@@ -8,6 +8,7 @@ export interface Options {
   publicFeed?: boolean;
   flatfeed?: boolean;
   ascending?: boolean;
+  showLines: boolean;
 }
 
 @Injectable({
@@ -16,5 +17,5 @@ export interface Options {
 export class OptionsService {
   constructor() {}
 
-  options: Options = {};
+  options: Options = { showLines: true };
 }

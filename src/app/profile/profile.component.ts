@@ -8,7 +8,7 @@ import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DataService } from '../services/data.service';
 
 @Component({
@@ -25,6 +25,12 @@ export class ProfileComponent {
   profileName = '';
   loading!: boolean;
   subscriptions: Subscription[] = [];
+
+  #profileChanged: BehaviorSubject<NostrProfileDocument | undefined> = new BehaviorSubject<NostrProfileDocument | undefined>(this.profile);
+
+  get profile$(): Observable<NostrProfileDocument | undefined> {
+    return this.#profileChanged.asObservable();
+  }
 
   constructor(
     public appState: ApplicationState,
@@ -64,7 +70,13 @@ export class ProfileComponent {
 
   cloneProfile() {
     const profileClone = JSON.stringify(this.originalProfile);
-    this.profile = JSON.parse(profileClone);
+    // this.profile = JSON.parse(profileClone);
+    this.profile = Object.assign({}, JSON.parse(profileClone));
+
+    this.#profileChanged.next(this.profile);
+
+    // Whenever the active user profile is changed, also change the selected profile which is used by profile header.
+    this.profileService.setItem(this.profile);
   }
 
   cancelEdit() {
