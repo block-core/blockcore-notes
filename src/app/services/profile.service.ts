@@ -119,13 +119,13 @@ export class ProfileService {
           return true;
         }
 
-        index = profile.display_name?.toLocaleLowerCase().indexOf(searchText);
+        index = profile.nip05?.toLocaleLowerCase().indexOf(searchText);
 
         if (index > -1) {
           return true;
         }
 
-        index = profile.about?.toLocaleLowerCase().indexOf(searchText);
+        index = profile.display_name?.toLocaleLowerCase().indexOf(searchText);
 
         if (index > -1) {
           return true;
