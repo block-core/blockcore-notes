@@ -410,6 +410,56 @@ export class DataService {
     // }, this.cleanProfileInterval);
   }
 
+  /** Request an event to be signed. This method will calculate the content id automatically. */
+  async signEvent(event: Event) {
+    if (!event.id) {
+      event.id = getEventHash(event);
+    }
+
+    const gt = globalThis as any;
+
+    // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
+    const signedEvent = await gt.nostr.signEvent(event);
+
+    // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
+    // We must do this before we run nostr-tools validate and signature validation.
+    const verifiedEvent = this.eventService.processEvent(signedEvent as NostrEventDocument);
+
+    let ok = validateEvent(signedEvent);
+
+    if (!ok) {
+      throw new Error('The event is not valid. Cannot publish.');
+    }
+
+    let veryOk = await verifySignature(signedEvent as any); // Required .id and .sig, which we know has been added at this stage.
+
+    if (!veryOk) {
+      throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
+    }
+
+    return signedEvent;
+  }
+
+  /** Will attempt to publish to all registered events independent of their current connection status. This will fail
+   * to publish if the relay is not currently connected. Failed publish will not be retried.
+   */
+  async publishEvent(event: Event) {
+    for (let i = 0; i < this.relayService.relays.length; i++) {
+      const relay = this.relayService.relays[i];
+
+      let pub = relay.publish(event);
+      pub.on('ok', () => {
+        console.log(`${relay.url} has accepted our event`);
+      });
+      pub.on('seen', () => {
+        console.log(`we saw the event on ${relay.url}`);
+      });
+      pub.on('failed', (reason: any) => {
+        console.log(`failed to publish to ${relay.url}: ${reason}`);
+      });
+    }
+  }
+
   async publishContacts(pubkeys: string[]) {
     const mappedContacts = pubkeys.map((c) => {
       return ['p', c];

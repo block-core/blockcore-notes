@@ -1,17 +1,21 @@
 .thread-event {
-    margin-left: 1em;
-    border-left: 2px solid rgba(255, 255, 255, 0.15);
-    padding-top: 0em;
-    padding-left: 1em;
-  }
-  
-  .thread-content {
-    margin-left: 1em;
-    padding-left: 1em;
-    border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
-    display: block;
-  }
-  
-  .events {
-    padding: 0 !important;
-  }
+  margin-left: 1em;
+  border-left: 2px solid rgba(255, 255, 255, 0.15);
+  padding-top: 0em;
+  padding-left: 1em;
+}
+
+.thread-content {
+  margin-left: 1em;
+  padding-left: 1em;
+  border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
+  display: block;
+}
+
+.no-lines {
+  border-left: 2px solid transparent !important;
+}
+
+.events {
+  padding: 0 !important;
+}

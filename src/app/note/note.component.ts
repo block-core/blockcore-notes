@@ -99,6 +99,8 @@ export class NoteComponent {
     return eTags[0][1];
   }
 
+  showLines = true;
+
   ngOnInit() {
     console.log('CURRENT EVENT:', this.navigation.currentEvent);
 

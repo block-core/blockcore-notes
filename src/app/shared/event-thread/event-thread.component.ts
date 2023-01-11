@@ -12,6 +12,7 @@ import { Circle, ThreadEntry } from '../../services/interfaces';
 })
 export class EventThreadComponent {
   @Input() threadEntry?: ThreadEntry | undefined;
+  @Input() showLines?: boolean;
 
   imagePath = '/assets/profile.png';
   tooltip = '';

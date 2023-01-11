@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate.service';
 import { Utilities } from '../services/utilities.service';
-import { relayInit, Relay, Event } from 'nostr-tools';
+import { relayInit, Relay, Event, getEventHash } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation.service';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
@@ -91,13 +91,16 @@ export class ProfileComponent {
       tags: [],
     };
 
-    // await this.feedService.publish(event, false); // Don't persist this locally.
+    const signedEvent = await this.dataService.signEvent(event);
 
+    // await this.feedService.publish(event, false); // Don't persist this locally.
     this.profile!.created_at = event.created_at;
 
     // Use the whole document for this update as we don't want to loose additional metadata we have, such
     // as follow (on self).
     await this.profileService.updateProfile(this.profile!.pubkey, this.profile!);
+
+    await this.dataService.publishEvent(signedEvent);
 
     this.appState.navigateBack();
   }

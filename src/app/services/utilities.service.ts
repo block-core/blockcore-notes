@@ -39,9 +39,9 @@ export class Utilities {
       picture: profile.picture,
       nip05: profile.nip05,
       lud06: profile.lud06,
+      display_name: profile.display_name,
+      website: profile.website
       // TODO: Consider adding support for these in the future depending on how the community of Nostr grows and adopts these fields.
-      // display_name: profile.display_name,
-      // website: profile.website
     } as NostrProfile;
   }
 
