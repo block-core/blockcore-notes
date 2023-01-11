@@ -146,6 +146,49 @@ h3 {
   border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
 }
 
+
+
+
+.image-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.image-grid img {
+  display: block;
+  height: 400px;
+  object-fit: cover;
+  width: 400px;
+}
+
+.image-grid-item {
+  height: 0;
+  padding-bottom: 100%;
+  position: relative;
+}
+
+.image-grid-item img {
+  height: 100%;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
 @media only screen and (max-width: 599px) {
   body {

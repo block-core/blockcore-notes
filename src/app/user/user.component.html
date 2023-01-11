@@ -1,13 +1,18 @@
 <app-profile-header></app-profile-header>
-<!-- 
-{{ circleService.getSync(profile?.circle) | json }}
-
-||{{ layout }}|| -->
 
 <ng-template [ngIf]="layout == 2">
   <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
-    <ng-template [ngIf]="items.value">
-      <app-content-photos [event]="event" *ngFor="let event of items.value; trackBy: trackByFn"> </app-content-photos>
+    <ng-template [ngIf]="items.value && items.value.length > 0">
+      <!-- <div class="products" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
+        <div class="products-item" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="products-item-name">{{ event.content }}</div>
+          <div class="products-item-image" [photoGallery]="'https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg'">
+            <img [src]="'https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg'" />
+          </div>
+        </div>
+      </div> -->
+
+      <app-content-photos [events]="items.value"> </app-content-photos>
     </ng-template>
     <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
     <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>

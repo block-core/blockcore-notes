@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MtxTooltipModule } from '@ng-matero/extensions/tooltip';
+import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -124,7 +125,7 @@ import { ContentPhotosComponent } from './shared/content-photos/content-photos.c
     FeedComponent,
     EventThreadComponent,
     EventReactionsComponent,
-    ContentPhotosComponent
+    ContentPhotosComponent,
   ],
   imports: [
     HttpClientModule,
@@ -164,6 +165,7 @@ import { ContentPhotosComponent } from './shared/content-photos/content-photos.c
     MatSnackBarModule,
     MatProgressBarModule,
     MatDialogModule,
+    PhotoGalleryModule,
     NgxColorsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),

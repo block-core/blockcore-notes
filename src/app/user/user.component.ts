@@ -155,6 +155,8 @@ export class UserComponent {
 
   layout?: number;
 
+
+
   ngOnInit() {
     // setInterval(() => {
     //   console.log('Closed:', this.feedSubscription?.closed);
