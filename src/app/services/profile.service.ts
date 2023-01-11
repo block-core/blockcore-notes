@@ -4,7 +4,7 @@ import { BehaviorSubject, from, map, Observable, tap, shareReplay } from 'rxjs';
 import * as moment from 'moment';
 import { ApplicationState } from './applicationstate.service';
 import { Utilities } from './utilities.service';
-import { DatabaseService } from './database.service';
+import { StorageService } from './storage.service';
 import { liveQuery } from 'dexie';
 import { CacheService } from './cache.service';
 import { FetchService } from './fetch.service';
@@ -15,7 +15,9 @@ import { dexieToRx } from '../shared/utilities';
   providedIn: 'root',
 })
 export class ProfileService {
-  private table;
+  private get table() {
+    return this.db.profiles;
+  }
 
   initialized = false;
 
@@ -177,9 +179,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: DatabaseService, private dataService: DataService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
-    this.table = db.profiles;
-  }
+  constructor(private db: StorageService, private dataService: DataService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {}
 
   // async downloadProfile(pubkey: string) {
   //   this.#profileRequested.next(pubkey);

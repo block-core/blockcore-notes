@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate.service';
-import { DatabaseService } from '../services/database.service';
+import { StorageService } from '../services/storage.service';
 import { EventService } from '../services/event.service';
 import { NostrRelay } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
@@ -24,7 +24,7 @@ export class SettingsComponent {
   wipedNotes = false;
   open = false;
 
-  constructor(public relayService: RelayService, public dialog: MatDialog, public appState: ApplicationState, private profileService: ProfileService, public theme: ThemeService, private db: DatabaseService) {}
+  constructor(public relayService: RelayService, public dialog: MatDialog, public appState: ApplicationState, private profileService: ProfileService, public theme: ThemeService, private db: StorageService) {}
 
   toggle() {
     if (this.open) {
@@ -50,18 +50,7 @@ export class SettingsComponent {
   }
 
   async clearDatabase() {
-    this.db
-      .delete()
-      .then(() => {
-        console.log('Database successfully deleted');
-      })
-      .catch((err) => {
-        console.error('Could not delete database');
-      })
-      .finally(() => {
-        // Do what should be done next...
-      });
-
+    await this.db.delete();
     this.wiped = true;
     location.reload();
   }

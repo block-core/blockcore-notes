@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from './interfaces';
 import { BehaviorSubject, from, Observable } from 'rxjs';
-import { DatabaseService } from './database.service';
+import { StorageService } from './storage.service';
 import { liveQuery } from 'dexie';
 import { dexieToRx } from '../shared/utilities';
 
@@ -9,7 +9,9 @@ import { dexieToRx } from '../shared/utilities';
   providedIn: 'root',
 })
 export class NotesService {
-  private table;
+  private get table() {
+    return this.db.notes;
+  }
 
   items$ = dexieToRx(liveQuery(() => this.items()));
 
@@ -20,9 +22,7 @@ export class NotesService {
   /** List of events for the current view, which might not be persisted. */
   // currentViewNotes: NostrEventDocument[] = [];
 
-  constructor(private db: DatabaseService) {
-    this.table = this.db.notes;
-  }
+  constructor(private db: StorageService) {}
 
   // async #filter(predicate: (value: NostrNoteDocument, key: string) => boolean): Promise<NostrNoteDocument[]> {
   //   const iterator = this.table.iterator<string, NostrNoteDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });

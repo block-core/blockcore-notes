@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
 import { Circle, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument } from './interfaces';
 
@@ -13,9 +12,6 @@ export interface ProfileItem {
   content: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
 export class DatabaseService extends Dexie {
   relays!: Table<NostrRelayDocument, string>;
   events!: Table<EventItem, string>;
@@ -23,8 +19,9 @@ export class DatabaseService extends Dexie {
   profiles!: Table<NostrProfileDocument, string>;
   circles!: Table<Circle, number>;
 
-  constructor() {
-    super('blockcore');
+  constructor(name: string) {
+    super(name);
+
     this.version(1).stores({
       relays: 'url',
       events: 'id',

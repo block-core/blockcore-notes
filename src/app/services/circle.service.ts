@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Circle } from './interfaces';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { liveQuery } from 'dexie';
-import { DatabaseService } from './database.service';
+import { StorageService } from './storage.service';
 import { CacheService } from './cache.service';
 import { Utilities } from './utilities.service';
 import { dexieToRx } from '../shared/utilities';
@@ -13,7 +13,9 @@ import { dexieToRx } from '../shared/utilities';
 export class CircleService {
   static DEFAULT: Circle = { id: 0, name: 'Following', color: '#e91e63', style: '1', public: true };
 
-  private table;
+  private get table() {
+    return this.db.circles;
+  }
 
   circles: Circle[] = [];
 
@@ -25,9 +27,7 @@ export class CircleService {
     return await this.table.toArray();
   }
 
-  constructor(private db: DatabaseService, private utilities: Utilities) {
-    this.table = this.db.circles;
-  }
+  constructor(private db: StorageService, private utilities: Utilities) {}
 
   /** Important to call to ensure we have the default circle added */
   async initialize() {

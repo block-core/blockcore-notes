@@ -20,7 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DataService } from '../services/data.service';
-import { DatabaseService } from '../services/database.service';
+import { StorageService } from '../services/storage.service';
 
 interface DefaultProfile {
   pubkey: string;
@@ -118,7 +118,7 @@ export class HomeComponent {
   // }
 
   constructor(
-    private db: DatabaseService,
+    private db: StorageService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     public options: OptionsService,

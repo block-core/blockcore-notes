@@ -21,6 +21,7 @@ import { NostrProtocolRequest } from './common/NostrProtocolRequest';
 import { SearchService } from './services/search.service';
 import { FormControl } from '@angular/forms';
 import { CircleService } from './services/circle.service';
+import { StorageService } from './services/storage.service';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +39,7 @@ export class AppComponent {
   searchControl: FormControl = new FormControl();
 
   constructor(
+    private db: StorageService,
     public appState: ApplicationState,
     public authService: AuthenticationService,
     private router: Router,
@@ -81,6 +83,8 @@ export class AppComponent {
 
     // appState.title = 'Blockcore Notes';
     this.authService.authInfo$.subscribe(async (auth) => {
+      auth.publicKeyHex;
+
       this.authenticated = auth.authenticated();
 
       if (this.authenticated) {
@@ -158,6 +162,7 @@ export class AppComponent {
   async initialize() {
     // await this.storage.open();
     // await this.storage.initialize();
+    await this.db.initialize('blockcore-' + this.appState.getPublicKey());
 
     await this.circleService.initialize();
 

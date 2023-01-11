@@ -2,7 +2,7 @@
 // import { Circle } from './interfaces';
 // import { BehaviorSubject, from, Observable } from 'rxjs';
 // import { liveQuery } from 'dexie';
-// import { DatabaseService } from './database.service';
+// import { StorageService } from './storage.service';
 // import { CacheService } from './cache.service';
 // import { Utilities } from './utilities.service';
 
@@ -22,7 +22,7 @@
 //     return await this.table.toArray();
 //   }
 
-//   constructor(private db: DatabaseService, private utilities: Utilities) {
+//   constructor(private db: StorageService, private utilities: Utilities) {
 //     this.table = this.db.notes;
 //   }
 

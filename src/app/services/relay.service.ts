@@ -7,7 +7,7 @@ import { OptionsService } from './options.service';
 import { ApplicationState } from './applicationstate.service';
 import { CacheService } from './cache.service';
 import { liveQuery } from 'dexie';
-import { DatabaseService } from './database.service';
+import { StorageService } from './storage.service';
 import { dexieToRx } from '../shared/utilities';
 
 @Injectable({
@@ -26,7 +26,9 @@ export class RelayService {
     // 'wss://nostrex.fly.dev': { read: true, write: true },
   };
 
-  private table;
+  private get table() {
+    return this.db.relays;
+  }
 
   cache = new CacheService();
 
@@ -188,9 +190,7 @@ export class RelayService {
   //     );
   // }
 
-  constructor(private db: DatabaseService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
-    this.table = this.db.relays;
-
+  constructor(private db: StorageService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
       if (visible) {
