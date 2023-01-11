@@ -215,7 +215,7 @@ export class CirclesComponent {
 
   createCircle(): void {
     const dialogRef = this.dialog.open(CircleDialog, {
-      data: { name: '', style: '1', public: true },
+      data: { name: '', style: 1, public: true },
       maxWidth: '100vw',
       panelClass: 'full-width-dialog',
     });
