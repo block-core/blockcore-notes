@@ -119,7 +119,7 @@ export class UserComponent {
     public profiles: ProfileService,
     private dataService: DataService,
     private validator: DataValidation,
-    private circleService: CircleService,
+    public circleService: CircleService,
     private utilities: Utilities,
     public notesService: NotesService,
     private router: Router,
@@ -152,6 +152,8 @@ export class UserComponent {
     this.eventsCount += 5;
     this.#changed();
   }
+
+  layout?: number;
 
   ngOnInit() {
     // setInterval(() => {
@@ -214,6 +216,8 @@ export class UserComponent {
           this.appState.title = this.utilities.getProfileDisplayName(this.profile);
           this.imagePath = this.profile.picture || '/assets/profile.png';
           this.circle = await this.circleService.get(this.profile.circle);
+
+          this.layout = this.circle!.style;
         });
 
         this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {

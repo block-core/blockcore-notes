@@ -81,6 +81,7 @@ import { WithStatusPipe } from './shared/loading.pipe';
 import { EventThreadComponent } from './shared/event-thread/event-thread.component';
 import { EventReactionsComponent } from './shared/event-reactions/event-reactions.component';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
+import { ContentPhotosComponent } from './shared/content-photos/content-photos.component';
 
 @NgModule({
   declarations: [
@@ -122,7 +123,8 @@ import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
     ChatComponent,
     FeedComponent,
     EventThreadComponent,
-    EventReactionsComponent
+    EventReactionsComponent,
+    ContentPhotosComponent
   ],
   imports: [
     HttpClientModule,

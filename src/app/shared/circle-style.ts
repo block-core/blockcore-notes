@@ -7,9 +7,9 @@ import { circleStyles } from './defaults';
 export class CircleStylePipe implements PipeTransform {
   constructor() {}
 
-  transform(value: string): string | undefined {
+  transform(value: number): string | undefined {
     if (!value) {
-      return value;
+      return 'Pipes';
     }
 
     return circleStyles.find((c) => c.id == value)?.name;

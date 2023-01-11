@@ -4,7 +4,7 @@ export interface Circle {
   id?: number;
   name: string;
   color: string;
-  style: string;
+  style: number;
   created?: number;
   modified?: number;
   public: boolean;
@@ -150,7 +150,7 @@ export interface NostrProfileDocument extends NostrProfile {
 }
 
 export interface CircleStyle {
-  id: string;
+  id: number;
   name: string;
 }
 

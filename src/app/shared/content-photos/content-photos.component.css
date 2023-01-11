@@ -1,0 +1,40 @@
+.event-image {
+  width: 100%;
+  max-width: 480px;
+  display: inline-block;
+  margin-top: 0.2em;
+}
+
+.event-images {
+  text-align: left;
+}
+
+.event-video {
+  width: 100%;
+  display: inline-block;
+  margin-top: 0.2em;
+  min-height: 320px;
+  height: 480px;
+}
+
+.events-videos {
+  text-align: left;
+}
+
+.reply-to {
+  margin-top: 0.2em;
+}
+
+@media only screen and (max-width: 599px) {
+  .event-video {
+    width: 100vw !important;
+    height: 50vh !important;
+    margin-left: -1.6em;
+  }
+
+  .event-image {
+    width: 100vw !important;
+    margin-left: -1.6em;
+    max-width: max-content;
+  }
+}

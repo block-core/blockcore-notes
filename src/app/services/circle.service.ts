@@ -11,7 +11,7 @@ import { dexieToRx } from '../shared/utilities';
   providedIn: 'root',
 })
 export class CircleService {
-  static DEFAULT: Circle = { id: 0, name: 'Following', color: '#e91e63', style: '1', public: true };
+  static DEFAULT: Circle = { id: 0, name: 'Following', color: '#e91e63', style: 1, public: true };
 
   private get table() {
     return this.db.circles;

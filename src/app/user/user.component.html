@@ -1,6 +1,20 @@
 <app-profile-header></app-profile-header>
+<!-- 
+{{ circleService.getSync(profile?.circle) | json }}
 
-<mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
+||{{ layout }}|| -->
+
+<ng-template [ngIf]="layout == 2">
+  <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
+    <ng-template [ngIf]="items.value">
+      <app-content-photos [event]="event" *ngFor="let event of items.value; trackBy: trackByFn"> </app-content-photos>
+    </ng-template>
+    <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+    <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+  </div>
+</ng-template>
+
+<mat-tab-group *ngIf="layout == 1" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Notes">
     <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">

@@ -1,0 +1,19 @@
+<div class="content clickable" *ngIf="event">
+  <!-- {{ content }}<span *ngIf="event.contentCut">... (message was truncated)</span> -->
+  <div class="event-images" *ngIf="images && images.length > 0">
+    <img class="event-image" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
+  </div>
+  <div class="event-videos" *ngIf="videos && videos.length > 0">
+    <iframe id="ytplayer" class="event-video" type="text/html" *ngFor="let video of videos" [src]="video" frameborder="0"></iframe>
+  </div>
+  <!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->
+  <ng-template [ngIf]="displayRepliesTo">
+    <div *ngIf="repliesTo(event) as replies" class="reply-to dimmed clickable">
+      <span class="clickable" *ngIf="replies.length > 0">Replying to </span>
+      <app-reply-list [keys]="replies"></app-reply-list>
+    </div>
+  </ng-template>
+  <mat-chip-set class="hashtags">
+    <mat-chip *ngFor="let tag of hashtags(event.tags)">#{{ tag }}</mat-chip>
+  </mat-chip-set>
+</div>
