@@ -425,6 +425,7 @@ export class RelayService {
 
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit(server.url) as NostrRelay;
+    relay.subscriptions=[];
 
     relay.on('connect', () => {
       // console.log(`connected to ${relay?.url}`);
@@ -434,6 +435,7 @@ export class RelayService {
 
     relay.on('disconnect', () => {
       console.log(`DISCONNECTED! ${relay?.url}`);
+      relay.subscriptions=[];
     });
 
     relay.on('notice', (msg: any) => {
