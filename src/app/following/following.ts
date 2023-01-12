@@ -2,10 +2,10 @@ import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ApplicationState } from '../services/applicationstate.service';
-import { DataService } from '../services/data.service';
+import { ApplicationState } from '../services/applicationstate';
+import { DataService } from '../services/data';
 import { NostrEventDocument, NostrProfileDocument } from '../services/interfaces';
-import { ProfileService } from '../services/profile.service';
+import { ProfileService } from '../services/profile';
 
 @Component({
   selector: 'app-following',

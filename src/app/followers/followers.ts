@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
-import { ProfileService } from '../services/profile.service';
+import { ProfileService } from '../services/profile';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { ApplicationState } from '../services/applicationstate.service';
+import { ApplicationState } from '../services/applicationstate';
 
 @Component({
   selector: 'app-followers',

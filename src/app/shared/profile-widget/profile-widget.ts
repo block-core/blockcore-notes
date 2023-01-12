@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ProfileService } from 'src/app/services/profile.service';
-import { Utilities } from 'src/app/services/utilities.service';
+import { ProfileService } from 'src/app/services/profile';
+import { Utilities } from 'src/app/services/utilities';
 import { NostrProfile } from '../../services/interfaces';
 
 @Component({
