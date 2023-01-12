@@ -46,6 +46,7 @@ export interface NostrRelay extends Relay {
   // nip11: any;
   // error: string;
   metadata: NostrRelayDocument;
+  subscriptions: Sub [];
 }
 
 export interface NostrRelayDocument {

@@ -207,6 +207,7 @@ export class DataService {
   subscribeToRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub(filters, {}) as NostrSubscription;
+      relay.subscriptions.push(sub);
 
       sub.on('event', (originalEvent: any) => {
         const event = this.eventService.processEvent(originalEvent);
@@ -224,6 +225,10 @@ export class DataService {
         console.log('subscribeToRelay:finished:unsub');
         // When the observable is finished, this return function is called.
         sub.unsub();
+        const subIndex = relay.subscriptions.findIndex(s => s==sub)
+        if (subIndex > -1){
+          relay.subscriptions.splice (subIndex, 1)
+        }
       };
     });
   }
@@ -231,6 +236,7 @@ export class DataService {
   downloadFromRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([...filters], {}) as NostrSubscription;
+      relay.subscriptions.push(sub);
 
       sub.on('event', (originalEvent: any) => {
         const event = this.eventService.processEvent(originalEvent);

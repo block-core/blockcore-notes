@@ -24,8 +24,9 @@
               <span class="dimmed">
                 NIPs: {{ relay.metadata.nip11.supported_nips }}<br />
                 Software: {{ relay.metadata.nip11.software }} ({{ relay.metadata.nip11.version }})<br />
-                <span class="wrap">ID: {{ relay.metadata.nip11.pubkey }}</span></span
-              >
+                <span class="wrap"> ID: {{ relay.metadata.nip11.pubkey }}</span></span>
+            <div> Subscriptions Count : {{ relay.subscriptions.length }} </div>
+
             </div>
             <button class="delete-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">Delete</button>
           </mat-expansion-panel>
