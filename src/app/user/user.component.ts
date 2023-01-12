@@ -211,7 +211,7 @@ export class UserComponent {
         }
 
         this.pubkey = pubkey;
-        this.appState.title = `@${this.utilities.getShortenedIdentifier(pubkey)}`;
+        this.appState.updateTitle(this.utilities.getShortenedIdentifier(pubkey));
 
         this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
           this.profiles.setItem(profile);
@@ -229,7 +229,7 @@ export class UserComponent {
           // }
 
           // this.profileName = this.profile.name;
-          this.appState.title = `@${this.utilities.getProfileDisplayName(this.profile)}`;
+          this.appState.updateTitle(this.utilities.getProfileTitle(this.profile));
           this.imagePath = this.profile.picture || '/assets/profile.png';
           this.circle = await this.circleService.get(this.profile.circle);
 

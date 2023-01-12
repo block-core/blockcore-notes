@@ -102,7 +102,7 @@
         <mat-icon class="arrow-back">arrow_back</mat-icon>
       </button>
 
-      <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title }}</div>
+      <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title$ | async }}</div>
 
       <!-- <app-language-selector></app-language-selector> -->
       <span *ngIf="!appState.showSearch">

@@ -55,6 +55,14 @@ export class Utilities {
     }
   }
 
+  getProfileTitle(profile: NostrProfileDocument) {
+    if (profile.name) {
+      return `@${profile.name}`;
+    } else {
+      return `@${profile.npub}`;
+    }
+  }
+
   mapProfileEvent(event: NostrEventDocument): NostrProfileDocument | undefined {
     // If a timeout is received, the event content will be: "The query timed out before it could complete: [{"kinds":[0],"authors":["edcd205..."]}]."
     if (typeof event === 'string') {

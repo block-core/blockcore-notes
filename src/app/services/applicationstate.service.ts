@@ -23,6 +23,8 @@ export class ApplicationState {
     this.connected$ = this.connectedChanged.asObservable();
 
     this.visibility$ = this.visibilityChanged.asObservable();
+
+    this.title$ = this.titleChanged.asObservable();
   }
 
   getPublicKey(): string {
@@ -34,6 +36,15 @@ export class ApplicationState {
   }
 
   title = 'Blockcore Notes';
+
+  title$: Observable<string>;
+
+  titleChanged: BehaviorSubject<string> = new BehaviorSubject<string>(this.title);
+
+  updateTitle(title: string) {
+    this.title = title;
+    this.titleChanged.next(this.title);
+  }
 
   goBack = false;
 
