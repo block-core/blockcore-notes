@@ -9,8 +9,8 @@ import { ProfileService } from '../services/profile.service';
 
 @Component({
   selector: 'app-following',
-  templateUrl: './following.component.html',
-  styleUrls: ['./following.component.css'],
+  templateUrl: './following.html',
+  styleUrls: ['./following.css'],
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FollowingComponent {

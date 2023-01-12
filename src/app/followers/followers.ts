@@ -7,8 +7,8 @@ import { ApplicationState } from '../services/applicationstate.service';
 
 @Component({
   selector: 'app-followers',
-  templateUrl: './followers.component.html',
-  styleUrls: ['./followers.component.css'],
+  templateUrl: './followers.html',
+  styleUrls: ['./followers.css'],
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FollowersComponent {

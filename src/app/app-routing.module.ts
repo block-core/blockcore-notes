@@ -15,8 +15,8 @@ import { NoteComponent } from './note/note.component';
 import { LicensesComponent } from './about/licenses/licenses.component';
 import { ChatComponent } from './chat/chat.component';
 import { FeedComponent } from './feed/feed.component';
-import { FollowingComponent } from './following/following.component';
-import { FollowersComponent } from './followers/followers.component';
+import { FollowingComponent } from './following/following';
+import { FollowersComponent } from './followers/followers';
 
 const routes: Routes = [
   {
