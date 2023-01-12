@@ -3,6 +3,8 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ApplicationState } from '../services/applicationstate.service';
+import { DataService } from '../services/data.service';
+import { NostrEventDocument, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile.service';
 
 @Component({
@@ -18,16 +20,24 @@ export class FollowingComponent {
 
   pubkeys?: string[] = [];
 
-  constructor(private appState: ApplicationState, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(private appState: ApplicationState, private dataService: DataService, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     this.appState.showBackButton = true;
 
     this.subscriptions.push(
       this.profileService.item$.subscribe((profile) => {
-        this.appState.title = `@${profile?.name}`;
+        if (!profile) {
+          return;
+        }
 
-        this.pubkeys = profile?.following;
+        this.appState.title = `@${profile.name}`;
+
+        if (profile.following) {
+          this.pubkeys = profile.following;
+        } else {
+          this.downloadFollowingAndRelays(profile);
+        }
       })
     );
 
@@ -45,5 +55,17 @@ export class FollowingComponent {
     for (let i = 0; i < this.subscriptions.length; i++) {
       this.subscriptions[i].unsubscribe();
     }
+  }
+
+  downloadFollowingAndRelays(profile: NostrProfileDocument) {
+    this.subscriptions.push(
+      this.dataService.downloadNewestContactsEvents([profile.pubkey]).subscribe((event) => {
+        const nostrEvent = event as NostrEventDocument;
+        const publicKeys = nostrEvent.tags.map((t) => t[1]);
+
+        this.profileService.following(profile.pubkey, publicKeys);
+        this.pubkeys = publicKeys;
+      })
+    );
   }
 }
