@@ -1,21 +1,32 @@
 <div class="dialog">
-  <h1 mat-dialog-title>Write Your Note</h1>
-  <div mat-dialog-content class="mat-dialog-content">
-    <div class="toolbar">
-      <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
-      <!-- <mat-icon class="toolbar-icon" (click)="addLink()" matTooltip="Insert link">insert_link</mat-icon> -->
+  <form [formGroup]="formGroup">
+    <h1 mat-dialog-title>Write Your Note</h1>
+    <div mat-dialog-content class="mat-dialog-content">
+      <div class="toolbar">
+        <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+        <!-- <mat-icon class="toolbar-icon" (click)="addLink()" matTooltip="Insert link">insert_link</mat-icon> -->
+      </div>
+      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+      <mat-form-field appearance="fill" class="input-full-width">
+        <mat-label>Note</mat-label>
+        <textarea class="note-input" matInput type="text" autocomplete="off" formControlName="note" rows="6"></textarea>
+      </mat-form-field>
+
+      <!-- <mat-form-field>
+        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a timeout" [formControl]="dateControl" [min]="minDate" />
+        <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
+          <ng-template>
+            <span>Set timeout</span>
+          </ng-template>
+        </ngx-mat-datetime-picker>
+      </mat-form-field> -->
+
     </div>
-    <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [showPreview]="false"
-      (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
-    <mat-form-field appearance="fill" class="input-full-width">
-      <mat-label>Note</mat-label>
-      <textarea class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="data.note" rows="6"></textarea>
-    </mat-form-field>
-  </div>
-  <div mat-dialog-actions class="mat-dialog-actions" align="end">
-    <mat-icon (click)="toggleSize()" class="hide-small maximize-button"
-      matTooltip="Maximize the window">zoom_out_map</mat-icon>
-    <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-    <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Post</button>
-  </div>
+    <div mat-dialog-actions class="mat-dialog-actions" align="end">
+      <mat-icon (click)="toggleSize()" class="hide-small maximize-button" matTooltip="Maximize the window">zoom_out_map</mat-icon>
+      <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+      <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Post</button>
+    </div>
+  </form>
 </div>

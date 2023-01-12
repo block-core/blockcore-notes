@@ -83,6 +83,8 @@ import { EventThreadComponent } from './shared/event-thread/event-thread.compone
 import { EventReactionsComponent } from './shared/event-reactions/event-reactions.component';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 import { ContentPhotosComponent } from './shared/content-photos/content-photos.component';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -165,7 +167,11 @@ import { ContentPhotosComponent } from './shared/content-photos/content-photos.c
     MatSnackBarModule,
     MatProgressBarModule,
     MatDialogModule,
+    MatDatepickerModule,
     PhotoGalleryModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule,
     NgxColorsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),

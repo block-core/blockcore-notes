@@ -1,4 +1,5 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
+import { FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface NoteDialogData {
@@ -11,10 +12,28 @@ export interface NoteDialogData {
   styleUrls: ['create-note-dialog.scss'],
 })
 export class NoteDialog {
+  @ViewChild('picker') picker: unknown;
+
   isEmojiPickerVisible: boolean | undefined;
 
-  constructor(public dialogRef: MatDialogRef<NoteDialog>, @Inject(MAT_DIALOG_DATA) public data: NoteDialogData) {
+  formGroup!: UntypedFormGroup;
+
+  minDate?: number;
+
+  public dateControl = new FormControl(null);
+
+  constructor(private formBuilder: UntypedFormBuilder, public dialogRef: MatDialogRef<NoteDialog>, @Inject(MAT_DIALOG_DATA) public data: NoteDialogData) {
     this.data.note = '';
+  }
+
+  ngOnInit() {
+    this.minDate = Date.now();
+
+    this.formGroup = this.formBuilder.group({
+      note: ['', Validators.required],
+      expiration: [''],
+      dateControl: [],
+    });
   }
 
   onNoClick(): void {
