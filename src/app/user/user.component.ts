@@ -233,7 +233,9 @@ export class UserComponent {
           this.imagePath = this.profile.picture || '/assets/profile.png';
           this.circle = await this.circleService.get(this.profile.circle);
 
-          this.layout = this.circle!.style;
+          if (this.circle) {
+            this.layout = this.circle!.style;
+          }
 
           const timeAgo = moment().subtract(1, 'days').unix();
 
