@@ -1,0 +1,13 @@
+.profile-widget {
+    gap: 0.4em;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .profile-widget app-event-header {
+    flex-grow: 2;
+  }
+  
+  .profile-widget app-profile-actions {
+    width: 48px;
+  }

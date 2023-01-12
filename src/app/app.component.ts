@@ -140,7 +140,12 @@ export class AppComponent {
   );
 
   goBack() {
-    this.appState.navigateBack();
+    if (this.appState.backUrl) {
+      this.router.navigateByUrl(this.appState.backUrl);
+      this.appState.backUrl = undefined;
+    } else {
+      this.appState.navigateBack();
+    }
   }
 
   toggleMenu() {

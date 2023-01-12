@@ -112,6 +112,19 @@ export class ProfileService {
     this.#updatedItem();
   }
 
+  setItemByPubKey(pubkey: string) {
+    // If the pubkey as same as before, just trigger an changed event.
+    if (this.item?.pubkey == pubkey) {
+      this.#updatedItem();
+      return;
+    }
+
+    this.getProfile(pubkey).subscribe((profile) => {
+      this.item = profile;
+      this.#updatedItem();
+    });
+  }
+
   async search(searchText: string) {
     // this.table.filter((x) => x.name.toLowerCase().indexOf(searchText) > -1).toArray();
     return this.table
@@ -469,6 +482,13 @@ export class ProfileService {
       // Put into cache and database.
       await this.putProfile(profile);
     }
+  }
+
+  async following(pubkey: string, pubkeys: string[]) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.following = pubkeys;
+      return profile;
+    });
   }
 
   async setCircle(pubkey: string, circle?: number) {

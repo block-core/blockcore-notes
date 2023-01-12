@@ -39,6 +39,8 @@ export class ApplicationState {
 
   showBackButton = false;
 
+  backUrl?: string;
+
   searchText?: string;
 
   showSearch = false;

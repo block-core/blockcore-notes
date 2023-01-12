@@ -148,6 +148,8 @@ export interface NostrProfileDocument extends NostrProfile {
 
   /** Copy of the value from original event. */
   created_at?: number;
+
+  following?: string[];
 }
 
 export interface CircleStyle {

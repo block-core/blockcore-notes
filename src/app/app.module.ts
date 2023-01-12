@@ -85,6 +85,9 @@ import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 import { ContentPhotosComponent } from './shared/content-photos/content-photos.component';
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { FollowingComponent } from './following/following.component';
+import { FollowersComponent } from './followers/followers.component';
+import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
 
 @NgModule({
   declarations: [
@@ -128,6 +131,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     EventThreadComponent,
     EventReactionsComponent,
     ContentPhotosComponent,
+    FollowingComponent,
+    FollowersComponent,
+    ProfileWidgetComponent,
   ],
   imports: [
     HttpClientModule,

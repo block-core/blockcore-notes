@@ -15,6 +15,8 @@ import { NoteComponent } from './note/note.component';
 import { LicensesComponent } from './about/licenses/licenses.component';
 import { ChatComponent } from './chat/chat.component';
 import { FeedComponent } from './feed/feed.component';
+import { FollowingComponent } from './following/following.component';
+import { FollowersComponent } from './followers/followers.component';
 
 const routes: Routes = [
   {
@@ -74,6 +76,16 @@ const routes: Routes = [
   {
     path: 'e/:id',
     component: NoteComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'followers/:id',
+    component: FollowersComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'following/:id',
+    component: FollowingComponent,
     canActivate: [AuthGuard],
   },
   {

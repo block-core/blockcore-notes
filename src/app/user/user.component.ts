@@ -155,7 +155,21 @@ export class UserComponent {
 
   layout?: number;
 
+  // following: string[] = [];
 
+  downloadFollowingAndRelays(profile: NostrProfileDocument) {
+    this.dataService.downloadNewestContactsEvents([profile.pubkey]).subscribe((event) => {
+      const nostrEvent = event as NostrEventDocument;
+      const publicKeys = nostrEvent.tags.map((t) => t[1]);
+
+      // profile.following = publicKeys;
+      this.profiles.following(profile.pubkey, publicKeys);
+      // this.following = publicKeys;
+      // for (let i = 0; i < publicKeys.length; i++) {
+      //   const publicKey = publicKeys[i];
+      // }
+    });
+  }
 
   ngOnInit() {
     // setInterval(() => {
@@ -197,7 +211,7 @@ export class UserComponent {
         }
 
         this.pubkey = pubkey;
-        this.appState.title = this.utilities.getShortenedIdentifier(pubkey);
+        this.appState.title = `@${this.utilities.getShortenedIdentifier(pubkey)}`;
 
         this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
           this.profiles.setItem(profile);
@@ -215,11 +229,19 @@ export class UserComponent {
           // }
 
           // this.profileName = this.profile.name;
-          this.appState.title = this.utilities.getProfileDisplayName(this.profile);
+          this.appState.title = `@${this.utilities.getProfileDisplayName(this.profile)}`;
           this.imagePath = this.profile.picture || '/assets/profile.png';
           this.circle = await this.circleService.get(this.profile.circle);
 
           this.layout = this.circle!.style;
+
+          const timeAgo = moment().subtract(1, 'days').unix();
+
+          if (this.profile.retrieved && this.profile.retrieved < timeAgo) {
+            // Perform NIP-05 validation if older than X or has changed since last time.
+            // Get list of relays and following.
+            this.downloadFollowingAndRelays(profile);
+          }
         });
 
         this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {

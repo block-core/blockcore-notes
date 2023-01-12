@@ -53,6 +53,18 @@
   opacity: 0.6;
 }
 
+.following-counts {
+  margin-bottom: 0.4em;
+}
+
+.following-link {
+  text-decoration: none;
+}
+
+.following-link:hover {
+  text-decoration: underline;
+}
+
 /* .profile-labels-right {
   flex: 1 2 auto;
 } */
@@ -63,7 +75,6 @@
 }
 
 .qr-code-container {
-
 }
 
 .qr-code {

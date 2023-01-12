@@ -62,6 +62,10 @@
         <p class="wrap linebreaks" *ngIf="profile.about">{{ profile.about }}</p>
       </span>
 
+      <div class="following-counts" *ngIf="profile.following">
+        <a class="following-link" [routerLink]="['/following', profile.pubkey]">{{ profile.following.length }} <span class="dimmed">Following</span></a>
+      </div>
+
       <div>
         <!-- <a mat-mini-fab [matMenuTriggerFor]="menu"><mat-icon>notifications</mat-icon></a> -->
 
