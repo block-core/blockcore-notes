@@ -16,6 +16,14 @@ export interface Contact {
   name?: string;
 }
 
+export interface QueryJob {
+  type: 'Profile' | 'Event' | 'Contacts';
+  identifier: string;
+  // id?: string;
+  // pubkeys: string[]; // Using array instead of singular job makes everything harder.
+  // ids: string[];
+}
+
 export interface Action {
   tooltip: string;
   icon: string;
@@ -46,7 +54,7 @@ export interface NostrRelay extends Relay {
   // nip11: any;
   // error: string;
   metadata: NostrRelayDocument;
-  subscriptions: Sub [];
+  subscriptions: Sub[];
 }
 
 export interface NostrRelayDocument {
@@ -150,6 +158,8 @@ export interface NostrProfileDocument extends NostrProfile {
   created_at?: number;
 
   following?: string[];
+
+  relays?: any;
 }
 
 export interface CircleStyle {

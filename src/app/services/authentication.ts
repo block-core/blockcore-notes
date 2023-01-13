@@ -43,7 +43,6 @@ export class AuthenticationService {
     }
 
     const publicKey = readOnlyKey || '354faab36ca511a7956f0bfc2b64e06fe5395cd7208d9b65d6665270298743d8';
-    debugger;
     const user = this.createUser(publicKey);
     localStorage.setItem('blockcore:notes:nostr:pubkey', publicKey);
 

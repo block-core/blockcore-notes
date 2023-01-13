@@ -247,6 +247,10 @@ export class UserComponent {
         });
 
         this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {
+          if (!event) {
+            return;
+          }
+
           const existingIndex = this.events.findIndex((e) => e.id == event.id);
 
           if (existingIndex !== -1) {

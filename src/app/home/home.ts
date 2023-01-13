@@ -150,24 +150,30 @@ export class HomeComponent {
       'edcd20558f17d99327d841e4582f9b006331ac4010806efa020ef0d40078e6da',
     ];
 
-    const observable = this.dataService.downloadNewestProfiles(array).subscribe((profile) => {
-      console.log('PROFILE RECEIVED:', profile);
-
-      // let doc = profile as NostrEventDocument;
-      // const index = array.findIndex((a) => a == doc.pubkey);
-
-      // if (index > -1) {
-      //   array.splice(index, 1);
-      // }
-
-      // if (array.length === 0) {
-      //   console.log('FOUND ALL!!!!');
-      // }
+    array.map((pubkey) => {
+      this.dataService.enque({ identifier: pubkey, type: 'Profile' });
     });
 
-    setInterval(() => {
-      console.log('observable.closed:', observable.closed);
-    }, 250);
+    // const observable = this.dataService.downloadNewestProfiles(array);
+
+    // .subscribe((profile) => {
+    //   console.log('PROFILE RECEIVED:', profile);
+
+    //   // let doc = profile as NostrEventDocument;
+    //   // const index = array.findIndex((a) => a == doc.pubkey);
+
+    //   // if (index > -1) {
+    //   //   array.splice(index, 1);
+    //   // }
+
+    //   // if (array.length === 0) {
+    //   //   console.log('FOUND ALL!!!!');
+    //   // }
+    // });
+
+    // setInterval(() => {
+    //   console.log('observable.closed:', observable.closed);
+    // }, 250);
   }
 
   downloadProfiles2() {

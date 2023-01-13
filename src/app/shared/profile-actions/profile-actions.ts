@@ -106,6 +106,14 @@ export class ProfileActionsComponent {
     this.copy(JSON.stringify(profile));
   }
 
+  copyFollowing() {
+    this.copy(JSON.stringify(this.profile!.following));
+  }
+
+  copyRelays() {
+    this.copy(this.profile!.relays);
+  }
+
   copy(text: string) {
     copyToClipboard(text);
 

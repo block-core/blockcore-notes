@@ -73,6 +73,7 @@ export class Utilities {
       const jsonParsed = JSON.parse(event.content) as NostrProfileDocument;
       const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
       profile.pubkey = event.pubkey;
+      profile.created_at = event.created_at;
       return profile;
     } catch (err) {
       debugger;

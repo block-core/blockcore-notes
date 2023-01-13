@@ -30,7 +30,7 @@ export class ConnectComponent {
     localStorage.setItem('blockcore:notes:nostr:consent', this.consent.toString());
   }
 
-  async connect() {
+  async connect() { 
     if (!this.consent) {
       const element = document.getElementById('consent-card');
       // document.body.scroll(0, 5000);

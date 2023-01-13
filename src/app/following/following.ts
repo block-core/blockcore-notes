@@ -6,6 +6,8 @@ import { ApplicationState } from '../services/applicationstate';
 import { DataService } from '../services/data';
 import { NostrEventDocument, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
+import { QueueService } from '../services/queue';
+import { UIService } from '../services/ui';
 
 @Component({
   selector: 'app-following',
@@ -15,35 +17,37 @@ import { ProfileService } from '../services/profile';
 })
 export class FollowingComponent {
   pubkey?: string;
-
   subscriptions: Subscription[] = [];
 
-  pubkeys?: string[] = [];
-
-  constructor(private appState: ApplicationState, private dataService: DataService, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(public ui: UIService, private appState: ApplicationState, private dataService: DataService, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     this.appState.showBackButton = true;
 
     this.subscriptions.push(
-      this.profileService.item$.subscribe((profile) => {
+      this.ui.profile$.subscribe((profile) => {
         if (!profile) {
           return;
         }
 
-        this.appState.title = `@${profile.name}`;
+        this.appState.updateTitle(profile.name);
 
-        if (profile.following) {
-          this.pubkeys = profile.following;
-        } else {
-          this.downloadFollowingAndRelays(profile);
-        }
+        // If there are no following calculated on the profile, attempt to get it.
+        // if (profile.following) {
+        this.dataService.enque({ type: 'Contacts', identifier: profile.pubkey });
+        // this.downloadFollowingAndRelays(profile);
+        // }
       })
     );
 
     this.subscriptions.push(
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const pubkey: any = params.get('id');
+
+        if (pubkey) {
+          this.ui.setPubKey(pubkey);
+        }
+
         this.pubkey = pubkey;
         this.profileService.setItemByPubKey(pubkey);
         this.appState.backUrl = '/p/' + this.pubkey;
@@ -57,15 +61,15 @@ export class FollowingComponent {
     }
   }
 
-  downloadFollowingAndRelays(profile: NostrProfileDocument) {
-    this.subscriptions.push(
-      this.dataService.downloadNewestContactsEvents([profile.pubkey]).subscribe((event) => {
-        const nostrEvent = event as NostrEventDocument;
-        const publicKeys = nostrEvent.tags.map((t) => t[1]);
+  // downloadFollowingAndRelays(profile: NostrProfileDocument) {
+  //   this.subscriptions.push(
+  //     this.dataService.downloadNewestContactsEvents([profile.pubkey]).subscribe((event) => {
+  //       const nostrEvent = event as NostrEventDocument;
+  //       const publicKeys = nostrEvent.tags.map((t) => t[1]);
 
-        this.profileService.following(profile.pubkey, publicKeys);
-        this.pubkeys = publicKeys;
-      })
-    );
-  }
+  //       this.profileService.following(profile.pubkey, publicKeys);
+  //       this.pubkeys = publicKeys;
+  //     })
+  //   );
+  // }
 }

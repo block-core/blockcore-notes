@@ -90,4 +90,12 @@
     <mat-icon>content_copy</mat-icon>
     <span>Profile Data</span>
   </button>
+  <button mat-menu-item *ngIf="this.profile?.following" (click)="copyFollowing()">
+    <mat-icon>content_copy</mat-icon>
+    <span>Following List</span>
+  </button>
+  <button mat-menu-item *ngIf="this.profile?.relays" (click)="copyRelays()">
+    <mat-icon>content_copy</mat-icon>
+    <span>Relay List</span>
+  </button>
 </mat-menu>

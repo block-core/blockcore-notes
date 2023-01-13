@@ -8,7 +8,6 @@ import { StorageService } from './storage';
 import { liveQuery } from 'dexie';
 import { CacheService } from './cache';
 import { FetchService } from './fetch';
-import { DataService } from './data';
 import { dexieToRx } from '../shared/utilities';
 
 @Injectable({
@@ -192,7 +191,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: StorageService, private dataService: DataService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {}
+  constructor(private db: StorageService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {}
 
   // async downloadProfile(pubkey: string) {
   //   this.#profileRequested.next(pubkey);
@@ -231,17 +230,17 @@ export class ProfileService {
               return;
             }
 
-            this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
-              // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
-              const p = await profile;
+            // this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
+            //   // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
+            //   const p = await profile;
 
-              if (p) {
-                this.updateProfile(p.pubkey, p);
-              } else {
-                console.log('NULL PROFILE!!');
-                debugger;
-              }
-            });
+            //   if (p) {
+            //     this.updateProfile(p.pubkey, p);
+            //   } else {
+            //     console.log('NULL PROFILE!!');
+            //     debugger;
+            //   }
+            // });
           })
           .catch((err) => {
             debugger;
@@ -460,19 +459,19 @@ export class ProfileService {
       await this.table.put(existingProfile);
 
       // Now retrieve this profile
-      this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
-        // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
-        const p = await profile;
+      // this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
+      //   // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
+      //   const p = await profile;
 
-        console.log('Downloaded profile: ', p);
+      //   console.log('Downloaded profile: ', p);
 
-        if (p) {
-          this.updateProfile(p.pubkey, p);
-        } else {
-          console.log('NULL PROFILE!!');
-          debugger;
-        }
-      });
+      //   if (p) {
+      //     this.updateProfile(p.pubkey, p);
+      //   } else {
+      //     console.log('NULL PROFILE!!');
+      //     debugger;
+      //   }
+      // });
     } else {
       profile.status = ProfileStatus.Follow;
       profile.modified = now;
@@ -487,6 +486,14 @@ export class ProfileService {
   async following(pubkey: string, pubkeys: string[]) {
     return this.#updateProfileValues(pubkey, (profile) => {
       profile.following = pubkeys;
+      return profile;
+    });
+  }
+
+  async followingAndRelays(pubkey: string, following: string[], relays: any) {
+    return this.#updateProfileValues(pubkey, (profile) => {
+      profile.following = following;
+      profile.relays = relays;
       return profile;
     });
   }

@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrRelay, NostrRelayDocument } from './interfaces';
-import { Observable, BehaviorSubject, from } from 'rxjs';
+import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
 import { Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
 import { CacheService } from './cache';
-import { liveQuery } from 'dexie';
+import { liveQuery, Subscription } from 'dexie';
 import { StorageService } from './storage';
 import { dexieToRx } from '../shared/utilities';
+import { mergeNsAndName } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root',
@@ -384,6 +385,9 @@ export class RelayService {
 
   async connect() {
     const items = await this.table.toArray();
+    let relayCountCountdown = items.length;
+
+    const observables = [];
 
     for (var i = 0; i < items.length; i++) {
       const entry = items[i];
@@ -394,8 +398,29 @@ export class RelayService {
         continue;
       }
 
-      this.openConnection(entry);
+      observables.push(this.openConnection(entry));
     }
+
+    let timer: any;
+
+    merge(...observables).subscribe(() => {
+      // As we receive an initial connection, let's create a new observable that will trigger the connection status
+      // update either when everything is connected or a timeout is reached.
+      relayCountCountdown--;
+
+      // If we reach zero, update the status immediately.
+      if (relayCountCountdown == 0) {
+        clearTimeout(timer);
+        this.appState.updateConnectionStatus(true);
+      }
+
+      if (!timer) {
+        // Wait a maximum of 3 seconds for all connections to finish.
+        timer = setTimeout(() => {
+          this.appState.updateConnectionStatus(true);
+        }, 3000);
+      }
+    });
   }
 
   async reset() {
@@ -425,7 +450,7 @@ export class RelayService {
 
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit(server.url) as NostrRelay;
-    relay.subscriptions=[];
+    relay.subscriptions = [];
 
     relay.on('connect', () => {
       // console.log(`connected to ${relay?.url}`);
@@ -435,7 +460,7 @@ export class RelayService {
 
     relay.on('disconnect', () => {
       console.log(`DISCONNECTED! ${relay?.url}`);
-      relay.subscriptions=[];
+      relay.subscriptions = [];
     });
 
     relay.on('notice', (msg: any) => {
@@ -458,13 +483,18 @@ export class RelayService {
   }
 
   openConnection(server: NostrRelayDocument) {
-    this.#connectToRelay(server, (relay: Relay) => {
-      console.log('Connected to:', relay.url);
+    return new Observable((observer) => {
+      this.#connectToRelay(server, (relay: Relay) => {
+        console.log('Connected to:', relay.url);
 
-      // When finished, trigger an observable that we are connected.
-      this.appState.updateConnectionStatus(true);
+        // Put the connected relay into the array together with the metadata.
+        this.relays.push(relay as NostrRelay);
 
-      // this.subscribeToFollowing(relay);
+        observer.next(true);
+        observer.complete();
+
+        // this.subscribeToFollowing(relay);
+      });
     });
   }
 

@@ -6,7 +6,9 @@
   <!-- <div *ngIf="profileService.item$ | async as profile">
     {{ profile.name }}
   </div> -->
-  <div class="page">
-    <app-profile-widget *ngFor="let pubkey of pubkeys" [pubkey]="pubkey"></app-profile-widget>
+  <div class="page" *ngIf="ui.profile$ | async as profile">
+    {{profile.name}}
+
+    <app-profile-widget *ngFor="let pubkey of profile.following" [pubkey]="pubkey"></app-profile-widget>
   </div>
 </mat-tab-nav-panel>

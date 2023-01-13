@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrRelay, NostrSubscription } from './interfaces';
+import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrRelay, NostrSubscription, QueryJob } from './interfaces';
 import { ProfileService } from './profile';
 import * as moment from 'moment';
 import { EventService } from './event';
@@ -7,8 +7,10 @@ import { RelayService } from './relay';
 import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature } from 'nostr-tools';
 import { DataValidation } from './data-validation';
 import { ApplicationState } from './applicationstate';
-import { timeout, map, merge, Observable, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter } from 'rxjs';
+import { timeout, map, merge, Observable, delay, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter, from } from 'rxjs';
 import { Utilities } from './utilities';
+import { StorageService } from './storage';
+import { QueueService } from './queue';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +22,31 @@ export class DataService {
   // downloadProfileInterval = 500;
   profileBatchSize = 20;
   refreshUserProfile = 1000 * 60 * 60 * 2; // Every second hour
+  connected = false;
 
-  constructor(private appState: ApplicationState, private utilities: Utilities, private validator: DataValidation, private eventService: EventService, private relayService: RelayService) {
+  // Observable that can be merged with to avoid performing calls unless we have connected to relays.
+  connected$ = this.appState.connected$.pipe(map((status) => status === true));
+
+  constructor(
+    private queueService: QueueService,
+    private profileService: ProfileService,
+    private appState: ApplicationState,
+    private utilities: Utilities,
+    private validator: DataValidation,
+    private eventService: EventService,
+    private relayService: RelayService
+  ) {
+    // We use a global observable for the connected state to avoid having many subscriptions and we'll skip processing until this is true.
+    this.appState.connected$.subscribe((connected) => {
+      console.log('Connection state changed: ', connected);
+      this.connected = connected;
+
+      if (this.connected) {
+        console.log('Connection established, start processing queues.');
+        this.processQueues();
+      }
+    });
+
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {
     //   if (!pubkey) {
@@ -65,6 +90,128 @@ export class DataService {
 
   isFetching = false;
   profileQueue: string[] = [];
+  queue: QueryJob[] = [];
+
+  /** Enques a job to be processed against connected relays. */
+  enque(job: QueryJob) {
+    // It is way more optimal to just delegate jobs into separate queues when enquing than querying later.
+    if (job.type == 'Profile') {
+      this.queueService.queues.profile.jobs.push(job);
+    } else if (job.type == 'Contacts') {
+      this.queueService.queues.contacts.jobs.push(job);
+    } else if (job.type == 'Event') {
+      this.queueService.queues.event.jobs.push(job);
+    } else {
+      throw Error(`This type of job (${job.type}) is currently not supported.`);
+    }
+
+    // We always delay the processing in case we receive
+    setTimeout(() => {
+      this.processQueues();
+    }, 100);
+  }
+
+  /**
+   * Since most relays limits at 10 we must ensure we don't go above that.
+   * 1 reserved for profile retrieval and we queue up maximum 50 on each in batches.
+   * 1 reserved for live public feed.
+   * 1 reserved for current profile feed.
+   * 1 reserved for logged on user feed.
+   * ...
+   */
+
+  processQueues() {
+    if (!this.connected) {
+      console.warn('Cannot process queues, no connection to relays.');
+      return;
+    }
+
+    if (this.queueService.queues.profile.jobs.length > 0) {
+      this.processProfileQueue();
+    }
+
+    if (this.queueService.queues.contacts.jobs.length > 0) {
+      this.processContactsQueue();
+    }
+
+    if (this.queueService.queues.event.jobs.length > 0) {
+      this.processEventQueue();
+    }
+  }
+
+  processEventQueue() {}
+
+  processProfileQueue() {
+    console.log('processProfileQueue');
+    // If already active, just skip processing for now.
+    if (this.queueService.queues.profile.active) {
+      console.log('processProfileQueue: skip');
+      return;
+    }
+
+    // Grab a batch of jobs.
+    const jobs = this.queueService.queues.profile.jobs.splice(0, 50);
+    const pubkeys = jobs.map((j) => j.identifier);
+
+    console.log('processProfileQueue: pubkeys', pubkeys);
+
+    // Download the profiles that was queued up.
+    this.downloadNewestProfiles(pubkeys, 10000, pubkeys.length).subscribe(async (event) => {
+      // const e = await event;
+      console.log('processProfileQueue: event', event);
+
+      if (!event) {
+        return;
+      }
+
+      // Make sure we run update and not put whenever we download the latest profile.
+      await this.profileService.updateProfile(event.pubkey, event);
+    });
+  }
+
+  processContactsQueue() {
+    console.log('processContactsQueue');
+    // If already active, just skip processing for now.
+    if (this.queueService.queues.contacts.active) {
+      console.log('processContactsQueue: skip');
+      return;
+    }
+
+    this.queueService.queues.contacts.active = true;
+
+    // Grab a batch of jobs.
+    const jobs = this.queueService.queues.contacts.jobs.splice(0, 50);
+    const pubkeys = jobs.map((j) => j.identifier);
+
+    console.log('processContactsQueue: pubkeys', pubkeys);
+
+    // Use a dynamic timeout depending on the number of pubkeys requested.
+    // const timeout = pubkeys.length * 1000;
+    const timeout = pubkeys.length < 10 ? 10000 : 20000;
+
+    // Download the profiles that was queued up.
+    this.downloadNewestContactsEvents(pubkeys, timeout)
+      .pipe(
+        finalize(() => {
+          this.queueService.queues.contacts.active = false;
+          console.log('processContactsQueue: completed');
+        })
+      )
+      .subscribe(async (event) => {
+        console.log('processContactsQueue: event', event);
+
+        if (!event) {
+          return;
+        }
+
+        // Whenever we download the contacts document, we'll refresh the RELAYS and FOLLOWING
+        // on the profile in question.
+        const following = event.tags.map((t) => t[1]);
+
+        // Make sure we run update and not put whenever we download the latest profile.
+        this.profileService.followingAndRelays(event.pubkey, following, event.content);
+      });
+  }
 
   processProfilesQueue() {
     // console.log('processProfilesQueue', this.isFetching);
@@ -86,13 +233,14 @@ export class DataService {
     }
   }
 
-  // Observable that can be merged with to avoid performing calls unless we have connected to relays.
-  connected$ = this.appState.connected$.pipe(map((status) => status === true));
-
   /** Creates an observable that will attempt to get newest profile entry across all relays and perform multiple callbacks if newer is found. */
-  downloadNewestProfiles(pubkeys: string[], requestTimeout = 10000) {
-    return this.downloadNewestProfileEvents(pubkeys).pipe(
-      map(async (event: any) => {
+  downloadNewestProfiles(pubkeys: string[], requestTimeout = 10000, expectedCount = -1) {
+    return this.downloadNewestProfileEvents(pubkeys, requestTimeout, expectedCount).pipe(
+      map((event: any) => {
+        if (!event) {
+          return;
+        }
+
         const profile = this.utilities.mapProfileEvent(event);
         return profile;
       })
@@ -100,16 +248,16 @@ export class DataService {
   }
 
   /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
-  downloadNewestProfileEvents(pubkeys: string[], requestTimeout = 10000) {
-    return this.downloadNewestEvents(pubkeys, [0], requestTimeout);
+  downloadNewestProfileEvents(pubkeys: string[], requestTimeout = 10000, expectedCount = -1) {
+    return this.downloadNewestEvents(pubkeys, [0], requestTimeout, expectedCount);
   }
 
-  downloadNewestContactsEvents(pubkeys: string[], requestTimeout = 10000) {
-    return this.downloadNewestEvents(pubkeys, [3], requestTimeout);
+  downloadNewestContactsEvents(pubkeys: string[], requestTimeout = 10000, expectedEventCount = -1) {
+    return this.downloadNewestEvents(pubkeys, [3], requestTimeout, expectedEventCount);
   }
 
-  downloadNewestEvents(pubkeys: string[], kinds: number[], requestTimeout = 10000) {
-    return this.downloadNewestEventsByQuery([{ kinds: kinds, authors: pubkeys }]);
+  downloadNewestEvents(pubkeys: string[], kinds: number[], requestTimeout = 10000, expectedEventCount = -1) {
+    return this.downloadNewestEventsByQuery([{ kinds: kinds, authors: pubkeys }], requestTimeout, expectedEventCount);
   }
 
   downloadEventsByTags(query: any[], requestTimeout = 10000) {
@@ -124,23 +272,20 @@ export class DataService {
   downloadEventByQuery(query: any, requestTimeout = 10000) {
     let event: any;
 
-    return (
-      this.connected$
-        // .pipe(take(1))
-        .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
-        .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
-        .pipe(
-          filter((data) => {
-            // Only trigger the reply once.
-            if (!event) {
-              event = data;
-              return true;
-            } else {
-              return false;
-            }
-          })
-        )
-    );
+    return this.connected$
+      .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
+      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+      .pipe(
+        filter((data) => {
+          // Only trigger the reply once.
+          if (!event) {
+            event = data;
+            return true;
+          } else {
+            return false;
+          }
+        })
+      );
     // .pipe(
     //   timeout(requestTimeout),
     //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
@@ -148,41 +293,51 @@ export class DataService {
   }
 
   /** Creates an observable that will attempt to get newest events across all relays and perform multiple callbacks if newer is found. */
-  downloadNewestEventsByQuery(query: any, requestTimeout = 10000) {
+  downloadNewestEventsByQuery(query: any, requestTimeout = 10000, expectedEventCount = -1) {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
     const totalEvents: NostrEventDocument[] = [];
     // TODO: Figure out if we end up having memory leak with this totalEvents array.
+    const observables = this.relayService.connectedRelays().map((relay) => this.downloadFromRelay(query, relay));
 
-    return (
-      this.connected$
-        // .pipe(take(1))
-        .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
-        .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
-        .pipe(
-          filter((data) => {
-            // This logic is to ensure we don't care about receiving the same data more than once, unless the data is newer.
-            const existingEventIndex = totalEvents.findIndex((e) => e.id === data.id);
-            if (existingEventIndex > -1) {
-              const existingEvent = totalEvents[existingEventIndex];
+    return merge(...observables)
+      .pipe(
+        finalize(() => {
+          console.log('FINALIZED THE DOWNLOAD FROM ALL RELAYS!!');
+        })
+      )
+      .pipe(
+        filter((data, index) => {
+          let result = false;
 
-              // Verify if newer, then replace
-              if (existingEvent.created_at < data.created_at) {
-                totalEvents[existingEventIndex] = data;
-                return true;
-              }
-            } else {
-              totalEvents.push(data);
-              return true;
+          // This logic is to ensure we don't care about receiving the same data more than once, unless the data is newer.
+          const existingEventIndex = totalEvents.findIndex((e) => e.id === data.id);
+          if (existingEventIndex > -1) {
+            const existingEvent = totalEvents[existingEventIndex];
+
+            // Verify if newer, then replace
+            if (existingEvent.created_at < data.created_at) {
+              totalEvents[existingEventIndex] = data;
+              result = true;
             }
+          } else {
+            totalEvents.push(data);
+            result = true;
+          }
 
-            return false;
-          })
-        )
-    );
-    // .pipe(
-    //   timeout(requestTimeout),
-    //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
-    // );
+          if (expectedEventCount > -1 && expectedEventCount != 0) {
+            expectedEventCount--;
+          }
+
+          return result;
+        })
+      )
+      .pipe(
+        timeout(requestTimeout),
+        catchError((error) => {
+          console.warn('The observable was timed out.');
+          return of(undefined);
+        }) // Simply return undefined when the timeout is reached.
+      );
   }
 
   downloadEventsByQuery(query: any[], requestTimeout = 10000) {
@@ -225,9 +380,9 @@ export class DataService {
         console.log('subscribeToRelay:finished:unsub');
         // When the observable is finished, this return function is called.
         sub.unsub();
-        const subIndex = relay.subscriptions.findIndex(s => s==sub)
-        if (subIndex > -1){
-          relay.subscriptions.splice (subIndex, 1)
+        const subIndex = relay.subscriptions.findIndex((s) => s == sub);
+        if (subIndex > -1) {
+          relay.subscriptions.splice(subIndex, 1);
         }
       };
     });

@@ -71,10 +71,12 @@ export class ApplicationState {
 
   connectedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.connected);
 
+  /** This will check if status has changed and trigger. If status is the same, the observable is not triggered. */
   updateConnectionStatus(status: boolean) {
-    this.connected = status;
-    this.connectedChanged.next(status);
-    // }
+    if (this.connected != status) {
+      this.connected = status;
+      this.connectedChanged.next(status);
+    }
   }
 
   visibility$: Observable<boolean>;
