@@ -15,6 +15,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { map, Observable, of, Subscription, tap, BehaviorSubject, finalize } from 'rxjs';
 import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
+import { QueueService } from '../services/queue';
 
 @Component({
   selector: 'app-user',
@@ -115,6 +116,7 @@ export class UserComponent {
     public appState: ApplicationState,
     private activatedRoute: ActivatedRoute,
     private cd: ChangeDetectorRef,
+    private queueService: QueueService,
     public options: OptionsService,
     public profiles: ProfileService,
     private dataService: DataService,
@@ -157,19 +159,19 @@ export class UserComponent {
 
   // following: string[] = [];
 
-  downloadFollowingAndRelays(profile: NostrProfileDocument) {
-    this.dataService.downloadNewestContactsEvents([profile.pubkey]).subscribe((event) => {
-      const nostrEvent = event as NostrEventDocument;
-      const publicKeys = nostrEvent.tags.map((t) => t[1]);
+  // downloadFollowingAndRelays(profile: NostrProfileDocument) {
+  //   this.dataService.downloadNewestContactsEvents([profile.pubkey]).subscribe((event) => {
+  //     const nostrEvent = event as NostrEventDocument;
+  //     const publicKeys = nostrEvent.tags.map((t) => t[1]);
 
-      // profile.following = publicKeys;
-      this.profiles.following(profile.pubkey, publicKeys);
-      // this.following = publicKeys;
-      // for (let i = 0; i < publicKeys.length; i++) {
-      //   const publicKey = publicKeys[i];
-      // }
-    });
-  }
+  //     // profile.following = publicKeys;
+  //     this.profiles.following(profile.pubkey, publicKeys);
+  //     // this.following = publicKeys;
+  //     // for (let i = 0; i < publicKeys.length; i++) {
+  //     //   const publicKey = publicKeys[i];
+  //     // }
+  //   });
+  // }
 
   ngOnInit() {
     // setInterval(() => {
@@ -237,16 +239,20 @@ export class UserComponent {
           this.imagePath = this.profile.picture || '/assets/profile.png';
           this.circle = await this.circleService.get(this.profile.circle);
 
+          debugger;
+
           if (this.circle) {
             this.layout = this.circle!.style;
           }
 
-          const timeAgo = moment().subtract(1, 'days').unix();
+          // TODO: Increase this, made low during development.
+          const timeAgo = moment().subtract(1, 'minutes').unix();
 
           if (this.profile.retrieved && this.profile.retrieved < timeAgo) {
             // Perform NIP-05 validation if older than X or has changed since last time.
             // Get list of relays and following.
-            this.downloadFollowingAndRelays(profile);
+            this.queueService.enqueContacts(profile.pubkey);
+            // this.downloadFollowingAndRelays(profile);
           }
         });
 

@@ -112,6 +112,18 @@ export class ProfileService {
     this.#updatedItem();
   }
 
+  /** Called whenever a profile has been updated, but only replace and trigger
+   * update even if the newly downloaded profile is the same as the active UI selected item.
+   */
+  updateItemIfSelected(item?: NostrProfileDocument) {
+    if (this.item?.pubkey !== item?.pubkey) {
+      return;
+    }
+
+    this.item = item;
+    this.#updatedItem();
+  }
+
   setItemByPubKey(pubkey: string) {
     // If the pubkey as same as before, just trigger an changed event.
     if (this.item?.pubkey == pubkey) {
@@ -286,7 +298,8 @@ export class ProfileService {
 
     this.cache.set(profile.pubkey, profile);
     await this.table.put(profile);
-    this.#updatedItem();
+
+    this.updateItemIfSelected(profile);
   }
 
   // profileDownloadQueue: string[] = [];

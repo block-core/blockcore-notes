@@ -15,18 +15,18 @@ export class QueueService {
     this.#queuesChanged.next();
   }
 
-  enqueProfile(identifier: string) {
-    this.queues.profile.jobs.push({ identifier: identifier, type: 'Profile' });
+  enqueProfile(identifier: string, callback?: any) {
+    this.queues.profile.jobs.push({ identifier: identifier, type: 'Profile', callback: callback });
     this.trigger();
   }
 
-  enqueEvent(identifier: string) {
-    this.queues.event.jobs.push({ identifier: identifier, type: 'Event' });
+  enqueEvent(identifier: string, callback?: any) {
+    this.queues.event.jobs.push({ identifier: identifier, type: 'Event', callback: callback });
     this.trigger();
   }
 
-  enqueContacts(identifier: string) {
-    this.queues.contacts.jobs.push({ identifier: identifier, type: 'Contacts' });
+  enqueContacts(identifier: string, callback?: any) {
+    this.queues.contacts.jobs.push({ identifier: identifier, type: 'Contacts', callback: callback });
     this.trigger();
   }
 
