@@ -12,7 +12,7 @@ import { OptionsService } from '../services/options';
 import { NavigationService } from '../services/navigation';
 import { CircleService } from '../services/circle';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { map, Observable, of, Subscription, tap, BehaviorSubject } from 'rxjs';
+import { map, Observable, of, Subscription, tap, BehaviorSubject, finalize } from 'rxjs';
 import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
 
@@ -207,11 +207,15 @@ export class UserComponent {
         }
 
         if (!pubkey) {
+          this.profiles.setItem(undefined);
           return;
         }
 
         this.pubkey = pubkey;
         this.appState.updateTitle(this.utilities.getShortenedIdentifier(pubkey));
+
+        // Reset the current profile first.
+        this.profiles.setItem(undefined);
 
         this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
           this.profiles.setItem(profile);
