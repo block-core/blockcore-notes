@@ -231,6 +231,8 @@ export class ProfileService {
               return;
             }
 
+            this.queueService.enqueProfile(pubkey);
+
             // this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
             //   // TODO: Figure out why we get Promise back here and not the time. No time to debug anymore!
             //   const p = await profile;
@@ -460,8 +462,7 @@ export class ProfileService {
       await this.table.put(existingProfile);
 
       // Queue up to get this profile.
-      this.queueService.queues.profile.jobs.push({ identifier: existingProfile.pubkey, type: 'Profile' });
-      this.queueService.trigger();
+      this.queueService.enqueProfile(existingProfile.pubkey);
 
       // Now retrieve this profile
       // this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
