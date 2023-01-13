@@ -47,6 +47,13 @@ export class DataService {
       }
     });
 
+    // Schedule a timeout whenever the queues has been triggered, to wait for additional items that might arrive in a loop.
+    this.queueService.queues$.subscribe(() => {
+      setTimeout(() => {
+        this.processQueues();
+      }, 250);
+    });
+
     // Whenever the profile service needs to get a profile from the network, this event is triggered.
     // this.profileService.profileRequested$.subscribe(async (pubkey) => {
     //   if (!pubkey) {

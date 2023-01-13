@@ -9,6 +9,7 @@ import { liveQuery } from 'dexie';
 import { CacheService } from './cache';
 import { FetchService } from './fetch';
 import { dexieToRx } from '../shared/utilities';
+import { QueueService } from './queue';
 
 @Injectable({
   providedIn: 'root',
@@ -191,7 +192,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: StorageService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {}
+  constructor(private db: StorageService, private queueService: QueueService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {}
 
   // async downloadProfile(pubkey: string) {
   //   this.#profileRequested.next(pubkey);
@@ -457,6 +458,10 @@ export class ProfileService {
 
       // Save directly, don't put in cache.
       await this.table.put(existingProfile);
+
+      // Queue up to get this profile.
+      this.queueService.queues.profile.jobs.push({ identifier: existingProfile.pubkey, type: 'Profile' });
+      this.queueService.trigger();
 
       // Now retrieve this profile
       // this.dataService.downloadNewestProfiles([pubkey]).subscribe(async (profile) => {
