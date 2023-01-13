@@ -210,6 +210,12 @@ export class DataService {
 
         // Make sure we run update and not put whenever we download the latest profile.
         this.profileService.followingAndRelays(event.pubkey, following, event.content);
+
+        for (let i = 0; i < jobs.length; i++) {
+          if (jobs[i].callback) {
+            jobs[i].callback(event);
+          }
+        }
       });
   }
 

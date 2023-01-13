@@ -19,6 +19,7 @@ export interface Contact {
 export interface QueryJob {
   type: 'Profile' | 'Event' | 'Contacts';
   identifier: string;
+  callback?: any;
   // id?: string;
   // pubkeys: string[]; // Using array instead of singular job makes everything harder.
   // ids: string[];

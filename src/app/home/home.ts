@@ -333,53 +333,70 @@ export class HomeComponent {
   }
 
   import(pubkey: string) {
-    // TODO: This is a copy-paste of code in circles, refactor ASAP!
+    this.dataService.enque({
+      identifier: pubkey,
+      type: 'Contacts',
+      callback: (data: NostrEventDocument) => {
+        console.log('DATA RECEIVED', data);
 
-    this.snackBar.open('Importing followers process has started', 'Hide', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
+        const following = data.tags.map((t) => t[1]);
+
+        for (let i = 0; i < following.length; i++) {
+          const publicKey = following[i];
+          this.profileService.follow(publicKey);
+        }
+      },
     });
-
-    pubkey = this.utilities.ensureHexIdentifier(pubkey);
-
-    this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
-      const nostrEvent = event as NostrEventDocument;
-      const publicKeys = nostrEvent.tags.map((t) => t[1]);
-
-      for (let i = 0; i < publicKeys.length; i++) {
-        const publicKey = publicKeys[i];
-        this.profileService.follow(publicKey);
-      }
-    });
-
-    // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
-    // follow lists and having to process everything multiple times. Just query one by one until
-    // we find the list. Until then, we simply grab the first relay only.
-    // this.subscriptions.push(
-    //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-    //     const publicKeys = contacts.tags.map((t) => t[1]);
-
-    //     for (let i = 0; i < publicKeys.length; i++) {
-    //       const publicKey = publicKeys[i];
-    //       const profile = await this.profileService.getProfile(publicKey);
-
-    //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-    //       if (profile) {
-    //         await this.profileService.follow(publicKeys[i], profile.circle);
-    //       } else {
-    //         await this.profileService.follow(publicKeys[i]);
-    //       }
-    //     }
-
-    //     this.router.navigateByUrl('/people');
-
-    //     // this.ngZone.run(() => {
-    //     //   this.cd.detectChanges();
-    //     // });
-    //   })
-    // );
   }
+
+  // import(pubkey: string) {
+  //   // TODO: This is a copy-paste of code in circles, refactor ASAP!
+
+  //   this.snackBar.open('Importing followers process has started', 'Hide', {
+  //     duration: 2000,
+  //     horizontalPosition: 'center',
+  //     verticalPosition: 'bottom',
+  //   });
+
+  //   pubkey = this.utilities.ensureHexIdentifier(pubkey);
+
+  //   this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
+  //     const nostrEvent = event as NostrEventDocument;
+  //     const publicKeys = nostrEvent.tags.map((t) => t[1]);
+
+  //     for (let i = 0; i < publicKeys.length; i++) {
+  //       const publicKey = publicKeys[i];
+  //       this.profileService.follow(publicKey);
+  //     }
+  //   });
+
+  //   // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
+  //   // follow lists and having to process everything multiple times. Just query one by one until
+  //   // we find the list. Until then, we simply grab the first relay only.
+  //   // this.subscriptions.push(
+  //   //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
+  //   //     const publicKeys = contacts.tags.map((t) => t[1]);
+
+  //   //     for (let i = 0; i < publicKeys.length; i++) {
+  //   //       const publicKey = publicKeys[i];
+  //   //       const profile = await this.profileService.getProfile(publicKey);
+
+  //   //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+  //   //       if (profile) {
+  //   //         await this.profileService.follow(publicKeys[i], profile.circle);
+  //   //       } else {
+  //   //         await this.profileService.follow(publicKeys[i]);
+  //   //       }
+  //   //     }
+
+  //   //     this.router.navigateByUrl('/people');
+
+  //   //     // this.ngZone.run(() => {
+  //   //     //   this.cd.detectChanges();
+  //   //     // });
+  //   //   })
+  //   // );
+  // }
 
   fetchProfiles(relay: Relay, authors: string[]) {
     // const filteredAuthors = authors.filter((a) => {

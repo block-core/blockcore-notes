@@ -33,7 +33,6 @@
       <button class="follow-button" mat-flat-button color="primary" (click)="import(this.appState.getPublicKey())">Import your following list</button>
       <br /><br />
 
-
       <h2>PROTOTYPE</h2>
       <p>Blockcore Notes is a prototype. Please wipe your local database once in a while to fix bugs and issues.</p>
       <p>
@@ -68,9 +67,8 @@
         <mat-card-content>
           <div class="list-selection" *ngFor="let list of lists">
             {{ list.name }}<br />
-            <small>{{ list.about }}</small
-            ><br />
-            <button (click)="import(list.pubkeyhex)" mat-flat-button color="primary">FOLLOW ALL</button>&nbsp;
+            <small>{{ list.about }}</small><br />
+            <button [routerLink]="['/following', list.pubkey]" mat-flat-button color="primary">FOLLOW ALL</button>&nbsp;
             <!-- <button (click)="import(list.pubkeyhex)" mat-button>BLOCK ALL</button> -->
           </div>
         </mat-card-content>
