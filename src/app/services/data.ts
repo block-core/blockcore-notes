@@ -320,6 +320,7 @@ export class DataService {
       )
       .pipe(
         filter((data, index) => {
+          console.log('downloadNewestEventsByQuery', data);
           let result = false;
 
           // This logic is to ensure we don't care about receiving the same data more than once, unless the data is newer.

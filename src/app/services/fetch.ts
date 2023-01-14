@@ -96,8 +96,6 @@ export class FetchService {
     // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
     const query = [{ kinds: [0], authors: pubkeys }];
 
-    debugger;
-
     return (
       this.connected$
         .pipe(

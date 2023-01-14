@@ -7,6 +7,7 @@ import { Circle, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog, ProfileImageDialogData } from '../profile-image-dialog/profile-image-dialog';
 import * as QRCode from 'qrcode';
 import { Subscription } from 'rxjs';
+import { UIService } from 'src/app/services/ui';
 
 @Component({
   selector: 'app-profile-header',
@@ -25,7 +26,7 @@ export class ProfileHeaderComponent {
   qr06?: string;
   qr16?: string;
 
-  constructor(public profileService: ProfileService, public dialog: MatDialog, public circleService: CircleService, public utilities: Utilities) {}
+  constructor(public ui: UIService, public profileService: ProfileService, public dialog: MatDialog, public circleService: CircleService, public utilities: Utilities) {}
 
   async ngAfterViewInit() {}
 
@@ -38,8 +39,8 @@ export class ProfileHeaderComponent {
   // }
 
   get imagePath() {
-    if (this.profileService.item!.picture) {
-      return this.profileService.item!.picture;
+    if (this.ui.profile!.picture) {
+      return this.ui.profile!.picture;
     }
 
     return ProfileHeaderComponent.defaultProfileImage;

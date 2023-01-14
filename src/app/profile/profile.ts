@@ -10,6 +10,7 @@ import { ProfileService } from '../services/profile';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DataService } from '../services/data';
+import { UIService } from '../services/ui';
 
 @Component({
   selector: 'app-profile',
@@ -33,6 +34,7 @@ export class ProfileComponent {
   }
 
   constructor(
+    public ui: UIService,
     public appState: ApplicationState,
     private validator: DataValidation,
     private utilities: Utilities,
@@ -76,7 +78,9 @@ export class ProfileComponent {
     this.#profileChanged.next(this.profile);
 
     // Whenever the active user profile is changed, also change the selected profile which is used by profile header.
-    this.profileService.setItem(this.profile);
+
+    this.ui.setProfile(this.profile);
+    // this.profileService.setItem(this.profile);
   }
 
   cancelEdit() {

@@ -8,18 +8,7 @@ import { ProfileService } from './profile';
   providedIn: 'root',
 })
 export class UIService {
-  constructor(private profileService: ProfileService) {
-    this.pubkey$.subscribe((pubkey) => {
-      if (!pubkey) {
-        return;
-      }
-
-      this.profileService.getProfile(pubkey).subscribe((profile) => {
-        this.#profile = profile;
-        this.#profileChanged.next(this.#profile);
-      });
-    });
-  }
+  constructor() {}
 
   #pubkey: string | undefined = undefined;
 
@@ -33,9 +22,14 @@ export class UIService {
     return this.#pubkeyChanged.asObservable();
   }
 
-  setPubKey(pubkey: string) {
+  setPubKey(pubkey: string | undefined) {
     this.#pubkey = pubkey;
     this.#pubkeyChanged.next(this.#pubkey);
+  }
+
+  setProfile(profile: NostrProfileDocument | undefined) {
+    this.#profile = profile;
+    this.#profileChanged.next(this.#profile);
   }
 
   #profile: NostrProfileDocument | undefined = undefined;

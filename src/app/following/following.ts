@@ -16,7 +16,7 @@ import { UIService } from '../services/ui';
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FollowingComponent {
-  pubkey?: string;
+  // pubkey?: string;
   subscriptions: Subscription[] = [];
 
   constructor(public ui: UIService, private appState: ApplicationState, private dataService: DataService, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
@@ -43,14 +43,14 @@ export class FollowingComponent {
     this.subscriptions.push(
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const pubkey: any = params.get('id');
+        this.ui.setPubKey(pubkey);
 
-        if (pubkey) {
-          this.ui.setPubKey(pubkey);
-        }
+        // if (pubkey) {
+        // }
 
-        this.pubkey = pubkey;
-        this.profileService.setItemByPubKey(pubkey);
-        this.appState.backUrl = '/p/' + this.pubkey;
+        // this.pubkey = pubkey;
+        // this.profileService.setItemByPubKey(pubkey);
+        this.appState.backUrl = '/p/' + pubkey;
       })
     );
   }

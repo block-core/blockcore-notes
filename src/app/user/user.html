@@ -50,7 +50,7 @@
     <div *ngIf="replyEvents$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
         <div class="page" *ngIf="items.value.length === 0">
-          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
         </div>
 
         <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">

@@ -59,15 +59,15 @@ export class ProfileActionsComponent {
       await this.profileService.setCircle(this.profile.pubkey, circle);
     }
 
-    this.updateProfile(this.profile.pubkey);
+    // this.updateProfile(this.profile.pubkey);
   }
 
-  updateProfile(pubkey: string) {
-    this.profileService.getProfile(pubkey).subscribe((profile) => {
-      this.profile = profile;
-      this.profileService.setItem(profile);
-    });
-  }
+  // updateProfile(pubkey: string) {
+  //   this.profileService.getProfile(pubkey).subscribe((profile) => {
+  //     this.profile = profile;
+  //     this.profileService.setItem(profile);
+  //   });
+  // }
 
   getNpub(hex: string) {
     return this.utilities.getNostrIdentifier(hex);
@@ -130,7 +130,7 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.unfollow(this.profile.pubkey);
-    this.updateProfile(this.profile.pubkey);
+    // this.updateProfile(this.profile.pubkey);
   }
 
   async mute() {
@@ -139,7 +139,7 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.mute(this.profile.pubkey);
-    this.updateProfile(this.profile.pubkey);
+    // this.updateProfile(this.profile.pubkey);
   }
 
   async unmute() {
@@ -148,7 +148,7 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.unmute(this.profile.pubkey);
-    this.updateProfile(this.profile.pubkey);
+    // this.updateProfile(this.profile.pubkey);
   }
 
   async block() {
@@ -157,7 +157,7 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.block(this.profile.pubkey);
-    this.updateProfile(this.profile.pubkey);
+    // this.updateProfile(this.profile.pubkey);
   }
 
   async unblock() {
@@ -166,7 +166,7 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.unblock(this.profile.pubkey);
-    this.updateProfile(this.profile.pubkey);
+    // this.updateProfile(this.profile.pubkey);
   }
 
   ngOnDestroy() {}

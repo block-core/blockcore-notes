@@ -1,6 +1,6 @@
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  <a mat-tab-link [routerLink]="['/followers', pubkey]" [active]="false">Followers</a>
-  <a mat-tab-link [routerLink]="['/following', pubkey]" [active]="true">Following</a>
+  <a mat-tab-link [routerLink]="['/followers', ui.pubkey]" [active]="false">Followers</a>
+  <a mat-tab-link [routerLink]="['/following', ui.pubkey]" [active]="true">Following</a>
 </nav>
 <mat-tab-nav-panel #tabPanel>
   <!-- <div *ngIf="profileService.item$ | async as profile">

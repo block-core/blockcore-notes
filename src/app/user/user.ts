@@ -16,6 +16,7 @@ import { map, Observable, of, Subscription, tap, BehaviorSubject, finalize } fro
 import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
 import { QueueService } from '../services/queue';
+import { UIService } from '../services/ui';
 
 @Component({
   selector: 'app-user',
@@ -24,10 +25,10 @@ import { QueueService } from '../services/queue';
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent {
-  pubkey?: string | null;
-  npub!: string;
-  profile?: NostrProfileDocument;
-  about?: string;
+  // pubkey?: string | null;
+  // npub!: string;
+  // profile?: NostrProfileDocument;
+  // about?: string;
   imagePath = '/assets/profile.png';
   profileName = '';
   circle?: Circle;
@@ -120,17 +121,49 @@ export class UserComponent {
     public options: OptionsService,
     public profiles: ProfileService,
     private dataService: DataService,
+    public ui: UIService,
     private validator: DataValidation,
     public circleService: CircleService,
     private utilities: Utilities,
     public notesService: NotesService,
     private router: Router,
     private ngZone: NgZone
-  ) {}
+  ) {
+    this.subscriptions.push(
+      this.ui.profile$.subscribe(async (profile) => {
+        if (!profile) {
+          return;
+        }
+
+        // this.appState.updateTitle(this.utilities.getShortenedIdentifier(profile.pubkey));
+        this.appState.updateTitle(this.utilities.getProfileTitle(this.ui.profile!));
+        this.imagePath = this.ui.profile!.picture || '/assets/profile.png';
+        this.circle = await this.circleService.get(this.ui.profile!.circle);
+
+        if (this.circle) {
+          this.layout = this.circle!.style;
+        }
+
+        // TODO: Increase this, made low during development.
+        const timeAgo = moment().subtract(5, 'minutes').unix();
+
+        // If following is nothing and it's been a while since we retrieved the profile,
+        // go grab the contacts list.
+        if (!this.ui.profile!.following || (this.ui.profile!.retrieved && this.ui.profile!.retrieved < timeAgo)) {
+          debugger;
+          // Perform NIP-05 validation if older than X or has changed since last time.
+          // Get list of relays and following.
+          this.queueService.enqueContacts(profile.pubkey);
+          // this.downloadFollowingAndRelays(profile);
+        }
+      })
+    );
+  }
 
   async follow() {
-    this.profile!.status = ProfileStatus.Follow;
-    await this.profiles.follow(this.pubkey!);
+    this.ui.profile!.status = ProfileStatus.Follow;
+    await this.profiles.follow(this.ui.pubkey);
+    // this.profile!.status = ProfileStatus.Follow;
     // this.feedService.downloadRecent([this.pubkey!]);
   }
 
@@ -155,7 +188,7 @@ export class UserComponent {
     this.#changed();
   }
 
-  layout?: number;
+  layout?: number = 1;
 
   // following: string[] = [];
 
@@ -198,6 +231,7 @@ export class UserComponent {
     this.subscriptions.push(
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const pubkey: any = params.get('id');
+        this.ui.setPubKey(undefined);
 
         // Whenever the user changes, unsubsribe the profile observable (which normally should be completed, but for safety).
         if (this.profileSubscription) {
@@ -209,54 +243,42 @@ export class UserComponent {
         }
 
         if (!pubkey) {
-          this.profiles.setItem(undefined);
+          this.ui.setPubKey(undefined);
+          // this.profiles.setItem(undefined);
           return;
         }
 
-        this.pubkey = pubkey;
+        this.ui.setPubKey(pubkey);
         this.appState.updateTitle(this.utilities.getShortenedIdentifier(pubkey));
-
+        // this.pubkey = pubkey;
         // Reset the current profile first.
-        this.profiles.setItem(undefined);
+        // this.profiles.setItem(undefined);
 
-        this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
-          this.profiles.setItem(profile);
-          this.profile = profile;
+        // this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
+        //   debugger;
 
-          if (!this.profile) {
-            this.profile = this.profiles.emptyProfile(pubkey);
-            this.circle = undefined;
-          }
+        //   if (!profile) {
+        //     return;
+        //   }
 
-          // this.npub = this.utilities.getNostrIdentifier(pubkey);
+        //   // this.profiles.setItem(profile);
+        //   // this.profile = profile;
 
-          // if (!this.profile.name) {
-          //   this.profile.name = this.npub;
-          // }
+        //   // if (!this.profile) {
+        //   //   this.profile = this.profiles.emptyProfile(pubkey);
+        //   //   this.circle = undefined;
+        //   // }
 
-          // this.profileName = this.profile.name;
-          this.appState.updateTitle(this.utilities.getProfileTitle(this.profile));
-          this.imagePath = this.profile.picture || '/assets/profile.png';
-          this.circle = await this.circleService.get(this.profile.circle);
+        //   // this.npub = this.utilities.getNostrIdentifier(pubkey);
 
-          debugger;
+        //   // if (!this.profile.name) {
+        //   //   this.profile.name = this.npub;
+        //   // }
 
-          if (this.circle) {
-            this.layout = this.circle!.style;
-          }
+        //   // this.profileName = this.profile.name;
+        // });
 
-          // TODO: Increase this, made low during development.
-          const timeAgo = moment().subtract(1, 'minutes').unix();
-
-          if (this.profile.retrieved && this.profile.retrieved < timeAgo) {
-            // Perform NIP-05 validation if older than X or has changed since last time.
-            // Get list of relays and following.
-            this.queueService.enqueContacts(profile.pubkey);
-            // this.downloadFollowingAndRelays(profile);
-          }
-        });
-
-        this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [this.pubkey], limit: 100 }]).subscribe((event) => {
+        this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [pubkey], limit: 100 }]).subscribe((event) => {
           if (!event) {
             return;
           }

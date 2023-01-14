@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ApplicationState } from '../services/applicationstate';
+import { UIService } from '../services/ui';
 
 @Component({
   selector: 'app-followers',
@@ -12,17 +13,17 @@ import { ApplicationState } from '../services/applicationstate';
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FollowersComponent {
-  pubkey?: string;
+  // pubkey?: string;
 
   subscriptions: Subscription[] = [];
 
-  constructor(private appState: ApplicationState, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(public ui: UIService, private appState: ApplicationState, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     this.appState.showBackButton = true;
 
     this.subscriptions.push(
-      this.profileService.item$.subscribe((profile) => {
+      this.ui.profile$.subscribe((profile) => {
         this.appState.title = `@${profile?.name}`;
       })
     );
@@ -30,9 +31,10 @@ export class FollowersComponent {
     this.subscriptions.push(
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const pubkey: any = params.get('id');
-        this.pubkey = pubkey;
-        this.profileService.setItemByPubKey(pubkey);
-        this.appState.backUrl = '/p/' + this.pubkey;
+        this.ui.setPubKey(pubkey);
+        // this.pubkey = pubkey;
+        // this.profileService.setItemByPubKey(pubkey);
+        this.appState.backUrl = '/p/' + pubkey;
       })
     );
   }

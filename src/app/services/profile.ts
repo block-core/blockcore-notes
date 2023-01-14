@@ -10,6 +10,7 @@ import { CacheService } from './cache';
 import { FetchService } from './fetch';
 import { dexieToRx } from '../shared/utilities';
 import { QueueService } from './queue';
+import { UIService } from './ui';
 
 @Injectable({
   providedIn: 'root',
@@ -23,13 +24,13 @@ export class ProfileService {
 
   cache = new CacheService();
 
-  item: NostrProfileDocument | undefined = undefined;
+  // item: NostrProfileDocument | undefined = undefined;
 
-  #itemChanged: BehaviorSubject<NostrProfileDocument | undefined> = new BehaviorSubject<NostrProfileDocument | undefined>(this.item);
+  // #itemChanged: BehaviorSubject<NostrProfileDocument | undefined> = new BehaviorSubject<NostrProfileDocument | undefined>(this.item);
 
-  get item$(): Observable<NostrProfileDocument | undefined> {
-    return this.#itemChanged.asObservable();
-  }
+  // get item$(): Observable<NostrProfileDocument | undefined> {
+  //   return this.#itemChanged.asObservable();
+  // }
 
   items$ = dexieToRx(liveQuery(() => this.list(ProfileStatus.Follow)));
 
@@ -103,39 +104,40 @@ export class ProfileService {
     this.#followingChanged.next(this.profiles);
   }
 
-  #updatedItem() {
-    this.#itemChanged.next(this.item);
-  }
+  // #updatedItem() {
+  //   this.#itemChanged.next(this.item);
+  // }
 
-  setItem(item?: NostrProfileDocument) {
-    this.item = item;
-    this.#updatedItem();
-  }
+  // setItem(item?: NostrProfileDocument) {
+  //   this.item = item;
+  //   this.#updatedItem();
+  // }
 
   /** Called whenever a profile has been updated, but only replace and trigger
    * update even if the newly downloaded profile is the same as the active UI selected item.
    */
   updateItemIfSelected(item?: NostrProfileDocument) {
-    if (this.item?.pubkey !== item?.pubkey) {
+    if (this.ui.pubkey !== item?.pubkey) {
       return;
     }
 
-    this.item = item;
-    this.#updatedItem();
+    this.ui.setProfile(item);
+    // this.item = item;
+    // this.#updatedItem();
   }
 
-  setItemByPubKey(pubkey: string) {
-    // If the pubkey as same as before, just trigger an changed event.
-    if (this.item?.pubkey == pubkey) {
-      this.#updatedItem();
-      return;
-    }
+  // setItemByPubKey(pubkey: string) {
+  //   // If the pubkey as same as before, just trigger an changed event.
+  //   if (this.item?.pubkey == pubkey) {
+  //     this.#updatedItem();
+  //     return;
+  //   }
 
-    this.getProfile(pubkey).subscribe((profile) => {
-      this.item = profile;
-      this.#updatedItem();
-    });
-  }
+  //   this.getProfile(pubkey).subscribe((profile) => {
+  //     this.item = profile;
+  //     this.#updatedItem();
+  //   });
+  // }
 
   async search(searchText: string) {
     // this.table.filter((x) => x.name.toLowerCase().indexOf(searchText) > -1).toArray();
@@ -204,7 +206,19 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: StorageService, private queueService: QueueService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {}
+  constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
+    this.ui.pubkey$.subscribe((pubkey) => {
+      if (!pubkey) {
+        this.ui.setProfile(undefined);
+      } else {
+        this.getProfile(pubkey).subscribe((profile) => {
+          // We don't need to run setProfile here, the putProfile will recognice the
+          // current selected profile and update for us.
+          // this.ui.setProfile(profile);
+        });
+      }
+    });
+  }
 
   // async downloadProfile(pubkey: string) {
   //   this.#profileRequested.next(pubkey);
@@ -453,7 +467,11 @@ export class ProfileService {
   }
 
   /** Follow can be called without having an existing profile persisted. */
-  async follow(pubkey: string, circle: number = 0, existingProfile?: NostrProfileDocument) {
+  async follow(pubkey?: string, circle: number = 0, existingProfile?: NostrProfileDocument) {
+    if (!pubkey) {
+      return;
+    }
+
     const profile = await this.getLocalProfile(pubkey);
     const now = this.utilities.now();
 
