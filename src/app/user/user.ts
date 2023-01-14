@@ -34,13 +34,13 @@ export class UserComponent {
   circle?: Circle;
   initialLoad = true;
 
-  events: NostrEventDocument[] = [];
-  #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
-  get events$(): Observable<NostrEventDocument[]> {
-    return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
-  }
+  // events: NostrEventDocument[] = [];
+  // #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
+  // get events$(): Observable<NostrEventDocument[]> {
+  //   return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
+  // }
 
-  rootEvents$ = this.events$
+  rootEvents$ = this.ui.events$
     .pipe(
       map((data) => {
         return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length == 0);
@@ -48,7 +48,7 @@ export class UserComponent {
     )
     .pipe(map((x) => x.slice(0, this.eventsCount)));
 
-  replyEvents$ = this.events$
+  replyEvents$ = this.ui.events$
     .pipe(
       map((data) => {
         return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length > 0);
@@ -131,8 +131,6 @@ export class UserComponent {
   ) {
     this.subscriptions.push(
       this.ui.profile$.subscribe(async (profile) => {
-        debugger;
-
         if (!profile) {
           return;
         }
@@ -152,7 +150,6 @@ export class UserComponent {
         // If following is nothing and it's been a while since we retrieved the profile,
         // go grab the contacts list.
         if (!this.ui.profile!.following || (this.ui.profile!.retrieved && this.ui.profile!.retrieved < timeAgo)) {
-          debugger;
           // Perform NIP-05 validation if older than X or has changed since last time.
           // Get list of relays and following.
           this.queueService.enqueContacts(profile.pubkey);
@@ -180,7 +177,7 @@ export class UserComponent {
   }
 
   #changed() {
-    this.#eventsChanged.next(this.events);
+    // this.#eventsChanged.next(this.events);
   }
 
   eventsCount = 5;
@@ -232,13 +229,12 @@ export class UserComponent {
 
     this.subscriptions.push(
       this.activatedRoute.paramMap.subscribe(async (params) => {
-        debugger;
         const pubkey: any = params.get('id');
         this.ui.setPubKey(pubkey);
 
-        if (this.feedSubscription) {
-          this.feedSubscription.unsubscribe();
-        }
+        // if (this.feedSubscription) {
+        //   this.feedSubscription.unsubscribe();
+        // }
 
         this.appState.updateTitle(this.utilities.getShortenedIdentifier(pubkey));
         // this.pubkey = pubkey;
@@ -269,50 +265,62 @@ export class UserComponent {
         //   // this.profileName = this.profile.name;
         // });
 
-        this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [pubkey], limit: 100 }]).subscribe((event) => {
-          if (!event) {
-            return;
-          }
+        this.queueService.enqueEvent(
+          pubkey,
+          (data: NostrEventDocument) => {
+            this.ui.putEvent(data);
+            // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+            // this.#changed();
+          },
+          100
+        );
 
-          const existingIndex = this.events.findIndex((e) => e.id == event.id);
+        // this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [pubkey], limit: 100 }]).subscribe((event) => {
+        //   debugger;
 
-          if (existingIndex !== -1) {
-            return;
-          }
+        //   if (!event) {
+        //     return;
+        //   }
 
-          this.events.unshift(event);
-          // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-          this.#changed();
+        //   const existingIndex = this.events.findIndex((e) => e.id == event.id);
 
-          // this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
+        //   if (existingIndex !== -1) {
+        //     return;
+        //   }
 
-          // this.ngZone.run(() => {
-          //   // this.notesService.currentViewNotes.push(event);
-          //   this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
-          //   console.log(this.notes);
-          // });
+        //   this.events.unshift(event);
+        //   // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+        //   this.#changed();
 
-          // this.ite
-          //   .of(this.notesService.currentViewNotes)
-          //   // .pipe(
-          //   //   map((data) => {
-          //   //     // debugger;
-          //   //     return data.sort((a, b) => {
-          //   //       debugger;
-          //   //       return a.created_at > b.created_at ? 1 : -1;
-          //   //     });
-          //   //   })
-          //   // )
-          //   .pipe(map((x) => x.slice(0, this.eventsCount)));
+        //   // this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
 
-          // x.slice(0, this.eventsCount);
+        //   // this.ngZone.run(() => {
+        //   //   // this.notesService.currentViewNotes.push(event);
+        //   //   this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
+        //   //   console.log(this.notes);
+        //   // });
 
-          // this.ngZone.run(() => {
-          //   this.notesService.currentViewNotes.push(event);
-          // });
+        //   // this.ite
+        //   //   .of(this.notesService.currentViewNotes)
+        //   //   // .pipe(
+        //   //   //   map((data) => {
+        //   //   //     // debugger;
+        //   //   //     return data.sort((a, b) => {
+        //   //   //       debugger;
+        //   //   //       return a.created_at > b.created_at ? 1 : -1;
+        //   //   //     });
+        //   //   //   })
+        //   //   // )
+        //   //   .pipe(map((x) => x.slice(0, this.eventsCount)));
 
-          // console.log('LENGTH:', this.notesService.currentViewNotes.length);
-        });
+        //   // x.slice(0, this.eventsCount);
+
+        //   // this.ngZone.run(() => {
+        //   //   this.notesService.currentViewNotes.push(event);
+        //   // });
+
+        //   // console.log('LENGTH:', this.notesService.currentViewNotes.length);
+        // });
       })
     );
 

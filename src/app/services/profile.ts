@@ -208,7 +208,6 @@ export class ProfileService {
 
   constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
     this.ui.pubkey$.subscribe((pubkey) => {
-      debugger;
       if (!pubkey) {
         this.ui.setProfile(undefined);
       } else {

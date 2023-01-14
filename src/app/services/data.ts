@@ -11,6 +11,7 @@ import { timeout, map, merge, Observable, delay, Observer, race, take, switchMap
 import { Utilities } from './utilities';
 import { StorageService } from './storage';
 import { QueueService } from './queue';
+import { UIService } from './ui';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,7 @@ export class DataService {
   connected$ = this.appState.connected$.pipe(map((status) => status === true));
 
   constructor(
+    private ui: UIService,
     private queueService: QueueService,
     private profileService: ProfileService,
     private appState: ApplicationState,
@@ -146,7 +148,42 @@ export class DataService {
     }
   }
 
-  processEventQueue() {}
+  processEventQueue() {
+    if (this.queueService.queues.event.active) {
+      console.log('Events are already active... Skipping.');
+      return;
+    }
+
+    const jobs = this.queueService.queues.event.jobs.splice(0, 10);
+    const filters = jobs.map((j) => {
+      return {
+        kinds: [1],
+        authors: [j.identifier],
+        limit: j.limit,
+      } as Filter;
+    });
+
+    return this.downloadNewestEventsByQuery(filters).subscribe(async (event) => {
+      console.log('processEventQueue: event', event);
+
+      if (!event) {
+        return;
+      }
+
+      for (let i = 0; i < jobs.length; i++) {
+        if (jobs[i].callback) {
+          jobs[i].callback(event);
+        }
+      }
+
+      // this.ui.putEvent(event);
+    });
+
+    // this.downloadNewestEvents()
+    // this.downloadNewestEventsByQuery()
+    // this.downloadEventsByQuery("", );
+    // this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [pubkey], limit: 100 }]).subscribe((event) => {
+  }
 
   processProfileQueue() {
     console.log('processProfileQueue');

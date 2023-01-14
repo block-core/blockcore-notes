@@ -20,8 +20,8 @@ export class QueueService {
     this.trigger();
   }
 
-  enqueEvent(identifier: string, callback?: any) {
-    this.queues.event.jobs.push({ identifier: identifier, type: 'Event', callback: callback });
+  enqueEvent(identifier: string, callback?: any, limit?: number) {
+    this.queues.event.jobs.push({ identifier: identifier, type: 'Event', callback: callback, limit: limit });
     this.trigger();
   }
 
@@ -30,11 +30,11 @@ export class QueueService {
     this.trigger();
   }
 
-  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts') {
+  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts', limit?: number) {
     if (type === 'Profile') {
       this.enqueProfile(identifier);
     } else if (type === 'Event') {
-      this.enqueEvent(identifier);
+      this.enqueEvent(identifier, undefined, limit);
     } else if (type === 'Contacts') {
       this.enqueContacts(identifier);
     }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { NostrProfileDocument } from './interfaces';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { NostrEventDocument, NostrProfileDocument } from './interfaces';
 import { ProfileService } from './profile';
 
 @Injectable({
@@ -25,7 +25,7 @@ export class UIService {
   setPubKey(pubkey: string | undefined) {
     this.#pubkey = pubkey;
     this.#pubkeyChanged.next(this.#pubkey);
-    }
+  }
 
   setProfile(profile: NostrProfileDocument | undefined) {
     this.#profile = profile;
@@ -42,6 +42,31 @@ export class UIService {
 
   get profile$(): Observable<NostrProfileDocument | undefined> {
     return this.#profileChanged.asObservable();
+  }
+
+  events: NostrEventDocument[] = [];
+
+  #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
+
+  get events$(): Observable<NostrEventDocument[]> {
+    return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
+  }
+
+  putEvent(event: NostrEventDocument) {
+    const existingIndex = this.events.findIndex((e) => e.id == event.id);
+
+    if (existingIndex > -1) {
+      this.events[existingIndex] = event;
+    } else {
+      this.events.unshift(event);
+    }
+
+    this.#eventsChanged.next(this.events);
+  }
+
+  clearEvents() {
+    this.events = [];
+    this.#eventsChanged.next(this.events);
   }
 
   //   get profile$(): Observable<NostrProfileDocument | undefined> {
