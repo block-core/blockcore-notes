@@ -41,6 +41,11 @@
     <span>Copy</span>
   </button>
 
+  <button mat-menu-item [matMenuTriggerFor]="shareMenu">
+    <mat-icon>ios_share</mat-icon>
+    <span>Share</span>
+  </button>
+
   <button mat-menu-item (click)="unmute()" *ngIf="profile?.status == 2">
     <mat-icon>notifications</mat-icon>
     <span>Unmute</span>
@@ -97,5 +102,12 @@
   <button mat-menu-item *ngIf="this.profile?.relays" (click)="copyRelays()">
     <mat-icon>content_copy</mat-icon>
     <span>Relay List</span>
+  </button>
+</mat-menu>
+
+<mat-menu #shareMenu="matMenu">
+  <button mat-menu-item (click)="copy('https://notes.blockcore.net/p/' + profile!.pubkey)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Profile URL</span>
   </button>
 </mat-menu>
