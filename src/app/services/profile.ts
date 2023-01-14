@@ -208,13 +208,12 @@ export class ProfileService {
 
   constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
     this.ui.pubkey$.subscribe((pubkey) => {
+      debugger;
       if (!pubkey) {
         this.ui.setProfile(undefined);
       } else {
         this.getProfile(pubkey).subscribe((profile) => {
-          // We don't need to run setProfile here, the putProfile will recognice the
-          // current selected profile and update for us.
-          // this.ui.setProfile(profile);
+          this.ui.setProfile(profile);
         });
       }
     });

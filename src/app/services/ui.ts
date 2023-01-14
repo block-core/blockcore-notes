@@ -25,7 +25,7 @@ export class UIService {
   setPubKey(pubkey: string | undefined) {
     this.#pubkey = pubkey;
     this.#pubkeyChanged.next(this.#pubkey);
-  }
+    }
 
   setProfile(profile: NostrProfileDocument | undefined) {
     this.#profile = profile;

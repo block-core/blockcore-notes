@@ -131,6 +131,8 @@ export class UserComponent {
   ) {
     this.subscriptions.push(
       this.ui.profile$.subscribe(async (profile) => {
+        debugger;
+
         if (!profile) {
           return;
         }
@@ -230,25 +232,14 @@ export class UserComponent {
 
     this.subscriptions.push(
       this.activatedRoute.paramMap.subscribe(async (params) => {
+        debugger;
         const pubkey: any = params.get('id');
-        this.ui.setPubKey(undefined);
-
-        // Whenever the user changes, unsubsribe the profile observable (which normally should be completed, but for safety).
-        if (this.profileSubscription) {
-          this.profileSubscription.unsubscribe();
-        }
+        this.ui.setPubKey(pubkey);
 
         if (this.feedSubscription) {
           this.feedSubscription.unsubscribe();
         }
 
-        if (!pubkey) {
-          this.ui.setPubKey(undefined);
-          // this.profiles.setItem(undefined);
-          return;
-        }
-
-        this.ui.setPubKey(pubkey);
         this.appState.updateTitle(this.utilities.getShortenedIdentifier(pubkey));
         // this.pubkey = pubkey;
         // Reset the current profile first.
