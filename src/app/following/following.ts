@@ -23,6 +23,7 @@ export class FollowingComponent {
 
   ngOnInit() {
     this.appState.showBackButton = true;
+    this.appState.backUrl = undefined;
 
     this.subscriptions.push(
       this.ui.profile$.subscribe((profile) => {
