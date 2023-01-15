@@ -30,3 +30,14 @@
 .people-card {
   flex: 1 1 240px;
 }
+
+.profile-banner {
+  min-height: 240px;
+  /* margin-bottom: 30em;
+  position: fixed; */
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  margin-top: -2em;
+}

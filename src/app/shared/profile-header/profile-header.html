@@ -1,5 +1,5 @@
 <div class="profile-page" *ngIf="ui.profile$ | async as profile">
-  <div [style.background-image]="getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div>
+  <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div>
 
   <div class="profile-page-header">
     <!-- <img [src]="profile.banner"> -->

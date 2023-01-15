@@ -28,10 +28,12 @@
       <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of items.value; trackBy: trackByFn">
         <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
         <div class="events-header">
+
+          <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
+
           <app-event-header [profile]="profile">
             <small>
             <span class="clickable" *ngIf="profile.created">
-          
           
             Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon>
           </small>

@@ -36,7 +36,7 @@ export class PeopleComponent {
     public dialog: MatDialog,
     public profileService: ProfileService,
     private validator: DataValidation,
-    private utilities: Utilities,
+    public utilities: Utilities,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}
