@@ -28,7 +28,6 @@
             </div>
             <button class="delete-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">Delete</button>
 
-            {{relay.metadata.enabled}}
             <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.metadata.enabled">&nbsp;On/Off</mat-slide-toggle>
           </mat-expansion-panel>
         </mat-accordion>
