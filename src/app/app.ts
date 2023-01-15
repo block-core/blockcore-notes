@@ -212,7 +212,7 @@ export class AppComponent {
         const following = this.profileService.profile?.following;
         const pubkeys = data.tags.map((t: any[]) => t[1]);
 
-        if (!following && this.profileService.profiles.length === 0) {
+        if (!following) {
           this.openImportSheet({ pubkeys: pubkeys, pubkey: data.pubkey });
         }
       },
