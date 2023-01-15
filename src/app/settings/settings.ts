@@ -80,9 +80,17 @@ export class SettingsComponent {
   }
 
   ngOnInit() {
-    this.appState.title = 'Settings';
+    this.appState.updateTitle('Settings');
     this.appState.showBackButton = true;
-    this.appState.actions = [];
+    this.appState.actions = [
+      {
+        icon: 'add_circle',
+        tooltip: 'Add Relay',
+        click: () => {
+          this.addRelay();
+        },
+      },
+    ];
   }
 
   registerHandler(protocol: string, parameter: string) {
@@ -100,6 +108,11 @@ export class SettingsComponent {
     dialogRef.afterClosed().subscribe(async (result: AddRelayDialogData) => {
       if (!result) {
         return;
+      }
+
+      // Append the Web Socket prefix if missing.
+      if (result.url.indexOf('://') === -1) {
+        result.url = 'wss://' + result.url;
       }
 
       await this.relayService.appendRelay(result.url, result.read, result.write);

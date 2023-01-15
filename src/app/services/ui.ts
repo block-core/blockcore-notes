@@ -24,7 +24,14 @@ export class UIService {
 
   setPubKey(pubkey: string | undefined) {
     this.#pubkey = pubkey;
+
+    // Reset the profile and events when pubkey is changed.
+    this.#profile = undefined;
+    this.events = [];
+
     this.#pubkeyChanged.next(this.#pubkey);
+    this.#profileChanged.next(this.#profile);
+    this.#eventsChanged.next(this.events);
   }
 
   setProfile(profile: NostrProfileDocument | undefined) {

@@ -99,6 +99,7 @@ export class ProfileActionsComponent {
       nip05: this.profile.nip05,
       picture: this.profile.picture,
       website: this.profile.website,
+      banner: this.profile.banner,
       lud06: this.profile.lud06,
       display_name: this.profile.display_name,
     };

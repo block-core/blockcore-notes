@@ -627,6 +627,11 @@ export class ProfileService {
     if (!profile) {
       profile = document;
     } else {
+      if (profile.created_at && document.created_at && profile.created_at >= document.created_at) {
+        // If the existing profile is newer, ignore this update.
+        return;
+      }
+
       profile.name = document.name;
       profile.about = document.about;
       profile.nip05 = document.nip05;
@@ -635,6 +640,12 @@ export class ProfileService {
       profile.website = document.website;
       profile.display_name = document.display_name;
       profile.picture = document.picture;
+
+      if (document.banner) {
+        debugger;
+      }
+
+      profile.banner = document.banner;
       profile.created_at = document.created_at;
     }
 

@@ -109,6 +109,7 @@ export interface NostrProfile {
   name: string;
   about: string;
   picture: string;
+  banner?: string;
 
   /** https://github.com/nostr-protocol/nips/blob/master/05.md */
   nip05: string;

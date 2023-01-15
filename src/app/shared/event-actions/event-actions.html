@@ -21,6 +21,11 @@
     <mat-icon>copy_all</mat-icon>
     <span>Copy</span>
   </button>
+
+  <button mat-menu-item [matMenuTriggerFor]="shareMenu">
+    <mat-icon>ios_share</mat-icon>
+    <span>Share</span>
+  </button>
 </mat-menu>
 
 <mat-menu #copyMenu="matMenu">
@@ -39,5 +44,12 @@
   <button mat-menu-item *ngIf="event" (click)="copyEvent()">
     <mat-icon>content_copy</mat-icon>
     <span>Note Data</span>
+  </button>
+</mat-menu>
+
+<mat-menu #shareMenu="matMenu">
+  <button mat-menu-item (click)="copy('https://notes.blockcore.net/e/' + event!.id)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Note URL</span>
   </button>
 </mat-menu>
