@@ -49,12 +49,10 @@ export class ProfileHeaderComponent {
   getBannerBackgroundStyle(banner?: string) {
     if (!banner) {
       return '';
-      // return 'url(https://dafb3cv85j5xj.cloudfront.net/blog/wp-content/uploads/2017/04/journey.gif)';
     }
 
-    return `url(${banner})`;
-
-    // return this.utilities.sanitizeStyleUrl(banner);
+    const url = this.utilities.sanitizeImageUrl(banner);
+    return `url(${url})`;
   }
 
   showProfileImage() {
