@@ -230,7 +230,7 @@ export class CirclesComponent {
   }
 
   async ngOnInit() {
-    this.appState.title = 'Circles';
+    this.appState.updateTitle('Circles');
     this.appState.showBackButton = false;
     this.appState.actions = [
       {

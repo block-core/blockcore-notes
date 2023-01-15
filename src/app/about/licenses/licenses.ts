@@ -17,7 +17,7 @@ export class LicensesComponent {
 
   ngOnInit() {
     this.appState.showBackButton = true;
-    this.appState.title = 'Licenses';
+    this.appState.updateTitle('Licenses');
     this.appState.actions = [];
 
     const dataFormatter = (data: string) => `<pre>${data.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;

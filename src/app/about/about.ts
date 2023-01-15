@@ -13,7 +13,7 @@ export class AboutComponent {
 
   ngOnInit() {
     this.appState.showBackButton = true;
-    this.appState.title = 'About';
+    this.appState.updateTitle('About');
     this.appState.actions = [];
   }
 }

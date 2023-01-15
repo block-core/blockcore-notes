@@ -135,7 +135,7 @@ export class FeedPrivateComponent {
   hasFollowers = false;
 
   async ngOnInit() {
-    this.appState.title = 'Following Notes';
+    this.appState.updateTitle('Following Notes');
     this.options.options.privateFeed = true;
 
     this.subscriptions.push(

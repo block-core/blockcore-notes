@@ -9,7 +9,7 @@ export class ChatComponent {
   constructor(private appState: ApplicationState) {}
 
   async ngOnInit() {
-    this.appState.title = 'Chat';
+    this.appState.updateTitle('Chat');
     this.appState.goBack = true;
     this.appState.actions = [];
   }

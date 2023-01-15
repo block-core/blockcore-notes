@@ -25,7 +25,7 @@ export class NotesComponent {
   }
 
   ngOnInit() {
-    this.appState.title = 'Saved Notes';
+    this.appState.updateTitle('Saved Notes');
     this.appState.goBack = true;
     this.appState.actions = [];
   }

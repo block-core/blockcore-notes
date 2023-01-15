@@ -24,7 +24,7 @@ export class FollowersComponent {
 
     this.subscriptions.push(
       this.ui.profile$.subscribe((profile) => {
-        this.appState.title = `@${profile?.name}`;
+        this.appState.updateTitle(`@${profile?.name}`);
       })
     );
 

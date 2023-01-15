@@ -81,7 +81,6 @@ export class AppComponent {
       }
     }
 
-    // appState.title = 'Blockcore Notes';
     this.authService.authInfo$.subscribe(async (auth) => {
       auth.publicKeyHex;
 

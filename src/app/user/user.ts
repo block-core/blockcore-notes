@@ -228,7 +228,7 @@ export class UserComponent {
 
     this.appState.showBackButton = true;
     this.appState.actions = [];
-    this.appState.title = '';
+    this.appState.updateTitle('');
 
     this.subscriptions.push(
       this.activatedRoute.queryParams.subscribe(async (params) => {
