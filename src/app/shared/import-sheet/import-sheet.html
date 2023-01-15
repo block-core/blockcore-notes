@@ -1,10 +1,10 @@
 <mat-nav-list>
-  <a href="https://keep.google.com/" mat-list-item (click)="openLink($event)">
-    <span matListItemTitle>Google Keep</span>
-    <span matLine>Add to a note</span>
+  <a mat-list-item (click)="import($event)">
+    <span matListItemTitle>Found {{data.pubkeys.length}} profiles</span>
+    <span matLine>Import your existing public following list</span>
   </a>
 
-  <a href="https://docs.google.com/" mat-list-item (click)="openLink($event)">
+  <!-- <a href="https://docs.google.com/" mat-list-item (click)="openLink($event)">
     <span matListItemTitle>Google Docs</span>
     <span matLine>Embed in a document</span>
   </a>
@@ -17,5 +17,6 @@
   <a href="https://hangouts.google.com/" mat-list-item (click)="openLink($event)">
     <span matListItemTitle>Google Hangouts</span>
     <span matLine>Show to your coworkers</span>
-  </a>
+  </a> -->
+
 </mat-nav-list>

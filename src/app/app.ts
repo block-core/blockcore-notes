@@ -24,6 +24,7 @@ import { CircleService } from './services/circle';
 import { StorageService } from './services/storage';
 import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { UIService } from './services/ui';
 
 @Component({
   selector: 'app-root',
@@ -55,6 +56,7 @@ export class AppComponent {
     private circleService: CircleService,
     public profileService: ProfileService,
     public navigationService: NavigationService,
+    private ui: UIService,
     private bottomSheet: MatBottomSheet,
     public searchService: SearchService,
     public theme: ThemeService
@@ -185,7 +187,36 @@ export class AppComponent {
     await this.dataService.initialize();
 
     // Download the profile of the user.
-    this.dataService.enque({ identifier: this.appState.getPublicKey(), type: 'Profile' });
+    this.dataService.enque({
+      identifier: this.appState.getPublicKey(),
+      type: 'Profile',
+      // callback: (data: any) => {
+      //   // This call back is only called if we found a newer profile than already exists.
+      //   // So when this happens, we'll show the import sheet.
+      //   console.log(data);
+      //   debugger;
+
+      //   this.openImportSheet();
+
+      //   // if (!this.profileService.profile?.following || this.profileService.profile?.following.length === 0) {
+
+      //   // }
+      // },
+    });
+
+    // Download the following of the user.
+    this.dataService.enque({
+      identifier: this.appState.getPublicKey(),
+      type: 'Contacts',
+      callback: (data: any) => {
+        const following = this.profileService.profile?.following;
+        const pubkeys = data.tags.map((t: any[]) => t[1]);
+
+        if (!following && this.profileService.profiles.length === 0) {
+          this.openImportSheet({ pubkeys: pubkeys, pubkey: data.pubkey });
+        }
+      },
+    });
 
     // .subscribe(async (profile) => {
     //   // TODO: Figure out why we get promises from this observable.
@@ -223,7 +254,9 @@ export class AppComponent {
     // console.log(testdata);
   }
 
-  openImportSheet(): void {
-    this.bottomSheet.open(ImportSheet);
+  openImportSheet(data: any): void {
+    this.bottomSheet.open(ImportSheet, {
+      data: data,
+    });
   }
 }

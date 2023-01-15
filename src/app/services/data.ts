@@ -208,6 +208,12 @@ export class DataService {
 
       // Make sure we run update and not put whenever we download the latest profile.
       await this.profileService.updateProfile(event.pubkey, event);
+
+      for (let i = 0; i < jobs.length; i++) {
+        if (jobs[i].callback) {
+          jobs[i].callback(event);
+        }
+      }
     });
   }
 

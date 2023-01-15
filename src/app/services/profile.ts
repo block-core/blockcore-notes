@@ -79,7 +79,10 @@ export class ProfileService {
     return this.#profileChanged.asObservable();
   }
 
+  profile?: NostrProfileDocument;
+
   userProfileUpdated(profile: NostrProfileDocument | undefined) {
+    this.profile = profile;
     this.#profileChanged.next(profile);
   }
 
