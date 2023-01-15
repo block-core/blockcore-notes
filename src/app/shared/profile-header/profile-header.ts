@@ -22,21 +22,11 @@ export class ProfileHeaderComponent {
   tooltip = '';
   tooltipName = '';
   circle?: Circle;
-  npub!: string;
+  // npub!: string;
   qr06?: string;
   qr16?: string;
 
   constructor(public ui: UIService, public profileService: ProfileService, public dialog: MatDialog, public circleService: CircleService, public utilities: Utilities) {}
-
-  async ngAfterViewInit() {}
-
-  // get item() {
-  //   if (this.profile) {
-  //     return this.profile;
-  //   } else {
-  //     return this.profileService.item;
-  //   }
-  // }
 
   get imagePath() {
     if (this.ui.profile!.picture) {
@@ -45,10 +35,6 @@ export class ProfileHeaderComponent {
 
     return ProfileHeaderComponent.defaultProfileImage;
   }
-
-  
-
-
 
   showProfileImage() {
     this.dialog.open(ProfileImageDialog, {
@@ -65,20 +51,6 @@ export class ProfileHeaderComponent {
   }
 
   paymentVersion = 'lud06';
-
-  // toggleLn() {
-  //   if (!this.profile) {
-  //     return;
-  //   }
-
-  //   if (this.profile.lud16 && this.profile.lud06) {
-  //     this.paymentVersion = this.paymentVersion == 'lud06' ? 'lud06' : 'lud16';
-  //   }
-  // }
-
-  // async getCircle(id: number) {
-  //   return this.circleService.get(id);
-  // }
 
   async ngOnInit() {
     // if (!this.profile) {
