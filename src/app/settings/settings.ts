@@ -49,6 +49,16 @@ export class SettingsComponent {
     this.wipedNonFollow = true;
   }
 
+  async onRelayChanged(relay: NostrRelay) {
+    if (relay.metadata.enabled) {
+      await relay.connect();
+    } else {
+      await relay.close();
+    }
+
+    await this.relayService.putRelayMetadata(relay.metadata);
+  }
+
   async clearDatabase() {
     await this.db.delete();
     this.wiped = true;
