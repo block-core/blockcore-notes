@@ -204,6 +204,8 @@ a {
 a:hover {
   color: #c7b3ea;
   text-decoration: none;
+  transition: text-decoration 250ms ease;
+  transition: color 250ms ease;
 }
 
 app-profile-actions {
@@ -371,6 +373,7 @@ mat-sidenav-content mat-toolbar {
   // background-color: #535353;
   background-color: rgba(0, 0, 0, 0.04);
   cursor: pointer;
+  transition: background-color 250ms ease;
 }
 
 // .events {
@@ -382,6 +385,7 @@ mat-sidenav-content mat-toolbar {
   // background-color: #535353;
   background-color: rgba(0, 0, 0, 0.04);
   cursor: pointer;
+  transition: background-color 250ms ease;
 }
 
 .noclick:hover {
@@ -511,8 +515,9 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-image-large:hover {
-  opacity: 0.8;
+  opacity: 0.6;
   cursor: pointer;
+  transition: opacity 500ms ease;
 }
 
 @media only screen and (max-width: 599px) {
