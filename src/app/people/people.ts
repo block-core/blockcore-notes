@@ -30,6 +30,30 @@ export class PeopleComponent {
 
   items$ = this.profileService.items$;
 
+  sortedItems$ = this.items$.pipe(
+    map((data) => {
+      data.sort((a, b) => {
+        // if (a.name && !b.name) {
+        //   return -1;
+        // }
+
+        // if (b.name && !a.name) {
+        //   return 1;
+        // }
+
+        // if (!a.name && !b.name) {
+        //   return 0;
+        // }
+
+        return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
+      });
+
+      return data;
+    })
+  );
+
+  selected = 'name-asc';
+
   searchTerm: any;
   constructor(
     public navigation: NavigationService,
@@ -48,6 +72,154 @@ export class PeopleComponent {
   //   this.profiles = [];
   //   await this.load();
   // }
+
+  updateSorting(sorting: string) {
+    if (sorting === 'name-asc') {
+      this.sortedItems$ = this.items$.pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            // if (a.name && !b.name) {
+            //   return -1;
+            // }
+
+            // if (b.name && !a.name) {
+            //   return 1;
+            // }
+
+            // if (!a.name && !b.name) {
+            //   return 0;
+            // }
+
+            // if (!a.name) {
+            //   return -1;
+            // }
+
+            // if (!b.name) {
+            //   return -2;
+            // }
+
+            // if (!a.name && !b.name) {
+            //   return 0;
+            // }
+
+            return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
+          });
+
+          return data;
+        })
+      );
+    } else if (sorting === 'name-desc') {
+      this.sortedItems$ = this.items$.pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            // if (!a.name) {
+            //   return 1;
+            // }
+
+            // if (!b.name) {
+            //   return 2;
+            // }
+
+            // if (!a.name && !b.name) {
+            //   return 0;
+            // }
+
+            return a.name?.toLowerCase() < b.name?.toLowerCase() ? 1 : -1;
+          });
+
+          return data;
+        })
+      );
+    } else if (sorting === 'followed-asc') {
+      this.sortedItems$ = this.items$.pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            // if (!a.name) {
+            //   return 1;
+            // }
+
+            // if (!b.name) {
+            //   return 2;
+            // }
+
+            // if (!a.name && !b.name) {
+            //   return 0;
+            // }
+
+            return a.followed! < b.followed! ? -1 : 1;
+          });
+
+          return data;
+        })
+      );
+    } else if (sorting === 'followed-desc') {
+      this.sortedItems$ = this.items$.pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            // if (!a.name) {
+            //   return 1;
+            // }
+
+            // if (!b.name) {
+            //   return 2;
+            // }
+
+            // if (!a.name && !b.name) {
+            //   return 0;
+            // }
+
+            return a.followed! < b.followed! ? 1 : -1;
+          });
+
+          return data;
+        })
+      );
+    } else if (sorting === 'created-asc') {
+      this.sortedItems$ = this.items$.pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            // if (!a.name) {
+            //   return 1;
+            // }
+
+            // if (!b.name) {
+            //   return 2;
+            // }
+
+            // if (!a.name && !b.name) {
+            //   return 0;
+            // }
+
+            return a.created_at! < b.created_at! ? -1 : 1;
+          });
+
+          return data;
+        })
+      );
+    } else if (sorting === 'created-desc') {
+      this.sortedItems$ = this.items$.pipe(
+        map((data) => {
+          data.sort((a, b) => {
+            // if (!a.name) {
+            //   return 1;
+            // }
+
+            // if (!b.name) {
+            //   return 2;
+            // }
+
+            // if (!a.name && !b.name) {
+            //   return 0;
+            // }
+
+            return a.created_at! < b.created_at! ? 1 : -1;
+          });
+
+          return data;
+        })
+      );
+    }
+  }
 
   optionsUpdated($event: any, type: any) {
     if (type == 1) {

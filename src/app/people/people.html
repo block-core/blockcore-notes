@@ -23,11 +23,23 @@
           <mat-slide-toggle class="options-slider" [(ngModel)]="showAbout">Show about</mat-slide-toggle>
           <mat-slide-toggle class="options-slider" [(ngModel)]="showFollowingDate">Show following date</mat-slide-toggle>
         </p>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sorting</mat-label>
+          <mat-select  (selectionChange)="updateSorting(selected)" [(value)]="selected">
+            <mat-option value="name-asc">Name (A-Z)</mat-option>
+            <mat-option value="name-desc">Name (Z-A)</mat-option>
+            <mat-option value="followed-asc">Followed (Newest)</mat-option>
+            <mat-option value="followed-desc">Followed (Oldest)</mat-option>
+            <mat-option value="created-asc">Updated (Newest)</mat-option>
+            <mat-option value="created-desc">Updated (Oldest)</mat-option>
+          </mat-select>
+        </mat-form-field>
       </mat-expansion-panel>
     </mat-accordion>
   </div>
 
-  <div class="people-list" *ngIf="items$ | withStatus | async as items">
+  <div class="people-list" *ngIf="sortedItems$ | withStatus | async as items">
     <ng-template [ngIf]="items.value">
       <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of items.value; trackBy: trackByFn">
         <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
@@ -51,14 +63,14 @@
     <ng-template [ngIf]="items.loading">Loading...</ng-template>
   </div> -->
 
-  <div *ngIf="items$ | async as profiles">
+  <!-- <div *ngIf="items$ | async as profiles"> -->
     <!-- <div class="centered" style="width: 100%">
       <br />
       <mat-spinner class="loading"></mat-spinner>
     </div> -->
 
     <!-- Count: {{ profiles.length }} -->
-  </div>
+  <!-- </div> -->
 
   <p class="dimmed">People are those you are following. You can use circles to organize your people.</p>
 </div>
