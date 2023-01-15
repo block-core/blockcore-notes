@@ -50,7 +50,9 @@
       </button>
       <header>
         <div class="bio" (click)="openProfile()">
-          <img [src]="bgimagePath" alt="background" class="bg" />
+          <img *ngIf="profile?.banner" [src]="profile?.banner" alt="background" class="bg" />
+          <img *ngIf="!profile?.banner" [src]="bgimagePath" alt="background" class="bg" />
+
           <div class="desc">
             <h3><span *ngIf="profile?.name">@</span>{{ profile?.name }}</h3>
             <p>{{ profile?.about }}</p>
@@ -64,7 +66,9 @@
         <div class="data">
           <ul>
             <li>0 <span>Followers</span></li>
-            <li *ngIf="profileService.following$ | async as following">{{ following.length }} <span>Following</span></li>
+            <li *ngIf="profileService.items$ | async as following">
+              <a class="opposite-link" [routerLink]="['/following', appState.getPublicKey()]" (click)="toggleProfileMenu()"> {{ following.length }} <span>Following</span></a>
+            </li>
           </ul>
         </div>
       </div>
