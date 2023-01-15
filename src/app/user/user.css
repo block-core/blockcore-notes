@@ -2,3 +2,6 @@
   display: inline-block;
 }
 
+.feed-page {
+  min-height: 1200px;
+}

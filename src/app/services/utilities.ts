@@ -144,13 +144,51 @@ export class Utilities {
     return secp.utils.bytesToHex(publicKey);
   }
 
-  sanitize(url: string) {
+  sanitizeLUD06(url?: string) {
+    // Do not allow http prefix.
+    if (!url && url?.startsWith('http')) {
+      return undefined;
+    }
+
+    return url;
+  }
+
+  sanitizeUrl(url?: string) {
+    if (!url && !url?.startsWith('http')) {
+      return '';
+    }
+
+    return url;
+  }
+
+  sanitizeImageUrl(url?: string) {
+    url = this.sanitizeUrl(url);
+
+    if (!url) {
+      return undefined;
+    }
+
+    const urlLower = url.toLowerCase();
+
+    if (urlLower.endsWith('jpg') || urlLower.endsWith('jpeg') || urlLower.endsWith('png') || urlLower.endsWith('webp') || urlLower.endsWith('gif')) {
+      return url;
+    }
+
+    return undefined;
+  }
+
+  bypassUrl(url: string) {
     const clean = this.sanitizer.bypassSecurityTrustUrl(url);
     return clean;
   }
 
-  sanitizeUrl(url: string) {
+  bypassResourceUrl(url: string) {
     const clean = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    return clean;
+  }
+
+  bypassStyle(url: string) {
+    const clean = this.sanitizer.bypassSecurityTrustStyle(url);
     return clean;
   }
 }
