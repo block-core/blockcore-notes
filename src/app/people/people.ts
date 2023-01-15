@@ -73,35 +73,13 @@ export class PeopleComponent {
   //   await this.load();
   // }
 
-  updateSorting(sorting: string) {
+  updateSorting() {
+    const sorting = this.selected;
+
     if (sorting === 'name-asc') {
       this.sortedItems$ = this.items$.pipe(
         map((data) => {
           data.sort((a, b) => {
-            // if (a.name && !b.name) {
-            //   return -1;
-            // }
-
-            // if (b.name && !a.name) {
-            //   return 1;
-            // }
-
-            // if (!a.name && !b.name) {
-            //   return 0;
-            // }
-
-            // if (!a.name) {
-            //   return -1;
-            // }
-
-            // if (!b.name) {
-            //   return -2;
-            // }
-
-            // if (!a.name && !b.name) {
-            //   return 0;
-            // }
-
             return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
           });
 
@@ -112,18 +90,6 @@ export class PeopleComponent {
       this.sortedItems$ = this.items$.pipe(
         map((data) => {
           data.sort((a, b) => {
-            // if (!a.name) {
-            //   return 1;
-            // }
-
-            // if (!b.name) {
-            //   return 2;
-            // }
-
-            // if (!a.name && !b.name) {
-            //   return 0;
-            // }
-
             return a.name?.toLowerCase() < b.name?.toLowerCase() ? 1 : -1;
           });
 
@@ -134,19 +100,7 @@ export class PeopleComponent {
       this.sortedItems$ = this.items$.pipe(
         map((data) => {
           data.sort((a, b) => {
-            // if (!a.name) {
-            //   return 1;
-            // }
-
-            // if (!b.name) {
-            //   return 2;
-            // }
-
-            // if (!a.name && !b.name) {
-            //   return 0;
-            // }
-
-            return a.followed! < b.followed! ? -1 : 1;
+            return a.followed! < b.followed! ? 1 : -1;
           });
 
           return data;
@@ -156,19 +110,7 @@ export class PeopleComponent {
       this.sortedItems$ = this.items$.pipe(
         map((data) => {
           data.sort((a, b) => {
-            // if (!a.name) {
-            //   return 1;
-            // }
-
-            // if (!b.name) {
-            //   return 2;
-            // }
-
-            // if (!a.name && !b.name) {
-            //   return 0;
-            // }
-
-            return a.followed! < b.followed! ? 1 : -1;
+            return a.followed! < b.followed! ? -1 : 1;
           });
 
           return data;
@@ -178,18 +120,6 @@ export class PeopleComponent {
       this.sortedItems$ = this.items$.pipe(
         map((data) => {
           data.sort((a, b) => {
-            // if (!a.name) {
-            //   return 1;
-            // }
-
-            // if (!b.name) {
-            //   return 2;
-            // }
-
-            // if (!a.name && !b.name) {
-            //   return 0;
-            // }
-
             return a.created_at! < b.created_at! ? -1 : 1;
           });
 
@@ -257,6 +187,8 @@ export class PeopleComponent {
     } else {
       this.items$ = this.profileService.items$;
     }
+
+    this.updateSorting();
 
     this.loading = false;
   }

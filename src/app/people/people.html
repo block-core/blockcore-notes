@@ -26,7 +26,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Sorting</mat-label>
-          <mat-select  (selectionChange)="updateSorting(selected)" [(value)]="selected">
+          <mat-select  (selectionChange)="updateSorting()" [(value)]="selected">
             <mat-option value="name-asc">Name (A-Z)</mat-option>
             <mat-option value="name-desc">Name (Z-A)</mat-option>
             <mat-option value="followed-asc">Followed (Newest)</mat-option>

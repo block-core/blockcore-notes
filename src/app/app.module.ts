@@ -1,5 +1,6 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app';
@@ -88,6 +89,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FollowingComponent } from './following/following';
 import { FollowersComponent } from './followers/followers';
 import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
+import { ImportSheet } from './shared/import-sheet/import-sheet';
 
 @NgModule({
   declarations: [
@@ -134,6 +136,7 @@ import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
     FollowingComponent,
     FollowersComponent,
     ProfileWidgetComponent,
+    ImportSheet
   ],
   imports: [
     HttpClientModule,
@@ -169,6 +172,7 @@ import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
     FormsModule,
     ReactiveFormsModule,
     LayoutModule,
+    MatBottomSheetModule,
     NgxLoadingButtonsModule,
     MatSnackBarModule,
     MatProgressBarModule,
