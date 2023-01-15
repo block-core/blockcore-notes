@@ -41,6 +41,7 @@ export class Utilities {
       lud06: profile.lud06,
       display_name: profile.display_name,
       website: profile.website,
+      banner: profile.banner,
       // TODO: Consider adding support for these in the future depending on how the community of Nostr grows and adopts these fields.
     } as NostrProfile;
   }
