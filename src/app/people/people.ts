@@ -25,6 +25,7 @@ export class PeopleComponent {
   showBlocked = false;
   showCached = false;
   showMuted = false;
+  showAbout = true;
 
   items$ = this.profileService.items$;
 

@@ -19,6 +19,9 @@
           <mat-slide-toggle class="options-slider" [(ngModel)]="showMuted" (change)="optionsUpdated($event, 2)">Show muted</mat-slide-toggle>
           <mat-slide-toggle class="options-slider" [(ngModel)]="showCached" (change)="optionsUpdated($event, 3)">Show cached</mat-slide-toggle>
         </p>
+        <p>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="showAbout">Show about</mat-slide-toggle>
+        </p>
       </mat-expansion-panel>
     </mat-accordion>
   </div>
@@ -41,7 +44,7 @@
           </app-event-header>
           <app-profile-actions [profile]="profile"></app-profile-actions>
         </div>
-        <div class="content clickable">{{ profile.about }}</div>
+        <div *ngIf="showAbout" class="content clickable">{{ profile.about }}</div>
       </mat-card>
     </ng-template>
     <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
