@@ -36,8 +36,6 @@ export class SettingsComponent {
     }
   }
 
-  enDis(){};
-
   async deleteRelay(relay: Relay) {
     await this.relayService.deleteRelay(relay.url);
   }
@@ -49,6 +47,16 @@ export class SettingsComponent {
   async clearProfileCache() {
     // await this.profileService.wipeNonFollow();
     this.wipedNonFollow = true;
+  }
+
+  async onRelayChanged(relay: NostrRelay) {
+    if (relay.metadata.enabled) {
+      await relay.connect();
+    } else {
+      await relay.close();
+    }
+
+    await this.relayService.putRelayMetadata(relay.metadata);
   }
 
   async clearDatabase() {

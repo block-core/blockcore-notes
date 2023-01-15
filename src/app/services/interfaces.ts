@@ -65,6 +65,7 @@ export interface NostrRelayDocument {
   write: boolean;
   nip11?: any;
   error?: string;
+  enabled?: boolean;
 }
 
 /** OBSOLETE */

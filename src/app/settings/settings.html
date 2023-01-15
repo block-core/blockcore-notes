@@ -15,21 +15,21 @@
                 <mat-icon class="online" [ngClass]="'relay-status-' + relay.status">radio_button_checked</mat-icon>
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <div *ngIf="relay.metadata.error" class="error">
-              {{ relay.metadata.error }}
-            </div>
+            <div *ngIf="relay.metadata.error" class="error">{{ relay.metadata.error }}</div>
             <div *ngIf="relay.metadata.nip11">
               <h2 *ngIf="relay.metadata.nip11?.name">{{ relay.metadata.nip11?.name }}</h2>
               {{ relay.metadata.nip11.description }}<br /><br />
               <span class="dimmed">
                 NIPs: {{ relay.metadata.nip11.supported_nips }}<br />
                 Software: {{ relay.metadata.nip11.software }} ({{ relay.metadata.nip11.version }})<br />
-                <span class="wrap"> ID: {{ relay.metadata.nip11.pubkey }}</span></span>
-            <div> Subscriptions Count : {{ relay.subscriptions.length }} </div>
-
+                <span class="wrap"> ID: {{ relay.metadata.nip11.pubkey }}</span></span
+              >
+              <div>Subscriptions Count : {{ relay.subscriptions.length }}</div>
             </div>
             <button class="delete-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">Delete</button>
-            <mat-slide-toggle class="options-slider" (click)="enDis()">&nbsp;On/Off</mat-slide-toggle>
+
+            {{relay.metadata.enabled}}
+            <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.metadata.enabled">&nbsp;On/Off</mat-slide-toggle>
           </mat-expansion-panel>
         </mat-accordion>
 
@@ -61,7 +61,7 @@
           </mat-card-content>
         </mat-card>
 
-        <br>
+        <br />
 
         <mat-card>
           <mat-card-content>

@@ -256,9 +256,12 @@ export class RelayService {
       relay.metadata.error = `Unable to get NIP-11 data. Status: ${err}`;
     }
 
-    // Persist the latest NIP11 metadata on the NostrRelayDocument.
-    await this.table.put(relay.metadata);
+    await this.putRelayMetadata(relay.metadata);
+  }
 
+  async putRelayMetadata(metadata: NostrRelayDocument) {
+    // Persist the latest NIP11 metadata on the NostrRelayDocument.
+    await this.table.put(metadata);
     this.relaysUpdated();
   }
 
@@ -385,6 +388,7 @@ export class RelayService {
 
   async connect() {
     const items = await this.table.toArray();
+
     let relayCountCountdown = items.length;
 
     const observables = [];
@@ -470,8 +474,14 @@ export class RelayService {
     // Keep a reference of the metadata on the relay instance.
     relay.metadata = server;
 
+    if (relay.metadata.enabled == undefined) {
+      relay.metadata.enabled = true;
+    }
+
     try {
-      await relay.connect();
+      if (relay.metadata.enabled) {
+        await relay.connect();
+      }
     } catch (err) {
       console.log(err);
       relay.metadata.error = 'Unable to connect.';
