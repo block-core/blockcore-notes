@@ -11,7 +11,7 @@ export class DataValidation {
   contentLimit = 16384;
   tagsLimit = 50;
 
-  profileLimit = 16384;
+  profileLimit = 16384; // Should we consider 32768 for profiles?
   profileTagsLimit = 1000;
 
   contactsContentLimit = 16384;
@@ -111,7 +111,6 @@ export class DataValidation {
 
   /** Returns true if valid, false if not valid. Does not throw error for optimization purposes. */
   validateContacts(event: NostrEvent) {
-    debugger;
     if (event.pubkey.length < 60 || event.pubkey.length > 70) {
       return null;
     }

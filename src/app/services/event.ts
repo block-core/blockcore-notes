@@ -9,8 +9,15 @@ export class EventService {
   constructor(private validator: DataValidation) {}
 
   processEvent(originalEvent: NostrEvent): NostrEvent | null {
-    // Validate the event:
-    let event = this.validator.validateEvent(originalEvent);
+    let event;
+
+    if (originalEvent.kind == 3) {
+      // Validate the contacts:
+      event = this.validator.validateContacts(originalEvent);
+    } else {
+      // Validate the event:
+      event = this.validator.validateEvent(originalEvent);
+    }
 
     if (!event) {
       debugger;
@@ -24,29 +31,6 @@ export class EventService {
     if (!event) {
       return null;
     }
-
-    // TODO: Store the raw event.
-    // const nostrEvent = event as NostrEventDocument;
-    // nostrEvent.raw = originalEvent;
-
-    return event;
-  }
-
-  processContacts(originalEvent: NostrEvent): NostrEvent | null {
-    // Validate the event:
-    let event = this.validator.validateContacts(originalEvent);
-
-    if (!event) {
-      debugger;
-      console.log('INVALID CONTACT EVENT!');
-      return null;
-    }
-
-    // event = this.validator.filterEvent(event);
-
-    // if (!event) {
-    //   return null;
-    // }
 
     // TODO: Store the raw event.
     // const nostrEvent = event as NostrEventDocument;
