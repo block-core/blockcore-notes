@@ -25,10 +25,18 @@
 
   <div class="people-list" *ngIf="items$ | withStatus | async as items">
     <ng-template [ngIf]="items.value">
-      <mat-card class="people-card events clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of items.value; trackBy: trackByFn">
+      <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of items.value; trackBy: trackByFn">
         <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
         <div class="events-header">
-          <app-event-header [profile]="profile"><span class="clickable" *ngIf="profile.created">Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon></app-event-header>
+          <app-event-header [profile]="profile">
+            <small>
+            <span class="clickable" *ngIf="profile.created">
+          
+          
+            Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon>
+          </small>
+          
+          </app-event-header>
           <app-profile-actions [profile]="profile"></app-profile-actions>
         </div>
         <div class="content clickable">{{ profile.about }}</div>

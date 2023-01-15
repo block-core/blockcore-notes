@@ -361,6 +361,18 @@ mat-sidenav-content mat-toolbar {
   border-radius: 10px !important;
 }
 
+.people {
+  padding: 1em;
+  margin-bottom: 0;
+  border-radius: 10px !important;
+}
+
+.people.clickable:hover {
+  // background-color: #535353;
+  background-color: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+
 // .events {
 //   background-color: #535353;
 //   cursor: pointer;
