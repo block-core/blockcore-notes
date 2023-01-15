@@ -46,6 +46,16 @@ export class ProfileHeaderComponent {
     return ProfileHeaderComponent.defaultProfileImage;
   }
 
+  getBannerBackgroundStyle(banner?: string) {
+    if (!banner) {
+      return 'url(https://dafb3cv85j5xj.cloudfront.net/blog/wp-content/uploads/2017/04/journey.gif)';
+    }
+
+    return `url(${banner})`;
+
+    // return this.utilities.sanitizeStyleUrl(banner);
+  }
+
   showProfileImage() {
     this.dialog.open(ProfileImageDialog, {
       data: { picture: this.imagePath },

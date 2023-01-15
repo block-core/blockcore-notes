@@ -47,7 +47,7 @@ export class ProfileComponent {
   ) {}
 
   async ngOnInit() {
-    this.appState.title = 'Edit Profile';
+    this.appState.updateTitle('Edit Profile');
 
     this.originalProfile = {
       name: '',

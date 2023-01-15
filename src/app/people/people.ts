@@ -92,7 +92,7 @@ export class PeopleComponent {
   }
 
   async ngOnInit() {
-    this.appState.title = 'People';
+    this.appState.updateTitle('People');
     this.appState.showBackButton = false;
     this.appState.actions = [
       {

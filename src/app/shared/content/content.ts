@@ -75,7 +75,7 @@ export class ContentComponent {
       this.images = images.map((i) => this.utilities.sanitizeUrl(i[0]));
 
       const thisisthewayMatch = [...content.matchAll(ContentComponent.regexpThisIsTheWay)];
-      const thisistheway = thisisthewayMatch.map((i) => this.utilities.sanitizeUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
+      const thisistheway = thisisthewayMatch.map((i) => this.utilities.bypassResourceUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
       this.images.push(...thisistheway);
 
       const videos = [...content.matchAll(ContentComponent.regexpVideo)];

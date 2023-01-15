@@ -131,7 +131,7 @@ h3 {
 }
 
 .profile-page {
-  padding: 1.6em 1.6em 0 1.6em;
+  // padding: 1.6em 1.6em 0 1.6em;
 }
 
 .feed-page {
@@ -145,9 +145,6 @@ h3 {
 .lines {
   border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
 }
-
-
-
 
 .image-grid {
   display: grid;
@@ -177,18 +174,6 @@ h3 {
   width: 100%;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
 @media only screen and (max-width: 599px) {
   body {
@@ -200,7 +185,11 @@ h3 {
   }
 
   .profile-page {
-    padding: 0.8em 0.8em 0 0.8em;
+    // padding: 0.8em 0.8em 0 0.8em;
+  }
+
+  .profile-page-header {
+    padding: 0 0.8em 0 0.8em;
   }
 
   .feed-page {
@@ -422,6 +411,8 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-image {
+  padding-top: 3em;
+  margin-top: 3em;
   /* border: 1px solid; */
 }
 
@@ -434,12 +425,19 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-page-header {
+  padding: 0 1.6em 0 1.6em;
   display: flex;
   gap: 1em;
 }
 
 .profile-page-header-left {
   flex: 0 1 auto;
+  // display: flex;
+}
+
+.profile-image-anchor {
+  padding-top: 1.4em;
+  margin-top: -6em;
 }
 
 .profile-page-header-middle {
@@ -495,6 +493,7 @@ mat-sidenav-content mat-toolbar {
   width: 150px;
   height: 150px;
   border-radius: 50%;
+  // margin-top: -3em;
 }
 
 .profile-image-large:hover {
@@ -507,6 +506,11 @@ mat-sidenav-content mat-toolbar {
     width: 96px;
     height: 96px;
     border-radius: 50%;
+  }
+
+  .profile-image-anchor {
+    padding-top: 1em;
+    margin-top: -4em;
   }
 }
 

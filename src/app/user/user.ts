@@ -155,9 +155,19 @@ export class UserComponent {
           this.queueService.enqueContacts(profile.pubkey);
           // this.downloadFollowingAndRelays(profile);
         }
+
+        if (this.previousPubKey != profile.pubkey) {
+          setTimeout(() => {
+            const element2 = document.getElementById('profile-image-anchor');
+            element2!.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+            this.previousPubKey = profile.pubkey;
+          }, 50);
+        }
       })
     );
   }
+
+  previousPubKey?: string;
 
   async follow() {
     this.ui.profile!.status = ProfileStatus.Follow;
