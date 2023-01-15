@@ -14,3 +14,19 @@
   margin-bottom: 1em;
   border-radius: 10px;
 }
+
+.people-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+  /* margin-top: 1em; */
+}
+
+/* .people-list > * {
+  flex: 1 1 240px;
+} */
+
+.people-card {
+  flex: 1 1 240px;
+}
