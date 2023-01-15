@@ -48,7 +48,8 @@ export class ProfileHeaderComponent {
 
   getBannerBackgroundStyle(banner?: string) {
     if (!banner) {
-      return 'url(https://dafb3cv85j5xj.cloudfront.net/blog/wp-content/uploads/2017/04/journey.gif)';
+      return '';
+      // return 'url(https://dafb3cv85j5xj.cloudfront.net/blog/wp-content/uploads/2017/04/journey.gif)';
     }
 
     return `url(${banner})`;
