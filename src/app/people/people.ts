@@ -26,6 +26,7 @@ export class PeopleComponent {
   showCached = false;
   showMuted = false;
   showAbout = true;
+  showFollowingDate = true;
 
   items$ = this.profileService.items$;
 
