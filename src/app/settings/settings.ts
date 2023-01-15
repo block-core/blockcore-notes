@@ -36,6 +36,8 @@ export class SettingsComponent {
     }
   }
 
+  enDis(){};
+
   async deleteRelay(relay: Relay) {
     await this.relayService.deleteRelay(relay.url);
   }
