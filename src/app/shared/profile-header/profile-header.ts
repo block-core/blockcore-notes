@@ -46,12 +46,19 @@ export class ProfileHeaderComponent {
     return ProfileHeaderComponent.defaultProfileImage;
   }
 
+  defaultBackground = 'url(/assets/gradient.jpg)';
+
   getBannerBackgroundStyle(banner?: string) {
     if (!banner) {
-      return '';
+      return this.defaultBackground;
     }
 
     const url = this.utilities.sanitizeImageUrl(banner);
+
+    if (!url) {
+      return this.defaultBackground;
+    }
+
     return `url(${url})`;
   }
 

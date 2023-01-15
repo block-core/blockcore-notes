@@ -164,8 +164,6 @@ export class DataService {
     });
 
     return this.downloadNewestEventsByQuery(filters).subscribe(async (event) => {
-      console.log('processEventQueue: event', event);
-
       if (!event) {
         return;
       }
@@ -227,8 +225,6 @@ export class DataService {
     const jobs = this.queueService.queues.contacts.jobs.splice(0, 50);
     const pubkeys = jobs.map((j) => j.identifier);
 
-    console.log('processContactsQueue: pubkeys', pubkeys);
-
     // Use a dynamic timeout depending on the number of pubkeys requested.
     // const timeout = pubkeys.length * 1000;
     const timeout = pubkeys.length < 10 ? 10000 : 20000;
@@ -238,12 +234,9 @@ export class DataService {
       .pipe(
         finalize(() => {
           this.queueService.queues.contacts.active = false;
-          console.log('processContactsQueue: completed');
         })
       )
       .subscribe(async (event) => {
-        console.log('processContactsQueue: event', event);
-
         if (!event) {
           return;
         }
@@ -351,13 +344,7 @@ export class DataService {
 
     return merge(...observables)
       .pipe(
-        finalize(() => {
-          console.log('FINALIZED THE DOWNLOAD FROM ALL RELAYS!!');
-        })
-      )
-      .pipe(
         filter((data, index) => {
-          console.log('downloadNewestEventsByQuery', data);
           let result = false;
 
           // This logic is to ensure we don't care about receiving the same data more than once, unless the data is newer.

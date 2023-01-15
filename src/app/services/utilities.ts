@@ -153,6 +153,11 @@ export class Utilities {
     return url;
   }
 
+  sanitizeUrlAndBypass(url?: string) {
+    const cleanedUrl = this.sanitizeUrl(url);
+    return this.bypassUrl(cleanedUrl);
+  }
+
   sanitizeUrl(url?: string) {
     if (!url && !url?.startsWith('http')) {
       return '';
@@ -182,13 +187,13 @@ export class Utilities {
     return clean;
   }
 
-  bypassResourceUrl(url: string) {
-    const clean = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  bypassStyle(url: string) {
+    const clean = this.sanitizer.bypassSecurityTrustStyle(url);
     return clean;
   }
 
-  bypassStyle(url: string) {
-    const clean = this.sanitizer.bypassSecurityTrustStyle(url);
+  bypassFrameUrl(url: string) {
+    const clean = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     return clean;
   }
 }

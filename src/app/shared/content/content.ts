@@ -72,14 +72,14 @@ export class ContentComponent {
 
     if (isFollowing) {
       const images = [...content.matchAll(ContentComponent.regexpImage)];
-      this.images = images.map((i) => this.utilities.sanitizeUrl(i[0]));
+      this.images = images.map((i) => this.utilities.sanitizeUrlAndBypass(i[0]));
 
       const thisisthewayMatch = [...content.matchAll(ContentComponent.regexpThisIsTheWay)];
-      const thisistheway = thisisthewayMatch.map((i) => this.utilities.bypassResourceUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
+      const thisistheway = thisisthewayMatch.map((i) => this.utilities.bypassUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
       this.images.push(...thisistheway);
 
       const videos = [...content.matchAll(ContentComponent.regexpVideo)];
-      this.videos = videos.map((i) => this.utilities.sanitizeUrl(`https://www.youtube.com/embed/${i[1]}`));
+      this.videos = videos.map((i) => this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`));
 
       // Remove the image links from the text.
       content = content.replaceAll(ContentComponent.regexpImage, '');
