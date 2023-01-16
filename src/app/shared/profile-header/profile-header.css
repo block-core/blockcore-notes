@@ -91,3 +91,9 @@
   background-position: center;
   background-size: cover;
 }
+
+@media only screen and (max-width: 599px) {
+  .current-event {
+    margin-bottom: 0;
+  }
+}

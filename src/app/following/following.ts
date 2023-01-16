@@ -51,7 +51,7 @@ export class FollowingComponent {
 
         // this.pubkey = pubkey;
         // this.profileService.setItemByPubKey(pubkey);
-        this.appState.backUrl = '/p/' + pubkey;
+        // this.appState.backUrl = '/p/' + pubkey;
       })
     );
   }

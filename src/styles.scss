@@ -527,7 +527,7 @@ mat-sidenav-content mat-toolbar {
 }
 
 .opposite-link:hover {
-  text-decoration: underline !important;  
+  text-decoration: underline !important;
 }
 
 .profile-image-large:hover {
@@ -538,14 +538,22 @@ mat-sidenav-content mat-toolbar {
 
 @media only screen and (max-width: 599px) {
   .profile-image-large {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
+    width: 128px;
+    height: 128px;
   }
 
   .profile-image-anchor {
     padding-top: 1em;
-    margin-top: -4em;
+    margin-top: -6em;
+  }
+
+  .profile-page-header {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .profile-image-anchor {
+    text-align: center;
   }
 }
 
