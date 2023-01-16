@@ -119,13 +119,12 @@ export class EventButtonsComponent {
     try {
       const signedEvent = await this.dataService.signEvent(replyEvent);
       console.log(signedEvent);
+      await this.dataService.publishEvent(signedEvent);
       this.hideReply();
     } catch (err: any) {
       this.error = err.toString();
       console.log(err);
       this.publishing = false;
     }
-
-    // await this.dataService.publishEvent(signedEvent);
   }
 }
