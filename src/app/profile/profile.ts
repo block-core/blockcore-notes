@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay, Event, getEventHash } from 'nostr-tools';
+import { relayInit, Relay, Event, getEventHash, Kind } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
@@ -99,13 +99,7 @@ export class ProfileComponent {
   async updateMetadata() {
     const profileContent = this.utilities.reduceProfile(this.profile!);
 
-    let event: Event = {
-      kind: 0,
-      created_at: Math.floor(Date.now() / 1000),
-      content: JSON.stringify(profileContent),
-      pubkey: this.appState.getPublicKey(),
-      tags: [],
-    };
+    let event = this.dataService.createEvent(Kind.Metadata, JSON.stringify(profileContent));
 
     const signedEvent = await this.dataService.signEvent(event);
 

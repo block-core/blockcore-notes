@@ -5,7 +5,7 @@ import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject,
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { ApplicationState } from './applicationstate';
-import { Event } from 'nostr-tools';
+import { Event, Kind } from 'nostr-tools';
 import { DataService } from './data';
 
 @Injectable({
@@ -77,13 +77,7 @@ export class NavigationService {
       console.log('dialog data:', data);
       let note = data.note;
 
-      let event: Event = {
-        kind: 1,
-        created_at: Math.floor(Date.now() / 1000),
-        content: note,
-        pubkey: this.appState.getPublicKey(),
-        tags: [],
-      };
+      let event = this.dataService.createEvent(Kind.Text, JSON.stringify(note));
 
       // TODO: We should likely save this event locally to ensure user don't loose their posts
       // if all of the network is down.

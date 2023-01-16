@@ -13,3 +13,9 @@
 .events {
   padding: 0 !important;
 }
+
+.thread-actions {
+  margin-left: 1em;
+  padding-left: 1em;
+  padding-bottom: 0.3em;
+}

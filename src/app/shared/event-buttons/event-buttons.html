@@ -1,0 +1,14 @@
+<div class="thread-actions" [ngClass]="{ 'no-lines': !optionsService.options.showLines, 'lines': optionsService.options.showLines }">
+  <mat-icon class="reaction-icon toolbar-icon" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Reaction to post">sentiment_satisfied</mat-icon>
+  <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [showPreview]="true" (emojiSelect)="addEmoji($event)" title="Choose your reaction"></emoji-mart>
+  
+  <!-- <button mat-button>
+    <mat-icon class="toolbar-icon" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert reaction">sentiment_satisfied</mat-icon>
+    Reaction
+  </button> -->
+  <button [matMenuTriggerFor]="reactionMenu" mat-button>Reply</button>
+</div>
+
+<mat-menu #reactionMenu="matMenu">
+  <button mat-menu-item>Coming soon...</button>
+</mat-menu>

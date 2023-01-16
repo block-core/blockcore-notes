@@ -9,7 +9,7 @@
       <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
       <mat-form-field appearance="fill" class="input-full-width">
         <mat-label>Note</mat-label>
-        <textarea class="note-input" matInput type="text" autocomplete="off" formControlName="note" rows="6"></textarea>
+        <textarea class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="data.note" formControlName="note" rows="6"></textarea>
       </mat-form-field>
 
       <!-- <mat-form-field>
@@ -21,7 +21,6 @@
           </ng-template>
         </ngx-mat-datetime-picker>
       </mat-form-field> -->
-
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
       <mat-icon (click)="toggleSize()" class="hide-small maximize-button" matTooltip="Maximize the window">zoom_out_map</mat-icon>

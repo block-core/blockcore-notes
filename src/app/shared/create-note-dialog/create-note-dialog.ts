@@ -42,6 +42,7 @@ export class NoteDialog {
   }
 
   public addEmoji(event: { emoji: { native: any } }) {
+    // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
     this.data.note = `${this.data.note}${event.emoji.native}`;
     this.isEmojiPickerVisible = false;
   }

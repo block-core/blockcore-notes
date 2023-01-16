@@ -4,7 +4,7 @@ import { ProfileService } from './profile';
 import * as moment from 'moment';
 import { EventService } from './event';
 import { RelayService } from './relay';
-import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature } from 'nostr-tools';
+import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature, Kind } from 'nostr-tools';
 import { DataValidation } from './data-validation';
 import { ApplicationState } from './applicationstate';
 import { timeout, map, merge, Observable, delay, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter, from } from 'rxjs';
@@ -613,6 +613,19 @@ export class DataService {
     // setTimeout(async () => {
     //   await this.cleanProfiles();
     // }, this.cleanProfileInterval);
+  }
+
+  /** Creates an event ready for modification, signing and publish. */
+  createEvent(kind: Kind | number, content: any): Event {
+    let event: Event = {
+      kind: kind,
+      created_at: Math.floor(Date.now() / 1000),
+      content: content,
+      pubkey: this.appState.getPublicKey(),
+      tags: [],
+    };
+
+    return event;
   }
 
   /** Request an event to be signed. This method will calculate the content id automatically. */

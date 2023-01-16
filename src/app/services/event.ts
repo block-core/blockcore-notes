@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Kind } from 'nostr-tools';
 import { DataValidation } from './data-validation';
 import { NostrEvent, NostrEventDocument } from './interfaces';
 
@@ -11,7 +12,12 @@ export class EventService {
   processEvent(originalEvent: NostrEvent): NostrEvent | null {
     let event;
 
-    if (originalEvent.kind == 3) {
+    // Enable to debug events coming in on the network.
+    // if (originalEvent.kind == Kind.Reaction) {
+    //   console.log(originalEvent);
+    // }
+
+    if (originalEvent.kind == Kind.Contacts) {
       // Validate the contacts:
       event = this.validator.validateContacts(originalEvent);
     } else {
@@ -79,7 +85,6 @@ export class EventService {
     return eTags[0][1];
   }
 
-  /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
   replyEventId(event: NostrEventDocument | null) {
     if (!event) {
       return;

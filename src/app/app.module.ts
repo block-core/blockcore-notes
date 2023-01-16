@@ -90,6 +90,7 @@ import { FollowingComponent } from './following/following';
 import { FollowersComponent } from './followers/followers';
 import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
 import { ImportSheet } from './shared/import-sheet/import-sheet';
+import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
 
 @NgModule({
   declarations: [
@@ -136,7 +137,8 @@ import { ImportSheet } from './shared/import-sheet/import-sheet';
     FollowingComponent,
     FollowersComponent,
     ProfileWidgetComponent,
-    ImportSheet
+    ImportSheet,
+    EventButtonsComponent
   ],
   imports: [
     HttpClientModule,
