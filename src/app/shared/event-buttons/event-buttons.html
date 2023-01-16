@@ -12,7 +12,7 @@
   <div class="reply-widget" *ngIf="replyOpen">
     <mat-form-field appearance="outline" class="input-full-width">
       <mat-label>Note</mat-label>
-      <textarea class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="note" rows="6"></textarea>
+      <textarea #replyInput [tabIndex]="0" class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="note" rows="6"></textarea>
     </mat-form-field>
 
     <div class="reply-widget-buttons">

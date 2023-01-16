@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { Kind } from 'nostr-tools';
@@ -18,6 +18,12 @@ import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog
 export class EventButtonsComponent {
   @Input() event?: NostrEventDocument;
 
+  // TODO: This unfortunately creates multiple handlers for every single post in the UI.
+  // Need to be optimized to only register whenever open is triggered.
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    this.hideReply();
+  }
+
   isEmojiPickerVisible: boolean | undefined;
   isEmojiPickerTextVisible: boolean | undefined;
 
@@ -27,6 +33,8 @@ export class EventButtonsComponent {
   publishing = false;
   error = '';
 
+  @ViewChild('replyInput') replyInput?: ElementRef;
+
   constructor(private eventService: EventService, private dataService: DataService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
   openReply() {
@@ -34,6 +42,11 @@ export class EventButtonsComponent {
     this.publishing = false;
     this.note = '';
     this.error = '';
+
+    setTimeout(() => {
+      console.log(this.replyInput);
+      this.replyInput?.nativeElement.focus();
+    });
   }
 
   hideReply() {
