@@ -77,7 +77,11 @@ export class NavigationService {
       console.log('dialog data:', data);
       let note = data.note;
 
-      let event = this.dataService.createEvent(Kind.Text, JSON.stringify(note));
+      if (typeof note !== 'string') {
+        note = JSON.stringify(note);
+      }
+
+      let event = this.dataService.createEvent(Kind.Text, note);
 
       // TODO: We should likely save this event locally to ensure user don't loose their posts
       // if all of the network is down.
