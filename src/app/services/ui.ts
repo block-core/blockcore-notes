@@ -29,9 +29,9 @@ export class UIService {
     this.#profile = undefined;
     this.events = [];
 
-    this.#pubkeyChanged.next(this.#pubkey);
-    this.#profileChanged.next(this.#profile);
     this.#eventsChanged.next(this.events);
+    this.#profileChanged.next(this.#profile);
+    this.#pubkeyChanged.next(this.#pubkey);
   }
 
   setProfile(profile: NostrProfileDocument | undefined) {
@@ -60,14 +60,26 @@ export class UIService {
   }
 
   putEvent(event: NostrEventDocument) {
+    // It might happen that async events are triggering this method after user have selected another
+    // profile to watch, so we must ignore those events to avoid UI-glitches.
+    if (event.pubkey != this.pubkey) {
+      return;
+    }
+
     const existingIndex = this.events.findIndex((e) => e.id == event.id);
 
     if (existingIndex > -1) {
       this.events[existingIndex] = event;
     } else {
       this.events.unshift(event);
-    }
 
+      // Attempting to only trigger events changed if there is an actual change in the content.
+      this.#eventsChanged.next(this.events);
+    }
+  }
+
+  putEvents(events: NostrEventDocument[]) {
+    this.events = events;
     this.#eventsChanged.next(this.events);
   }
 

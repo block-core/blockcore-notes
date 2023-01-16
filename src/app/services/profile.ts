@@ -223,9 +223,9 @@ export class ProfileService {
   //   this.#profileRequested.next(pubkey);
   // }
 
-  downloadRecent(pubkey: string) {
-    this.#profileRequested.next(pubkey);
-  }
+  // downloadRecent(pubkey: string) {
+  //   this.#profileRequested.next(pubkey);
+  // }
 
   // #getProfile(pubkey: string) {
   //   return new Observable((observer) => {

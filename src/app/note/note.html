@@ -40,7 +40,7 @@
     </div>
   </ng-template> -->
 
-  <div class="events above-event clickable" (click)="navigation.openEvent($event, event)"  *ngIf="thread.above$ | async as event">
+  <div class="events above-event clickable" (click)="navigation.openEvent($event, event)" *ngIf="thread.above$ | async as event">
     <div class="events-header">
       <app-event-header [pubkey]="event.pubkey"><span class="event-date" [matTooltip]="event.created_at.toString()">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>

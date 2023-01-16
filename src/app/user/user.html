@@ -10,6 +10,10 @@
   </div>
 </ng-template>
 
+<!-- <div *ngIf="rootEvents$ | withStatus | async as items">
+  <div *ngFor="let event of items.value; trackBy: trackByFn">{{event.id}}</div>
+</div> -->
+
 <mat-tab-group *ngIf="layout == 1" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Notes">
     <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">

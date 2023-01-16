@@ -17,6 +17,7 @@ import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
 import { QueueService } from '../services/queue';
 import { UIService } from '../services/ui';
+import { StorageService } from '../services/storage';
 
 @Component({
   selector: 'app-user',
@@ -124,6 +125,7 @@ export class UserComponent {
     public ui: UIService,
     private validator: DataValidation,
     public circleService: CircleService,
+    private storage: StorageService,
     private utilities: Utilities,
     public notesService: NotesService,
     private router: Router,
@@ -281,6 +283,11 @@ export class UserComponent {
         //   // this.profileName = this.profile.name;
         // });
 
+        // First load all events from the persistent storage
+        const events = await this.storage.events.where('pubkey').equals(pubkey).toArray();
+        this.ui.putEvents(events);
+
+        // Then query for the latest events.
         this.queueService.enqueEvent(
           pubkey,
           (data: NostrEventDocument) => {
@@ -290,6 +297,25 @@ export class UserComponent {
           },
           100
         );
+
+        // setTimeout(async () => {
+        //   const events = await this.storage.events.where('pubkey').equals(pubkey).toArray();
+        //   this.ui.putEvents(events);
+        // }, 0);
+
+        // setTimeout(async () => {
+        //   // First load all events from the persistent storage
+        //   // Then query for the latest events.
+        //   this.queueService.enqueEvent(
+        //     pubkey,
+        //     (data: NostrEventDocument) => {
+        //       this.ui.putEvent(data);
+        //       // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+        //       // this.#changed();
+        //     },
+        //     100
+        //   );
+        // }, 50);
 
         // this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [pubkey], limit: 100 }]).subscribe((event) => {
         //   debugger;

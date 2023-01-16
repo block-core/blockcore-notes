@@ -169,11 +169,15 @@ export class Utilities {
 
   sanitizeLUD06(url?: string) {
     // Do not allow http prefix.
-    if (!url && url?.startsWith('http')) {
+    if (!url) {
       return undefined;
     }
 
-    return url;
+    if (url.startsWith('http')) {
+      return undefined;
+    }
+
+    return this.bypassUrl(url);
   }
 
   sanitizeUrlAndBypass(url?: string) {
