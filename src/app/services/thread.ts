@@ -206,6 +206,8 @@ export class ThreadService {
       return undefined;
     }
 
+    thread.children.sort((a: ThreadEntryChild, b: ThreadEntryChild) => b.date - a.date);
+
     return thread;
   }
 
@@ -247,7 +249,7 @@ export class ThreadService {
 
     if (event.kind == 1) {
       thread.children.push({ id: event.id, date: event.created_at });
-      thread.children.sort((a: ThreadEntryChild, b: ThreadEntryChild) => a.date - b.date);
+      thread.children.sort((a: ThreadEntryChild, b: ThreadEntryChild) => b.date - a.date);
     } else if (event.kind == 7) {
       if (event.content == '' || event.content == '+') {
         if (!thread.reactions[EmojiEnum['👍']]) {
