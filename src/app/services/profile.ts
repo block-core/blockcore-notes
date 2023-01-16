@@ -55,9 +55,7 @@ export class ProfileService {
     return dexieToRx(liveQuery(() => this.list(ProfileStatus.Mute)));
   }
 
-  // #profile: NostrProfileDocument;
-
-  /** TODO: Destroy this array when there are zero subscribers left. */
+  /** The profiles the user is following. */
   profiles: NostrProfileDocument[] = [];
 
   #followingChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.profiles);
@@ -313,6 +311,7 @@ export class ProfileService {
 
     this.cache.set(profile.pubkey, profile);
     await this.table.put(profile);
+    this.#putFollowingProfile(profile);
 
     this.updateItemIfSelected(profile);
   }
@@ -361,6 +360,11 @@ export class ProfileService {
     // Load the logged on user profile and have it immediately available.
     const profile = await this.getLocalProfile(pubkey);
     this.userProfileUpdated(profile);
+
+    // Perform initial population of .profiles, which contains profile the user is following.
+    const items = await this.table.where('status').equals(1).toArray();
+    this.profiles = items;
+    this.#profilesChanged.next(this.profiles);
   }
 
   /** Populate the observable with profiles which we are following. */
@@ -467,6 +471,16 @@ export class ProfileService {
     // }
   }
 
+  #putFollowingProfile(profile: NostrProfileDocument) {
+    const existingIndex = this.profiles.findIndex((p) => p.pubkey == profile.pubkey);
+
+    if (existingIndex === -1) {
+      this.profiles.push(profile);
+    } else {
+      this.profiles[existingIndex] = profile;
+    }
+  }
+
   /** Follow can be called without having an existing profile persisted. */
   async follow(pubkey?: string, circle: number = 0, existingProfile?: NostrProfileDocument) {
     if (!pubkey) {
@@ -489,6 +503,7 @@ export class ProfileService {
 
       // Save directly, don't put in cache.
       await this.table.put(existingProfile);
+      this.#putFollowingProfile(existingProfile);
 
       // Queue up to get this profile.
       this.queueService.enqueProfile(existingProfile.pubkey);
@@ -609,8 +624,15 @@ export class ProfileService {
   //   this.profiles.splice(index, 1);
   // }
 
-  async isFollowing(pubkey: string) {
-    const profile = await this.table.get(pubkey);
+  isFollowing(pubkey: string) {
+    const existingIndex = this.profiles.findIndex((p) => p.pubkey == pubkey);
+
+    if (existingIndex === -1) {
+      return false;
+    }
+
+    const profile = this.profiles[existingIndex];
+    // const profile = await this.table.get(pubkey);
 
     if (!profile) {
       return false;

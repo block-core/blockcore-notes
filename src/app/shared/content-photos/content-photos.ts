@@ -194,7 +194,7 @@ export class ContentPhotosComponent {
       return;
     }
 
-    const isFollowing = await this.profileService.isFollowing(this.events[0].pubkey);
+    const isFollowing = this.profileService.isFollowing(this.events[0].pubkey);
 
     if (isFollowing) {
       const images = this.events.flatMap((e) => {

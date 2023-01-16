@@ -30,6 +30,7 @@ export class DataService {
 
   constructor(
     private ui: UIService,
+    private storage: StorageService,
     private queueService: QueueService,
     private profileService: ProfileService,
     private appState: ApplicationState,
@@ -166,6 +167,12 @@ export class DataService {
     return this.downloadNewestEventsByQuery(filters).subscribe(async (event) => {
       if (!event) {
         return;
+      }
+
+      // If we are following this user, we'll persist this event.
+      const following = this.profileService.isFollowing(event.pubkey);
+      if (following) {
+        await this.storage.events.put(event, event.id);
       }
 
       for (let i = 0; i < jobs.length; i++) {

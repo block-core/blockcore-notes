@@ -1,20 +1,9 @@
 import Dexie, { Table } from 'dexie';
-import { Circle, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument } from './interfaces';
-
-export interface EventItem {
-  id?: number;
-  pubkey: number;
-  content: string;
-}
-
-export interface ProfileItem {
-  pubkey: string;
-  content: string;
-}
+import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument } from './interfaces';
 
 export class DatabaseService extends Dexie {
   relays!: Table<NostrRelayDocument, string>;
-  events!: Table<EventItem, string>;
+  events!: Table<NostrEventDocument, string>;
   notes!: Table<NostrNoteDocument, string>;
   profiles!: Table<NostrProfileDocument, string>;
   circles!: Table<Circle, number>;

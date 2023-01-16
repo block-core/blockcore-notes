@@ -1,24 +1,13 @@
 import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
 import { DatabaseService } from './database';
-import { Circle, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument } from './interfaces';
-
-export interface EventItem {
-  id?: number;
-  pubkey: number;
-  content: string;
-}
-
-export interface ProfileItem {
-  pubkey: string;
-  content: string;
-}
+import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument } from './interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StorageService {
-  get events(): Table<EventItem, string> {
+  get events(): Table<NostrEventDocument, string> {
     return this.db.events;
   }
 
