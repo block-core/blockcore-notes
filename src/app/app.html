@@ -58,9 +58,11 @@
             <p>{{ profile?.about }}</p>
           </div>
         </div>
+      <a [routerLink]="['/profile']" (click)="toggleProfileMenu()">
         <div class="avatarcontainer">
           <img [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="avatar" />
         </div>
+      </a>
       </header>
       <div class="content">
         <div class="data">
@@ -146,9 +148,8 @@
 
       <button *ngIf="!appState.connected" [mtBasicSpinner]="true" mat-icon-button></button>
 
-      <button *ngIf="!appState.showSearch" mat-icon-button (click)="draweraccount.toggle()">
-        <mat-icon>account_circle</mat-icon>
-      </button>
+      <img *ngIf="!appState.showSearch" mat-icon-button (click)="draweraccount.toggle()" [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="topavatar" />
+
     </mat-toolbar>
 
     <div class="scrolling-content" appDetectScroll (onScroll)="onScroll($event)" [bottomOffset]="300" [topOffset]="300">

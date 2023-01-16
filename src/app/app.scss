@@ -75,15 +75,25 @@ header {
   border-radius: 50%;
   overflow: hidden;
   position: relative;
+  width: 96px;
+  height: 96px;
 }
 
-.avatar img {
-  width: 65px;
-  height: 65px;
-}
-
-.avatar:hover + .hover {
+.avatar:hover {
   opacity: 1;
+  cursor: pointer;
+}
+
+.topavatar {
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+
+.topavatar:hover {
+  opacity: 0.6;
   cursor: pointer;
 }
 
