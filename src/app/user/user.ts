@@ -246,6 +246,12 @@ export class UserComponent {
         //   this.feedSubscription.unsubscribe();
         // }
 
+        if (pubkey.startsWith('npub')) {
+          const convertedId = this.utilities.convertFromBech32ToHex(pubkey);
+          this.router.navigate(['/p', convertedId]);
+          return;
+        }
+
         this.appState.updateTitle(this.utilities.getShortenedIdentifier(pubkey));
         // this.pubkey = pubkey;
         // Reset the current profile first.

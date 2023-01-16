@@ -107,38 +107,8 @@ export class NoteComponent {
       this.thread.changeSelectedEvent(undefined, this.navigation.currentEvent);
     }
 
-    console.log('NG INIT ON NOTE:');
-
     this.appState.updateTitle('Thread');
     this.appState.showBackButton = true;
-
-    // Subscribe to the event which will update whenever user requests to view a different event.
-    // this.feedService.event$(1).subscribe((event) => {
-    //   console.log('EVENT CHANGED:', event);
-
-    //   if (!event) {
-    //     return;
-    //   }
-
-    //   this.event = event;
-
-    //   // Query for root
-    //   // Query all child
-
-    //   // Get the root event.
-    //   const rootEventId = this.rootEvent();
-
-    //   if (rootEventId) {
-    //     // Start downloading the root event.
-    //     this.feedService.downloadEvent([rootEventId]);
-    //   }
-
-    //   // Clear the initial thread:
-    //   this.feedService.thread = [];
-
-    //   // First download all posts, if any, that is mentioned in the e tags.
-    //   this.feedService.downloadThread(this.event.id!);
-    // });
 
     this.activatedRoute.paramMap.subscribe(async (params) => {
       const id: string | null = params.get('id');
@@ -151,29 +121,10 @@ export class NoteComponent {
       if (id.startsWith('note')) {
         const convertedId = this.utilities.convertFromBech32ToHex(id);
         this.router.navigate(['/e', convertedId]);
+        return;
       }
 
       this.thread.changeSelectedEvent(id);
-
-      // if (this.thread.event && this.thread.event.id == id) {
-      //   this.id = id;
-      //   return;
-      // } else {
-      //   this.thread.changeSelectedEvent(id);
-      //   this.id = id;
-      // }
-
-      // if (this.appState.connectedChanged.value === true) {
-      //   setTimeout(() => {
-      //     this.thread.changeSelectedEvent(id);
-      //   }, 0);
-      // } else {
-      //   // POOR MANS WAIT... this is not suppose to be needed, but appears to help sometimes.
-      //   setTimeout(() => {
-      //     this.thread.changeSelectedEvent(id);
-      //     this.id = id;
-      //   }, 4000);
-      // }
     });
   }
 
