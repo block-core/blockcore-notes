@@ -13,7 +13,6 @@ import { Location } from '@angular/common';
 import { RelayService } from './services/relay';
 import { DataService } from './services/data';
 import { ProfileService } from './services/profile';
-import { ScrollEvent } from './shared/scroll.directive';
 import { NavigationService } from './services/navigation';
 import { NostrProfileDocument } from './services/interfaces';
 import { ThemeService } from './services/theme';
@@ -118,24 +117,8 @@ export class AppComponent {
     }
   }
 
-  async onScroll(event: ScrollEvent) {
-    if (event.isReachingBottom) {
-      // console.log(`the user is reaching the bottom`);
-      this.navigationService.showMore();
-
-      // this.loading = true;
-      // setTimeout(async () => {
-
-      //   // await this.updateTransactions(this.link);
-      //   // this.loading = false;
-      // });
-    }
-    if (event.isReachingTop) {
-      // console.log(`the user is reaching the top`);
-    }
-    if (event.isWindowEvent) {
-      console.log(`This event is fired on Window not on an element.`);
-    }
+  async onInfiniteScroll() {
+    this.navigationService.showMore();
   }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe('(max-width: 599px)').pipe(

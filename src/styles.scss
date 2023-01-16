@@ -697,8 +697,13 @@ mat-card-footer {
   margin-bottom: 20px;
 }
 
-.mat-mdc-icon-button.mat-mdc-button-base{
+.mat-mdc-icon-button.mat-mdc-button-base {
   padding: 0.4em !important;
+}
+
+.show-more {
+  margin-bottom: 1em;
+  margin-top: 1em;
 }
 
 @media only screen and (max-width: 599px) {

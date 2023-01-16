@@ -1,112 +1,101 @@
-import { Directive, HostListener, Output, EventEmitter, Input } from '@angular/core';
+import { Directive, HostListener, Output, EventEmitter, Input, ElementRef, OnInit } from '@angular/core';
 
-// export function debounce(delay: number = 300) {
-//   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-//     const original = descriptor.value;
-//     const key = `__timeout__${propertyKey}`;
+// TODO: Make sure this doesn't trigger two in a row, do some distinct on the scroll position or 
+// at least some delay.
 
-//     descriptor.value = function (...args: any) {
-//       clearTimeout(this[key]);
-//       this[key] = setTimeout(() => original.apply(this, args), delay);
-//     };
-
-//     return descriptor;
-//   };
-// }
-
-export function ngDebounce(timeout: number, cancelDebounce?: CallableFunction) {
-  let timeoutRef: any = null;
-
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    const original = descriptor.value;
-
-    descriptor.value = function debounce(...args: any[]) {
-      clearTimeout(timeoutRef);
-
-      timeoutRef = setTimeout(() => {
-        original.apply(this, args);
-      }, timeout);
-
-      if (cancelDebounce) {
-        Object.defineProperty(debounce, 'cancelDebounce', {
-          value: function () {
-            clearTimeout(timeoutRef);
-          },
-        });
-      }
-    };
-
-    return descriptor;
-  };
+export interface Viewport {
+  h: number;
+  w: number;
 }
 
-export interface ScrollEvent {
-  isReachingBottom: boolean;
-  isReachingTop: boolean;
-  originalEvent: Event;
-  isWindowEvent: boolean;
-}
-
-declare const window: Window;
+export type InfiniteScrollContext = 'self' | 'document';
 
 @Directive({
-  selector: '[appDetectScroll]',
+  selector: '[infiniteScroll]',
 })
-export class ScrollDirective {
-  @Output() public onScroll = new EventEmitter<ScrollEvent>();
-  @Input() public bottomOffset = 100;
-  @Input() public topOffset = 100;
+export class InfiniteScrollDirective implements OnInit {
+  el: any;
+  viewport: Viewport;
+  canTriggerAction: boolean = true;
 
-  constructor() {}
-
-  throttle(fn: () => void, wait: number) {
-    let time = Date.now();
-    return function () {
-      if (time + wait - Date.now() < 0) {
-        fn();
-        time = Date.now();
+  @Input() infiniteScrollContext: InfiniteScrollContext = 'self';
+  @Output() scrollAction: EventEmitter<any> = new EventEmitter();
+  @HostListener('scroll', ['$event']) onElementScroll() {
+    if (this.infiniteScrollContext === 'self') {
+      if (this.elementEndReachedInSelfScrollbarContext() && this.canTriggerAction) {
+        this.triggerAction();
       }
+    }
+  }
+
+  constructor(private element: ElementRef) {
+    this.el = element.nativeElement;
+    this.viewport = this.getViewport(window);
+  }
+
+  ngOnInit() {
+    if (this.infiniteScrollContext === 'document') {
+      document.addEventListener('scroll', () => {
+        if (this.elementEndReachedInDocumentScrollbarContext(window, this.el) && this.canTriggerAction) {
+          this.triggerAction();
+        }
+      });
+    }
+  }
+
+  triggerAction() {
+    this.canTriggerAction = false;
+    this.scrollAction.emit(null);
+  }
+
+  elementEndReachedInSelfScrollbarContext(): boolean {
+    // Add a margin of 1 pixels due to sometimes 1 pixel "missing" in vertical browser mode.
+    if (this.el.scrollTop + this.el.offsetHeight >= this.el.scrollHeight - 1) {
+      this.canTriggerAction = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  elementEndReachedInDocumentScrollbarContext(win: Window, el: any): boolean {
+    const rect = el.getBoundingClientRect();
+    const elementTopRelativeToViewport = rect.top;
+    const elementTopRelativeToDocument = elementTopRelativeToViewport + win.pageYOffset;
+    const scrollableDistance = el.offsetHeight + elementTopRelativeToDocument;
+    const currentPos = win.pageYOffset + this.viewport.h;
+
+    if (currentPos > scrollableDistance) {
+      this.canTriggerAction = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  private getViewport(win: Window): Viewport {
+    // This works for all browsers except IE8 and before
+    if (win.innerWidth != null) {
+      return {
+        w: win.innerWidth,
+        h: win.innerHeight,
+      };
+    }
+
+    // For IE (or any browser) in Standards mode
+    let d = win.document;
+
+    if (document.compatMode == 'CSS1Compat') {
+      return {
+        w: d.documentElement.clientWidth,
+        h: d.documentElement.clientHeight,
+      };
+    }
+
+    // For browsers in Quirks mode
+    return {
+      w: d.body.clientWidth,
+      h: d.body.clientHeight,
     };
-  }
-
-  @HostListener('scroll', ['$event'])
-  //   @ngDebounce(5) // TODO: Figure out why we're getting logner delay than 5 ms when scrolling. We should bounce this event as it happens a lot, but need to have good UX.
-  public scrolled($event: Event) {
-    this.elementScrollEvent($event);
-  }
-
-  @HostListener('window:scroll', ['$event'])
-  //   @ngDebounce(5) // TODO: Figure out why we're getting logner delay than 5 ms when scrolling. We should bounce this event as it happens a lot, but need to have good UX.
-  public windowScrolled($event: Event) {
-    this.windowScrollEvent($event);
-  }
-
-  protected windowScrollEvent($event: Event) {
-    const target = <Document>$event.target;
-
-    if (!target || !target.body) {
-      return;
-    }
-
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    const isReachingTop = scrollTop < this.topOffset;
-    const isReachingBottom = target.body.offsetHeight - (window.innerHeight + scrollTop) < this.bottomOffset;
-    const emitValue: ScrollEvent = { isReachingBottom, isReachingTop, originalEvent: $event, isWindowEvent: true };
-    this.onScroll.emit(emitValue);
-  }
-
-  protected elementScrollEvent($event: Event) {
-    const target = <HTMLElement>$event.target;
-
-    if (!target) {
-      return;
-    }
-
-    const scrollPosition = target.scrollHeight - target.scrollTop;
-    const offsetHeight = target.offsetHeight;
-    const isReachingTop = target.scrollTop < this.topOffset;
-    const isReachingBottom = scrollPosition - offsetHeight < this.bottomOffset;
-    const emitValue: ScrollEvent = { isReachingBottom, isReachingTop, originalEvent: $event, isWindowEvent: false };
-    this.onScroll.emit(emitValue);
   }
 }

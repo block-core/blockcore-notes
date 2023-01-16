@@ -57,7 +57,7 @@ export class UIService {
 
   get events$(): Observable<NostrEventDocument[]> {
     return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
-  }
+  }  
 
   putEvent(event: NostrEventDocument) {
     // It might happen that async events are triggering this method after user have selected another

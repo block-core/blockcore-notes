@@ -11,9 +11,9 @@ export class DatabaseService extends Dexie {
   constructor(name: string) {
     super(name);
 
-    this.version(2).stores({
+    this.version(3).stores({
       relays: 'url',
-      events: 'id,pubkey',
+      events: 'id,pubkey,created_at',
       notes: 'id',
       profiles: 'pubkey,status',
       circles: '++id',

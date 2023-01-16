@@ -68,7 +68,7 @@ import { NoteComponent } from './note/note';
 import { CircleStylePipe } from './shared/circle-style';
 import { ReplyListComponent } from './shared/reply-list/reply-list';
 import { ContentComponent } from './shared/content/content';
-import { ScrollDirective } from './shared/scroll.directive';
+import { InfiniteScrollDirective } from './shared/scroll.directive';
 import { ImportFollowDialog } from './circles/import-follow-dialog/import-follow-dialog';
 import { ProfileHeaderComponent } from './shared/profile-header/profile-header';
 import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
@@ -122,7 +122,7 @@ import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
     NoteComponent,
     ReplyListComponent,
     ContentComponent,
-    ScrollDirective,
+    InfiniteScrollDirective,
     ImportFollowDialog,
     ProfileHeaderComponent,
     AddRelayDialog,
@@ -138,7 +138,7 @@ import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
     FollowersComponent,
     ProfileWidgetComponent,
     ImportSheet,
-    EventButtonsComponent
+    EventButtonsComponent,
   ],
   imports: [
     HttpClientModule,

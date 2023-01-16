@@ -12,8 +12,10 @@ import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
 import { NavigationService } from '../services/navigation';
-import { ScrollEvent } from '../shared/scroll.directive';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { StorageService } from '../services/storage';
+import { dexieToRx } from '../shared/utilities';
+import { liveQuery } from 'dexie';
 
 @Component({
   selector: 'app-feed-private',
@@ -21,9 +23,41 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./feed-private.css'],
 })
 export class FeedPrivateComponent {
+  private get table() {
+    return this.db.events;
+  }
+
   publicKey?: string | null;
+  offset = 0;
+  pageSize = 12;
+  currentItems: NostrEventDocument[] = [];
+
+  currentItems$ = dexieToRx(liveQuery(() => this.table.offset(this.offset).limit(this.pageSize).toArray())).pipe(
+    map((data) => {
+      data.sort((a, b) => {
+        return a.created_at < b.created_at ? 1 : -1;
+      });
+
+      return data;
+    })
+  );
+
+  items$ = dexieToRx(liveQuery(() => this.items())).pipe(
+    map((data) => {
+      data.sort((a, b) => {
+        return a.created_at < b.created_at ? 1 : -1;
+      });
+
+      return data;
+    })
+  );
+
+  async items() {
+    return this.table.toArray();
+  }
 
   constructor(
+    public db: StorageService,
     public navigation: NavigationService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
@@ -51,10 +85,16 @@ export class FeedPrivateComponent {
     console.log('ngAfterContentInit');
   }
 
-  eventsCount = 5;
+  async showMore() {
+    const items = await this.table.orderBy('created_at').reverse().offset(this.offset).limit(this.pageSize).toArray();
+    this.currentItems.push(...items);
 
-  showMore() {
-    this.eventsCount += 10;
+    // Half the page size after initial load.
+    if (this.offset === 0) {
+      this.pageSize = Math.floor(this.pageSize / 2);
+    }
+
+    this.offset += this.pageSize;
   }
 
   optionsUpdated() {
