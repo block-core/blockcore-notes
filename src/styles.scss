@@ -697,6 +697,10 @@ mat-card-footer {
   margin-bottom: 20px;
 }
 
+.mat-mdc-icon-button.mat-mdc-button-base{
+  padding: 9px !important;
+}
+
 @media only screen and (max-width: 599px) {
   .full-width-dialog {
     max-width: 100vw !important;
