@@ -181,9 +181,17 @@ export class Utilities {
     return this.bypassUrl(cleanedUrl);
   }
 
-  sanitizeUrl(url?: string) {
-    if (!url && !url?.startsWith('http')) {
+  sanitizeUrl(url?: string, appendHttpsIfMissing?: boolean) {
+    if (!url) {
       return '';
+    }
+
+    if (!url?.startsWith('http')) {
+      if (appendHttpsIfMissing) {
+        url = 'https://' + url;
+      } else {
+        return '';
+      }
     }
 
     return url;
