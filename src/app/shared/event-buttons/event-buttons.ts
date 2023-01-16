@@ -19,8 +19,36 @@ export class EventButtonsComponent {
   @Input() event?: NostrEventDocument;
 
   isEmojiPickerVisible: boolean | undefined;
+  isEmojiPickerTextVisible: boolean | undefined;
+
+  note?: string;
+
+  replyOpen = false;
+  publishing = false;
+  error = '';
 
   constructor(private eventService: EventService, private dataService: DataService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+
+  openReply() {
+    this.replyOpen = true;
+    this.publishing = false;
+    this.note = '';
+    this.error = '';
+  }
+
+  hideReply() {
+    this.replyOpen = false;
+    this.publishing = false;
+    this.note = '';
+    this.error = '';
+  }
+
+  async addEmojiInText(e: { emoji: { native: any } }) {
+    // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
+    // this.data.note = `${this.data.note}${event.emoji.native}`;
+    this.isEmojiPickerTextVisible = false;
+    this.note = `${this.note}${e.emoji.native}`;
+  }
 
   async addEmoji(e: { emoji: { native: any } }) {
     // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
@@ -54,5 +82,37 @@ export class EventButtonsComponent {
 
     // Replace tags on the local copy of the event.
     this.event.tags = reactionEvent.tags;
+  }
+
+  async addReply() {
+    this.publishing = true;
+
+    let replyEvent = this.dataService.createEvent(Kind.Text, this.note);
+
+    if (!this.event) {
+      console.warn('Event is empty on reply.');
+      return;
+    }
+
+    // Clone the existing tags.
+    replyEvent.tags = Object.assign([], this.event.tags);
+
+    // Add the public key of who we are reacting to.
+    replyEvent.tags.push(['p', this.event.pubkey]);
+
+    // Add the event Id of who we are reacting to.
+    replyEvent.tags.push(['e', this.event.id!]);
+
+    try {
+      const signedEvent = await this.dataService.signEvent(replyEvent);
+      console.log(signedEvent);
+      this.hideReply();
+    } catch (err: any) {
+      this.error = err.toString();
+      console.log(err);
+      this.publishing = false;
+    }
+
+    // await this.dataService.publishEvent(signedEvent);
   }
 }

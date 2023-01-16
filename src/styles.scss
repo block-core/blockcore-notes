@@ -650,12 +650,12 @@ select {
 }
 
 small {
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: rgba(0, 0, 0, 0.65);
 }
 
 .dark small {
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: rgba(255, 255, 255, 0.65);
 }
 
@@ -717,4 +717,8 @@ mat-card-footer {
   .hide-small {
     display: none !important;
   }
+}
+
+.error {
+  color: rgb(219, 2, 2) !important;
 }

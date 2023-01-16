@@ -20,3 +20,21 @@
 .reaction-icon {
   font-size: 1.4em;
 }
+
+.reply-widget {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.reply-widget-buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.reply-widget-middle {
+  flex: 1 2 auto;
+}
+
+.thread-actions button {
+  margin-left: 0.4em;
+}
