@@ -51,5 +51,8 @@ export class EventButtonsComponent {
     console.log(signedEvent);
 
     await this.dataService.publishEvent(signedEvent);
+
+    // Replace tags on the local copy of the event.
+    this.event.tags = reactionEvent.tags;
   }
 }
