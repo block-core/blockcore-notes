@@ -141,11 +141,16 @@ export class NoteComponent {
     // });
 
     this.activatedRoute.paramMap.subscribe(async (params) => {
-      const id: any = params.get('id');
+      const id: string | null = params.get('id');
 
       if (!id) {
         this.router.navigateByUrl('/');
         return;
+      }
+
+      if (id.startsWith('note')) {
+        const convertedId = this.utilities.convertFromBech32ToHex(id);
+        this.router.navigate(['/e', convertedId]);
       }
 
       this.thread.changeSelectedEvent(id);

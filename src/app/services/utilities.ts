@@ -157,6 +157,12 @@ export class Utilities {
     return key;
   }
 
+  convertFromBech32ToHex(address: string) {
+    const decoded = bech32.decode(address);
+    const key = bech32.fromWords(decoded.words);
+    return this.arrayToHex(key);
+  }
+
   keyToHex(publicKey: Uint8Array) {
     return secp.utils.bytesToHex(publicKey);
   }
