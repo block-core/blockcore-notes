@@ -40,6 +40,16 @@
     </div>
   </ng-template> -->
 
+  <div class="events clickable" (click)="navigation.openEvent($event, event)" *ngIf="thread.above$ | async as event">
+    <div class="events-header">
+      <app-event-header [pubkey]="event.pubkey"><span class="event-date" [matTooltip]="event.created_at.toString()">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+      <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+    </div>
+    <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.options.showLines, 'lines': optionsService.options.showLines }" [event]="event"></app-content>
+    <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions>
+    <app-event-buttons [event]="event"></app-event-buttons>
+  </div>
+
   <div class="current-event events noclick" *ngIf="thread.event$ | async as event">
     <div class="events-header">
       <app-event-header [pubkey]="event.pubkey"><span class="event-date" [matTooltip]="event.created_at.toString()">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
@@ -48,9 +58,8 @@
     <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.options.showLines, 'lines': optionsService.options.showLines }" [event]="event"></app-content>
     <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions>
     <app-event-buttons [event]="event"></app-event-buttons>
-    <app-event-thread [threadEntry]="thread.getTreeEntry(thread.threadId)"> </app-event-thread>
+    <app-event-thread [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-thread>
   </div>
-  
 </div>
 <mat-divider></mat-divider>
 

@@ -485,9 +485,6 @@ export class ProfileService {
       existingProfile.followed = now;
       existingProfile.circle = circle;
       existingProfile.status = ProfileStatus.Follow;
-
-      console.log('Created new empty profile: ', existingProfile);
-
       existingProfile.npub = this.utilities.getNostrIdentifier(existingProfile.pubkey);
 
       // Save directly, don't put in cache.

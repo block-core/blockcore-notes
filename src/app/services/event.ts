@@ -57,6 +57,20 @@ export class EventService {
     return eTags;
   }
 
+  parentEventId(event: NostrEventDocument | undefined) {
+    if (!event) {
+      return;
+    }
+
+    const eTags = event.tags.filter((t) => t[0] === 'e');
+
+    if (eTags.length == 0) {
+      return undefined;
+    }
+
+    return eTags[eTags.length - 1][1];
+  }
+
   /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
   rootEventId(event: NostrEventDocument | null) {
     if (!event) {

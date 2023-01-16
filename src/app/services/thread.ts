@@ -22,6 +22,10 @@ export class ThreadService {
   #events: NostrEventDocument[] | undefined = [];
   #eventsChanged: BehaviorSubject<NostrEventDocument[] | undefined> = new BehaviorSubject<NostrEventDocument[] | undefined>(this.#events);
 
+  above: NostrEventDocument | undefined = undefined;
+  #aboveChanged: BehaviorSubject<NostrEventDocument | undefined> = new BehaviorSubject<NostrEventDocument | undefined>(this.above);
+  above$ = this.#aboveChanged.asObservable();
+
   hasLoaded = false;
 
   get before$(): Observable<NostrEventDocument[]> {
@@ -144,6 +148,20 @@ export class ThreadService {
 
       if (!rootEventId) {
         rootEventId = event.id!;
+      }
+
+      // Grab the immediate parent, which will be clickable.
+      const parentId = this.eventService.parentEventId(event);
+
+      this.above = undefined;
+      this.#aboveChanged.next(this.above);
+
+      // If not parent Id, it means user is looking at root so we don't need to load additional events.
+      if (parentId) {
+        this.dataService.downloadEvent(parentId).subscribe((event) => {
+          this.above = event;
+          this.#aboveChanged.next(this.above);
+        });
       }
 
       // this.feedService
