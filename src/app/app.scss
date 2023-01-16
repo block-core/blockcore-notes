@@ -38,6 +38,7 @@ header {
   overflow: hidden;
   position: relative;
   padding-bottom: 2em;
+  height: 210px;
 }
 
 .container {
@@ -60,8 +61,9 @@ header {
   bottom: 0;
   right: 0;
   left: 0;
+  top: 140px;
   margin: auto;
-  width: 70px;
+  width: 90px;
   display: block;
 }
 
@@ -132,7 +134,7 @@ header {
   height: 171px;
   color: white;
   text-align: center;
-  opacity: 0.5;
+  opacity: 0.8;
   transition-property: all;
   transition-duration: 0.3s;
   transition-timing-function: ease-in;
