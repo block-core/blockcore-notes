@@ -31,6 +31,10 @@
 <mat-menu #copyMenu="matMenu">
   <button mat-menu-item *ngIf="event" (click)="copyNoteId(event!.id)">
     <mat-icon>content_copy</mat-icon>
+    <span>Note ID (note)</span>
+  </button>
+  <button mat-menu-item *ngIf="event" (click)="copyNoteEventId(event!.id)">
+    <mat-icon>content_copy</mat-icon>
     <span>Note ID (nevent)</span>
   </button>
   <button mat-menu-item *ngIf="event" (click)="copy(event!.id)">

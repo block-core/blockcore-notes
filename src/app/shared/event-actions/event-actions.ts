@@ -71,6 +71,10 @@ export class EventActionsComponent {
   }
 
   copyNoteId(id: string) {
+    this.copy(nip19.noteEncode(id));
+  }
+
+  copyNoteEventId(id: string) {
     // TODO: Copy the relays where we found this event from.
     let eventPointer: EventPointer = { id: id };
     this.copy(nip19.neventEncode(eventPointer));
