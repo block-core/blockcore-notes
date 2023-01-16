@@ -305,7 +305,7 @@ export class DataService {
 
   /** Creates an observable that will attempt to get newest profile events across all relays and perform multiple callbacks if newer is found. */
   downloadNewestProfileEvents(pubkeys: string[], requestTimeout = 10000, expectedCount = -1) {
-    return this.downloadNewestEvents(pubkeys, [0], requestTimeout, expectedCount);
+    return this.downloadNewestProfileEventByQuery([{ kinds: [0], authors: pubkeys }], requestTimeout, expectedCount);
   }
 
   downloadNewestContactsEvents(pubkeys: string[], requestTimeout = 10000, expectedEventCount = -1) {
@@ -360,16 +360,10 @@ export class DataService {
         filter((data, index) => {
           let result = false;
 
-          // This logic is to ensure we don't care about receiving the same data more than once, unless the data is newer.
+          // This logic is to ensure we don't care about receiving the same data more than once.
           const existingEventIndex = totalEvents.findIndex((e) => e.id === data.id);
           if (existingEventIndex > -1) {
-            const existingEvent = totalEvents[existingEventIndex];
-
-            // Verify if newer, then replace
-            if (existingEvent.created_at < data.created_at) {
-              totalEvents[existingEventIndex] = data;
-              result = true;
-            }
+            result = false;
           } else {
             totalEvents.push(data);
             result = true;
@@ -389,6 +383,22 @@ export class DataService {
           return of(undefined);
         }) // Simply return undefined when the timeout is reached.
       );
+  }
+
+  /** Creates an observable that will attempt to get newest events across all relays and perform multiple callbacks if newer is found. */
+  downloadNewestProfileEventByQuery(query: any, requestTimeout = 10000, expectedEventCount = -1) {
+    // TODO: Tune the timeout. There is no point waiting for too long if the relay is overwhelmed with requests as we will simply build up massive backpressure in the client.
+    // const totalEvents: NostrEventDocument[] = [];
+    // TODO: Figure out if we end up having memory leak with this totalEvents array.
+    const observables = this.relayService.connectedRelays().map((relay) => this.downloadFromRelay(query, relay));
+
+    return merge(...observables).pipe(
+      timeout(requestTimeout),
+      catchError((error) => {
+        console.warn('The observable was timed out.');
+        return of(undefined);
+      }) // Simply return undefined when the timeout is reached.
+    );
   }
 
   downloadEventsByQuery(query: any[], requestTimeout = 10000) {
