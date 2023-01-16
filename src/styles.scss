@@ -312,6 +312,11 @@ mat-sidenav-content mat-toolbar {
   // background-color: #a30770 !important;
 }
 
+.above-event {
+  // background-color: #303030 !important;
+  background-color: rgba(89, 91, 92, 0.6431372549);
+}
+
 .current-event {
   display: flex;
   flex-direction: column;
