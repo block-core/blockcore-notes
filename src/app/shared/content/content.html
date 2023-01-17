@@ -1,6 +1,6 @@
 <div class="content clickable" *ngIf="event">
   <div class="event-images" *ngIf="images && images.length > 0">
-    <img class="event-image" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
+    <img class="event-image" loading="lazy" decoding="async" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
   </div>
   <div class="event-videos" *ngIf="videos && videos.length > 0">
     <iframe id="ytplayer" class="event-video" type="text/html" *ngFor="let video of videos" [src]="video" frameborder="0"></iframe>
