@@ -5,7 +5,7 @@
 <mat-sidenav-container fullscreen class="sidenav-container" *ngIf="authenticated">
   <mat-sidenav #drawer class="sidenav print-hidden" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
     <mat-toolbar class="logo-icon">
-      <img src="assets/icons/icon-128x128.png" />
+      <img height="38" width="38" src="assets/icons/icon-128x128.png" />
       <div>Blockcore Notes</div>
     </mat-toolbar>
     <mat-nav-list>
@@ -36,7 +36,7 @@
     </mat-nav-list>
 
     <div class="new-post">
-      <img tabindex="10" (click)="navigationService.createNote()" src="/assets/post.svg" class="new-post-button" />
+      <img tabindex="10" width="92" height="92" (click)="navigationService.createNote()" src="/assets/post.svg" class="new-post-button" />
     </div>
   </mat-sidenav>
 
@@ -60,7 +60,7 @@
         </div>
         <a [routerLink]="['/profile']" (click)="toggleProfileMenu()">
           <div class="avatarcontainer">
-            <img [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="avatar" />
+            <img [src]="profile?.picture" width="96" height="96" onerror="this.src='/assets/profile.png'" alt="avatar" class="avatar" />
           </div>
         </a>
       </header>
@@ -148,7 +148,7 @@
 
       <button *ngIf="!appState.connected" [mtBasicSpinner]="true" mat-icon-button></button>
 
-      <img *ngIf="!appState.showSearch" mat-icon-button (click)="draweraccount.toggle()" [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="topavatar" />
+      <img *ngIf="!appState.showSearch" width="38" height="38" mat-icon-button (click)="draweraccount.toggle()" [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="topavatar" />
     </mat-toolbar>
 
     <div class="scrolling-content" infiniteScroll (scrollAction)="onInfiniteScroll()">

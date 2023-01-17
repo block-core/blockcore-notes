@@ -8,6 +8,8 @@
       <div id="profile-image-anchor" class="profile-image-anchor">
         <img
           id="profile-image"
+          width="150"
+          height="150"
           onerror="this.src='/assets/profile.png'"
           *ngIf="profile?.status == 1"
           (click)="showProfileImage()"
