@@ -1,0 +1,31 @@
+.drawer-container {
+  height: 100%;
+  z-index: 9999;
+  overflow: visible !important;
+}
+
+.sidebar {
+  &--message {
+    width: 100%;
+  }
+
+  &--user {
+    max-width: 360px;
+    width: 100%;
+  }
+
+  .mat-drawer-inner-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    z-index: 9999;
+  }
+}
+
+.zIndexTop {
+  z-index: 10;
+}
+
+.spacer {
+  flex: 1;
+}

@@ -91,6 +91,16 @@ import { FollowersComponent } from './followers/followers';
 import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
 import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
+import { UserItemComponent } from './shared/user-item/user-item.component';
+import { UserProfileComponent } from './shared/user-profile/user-profile.component';
+import { UserListComponent } from './shared/user-list/user-list.component';
+import { ChatDetailComponent } from './shared/chat-detail/chat-detail.component';
+import { ChatItemComponent } from './shared/chat-item/chat-item.component';
+import { ChatListComponent } from './shared/chat-list/chat-list.component';
+import { MessageBubbleComponent } from './shared/message-bubble/message-bubble.component';
+import { ChatService } from './services/chat.service';
+import { UserService } from './services/user.service';
+import { StatusComponent } from './shared/status/status.component';
 
 @NgModule({
   declarations: [
@@ -139,6 +149,14 @@ import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
     ProfileWidgetComponent,
     ImportSheet,
     EventButtonsComponent,
+    UserItemComponent,
+    UserProfileComponent,
+    UserListComponent,
+    ChatDetailComponent,
+    ChatItemComponent,
+    ChatListComponent,
+    MessageBubbleComponent,
+    StatusComponent
   ],
   imports: [
     HttpClientModule,
@@ -192,7 +210,15 @@ import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
-  providers: [AuthGuardService, AppUpdateService, CheckForUpdateService],
+  exports: [
+    ChatListComponent,
+    ChatDetailComponent,
+    UserListComponent,
+    UserProfileComponent,
+    UserItemComponent,
+    StatusComponent
+  ],
+  providers: [AuthGuardService, AppUpdateService, CheckForUpdateService,ChatService,UserService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

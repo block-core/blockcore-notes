@@ -1,0 +1,16 @@
+<div class="messages-list-container">
+  <div #scrollable class="scrollable">
+    <ng-container *ngIf="chat">
+      <ng-container *ngFor="let message of chat.chat">
+        <app-message-bubble [message]="message"></app-message-bubble>
+      </ng-container>
+    </ng-container>
+    <mat-spinner diameter="24" color="warn" *ngIf="sending"></mat-spinner>
+  </div>
+</div>
+<div class="message-send mat-elevation-z8">
+  <mat-form-field class="input-full-width">
+    <input type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
+    <mat-icon matSuffix>mode_edit</mat-icon>
+  </mat-form-field>
+</div>

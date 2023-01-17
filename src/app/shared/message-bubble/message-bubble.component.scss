@@ -1,0 +1,46 @@
+.bubble {
+  $this: &;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 12px;
+
+  &__cover {
+    width: 36px;
+    height: 36px;
+    margin-right: 16px;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  &__picture {
+    display: block;
+    max-width: 100%;
+  }
+
+  &__container {
+    flex: 1;
+  }
+
+  &__card {
+    display: inline-block !important;
+    padding: 12px;
+  }
+
+  &--me {
+    flex-direction: row-reverse;
+
+    #{$this}__container {
+      display: flex;
+      justify-content: flex-end;
+
+      .mat-card {
+        background-color: aquamarine;
+      }
+    }
+
+    #{$this}__cover {
+      margin-right: 0;
+      margin-left: 16px;
+    }
+  }
+}

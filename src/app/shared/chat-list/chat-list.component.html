@@ -1,0 +1,6 @@
+<mat-nav-list>
+  <ng-container *ngFor="let chat of chats$ | async; let lastItem = last;">
+    <app-chat-item (openChatSidebar)="openChatSidebar.emit($event)" [chat]="chat"></app-chat-item>
+    <mat-divider *ngIf="!lastItem"></mat-divider>
+  </ng-container>
+</mat-nav-list>

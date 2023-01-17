@@ -1,0 +1,6 @@
+<mat-nav-list>
+  <ng-container *ngFor="let user of data; let lastItem = last;">
+    <app-user-item [user]="user" (openSidebar)="openSidebar.emit($event)"></app-user-item>
+    <mat-divider *ngIf="!lastItem"></mat-divider>
+  </ng-container>
+</mat-nav-list>
