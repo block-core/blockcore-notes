@@ -706,6 +706,16 @@ mat-card-footer {
   margin-top: 1em;
 }
 
+.emoji-mart-scroll {
+  height: 205px !important;
+  padding: 0 !important;
+}
+
+.emoji-mart-emoji:hover:before {
+  top: 2px !important;
+  left: 4px !important;
+}
+
 @media only screen and (max-width: 599px) {
   .full-width-dialog {
     max-width: 100vw !important;
