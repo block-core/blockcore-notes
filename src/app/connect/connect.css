@@ -142,6 +142,8 @@
 
 .card-image img {
   border-radius: 10px;
+  width: 100%;
+  height: auto;
 }
 
 @media only screen and (min-width: 1360px) {
