@@ -716,12 +716,6 @@ mat-card-footer {
   left: 4px !important;
 }
 
-.picker {
-  display: block;
-  position: fixed;
-  z-index: 3;
-}
-
 @media only screen and (max-width: 599px) {
   .full-width-dialog {
     max-width: 100vw !important;

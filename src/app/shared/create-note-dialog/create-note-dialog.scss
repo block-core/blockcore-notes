@@ -3,9 +3,9 @@
 }
 
 .toolbar {
-display: flex;
-margin-bottom: 5px;
-margin-top: 3px;
+  display: flex;
+  margin-bottom: 5px;
+  margin-top: 3px;
 }
 
 .toolbar-icon {
@@ -31,7 +31,12 @@ margin-top: 3px;
   // height: 40vh !important;
 }
 
-.margin-right{
+.margin-right {
   margin-right: 5px;
 }
 
+.picker {
+  display: block;
+  position: fixed;
+  z-index: 3;
+}
