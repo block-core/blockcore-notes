@@ -91,6 +91,7 @@ import { FollowersComponent } from './followers/followers';
 import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
 import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
+import { ContentMusicComponent } from './shared/content-music/content-music';
 
 @NgModule({
   declarations: [
@@ -139,6 +140,7 @@ import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
     ProfileWidgetComponent,
     ImportSheet,
     EventButtonsComponent,
+    ContentMusicComponent,
   ],
   imports: [
     HttpClientModule,

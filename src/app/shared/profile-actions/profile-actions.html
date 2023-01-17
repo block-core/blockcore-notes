@@ -106,6 +106,10 @@
 </mat-menu>
 
 <mat-menu #shareMenu="matMenu">
+  <button mat-menu-item (click)="shareProfile(profile)">
+    <mat-icon>content_copy</mat-icon>
+    <span>Profile</span>
+  </button>
   <button mat-menu-item (click)="copy('https://notes.blockcore.net/p/' + profile!.pubkey)">
     <mat-icon>content_copy</mat-icon>
     <span>Profile URL</span>

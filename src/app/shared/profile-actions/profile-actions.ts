@@ -170,6 +170,23 @@ export class ProfileActionsComponent {
     // this.updateProfile(this.profile.pubkey);
   }
 
+  shareProfile(profile?: NostrProfileDocument) {
+    if (!profile) {
+      return;
+    }
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: profile.name,
+          text: profile.about,
+          url: 'https://notes.blockcore.net/p/' + profile!.pubkey,
+        })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing', error));
+    }
+  }
+
   ngOnDestroy() {}
 
   async ngOnInit() {

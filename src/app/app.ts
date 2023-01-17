@@ -192,6 +192,11 @@ export class AppComponent {
       identifier: this.appState.getPublicKey(),
       type: 'Contacts',
       callback: (data: any) => {
+        // The callback is called for all contacts lists, not just the one we call for.
+        if (data.pubkey !== this.appState.getPublicKey()) {
+          return;
+        }
+
         const following = this.profileService.profile?.following;
         const pubkeys = data.tags.map((t: any[]) => t[1]);
 
