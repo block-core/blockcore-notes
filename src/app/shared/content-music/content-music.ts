@@ -40,13 +40,14 @@ export class ContentMusicComponent {
     const audio = document.querySelector('audio');
 
     if (!audio) {
+      console.log('Unable to find audio element');
       return;
     }
 
     navigator.mediaSession.metadata = new MediaMetadata({
       title: 'LifeLike',
       artist: 'AlexiAction',
-      album: '',
+      album: 'Blockcore Notes',
       artwork: [{ src: 'https://cdn.pixabay.com/user/2022/04/24/14-49-29-962_250x250.jpg', sizes: '256x256' }],
     });
 
