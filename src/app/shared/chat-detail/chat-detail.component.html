@@ -10,8 +10,8 @@
 
   <div class="message-send">
       <mat-form-field class="input-full-width">
-        <input autocomplete="off" #message maxlength="500" type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
-        <mat-hint align="end">{{message.value.length}} / 500</mat-hint>
+        <input autocomplete="off" #message type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
+        <mat-hint align="end" class="hint">Length : {{message.value.length}}</mat-hint>
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
   </div>
