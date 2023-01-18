@@ -7,10 +7,11 @@
     </ng-container>
     <mat-spinner diameter="24" color="warn" *ngIf="sending"></mat-spinner>
   </div>
-</div>
-<div class="message-send mat-elevation-z8">
-  <mat-form-field class="input-full-width">
-    <input type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
-    <mat-icon matSuffix>mode_edit</mat-icon>
-  </mat-form-field>
+
+  <div class="message-send">
+    <mat-form-field class="input-full-width">
+      <input autocomplete="off" type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
+      <mat-icon matSuffix>mode_edit</mat-icon>
+    </mat-form-field>
+  </div>
 </div>
