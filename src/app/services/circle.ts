@@ -11,7 +11,12 @@ import { dexieToRx } from '../shared/utilities';
   providedIn: 'root',
 })
 export class CircleService {
-  static DEFAULT: Circle = { id: 0, name: 'Following', color: '#e91e63', style: 1, public: true };
+  static DEFAULT: Circle[] = [{ id: 0, name: 'Following', color: '#e91e63', style: 1, public: true }, 
+  {id: 1, name: "Text", color: '#7cb342', style: 2, public: true},
+  {id: 2, name: "Photo", color: '#ffb300', style: 3, public: true},
+  {id: 3, name: "Film", color: '#26c6da', style: 4, public: true},
+  {id: 4, name: "Music", color: '#ba9eea', style: 5, public: true},
+  {id: 5, name: "Podcast", color: '#ff8a65', style: 6, public: true}];
 
   private get table() {
     return this.db.circles;
@@ -34,7 +39,10 @@ export class CircleService {
     const defaultCircle = await this.table.get(0);
 
     if (!defaultCircle) {
-      await this.put(CircleService.DEFAULT);
+      for (let index = 0; index < CircleService.DEFAULT.length; index++) {
+        const element = CircleService.DEFAULT[index];
+        await this.put(element);
+      }
     }
 
     // Cache the circle so we can lookup quickly.

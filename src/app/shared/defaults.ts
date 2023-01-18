@@ -7,26 +7,22 @@ export const circleStyles: CircleStyle[] = [
   },
   {
     id: 2,
-    name: 'Photo',
+    name: 'Text',
   },
   {
     id: 3,
-    name: 'Film',
+    name: 'Photo',
   },
   {
     id: 4,
-    name: 'Blog',
+    name: 'Film',
   },
   {
     id: 5,
-    name: 'News',
-  },
-  {
-    id: 6,
     name: 'Music',
   },
   {
-    id: 7,
+    id: 6,
     name: 'Podcast',
   },
 ];
