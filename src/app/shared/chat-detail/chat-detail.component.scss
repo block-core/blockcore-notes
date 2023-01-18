@@ -1,13 +1,3 @@
-@import '../../../../node_modules/@angular/material/theming';
-
-@include mat-core();
-
-$app-primary: mat-palette($mat-amber);
-$app-accent: mat-palette($mat-blue-gray);
-
-$primary: mat-color($app-primary);
-$accent: mat-color($app-accent, A100);
-
 :host {
   display: flex;
   flex-direction: column;
@@ -19,7 +9,7 @@ $accent: mat-color($app-accent, A100);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background-color: $accent;
+  background-color: rgba(255, 255, 255, 0.65);;
 }
 
 .scrollable {
@@ -40,7 +30,7 @@ $accent: mat-color($app-accent, A100);
   flex-direction: row;
   margin-bottom: 12px;
 
-  &__cover {
+  .cover {
     width: 36px;
     height: 36px;
     margin-right: 16px;
@@ -48,32 +38,32 @@ $accent: mat-color($app-accent, A100);
     overflow: hidden;
   }
 
-  &__picture {
+  .picture {
     display: block;
     max-width: 100%;
   }
 
-  &__container {
+  .container {
     flex: 1;
   }
 
-  &__card {
+  .card {
     display: inline-block !important;
   }
 
-  &--me {
+  .me {
     flex-direction: row-reverse;
 
-    #{$this}__container {
+    .container {
       display: flex;
       justify-content: flex-end;
 
       .mat-card {
-        background-color: $primary;
+        background-color: rgba(255, 255, 255, 0.55);
       }
     }
 
-    #{$this}__cover {
+    .cover {
       margin-right: 0;
       margin-left: 16px;
     }

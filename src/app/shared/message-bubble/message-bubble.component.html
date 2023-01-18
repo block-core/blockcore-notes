@@ -1,9 +1,9 @@
-<div class="bubble" [class.bubble--me]="message.id==0">
-  <div class="bubble__cover">
-    <img class="bubble__picture" [src]="message.cover" alt="">
+<div class="bubble" [class.me]="message.id==0">
+  <div class="bubble cover">
+    <img class="bubble picture" [src]="message.cover" alt="">
   </div>
-  <div class="bubble__container">
-    <mat-card class="bubble__card">
+  <div class="bubble container">
+    <mat-card class="bubble card">
       {{message.message}}
     </mat-card>
   </div>

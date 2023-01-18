@@ -4,7 +4,7 @@
   flex-direction: row;
   margin-bottom: 12px;
 
-  &__cover {
+  &.cover {
     width: 36px;
     height: 36px;
     margin-right: 16px;
@@ -12,33 +12,39 @@
     overflow: hidden;
   }
 
-  &__picture {
+  &.picture {
     display: block;
     max-width: 100%;
+    margin-bottom: 0;
   }
 
-  &__container {
+  &.container {
     flex: 1;
   }
 
-  &__card {
+  &.card {
     display: inline-block !important;
     padding: 12px;
   }
 
-  &--me {
+  &.me {
     flex-direction: row-reverse;
 
-    #{$this}__container {
+    #{$this}.picture {
+      display: block;
+      max-width: 100%;
+    }
+
+    #{$this}.container {
       display: flex;
       justify-content: flex-end;
 
       .mat-card {
-        background-color: aquamarine;
+        background-color: rgba(255, 255, 255, 0.55);;
       }
     }
 
-    #{$this}__cover {
+    #{$this}.cover {
       margin-right: 0;
       margin-left: 16px;
     }
