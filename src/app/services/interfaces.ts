@@ -10,6 +10,14 @@ export interface Circle {
   public: boolean;
 }
 
+export interface MediaItem {
+  artwork: string;
+  title: string;
+  artist: string;
+  source: string;
+  type: 'Music' | 'Podcast';
+}
+
 export interface Contact {
   pubkey: string;
   relay?: string;

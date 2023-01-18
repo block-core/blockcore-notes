@@ -6,13 +6,18 @@
 }
 
 .media-info {
-  flex: 0 1 auto;
+  /* flex: 0 1 auto; */
+  flex: 1 1 calc(33%);
+
   display: flex;
   flex-direction: row;
 }
 
 .media-controls {
+  /* flex: 2 2 auto; */
   flex: 2 2 auto;
+  width: 360px;
+
   text-align: center;
   justify-content: center;
   display: flex;
@@ -22,8 +27,9 @@
 .media-audio {
   /* padding-top: 1.4em; */
   padding-right: 1.4em;
-  flex: 0 1 auto;
+  flex: 1 1 calc(33%);
   display: flex;
+  text-align: right;
 }
 
 .media-controls-container {
@@ -41,13 +47,27 @@
 }
 
 .music-title {
-  font-size: 1.2em;
+  font-size: 0.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+          line-clamp: 2;
+  -webkit-box-orient: vertical;
   font-weight: 700;
   margin-bottom: 0.4em;
 }
 
 .music-artist {
   color: rgba(255, 255, 255, 0.5);
+  font-size: 0.65em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines to show */
+          line-clamp: 1;
+  -webkit-box-orient: vertical;
+
 }
 
 .media-info-text {

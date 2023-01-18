@@ -94,6 +94,7 @@ import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
 import { ContentMusicComponent } from './shared/content-music/content-music';
 import { MediaPlayerComponent } from './shared/media-player/media-player';
 import { DateComponent } from './shared/date/date';
+import { ContentPodcastComponent } from './shared/content-podcast/content-podcast';
 
 @NgModule({
   declarations: [
@@ -144,7 +145,8 @@ import { DateComponent } from './shared/date/date';
     EventButtonsComponent,
     ContentMusicComponent,
     MediaPlayerComponent,
-    DateComponent
+    DateComponent,
+    ContentPodcastComponent
   ],
   imports: [
     HttpClientModule,

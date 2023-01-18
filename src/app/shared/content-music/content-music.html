@@ -1,4 +1,12 @@
 <div class="music-list feed-page">
+  <mat-card class="events clickable">
+    <div class="events-header">
+      <!-- <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header> -->
+      <app-event-actions></app-event-actions>
+    </div>
+    <!-- <app-content [event]="event"></app-content> -->
+  </mat-card>
+
   <div class="music-item">
     <img class="music-album" src="https://cdn.pixabay.com/user/2022/04/24/14-49-29-962_250x250.jpg" />
     <div class="music-details">
@@ -31,7 +39,7 @@
   </div>
 
   <button mat-flat-button (click)="mediaConnect()">Connect Media Events</button>
-  <br><br>
+  <br /><br />
   <button mat-flat-button (click)="toggleMediaPlayer()">Toggle Media Player</button>
 
   <!-- <div class="music-item">
