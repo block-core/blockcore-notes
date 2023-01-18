@@ -72,6 +72,9 @@ export class MediaService {
     this.index = -1;
     this.audio = undefined;
     this.current = undefined;
+
+    this.options.options.showMediaPlayer = false;
+    this.media = [];
   }
 
   play(file: MediaItem) {
@@ -96,6 +99,10 @@ export class MediaService {
   }
 
   async start() {
+    if (this.index === -1) {
+      this.index = 0;
+    }
+
     const file = this.media[this.index];
 
     console.log(file);

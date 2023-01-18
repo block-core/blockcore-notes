@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MediaService } from 'src/app/services/media';
+import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 
@@ -10,7 +11,7 @@ import { Utilities } from 'src/app/services/utilities';
   styleUrls: ['./media-player.css'],
 })
 export class MediaPlayerComponent {
-  constructor(public media: MediaService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+  constructor(public options: OptionsService, public media: MediaService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
   mediaConnect() {
     // new Audio('https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=lifelike-126735.mp3').play();
