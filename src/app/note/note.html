@@ -8,7 +8,7 @@
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <p>
-        <mat-slide-toggle class="options-slider" [(ngModel)]="optionsService.options.showLines">Show lines</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.options.showLines">Show lines</mat-slide-toggle>
       </p>
     </mat-expansion-panel>
   </mat-accordion>

@@ -16,7 +16,20 @@ export interface Options {
   providedIn: 'root',
 })
 export class OptionsService {
-  constructor() {}
+  constructor() {
+    this.load();
+  }
 
   options: Options = { showLines: true };
+  
+  load() {
+    let options = localStorage.getItem('blockcore:notes:nostr:options');
+    if (options) {
+      this.options = JSON.parse(options);
+    }
+  }
+
+  save() {
+    localStorage.setItem('blockcore:notes:nostr:options', JSON.stringify(this.options));
+  }
 }
