@@ -9,9 +9,10 @@
   </div>
 
   <div class="message-send">
-    <mat-form-field class="input-full-width">
-      <input autocomplete="off" type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
-      <mat-icon matSuffix>mode_edit</mat-icon>
-    </mat-form-field>
+      <mat-form-field class="input-full-width">
+        <input autocomplete="off" #message maxlength="500" type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
+        <mat-hint align="end">{{message.value.length}} / 500</mat-hint>
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
   </div>
 </div>
