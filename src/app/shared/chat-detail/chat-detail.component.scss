@@ -5,7 +5,7 @@
 
 .messages-list-container {
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: column;
   justify-content: space-between;
   width: 100%;
   height: calc(100vh - 64px);
@@ -14,7 +14,7 @@
 @media only screen and (max-width: 599px) {
   .messages-list-container {
 
-    height: calc(100vh - 55px);
+    height: calc(100vh - 56px);
   }}
 
 .scrollable {
