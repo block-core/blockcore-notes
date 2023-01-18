@@ -92,6 +92,7 @@ import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
 import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
 import { ContentMusicComponent } from './shared/content-music/content-music';
+import { MediaPlayerComponent } from './shared/media-player/media-player';
 
 @NgModule({
   declarations: [
@@ -141,6 +142,7 @@ import { ContentMusicComponent } from './shared/content-music/content-music';
     ImportSheet,
     EventButtonsComponent,
     ContentMusicComponent,
+    MediaPlayerComponent,
   ],
   imports: [
     HttpClientModule,

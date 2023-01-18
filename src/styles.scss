@@ -732,3 +732,9 @@ mat-card-footer {
 .error {
   color: rgb(219, 2, 2) !important;
 }
+
+@media only screen and (max-height: 200px) {
+  .sidenav {
+    display: none !important;
+  }
+}

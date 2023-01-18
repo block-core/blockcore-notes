@@ -24,6 +24,7 @@ import { StorageService } from './services/storage';
 import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UIService } from './services/ui';
+import { OptionsService } from './services/options';
 
 @Component({
   selector: 'app-root',
@@ -41,6 +42,7 @@ export class AppComponent {
   searchControl: FormControl = new FormControl();
 
   constructor(
+    public options: OptionsService,
     private db: StorageService,
     public appState: ApplicationState,
     public authService: AuthenticationService,

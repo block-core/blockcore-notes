@@ -9,6 +9,7 @@ export interface Options {
   flatfeed?: boolean;
   ascending?: boolean;
   showLines: boolean;
+  showMediaPlayer?: boolean;
 }
 
 @Injectable({

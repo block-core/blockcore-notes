@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
@@ -33,7 +34,11 @@ export class ContentMusicComponent {
   // static regexpWords = /\b(?:\w|-)+\b/g;
   // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
 
-  constructor(private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+  constructor(private options: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+
+  toggleMediaPlayer() {
+    this.options.options.showMediaPlayer = !this.options.options.showMediaPlayer;
+  }
 
   mediaConnect() {
     // new Audio('https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=lifelike-126735.mp3').play();

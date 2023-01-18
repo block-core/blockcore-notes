@@ -154,6 +154,7 @@
     <div class="scrolling-content" infiniteScroll (scrollAction)="onInfiniteScroll()">
       <router-outlet></router-outlet>
     </div>
+    <app-media-player *ngIf="options.options.showMediaPlayer"></app-media-player>
 
     <!-- <div class="scrolling-content" appDetectScroll (onScroll)="onScroll($event)" [bottomOffset]="300" [topOffset]="300">
       <router-outlet></router-outlet>
