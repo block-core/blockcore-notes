@@ -62,17 +62,14 @@ export class MediaService {
   }
 
   exit() {
-    if (!this.audio) {
-      return;
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.currentTime = 0;
+      this.audio = undefined;
     }
 
-    this.audio.pause();
-    this.audio.currentTime = 0;
-
     this.index = -1;
-    this.audio = undefined;
     this.current = undefined;
-
     this.options.options.showMediaPlayer = false;
     this.media = [];
   }
