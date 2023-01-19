@@ -4,6 +4,7 @@ import { MediaService } from 'src/app/services/media';
 import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
+import { TimePipe } from '../time.pipe';
 
 @Component({
   selector: 'app-media-player',
@@ -12,6 +13,10 @@ import { Utilities } from 'src/app/services/utilities';
 })
 export class MediaPlayerComponent {
   constructor(public options: OptionsService, public media: MediaService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+
+  formatLabel(value: number): string {
+    return TimePipe.time(value);
+  }
 
   mediaConnect() {
     // new Audio('https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=lifelike-126735.mp3').play();

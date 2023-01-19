@@ -21,6 +21,7 @@
   text-align: center;
   justify-content: center;
   display: flex;
+  flex-direction: column;
   /* padding-top: 1.4em; */
 }
 
@@ -73,6 +74,36 @@
   padding: 0.8em;
   align-self: center;
 }
+
+.media-timeline {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  font-size: 0.8em;
+  
+  justify-content: center;
+}
+
+.media-timeline-1 {
+  flex: 1 1 auto;
+  width: 100px;
+  align-self: center;
+}
+
+.media-timeline-2 {
+  flex: 2 2 auto;
+  align-self: center;
+}
+
+.media-timeline-3 {
+  flex: 1 1 auto;
+  width: 100px;
+  align-self: center;
+}
+
+/* .media-slider {
+  transform: scale(0.5);
+} */
 
 @media only screen and (max-height: 200px) {
   .media-player {

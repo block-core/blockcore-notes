@@ -95,6 +95,8 @@ import { ContentMusicComponent } from './shared/content-music/content-music';
 import { MediaPlayerComponent } from './shared/media-player/media-player';
 import { DateComponent } from './shared/date/date';
 import { ContentPodcastComponent } from './shared/content-podcast/content-podcast';
+import { MatSliderModule } from '@angular/material/slider';
+import { TimePipe } from './shared/time.pipe';
 
 @NgModule({
   declarations: [
@@ -146,7 +148,8 @@ import { ContentPodcastComponent } from './shared/content-podcast/content-podcas
     ContentMusicComponent,
     MediaPlayerComponent,
     DateComponent,
-    ContentPodcastComponent
+    ContentPodcastComponent,
+    TimePipe
   ],
   imports: [
     HttpClientModule,
@@ -184,6 +187,7 @@ import { ContentPodcastComponent } from './shared/content-podcast/content-podcas
     LayoutModule,
     MatBottomSheetModule,
     NgxLoadingButtonsModule,
+    MatSliderModule,
     MatSnackBarModule,
     MatProgressBarModule,
     MatDialogModule,

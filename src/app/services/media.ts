@@ -44,10 +44,10 @@ export class MediaService {
     });
 
     navigator.mediaSession.setActionHandler('seekbackward', () => {
-      this.rewind(30);
+      this.rewind(10);
     });
     navigator.mediaSession.setActionHandler('seekforward', () => {
-      this.forward(30);
+      this.forward(10);
     });
     navigator.mediaSession.setActionHandler('previoustrack', () => {
       if (this.canPrevious) {
@@ -182,6 +182,30 @@ export class MediaService {
     }
 
     return this.audio.muted;
+  }
+
+  get time() {
+    if (!this.audio) {
+      return 10;
+    }
+
+    return Math.floor(this.audio.currentTime);
+  }
+
+  set time(value) {
+    if (!this.audio) {
+      return;
+    }
+
+    this.audio.currentTime = value;
+  }
+
+  get duration() {
+    if (!this.audio) {
+      return 100;
+    }
+
+    return Math.floor(this.audio.duration);
   }
 
   mute() {
