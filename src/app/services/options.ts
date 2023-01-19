@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { boolean } from 'joi';
 
 export interface Options {
   hideSpam?: boolean;
@@ -11,6 +12,7 @@ export interface Options {
   showLines: boolean;
   showMediaPlayer?: boolean;
   enableSpotify?: boolean;
+  hideSideLabels?: boolean;
 }
 
 @Injectable({

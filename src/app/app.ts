@@ -70,6 +70,8 @@ export class AppComponent {
       });
     }
 
+    this.displayLabels = !this.options.values.hideSideLabels;
+
     // This must happen in the constructor on app component, or when loading in PWA, it won't
     // be possible to read the query parameters.
     const queryParam = globalThis.location.search;
@@ -109,6 +111,11 @@ export class AppComponent {
   toggleMenuSize() {
     this.displayLabels = !this.displayLabels;
     this.cd.detectChanges();
+
+    setTimeout(() => {
+      this.options.values.hideSideLabels = !this.displayLabels;
+      this.options.save();
+    }, 250);
 
     // this._container._ngZone.onMicrotaskEmpty.subscribe(() => {
     //   this._container._updateStyles();
