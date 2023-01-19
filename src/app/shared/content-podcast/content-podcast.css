@@ -14,7 +14,6 @@
 
 .music-title {
   font-weight: 700;
-  font-size: 1.2em;
   margin-bottom: 0.4em;
 }
 
@@ -36,4 +35,7 @@ audio {
 }
 
 @media only screen and (max-width: 599px) {
+  .music-album {
+    max-height: 32px;
+  }
 }

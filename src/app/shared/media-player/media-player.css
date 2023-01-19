@@ -52,7 +52,7 @@
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* number of lines to show */
-          line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   font-weight: 700;
   margin-bottom: 0.4em;
@@ -65,9 +65,8 @@
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 1; /* number of lines to show */
-          line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
-
 }
 
 .media-info-text {
@@ -85,5 +84,11 @@
     height: 100%;
     width: 100%;
     z-index: 1000;
+  }
+}
+
+@media only screen and (max-width: 780px) {
+  .hide-small {
+    display: none !important;
   }
 }
