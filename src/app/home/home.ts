@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
@@ -21,6 +21,7 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DataService } from '../services/data';
 import { StorageService } from '../services/storage';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 interface DefaultProfile {
   pubkey: string;
@@ -55,6 +56,12 @@ export class HomeComponent {
     { name: 'Bitcoin', about: 'Influencial Bitcoin people', pubkey: 'npub175ag9cus82a0zzpkheaglnudpvsc8q046z82cyz9gmauzlve6r2s4k9fpm', pubkeyhex: 'f53a82e3903abaf10836be7a8fcf8d0b218381f5d08eac104546fbc17d99d0d5' },
     { name: 'Blockcore', about: 'Follow the Blockcore developers', pubkey: 'npub1zfy0r7x8s3xukajewkmmzxjj3wpfan7apj5y7szz7y740wtf6p5q3tdyy9', pubkeyhex: '1248f1f8c7844dcb765975b7b11a528b829ecfdd0ca84f4042f13d57b969d068' },
   ];
+
+  @ViewChild('picker') picker: unknown;
+
+  isEmojiPickerVisible: boolean | undefined;
+
+  formGroup!: UntypedFormGroup;
 
   defaults: DefaultProfile[] = [
     {
@@ -132,9 +139,26 @@ export class HomeComponent {
     private dataService: DataService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private formBuilder: UntypedFormBuilder
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
+  }
+
+  note?: string;
+
+  public addEmoji(event: { emoji: { native: any } }) {
+    // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
+    this.note = `${this.note}${event.emoji.native}`;
+    this.isEmojiPickerVisible = false;
+  }
+
+  onCancel() {
+    this.note = '';
+  }
+
+  postNote() {
+    alert('coming soon!');
   }
 
   downloadProfiles() {
@@ -505,6 +529,12 @@ export class HomeComponent {
 
   async ngOnInit() {
     this.options.values.privateFeed = true;
+
+    this.formGroup = this.formBuilder.group({
+      note: ['', Validators.required],
+      expiration: [''],
+      dateControl: [],
+    });
 
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc

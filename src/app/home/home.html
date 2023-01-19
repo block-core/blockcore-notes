@@ -54,15 +54,14 @@
 
       <mat-card class="home-card">
         <mat-card-header>
-          <mat-card-title>Curated Following Lists</mat-card-title>
+          <mat-card-title>Following Lists</mat-card-title>
           <mat-card-subtitle>Lists of users based upon topics you can add to your following list.</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
           <div class="list-selection" *ngFor="let list of lists">
             {{ list.name }}<br />
             <small>{{ list.about }}</small><br />
-            <button [routerLink]="['/following', list.pubkeyhex]" mat-flat-button color="primary">View profiles</button>&nbsp;
-            <!-- <button (click)="import(list.pubkeyhex)" mat-button>BLOCK ALL</button> -->
+            <button class="full-width" [routerLink]="['/following', list.pubkeyhex]" mat-flat-button color="primary">View profiles</button>
           </div>
         </mat-card-content>
       </mat-card>
@@ -72,15 +71,53 @@
         <mat-card-header>
           <mat-card-title>Create Note</mat-card-title>
         </mat-card-header>
-        <mat-card-content> [Coming soon] </mat-card-content>
+        <mat-card-content>
+          <br />
+          <form [formGroup]="formGroup">
+            <div mat-dialog-content class="mat-dialog-content">
+              <!-- <div class="toolbar">
+                <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+              </div> -->
+              <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+              <mat-form-field appearance="outline" class="input-full-width">
+                <mat-label>Note</mat-label>
+                <textarea class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="note" formControlName="note" rows="6"></textarea>
+              </mat-form-field>
+
+              <!-- <mat-form-field>
+                <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a timeout" [formControl]="dateControl" [min]="minDate" />
+                <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
+                  <ng-template>
+                    <span>Set timeout</span>
+                  </ng-template>
+                </ngx-mat-datetime-picker>
+              </mat-form-field> -->
+            </div>
+            <div mat-dialog-actions class="mat-dialog-actions" align="end">
+              <button mat-stroked-button (click)="onCancel()">Cancel</button>&nbsp;
+              <button mat-flat-button (click)="postNote()" color="primary" cdkFocusInitial>Post</button>
+            </div>
+          </form>
+        </mat-card-content>
       </mat-card>
 
       <mat-card class="home-card">
         <mat-card-header>
-          <mat-card-title>Activity Feed</mat-card-title>
+          <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba1.jpg">
+          <mat-card-title>Shiba Inu</mat-card-title>
+          <mat-card-subtitle>Dog Breed</mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content> [Coming soon] </mat-card-content>
+        <img mat-card-image class="home-card-image" src="https://material.angular.io/assets/img/examples/shiba2.jpg" />
+        <mat-card-content>
+          <p>The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan. A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally bred for hunting.</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button>Like</button>
+          <button mat-button>Comments</button>
+        </mat-card-actions>
       </mat-card>
+
     </div>
   </div>
 
@@ -104,9 +141,9 @@
 
   <!-- <div class="dashboard">
     <div class="dashboard-left"> -->
-      <!-- <h1 class="marginless">Hi, having fun yet?</h1> -->
+  <!-- <h1 class="marginless">Hi, having fun yet?</h1> -->
 
-      <!-- <button (click)="downloadProfiles()">Click me</button>
+  <!-- <button (click)="downloadProfiles()">Click me</button>
 
       <button (click)="subscribeEvents()">Click me2</button>
 
@@ -114,17 +151,17 @@
 
       <button (click)="downloadProfiles2()">Click me4</button> -->
 
-      <!-- <p>You can import your existing followers:</p>
+  <!-- <p>You can import your existing followers:</p>
       <button class="follow-button" mat-flat-button color="primary" (click)="import(this.appState.getPublicKey())">Import your following list</button>
       <br /><br /> -->
 
-      <!-- <h2>PROTOTYPE</h2>
+  <!-- <h2>PROTOTYPE</h2>
       <p>Blockcore Notes is a prototype. Please wipe your local database once in a while to fix bugs and issues.</p>
       <p>
         <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
       </p> -->
 
-      <!-- <div *ngIf="defaults$ | async as defaults">
+  <!-- <div *ngIf="defaults$ | async as defaults">
         <div *ngIf="defaults.length > 0">
           <p>If you are new to Blockcore Notes, here are some interesting people you can follow.</p>
 
@@ -142,7 +179,7 @@
           </div>
         </div>
       </div> -->
-    <!-- </div> -->
-    <!-- <div class="dashboard-right"></div> -->
+  <!-- </div> -->
+  <!-- <div class="dashboard-right"></div> -->
   <!-- </div> -->
 </div>

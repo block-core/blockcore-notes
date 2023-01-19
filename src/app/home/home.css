@@ -61,11 +61,11 @@
 } */
 
 .list-selection {
-  margin-top: 2em;
+  margin-top: 1.4em;
 }
 
 .list-selection button {
-  margin-top: 1em;
+  margin-top: 0.8em;
 }
 
 @media only screen and (max-width: 920px) {
@@ -91,6 +91,8 @@
 .home {
   display: flex;
   gap: 1.5em;
+  max-width: 1360px;
+  align-self: center;
 }
 
 .home-left {
@@ -114,4 +116,22 @@
   margin-left: 0.1em;
   margin-right: 0.1em;
   border-radius: 5px;
+}
+
+.home-card-image {
+  width: 100%;
+}
+
+.page {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+@media only screen and (max-width: 599px) {
+  .home {
+    flex-direction: column-reverse;
+    gap: 1em;
+  }
 }
