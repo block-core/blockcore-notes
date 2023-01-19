@@ -42,9 +42,12 @@
   padding: 10px;
 }
 
-.message-send * {
-  border: none;
-  font-size: 1em;
+.toolbar-icon {
+  cursor: pointer;
+}
+
+.toolbar-icon:hover {
+  color: #9c27b0;
 }
 
 .bubble {

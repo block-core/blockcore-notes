@@ -12,7 +12,9 @@
       <mat-form-field class="input-full-width">
         <input autocomplete="off" #message type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
         <mat-hint align="end" class="hint">Length : {{message.value.length}}</mat-hint>
-        <mat-icon matSuffix>mode_edit</mat-icon>
+        <mat-icon class="toolbar-icon" matSuffix>sentiment_satisfied</mat-icon>
+        <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>
+        <mat-icon class="toolbar-icon" matSuffix>attach_file_add</mat-icon>
       </mat-form-field>
   </div>
 </div>
