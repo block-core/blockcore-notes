@@ -232,6 +232,7 @@ app-profile-actions {
   // overflow: overlay !important;
   // height: 300px;
   height: 100%;
+  width: 100%;
   // max-height: 300px;
   padding-bottom: 1em;
 
@@ -733,4 +734,14 @@ mat-card-footer {
   .sidenav {
     display: none !important;
   }
+}
+
+.new-post-small {
+  width: 56px !important;
+}
+
+.new-post-small img {
+  width: 56px !important;
+  left: 0px !important;
+  bottom: 0px !important;
 }

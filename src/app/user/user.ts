@@ -144,6 +144,8 @@ export class UserComponent {
 
         if (this.circle) {
           this.layout = this.circle!.style;
+        } else {
+          this.layout = 1;
         }
 
         // TODO: Increase this, made low during development.

@@ -1,13 +1,13 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ApplicationState } from './services/applicationstate';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavContainer } from '@angular/material/sidenav';
 import { Router, TitleStrategy } from '@angular/router';
 import { AuthenticationService } from './services/authentication';
 import { AppUpdateService } from './services/app-update';
 import { CheckForUpdateService } from './services/check-for-update';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
-import { Observable, map, shareReplay, startWith } from 'rxjs';
+import { Observable, map, shareReplay, startWith, debounceTime, tap } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Location } from '@angular/common';
 import { RelayService } from './services/relay';
@@ -40,8 +40,10 @@ export class AppComponent {
   profile: NostrProfileDocument | undefined;
   visibilityHandler: any;
   searchControl: FormControl = new FormControl();
+  @ViewChild('sidenavContainer') private sidenavContainer!: MatSidenavContainer;
 
   constructor(
+    private cd: ChangeDetectorRef,
     public options: OptionsService,
     private db: StorageService,
     public appState: ApplicationState,
@@ -102,11 +104,33 @@ export class AppComponent {
     });
   }
 
+  displayLabels = true;
+
+  toggleMenuSize() {
+    this.displayLabels = !this.displayLabels;
+    this.cd.detectChanges();
+
+    // this._container._ngZone.onMicrotaskEmpty.subscribe(() => {
+    //   this._container._updateStyles();
+    //   this._container._changeDetectorRef.markForCheck();
+    // });
+  }
+
   searchInputChanged() {
     if (this.appState.searchText) {
       this.searchService.search(this.appState.searchText);
     }
   }
+
+  // ngAfterViewInit() {
+  //   setTimeout(() => {
+  //     this.showMenu = true;
+  //   }, 0);
+  //   this._container._ngZone.onMicrotaskEmpty.subscribe(() => {
+  //     this._container._updateStyles();
+  //     this._container._changeDetectorRef.markForCheck();
+  //   });
+  // }
 
   searchVisibility(visible: boolean) {
     this.appState.showSearch = visible;

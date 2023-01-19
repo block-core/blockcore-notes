@@ -19,6 +19,22 @@
 // }
 
 .sidenav {
+  
+}
+
+.sidenav-small .mat-icon {
+  margin-right: 0 !important;
+}
+
+.sidenav-small .logo-icon {
+  width: 56px !important;
+}
+
+// .sidenav-small .mat-mdc-menu-item {
+//   width: 24px !important;
+// }
+
+.sidenav-labels {
   width: 200px;
 }
 
@@ -153,7 +169,7 @@ header {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* number of lines to show */
-          line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -216,3 +232,4 @@ header {
 .search-result-option span {
   margin-right: 0.4em;
 }
+
