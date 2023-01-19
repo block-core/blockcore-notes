@@ -94,7 +94,7 @@ export class ContentComponent {
       if (this.optionsService.values.enableSpotify) {
         // After doing image, video and known memes, get all URLs and handle spotify.
         const urls = [...content.matchAll(ContentComponent.regexpUrl)];
-        const spotifyUrl = urls.filter((url) => url.indexOf('open.spotify.com'));
+        const spotifyUrl = urls.filter((url) => url[0].indexOf('open.spotify.com') > -1);
         this.spotify = spotifyUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
 
         for (let index = 0; index < spotifyUrl.length; index++) {
