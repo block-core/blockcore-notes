@@ -185,6 +185,11 @@ export class Utilities {
     return this.bypassUrl(cleanedUrl);
   }
 
+  sanitizeUrlAndBypassFrame(url?: string) {
+    const cleanedUrl = this.sanitizeUrl(url);
+    return this.bypassFrameUrl(cleanedUrl);
+  }
+
   sanitizeUrl(url?: string, appendHttpsIfMissing?: boolean) {
     if (!url) {
       return '';

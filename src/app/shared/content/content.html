@@ -6,6 +6,25 @@
     <iframe id="ytplayer" class="event-video" type="text/html" *ngFor="let video of videos" [src]="video" frameborder="0"></iframe>
   </div>
 
+  <ng-template [ngIf]="spotify">
+
+    <!-- {{spotify | json}} -->
+
+    <iframe
+      *ngFor="let song of spotify"
+      style="border-radius: 12px"
+      [src]="song"
+      width="100%"
+      height="152"
+      frameborder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"
+    ></iframe>
+  </ng-template>
+
+  <!-- <div id="embed-iframe"></div> -->
+
   <!-- <div class="container-16-9">
     <video controls preload="none">
       <source src="video.mp4" type='video/mp4' />
