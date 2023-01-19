@@ -56,9 +56,9 @@
   flex-basis: 10%;
 }
 
-.lists-card {
+/* .lists-card {
   width: 100%;
-}
+} */
 
 .list-selection {
   margin-top: 2em;
@@ -86,4 +86,32 @@
     display: block;
     width: 100%;
   }
+}
+
+.home {
+  display: flex;
+  gap: 1.5em;
+}
+
+.home-left {
+  flex: 1 1 0;
+  min-width: 240px;
+}
+
+.home-right {
+  flex: 3 1 0;
+}
+
+.home-card {
+  border-radius: 15px;
+  margin-bottom: 1.8em;
+  width: 100%;
+}
+
+.home-card-thumbnail {
+  width: 56px;
+  height: 56px;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  border-radius: 5px;
 }
