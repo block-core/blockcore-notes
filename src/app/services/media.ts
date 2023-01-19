@@ -70,12 +70,12 @@ export class MediaService {
 
     this.index = -1;
     this.current = undefined;
-    this.options.options.showMediaPlayer = false;
+    this.options.values.showMediaPlayer = false;
     this.media = [];
   }
 
   play(file: MediaItem) {
-    this.options.options.showMediaPlayer = true;
+    this.options.values.showMediaPlayer = true;
     this.media = [];
     this.media.push(file);
 
@@ -86,7 +86,7 @@ export class MediaService {
 
   enque(file: MediaItem) {
     // TODO: Clean the file.source URL!
-    this.options.options.showMediaPlayer = true;
+    this.options.values.showMediaPlayer = true;
     this.media.push(file);
     // this.snackBar.open('Added to media queue', 'Hide', {
     //   duration: 1500,
@@ -110,7 +110,7 @@ export class MediaService {
 
     this.current = file;
 
-    this.options.options.showMediaPlayer = true;
+    this.options.values.showMediaPlayer = true;
 
     if (!this.audio) {
       this.audio = new Audio(file.source);

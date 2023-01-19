@@ -1,4 +1,4 @@
-<div class="thread-actions" [ngClass]="{ 'no-lines': !optionsService.options.showLines, 'lines': optionsService.options.showLines }">
+<div class="thread-actions" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
   <ng-template [ngIf]="!replyOpen">
     <mat-icon class="reaction-icon toolbar-icon" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Reaction to post">sentiment_satisfied</mat-icon>
     <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="true" (emojiSelect)="addEmoji($event)" title="Choose your reaction"></emoji-mart>

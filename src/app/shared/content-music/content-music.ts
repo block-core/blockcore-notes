@@ -37,7 +37,7 @@ export class ContentMusicComponent {
   constructor(private options: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
   toggleMediaPlayer() {
-    this.options.options.showMediaPlayer = !this.options.options.showMediaPlayer;
+    this.options.values.showMediaPlayer = !this.options.values.showMediaPlayer;
   }
 
   mediaConnect() {

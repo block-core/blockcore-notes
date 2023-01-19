@@ -10,6 +10,7 @@ import { ProfileService } from '../services/profile';
 import { RelayService } from '../services/relay';
 import { ThemeService } from '../services/theme';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
+import { OptionsService } from '../services/options';
 
 @Component({
   selector: 'app-settings',
@@ -24,7 +25,15 @@ export class SettingsComponent {
   wipedNotes = false;
   open = false;
 
-  constructor(public relayService: RelayService, public dialog: MatDialog, public appState: ApplicationState, private profileService: ProfileService, public theme: ThemeService, private db: StorageService) {}
+  constructor(
+    public optionsService: OptionsService,
+    public relayService: RelayService,
+    public dialog: MatDialog,
+    public appState: ApplicationState,
+    private profileService: ProfileService,
+    public theme: ThemeService,
+    private db: StorageService
+  ) {}
 
   toggle() {
     if (this.open) {

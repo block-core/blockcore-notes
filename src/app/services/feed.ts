@@ -88,7 +88,7 @@
 //   get threadedEvents$(): Observable<NostrEventDocument[]> {
 //     return this.events$.pipe(
 //       map((data) => {
-//         if (this.options.options.flatfeed) {
+//         if (this.options.values.flatfeed) {
 //           return data;
 //           // return data.filter((events) => !events.tags.find((t) => t[0] === 'e'));
 //         } else {

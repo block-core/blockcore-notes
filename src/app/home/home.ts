@@ -460,17 +460,17 @@ export class HomeComponent {
   feedChanged($event: any, type: string) {
     if (type === 'public') {
       // If user choose public and set the value to values, we'll turn on the private.
-      if (!this.options.options.publicFeed) {
-        this.options.options.privateFeed = true;
+      if (!this.options.values.publicFeed) {
+        this.options.values.privateFeed = true;
       } else {
-        this.options.options.privateFeed = false;
+        this.options.values.privateFeed = false;
       }
     } else {
       // If user choose private and set the value to values, we'll turn on the public.
-      if (!this.options.options.privateFeed) {
-        this.options.options.publicFeed = true;
+      if (!this.options.values.privateFeed) {
+        this.options.values.publicFeed = true;
       } else {
-        this.options.options.publicFeed = false;
+        this.options.values.publicFeed = false;
       }
     }
   }
@@ -486,7 +486,7 @@ export class HomeComponent {
   // }
 
   async ngOnInit() {
-    this.options.options.privateFeed = true;
+    this.options.values.privateFeed = true;
 
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc

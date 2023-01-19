@@ -38,7 +38,7 @@ export class ContentPodcastComponent {
   constructor(private media: MediaService, private options: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
   toggleMediaPlayer() {
-    this.options.options.showMediaPlayer = !this.options.options.showMediaPlayer;
+    this.options.values.showMediaPlayer = !this.options.values.showMediaPlayer;
   }
 
   play(title: string, artist: string, file: string, artwork: string) {

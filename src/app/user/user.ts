@@ -381,13 +381,13 @@ export class UserComponent {
   activeOptions() {
     let options = '';
 
-    if (this.options.options.hideSpam) {
+    if (this.options.values.hideSpam) {
       options += ' Spam: Filtered';
     } else {
       options += ' Spam: Allowed';
     }
 
-    if (this.options.options.hideInvoice) {
+    if (this.options.values.hideInvoice) {
       options += ' Invoices: Hidden';
     } else {
       options += ' Invoices: Displayed';
