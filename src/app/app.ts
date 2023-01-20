@@ -230,8 +230,6 @@ export class AppComponent {
           return;
         }
 
-        debugger;
-
         // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
         if (this.discoveredProfileDate < data.created_at) {
           this.discoveredProfileDate = data.created_at;

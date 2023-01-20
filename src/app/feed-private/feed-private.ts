@@ -32,15 +32,7 @@ export class FeedPrivateComponent {
   pageSize = 12;
   currentItems: NostrEventDocument[] = [];
 
-  currentItems$ = dexieToRx(liveQuery(() => this.table.offset(this.offset).limit(this.pageSize).toArray())).pipe(
-    map((data) => {
-      data.sort((a, b) => {
-        return a.created_at < b.created_at ? 1 : -1;
-      });
-
-      return data;
-    })
-  );
+  currentItems$ = dexieToRx(liveQuery(() => this.table.orderBy('created_at').offset(this.offset).limit(this.pageSize).toArray()));
 
   items$ = dexieToRx(liveQuery(() => this.items())).pipe(
     map((data) => {
