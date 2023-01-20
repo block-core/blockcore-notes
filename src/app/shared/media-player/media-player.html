@@ -49,7 +49,7 @@
       <button matTooltip="Unmute" class="hide-small" *ngIf="!media.muted" mat-icon-button (click)="media.mute()">
         <mat-icon>volume_up</mat-icon>
       </button>
-      <button class="hide-small" mat-icon-button>
+      <button routerLink="/queue" class="hide-small" mat-icon-button>
         <mat-icon>queue_music</mat-icon>
       </button>
       <button matTooltip="Exit Media Player" (click)="media.exit()" mat-icon-button>

@@ -97,6 +97,7 @@ import { DateComponent } from './shared/date/date';
 import { ContentPodcastComponent } from './shared/content-podcast/content-podcast';
 import { MatSliderModule } from '@angular/material/slider';
 import { TimePipe } from './shared/time.pipe';
+import { QueueComponent } from './queue/queue';
 
 @NgModule({
   declarations: [
@@ -149,7 +150,8 @@ import { TimePipe } from './shared/time.pipe';
     MediaPlayerComponent,
     DateComponent,
     ContentPodcastComponent,
-    TimePipe
+    TimePipe,
+    QueueComponent,
   ],
   imports: [
     HttpClientModule,
