@@ -297,7 +297,7 @@ export class UserComponent {
             // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
             // this.#changed();
           },
-          100
+          200
         );
 
         // setTimeout(async () => {

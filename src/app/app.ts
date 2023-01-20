@@ -230,11 +230,18 @@ export class AppComponent {
           return;
         }
 
-        const following = this.profileService.profile?.following;
-        const pubkeys = data.tags.map((t: any[]) => t[1]);
+        debugger;
 
-        if (!following) {
-          this.openImportSheet({ pubkeys: pubkeys, pubkey: data.pubkey });
+        // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
+        if (this.discoveredProfileDate < data.created_at) {
+          this.discoveredProfileDate = data.created_at;
+
+          const following = this.profileService.profile?.following;
+          const pubkeys = data.tags.map((t: any[]) => t[1]);
+
+          if (!following) {
+            this.openImportSheet({ pubkeys: pubkeys, pubkey: data.pubkey });
+          }
         }
       },
     });
@@ -250,6 +257,8 @@ export class AppComponent {
     //   await this.profileService.updateProfile(p.pubkey, p);
     // });
   }
+
+  discoveredProfileDate = 0;
 
   async ngOnInit() {
     this.theme.init();
