@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { findIndex } from 'rxjs';
 import { MediaItem } from './interfaces';
 import { OptionsService } from './options';
 
@@ -93,6 +94,14 @@ export class MediaService {
     //   horizontalPosition: 'center',
     //   verticalPosition: 'bottom',
     // });
+  }
+
+  dequeue (file : MediaItem) {
+    const index = this.media.findIndex((e)=>e=== file);
+    if (index === -1){
+      return
+    }
+    this.media.splice(index, 1)
   }
 
   async start() {
