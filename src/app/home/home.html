@@ -112,7 +112,19 @@
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="home-card">
+      <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of latestItems$ | async; trackBy: trackByFn">
+        <div class="events-header">
+          <app-event-header [pubkey]="event.pubkey"><span class="event-date" matTooltipPosition="below">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+          <app-event-actions [event]="event"></app-event-actions>
+        </div>
+        <app-content [event]="event"></app-content>
+      </mat-card>
+
+      <p class="view-more-container">
+        <button mat-button routerLink="/feed">View more notes...</button>
+      </p>
+
+      <!-- <mat-card class="home-card">
         <mat-card-header>
           <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba1.jpg" />
           <mat-card-title>Shiba Inu</mat-card-title>
@@ -126,7 +138,7 @@
           <button mat-button>Like</button>
           <button mat-button>Comments</button>
         </mat-card-actions>
-      </mat-card>
+      </mat-card> -->
     </div>
   </div>
 

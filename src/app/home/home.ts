@@ -22,6 +22,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { DataService } from '../services/data';
 import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { dexieToRx } from '../shared/utilities';
+import { liveQuery } from 'dexie';
 
 interface DefaultProfile {
   pubkey: string;
@@ -130,6 +132,7 @@ export class HomeComponent {
     private cd: ChangeDetectorRef,
     public options: OptionsService,
     public dialog: MatDialog,
+    public navigation: NavigationService,
     public profileService: ProfileService,
     private validator: DataValidation,
     public navigationService: NavigationService,
@@ -311,12 +314,6 @@ export class HomeComponent {
   //   this.cd.detectChanges();
   // }
 
-  optionsUpdated() {
-    // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
-    // Parse existing content.
-    this.events = this.validator.filterEvents(this.events);
-  }
-
   public trackByFn(index: number, item: NostrEvent) {
     return item.id;
   }
@@ -329,11 +326,11 @@ export class HomeComponent {
     return item.id;
   }
 
-  events: NostrEvent[] = [];
+  latestItems$ = dexieToRx(liveQuery(() => this.db.events.orderBy('created_at').reverse().limit(7).toArray()));
+
   sub: any;
   relay?: Relay;
   initialLoad = true;
-
   details = false;
 
   toggleDetails() {
