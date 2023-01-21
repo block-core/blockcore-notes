@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { ChatService } from './chat.service';
 import { UserModel } from './interfaces';
 
 @Injectable({
@@ -9,9 +10,9 @@ export class UserService {
   users = new BehaviorSubject<Array<UserModel>>(null as any);
   active = new BehaviorSubject<UserModel>(null as any);
 
-  constructor() {}
+  constructor(private chatService: ChatService) {}
 
   getUsers() {
-    // this.http.getUsers().then(response => this.users.next(response));
+    return this.chatService.data.users;
   }
 }

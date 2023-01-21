@@ -1,16 +1,14 @@
 <div class="profile" *ngIf="user">
   <div class="profile__picture-container">
-    <img class="profile__picture" [src]="user.cover" alt="">
+    <img class="profile__picture" [src]="user.cover" alt="" />
   </div>
   <div class="profile__button">
     <button mat-flat-button color="primary" (click)="openNewChat()">Write Message</button>
   </div>
-  <h1 class="mat-h1 profile__username">{{user.username}}</h1>
+  <h1 class="mat-h1 profile__username">{{ user.username }}</h1>
   <div mat-line class="profile__status">
     <app-status class="mat-line" [text]="user.status"></app-status>
   </div>
   <h2 class="mat-h2">Biography</h2>
-  <p class="mat-body">{{user.bio}}</p>
+  <p class="mat-body">{{ user.bio }}</p>
 </div>
-
-
