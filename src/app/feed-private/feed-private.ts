@@ -2,12 +2,9 @@ import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
-import { SettingsService } from '../services/settings';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
@@ -32,15 +29,7 @@ export class FeedPrivateComponent {
   pageSize = 12;
   currentItems: NostrEventDocument[] = [];
 
-  currentItems$ = dexieToRx(liveQuery(() => this.table.offset(this.offset).limit(this.pageSize).toArray())).pipe(
-    map((data) => {
-      data.sort((a, b) => {
-        return a.created_at < b.created_at ? 1 : -1;
-      });
-
-      return data;
-    })
-  );
+  currentItems$ = dexieToRx(liveQuery(() => this.table.orderBy('created_at').offset(this.offset).limit(this.pageSize).toArray()));
 
   items$ = dexieToRx(liveQuery(() => this.items())).pipe(
     map((data) => {
@@ -70,12 +59,8 @@ export class FeedPrivateComponent {
     private snackBar: MatSnackBar,
     private ngZone: NgZone
   ) {
-    console.log('HOME constructor!!'); // Hm.. called twice, why?
+    // console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
-
-  // get eventsView$(): Observable<NostrEventDocument[]> {
-  //   return this.feedService.events$.pipe(map((x) => x.slice(0, this.eventsCount)));
-  // }
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit');
@@ -146,48 +131,32 @@ export class FeedPrivateComponent {
   feedChanged($event: any, type: string) {
     if (type === 'public') {
       // If user choose public and set the value to values, we'll turn on the private.
-      if (!this.options.options.publicFeed) {
-        this.options.options.privateFeed = true;
+      if (!this.options.values.publicFeed) {
+        this.options.values.privateFeed = true;
       } else {
-        this.options.options.privateFeed = false;
+        this.options.values.privateFeed = false;
       }
     } else {
       // If user choose private and set the value to values, we'll turn on the public.
-      if (!this.options.options.privateFeed) {
-        this.options.options.publicFeed = true;
+      if (!this.options.values.privateFeed) {
+        this.options.values.publicFeed = true;
       } else {
-        this.options.options.publicFeed = false;
+        this.options.values.publicFeed = false;
       }
     }
   }
-
-  // async optionsUpdated($event: any, type: any) {
-  //   if (type == 1) {
-  //     this.showCached = false;
-  //   } else {
-  //     this.showBlocked = false;
-  //   }
-
-  //   await this.load();
-  // }
 
   subscriptions: Subscription[] = [];
   hasFollowers = false;
 
   async ngOnInit() {
     this.appState.updateTitle('Following Notes');
-    this.options.options.privateFeed = true;
+    this.options.values.privateFeed = true;
 
     this.subscriptions.push(
       this.navigation.showMore$.subscribe(() => {
         this.showMore();
       })
     );
-
-    // const followList = await this.profileService.followList();
-    // this.hasFollowers = followList.length > 0;
-
-    // useReactiveContext // New construct in Angular 14 for subscription.
-    // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
   }
 }

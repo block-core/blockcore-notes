@@ -17,6 +17,7 @@ import { ChatComponent } from './chat/chat';
 import { FeedComponent } from './feed/feed';
 import { FollowingComponent } from './following/following';
 import { FollowersComponent } from './followers/followers';
+import { QueueComponent } from './queue/queue';
 
 const routes: Routes = [
   {
@@ -101,6 +102,12 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [AuthGuard],
+  },
+
+  {
+    path: 'queue',
+    component: QueueComponent,
     canActivate: [AuthGuard],
   },
   {

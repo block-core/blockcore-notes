@@ -90,8 +90,6 @@ export class NavigationService {
       await this.dataService.publishEvent(signedEvent);
 
       this.router.navigate(['/e', signedEvent.id]);
-
-      // await this.feedService.publish(event);
     });
   }
 }

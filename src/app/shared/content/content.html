@@ -1,10 +1,41 @@
 <div class="content clickable" *ngIf="event">
   <div class="event-images" *ngIf="images && images.length > 0">
-    <img class="event-image" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
+    <img mat-card-image class="event-image" loading="lazy" decoding="async" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
+    <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" /> -->
   </div>
   <div class="event-videos" *ngIf="videos && videos.length > 0">
     <iframe id="ytplayer" class="event-video" type="text/html" *ngFor="let video of videos" [src]="video" frameborder="0"></iframe>
   </div>
+
+  <ng-template [ngIf]="spotify">
+
+    <!-- {{spotify | json}} -->
+
+    <iframe
+      *ngFor="let song of spotify"
+      style="border-radius: 12px"
+      [src]="song"
+      width="100%"
+      height="152"
+      frameborder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"
+    ></iframe>
+  </ng-template>
+
+  <!-- <div id="embed-iframe"></div> -->
+
+  <!-- <div class="container-16-9">
+    <video controls preload="none">
+      <source src="video.mp4" type='video/mp4' />
+    </video>
+  </div> -->
+
+  <!-- <div style="--aspect-ratio: 21/9;">
+    <video...></video>
+  </div> -->
+
   <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">{{ content }}</span><span *ngIf="event.contentCut">... (message was truncated)</span>
   <!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->
   <ng-template [ngIf]="displayRepliesTo">

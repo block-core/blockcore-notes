@@ -1,7 +1,7 @@
 <mat-nav-list>
   <a mat-list-item (click)="import($event)">
-    <span matListItemTitle>Found {{data.pubkeys.length}} profiles</span>
-    <span matLine>Import your existing public following list</span>
+    <span matListItemTitle>Found {{data.pubkeys.length}} profiles and {{data.relaysCount}} relays</span>
+    <span matLine>Import your existing relays (replaces default relays) and public following list</span>
   </a>
 
   <!-- <a href="https://docs.google.com/" mat-list-item (click)="openLink($event)">
@@ -18,5 +18,4 @@
     <span matListItemTitle>Google Hangouts</span>
     <span matLine>Show to your coworkers</span>
   </a> -->
-
 </mat-nav-list>

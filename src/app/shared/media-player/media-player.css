@@ -1,0 +1,125 @@
+.media-player {
+  display: flex;
+  flex-direction: row;
+  background-color: #212121;
+  height: 96px;
+}
+
+.media-info {
+  /* flex: 0 1 auto; */
+  flex: 1 1 calc(33%);
+
+  display: flex;
+  flex-direction: row;
+}
+
+.media-controls {
+  /* flex: 2 2 auto; */
+  flex: 2 2 auto;
+  width: 360px;
+
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  /* padding-top: 1.4em; */
+}
+
+.media-audio {
+  /* padding-top: 1.4em; */
+  padding-right: 1.4em;
+  flex: 1 1 calc(33%);
+  display: flex;
+  text-align: right;
+}
+
+.media-controls-container {
+  align-self: center;
+  flex: 2 2 auto;
+}
+
+.media-audio-container {
+  align-self: center;
+  flex: 2 2 auto;
+}
+
+.music-album {
+  height: 100%;
+}
+
+.music-title {
+  font-size: 0.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-weight: 700;
+  margin-bottom: 0.4em;
+}
+
+.music-artist {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.65em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines to show */
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.media-info-text {
+  padding: 0.8em;
+  align-self: center;
+}
+
+.media-timeline {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  font-size: 0.8em;
+  
+  justify-content: center;
+}
+
+.media-timeline-1 {
+  flex: 1 1 auto;
+  width: 100px;
+  align-self: center;
+}
+
+.media-timeline-2 {
+  flex: 2 2 auto;
+  align-self: center;
+}
+
+.media-timeline-3 {
+  flex: 1 1 auto;
+  width: 100px;
+  align-self: center;
+}
+
+/* .media-slider {
+  transform: scale(0.5);
+} */
+
+@media only screen and (max-height: 200px) {
+  .media-player {
+    position: absolute;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+  }
+}
+
+@media only screen and (max-width: 780px) {
+  .hide-small {
+    display: none !important;
+  }
+}

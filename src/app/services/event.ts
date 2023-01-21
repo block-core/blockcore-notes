@@ -41,8 +41,16 @@ export class EventService {
     // TODO: Store the raw event.
     // const nostrEvent = event as NostrEventDocument;
     // nostrEvent.raw = originalEvent;
-
     return event;
+  }
+
+  getPublicKeyAndEventTags(tags?: string[][]) {
+    if (!tags) {
+      return [];
+    }
+
+    const epTags = tags.filter((t) => t[0] === 'e' || t[0] === 'p');
+    return epTags;
   }
 
   /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */

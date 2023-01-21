@@ -10,6 +10,7 @@ import { ProfileService } from '../services/profile';
 import { RelayService } from '../services/relay';
 import { ThemeService } from '../services/theme';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
+import { OptionsService } from '../services/options';
 
 @Component({
   selector: 'app-settings',
@@ -24,7 +25,15 @@ export class SettingsComponent {
   wipedNotes = false;
   open = false;
 
-  constructor(public relayService: RelayService, public dialog: MatDialog, public appState: ApplicationState, private profileService: ProfileService, public theme: ThemeService, private db: StorageService) {}
+  constructor(
+    public optionsService: OptionsService,
+    public relayService: RelayService,
+    public dialog: MatDialog,
+    public appState: ApplicationState,
+    private profileService: ProfileService,
+    public theme: ThemeService,
+    private db: StorageService
+  ) {}
 
   toggle() {
     if (this.open) {
@@ -34,6 +43,11 @@ export class SettingsComponent {
       this.open = true;
       this.accordion.openAll();
     }
+  }
+
+  async primaryRelay(relay: NostrRelay) {
+    this.optionsService.values.primaryRelay = relay.url;
+    this.optionsService.save();
   }
 
   async deleteRelay(relay: Relay) {
@@ -50,8 +64,10 @@ export class SettingsComponent {
   }
 
   async onRelayChanged(relay: NostrRelay) {
-    if (relay.metadata.enabled) {
+    if (relay.metadata.enabled && relay.metadata.read) {
       await relay.connect();
+    } else if (!relay.metadata.read) {
+      await relay.close();
     } else {
       await relay.close();
     }
@@ -127,7 +143,7 @@ export class SettingsComponent {
 
       await this.relayService.appendRelay(result.url, result.read, result.write);
 
-      this.relayService.connect();
+      await this.relayService.connect();
     });
   }
 }

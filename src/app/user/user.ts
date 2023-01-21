@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
-import { SettingsService } from '../services/settings';
 import { OptionsService } from '../services/options';
 import { NavigationService } from '../services/navigation';
 import { CircleService } from '../services/circle';
@@ -144,6 +143,8 @@ export class UserComponent {
 
         if (this.circle) {
           this.layout = this.circle!.style;
+        } else {
+          this.layout = 1;
         }
 
         // TODO: Increase this, made low during development.
@@ -295,7 +296,7 @@ export class UserComponent {
             // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
             // this.#changed();
           },
-          100
+          200
         );
 
         // setTimeout(async () => {
@@ -381,13 +382,13 @@ export class UserComponent {
   activeOptions() {
     let options = '';
 
-    if (this.options.options.hideSpam) {
+    if (this.options.values.hideSpam) {
       options += ' Spam: Filtered';
     } else {
       options += ' Spam: Allowed';
     }
 
-    if (this.options.options.hideInvoice) {
+    if (this.options.values.hideInvoice) {
       options += ' Invoices: Hidden';
     } else {
       options += ' Invoices: Displayed';

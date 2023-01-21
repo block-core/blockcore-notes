@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEvent, NostrProfile } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
-import { SettingsService } from './settings';
 import { OptionsService } from './options';
 
 @Injectable({
@@ -41,13 +40,13 @@ export class DataValidation {
   }
 
   filterEvent(event: NostrEvent) {
-    if (this.options.options.hideInvoice) {
+    if (this.options.values.hideInvoice) {
       if (event.content.indexOf('lnbc') > -1) {
         return null;
       }
     }
 
-    if (this.options.options.hideSpam) {
+    if (this.options.values.hideSpam) {
       // If the first 200 characters does not contain a space, just filter it out.
       if (event.content.substring(0, 200).indexOf(' ') == -1) {
         return null;

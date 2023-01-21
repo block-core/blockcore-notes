@@ -1,0 +1,78 @@
+<div class="music-list feed-page">
+  <mat-card class="events clickable">
+    <div class="events-header">
+      <!-- <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header> -->
+      <app-event-actions></app-event-actions>
+    </div>
+    <!-- <app-content [event]="event"></app-content> -->
+  </mat-card>
+
+  <div class="music-item">
+    <img class="music-album" src="https://cdn.pixabay.com/user/2022/04/24/14-49-29-962_250x250.jpg" />
+    <div class="music-details">
+      <div class="music-title">LifeLike</div>
+      <div class="music-artist">AlexiAction</div>
+      <audio controls src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=lifelike-126735.mp3">
+        <a href="https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=lifelike-126735.mp3"> Download audio </a>
+      </audio>
+    </div>
+  </div>
+  <div class="music-item">
+    <img class="music-album" src="https://cdn.pixabay.com/user/2022/04/24/14-49-29-962_250x250.jpg" />
+    <div class="music-details">
+      <div class="music-title">EasyToLove</div>
+      <div class="music-artist">AlexiAction</div>
+      <audio controls src="https://cdn.pixabay.com/download/audio/2022/12/15/audio_dd5b9f6f3a.mp3?filename=easy-to-love-129414.mp3">
+        <a href="https://cdn.pixabay.com/download/audio/2022/12/15/audio_dd5b9f6f3a.mp3?filename=easy-to-love-129414.mp3"> Download audio </a>
+      </audio>
+    </div>
+  </div>
+  <div class="music-item">
+    <img class="music-album" src="https://cdn.pixabay.com/audio/2022/10/14/13-08-36-813_200x200.png" />
+    <div class="music-details">
+      <div class="music-title">CINIM - Brainfluid</div>
+      <div class="music-artist">CINIM</div>
+      <audio controls src="https://cdn.pixabay.com/download/audio/2022/10/12/audio_061cead49a.mp3?filename=weeknds-122592.mp3">
+        <a href="https://cdn.pixabay.com/download/audio/2022/10/12/audio_061cead49a.mp3?filename=weeknds-122592.mp3"> Download audio </a>
+      </audio>
+    </div>
+  </div>
+
+  <button mat-flat-button (click)="mediaConnect()">Connect Media Events</button>
+  <br /><br />
+  <button mat-flat-button (click)="toggleMediaPlayer()">Toggle Media Player</button>
+
+  <!-- <div class="music-item">
+    <img src="https://cdn.pixabay.com/user/2022/04/24/14-49-29-962_250x250.jpg" />
+
+    <div class="music-title">EasyToLove</div>
+    <div class="music-artist">AlexiAction</div>
+
+    <audio controls src="https://cdn.pixabay.com/download/audio/2022/12/15/audio_dd5b9f6f3a.mp3?filename=easy-to-love-129414.mp3">
+      <a href="https://cdn.pixabay.com/download/audio/2022/12/15/audio_dd5b9f6f3a.mp3?filename=easy-to-love-129414.mp3"> Download audio </a>
+    </audio>
+  </div> -->
+</div>
+
+<!-- <button mat-flat-button (click)="play()">Play</button> -->
+
+<!-- <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
+  <div class="image-grid-item" *ngFor="let image of images2" [photoGallery]="image"><img [src]="image" /></div>
+</div> -->
+
+<!-- <app-content-photos [events]="items.value" class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }" [event]="event" *ngFor="let event of items.value; trackBy: trackByFn"> </app-content-photos> -->
+
+<!-- <div class="image-grid-item" *ngFor="let image of images2" [photoGallery]="image"><img [src]="image" alt="" /></div> -->
+
+<!-- <div class="content clickable" *ngIf="event"> -->
+<!-- {{ content }}<span *ngIf="event.contentCut">... (message was truncated)</span> -->
+<!-- <div class="event-images" *ngIf="images2 && images2.length > 0">
+    <span *ngFor="let image of images2" [photoGallery]="image.toString()"> <img class="event-image" [src]="image" (click)="expandImage(image)" /></span>
+  </div> -->
+
+<!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->
+
+<!-- <mat-chip-set class="hashtags">
+    <mat-chip *ngFor="let tag of hashtags(event.tags)">#{{ tag }}</mat-chip>
+  </mat-chip-set> -->
+<!-- </div> -->

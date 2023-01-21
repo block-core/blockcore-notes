@@ -265,6 +265,10 @@ export class PeopleComponent {
       for (let i = 0; i < pubkeys.length; i++) {
         await this.addFollow(pubkeys[i]);
       }
+
+      setTimeout(() => {
+        this.router.navigate(['/p', pubkeys[0]]);
+      }, 100);
     });
   }
 }

@@ -6,7 +6,7 @@
         <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
         <!-- <mat-icon class="toolbar-icon" (click)="addLink()" matTooltip="Insert link">insert_link</mat-icon> -->
       </div>
-      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
       <mat-form-field appearance="fill" class="input-full-width">
         <mat-label>Note</mat-label>
         <textarea class="note-input" matInput type="text" autocomplete="off" [(ngModel)]="data.note" formControlName="note" rows="6"></textarea>

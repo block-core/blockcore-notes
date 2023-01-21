@@ -1,0 +1,41 @@
+.music-list {
+}
+
+.music-item {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+
+.music-album {
+  max-height: 128px;
+}
+
+.music-title {
+  font-weight: 700;
+  margin-bottom: 0.4em;
+}
+
+.music-artist {
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.4em;
+}
+
+.music-controls {
+  width: 100%;
+}
+
+.music-details {
+  flex: 1 2 auto;
+}
+
+audio {
+  width: 100%;
+}
+
+@media only screen and (max-width: 599px) {
+  .music-album {
+    max-height: 32px;
+  }
+}

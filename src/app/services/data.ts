@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrRelay, NostrSubscription, QueryJob } from './interfaces';
 import { ProfileService } from './profile';
-import * as moment from 'moment';
 import { EventService } from './event';
 import { RelayService } from './relay';
 import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature, Kind } from 'nostr-tools';
@@ -19,8 +18,6 @@ import { UIService } from './ui';
 export class DataService {
   daysToKeepProfiles = 14;
   cleanProfileInterval = 1000 * 60 * 60; // Every hour
-  //downloadProfileInterval = 1000 * 3; // Every 3 seconds
-  // downloadProfileInterval = 500;
   profileBatchSize = 20;
   refreshUserProfile = 1000 * 60 * 60 * 2; // Every second hour
   connected = false;
@@ -56,47 +53,13 @@ export class DataService {
         this.processQueues();
       }, 250);
     });
-
-    // Whenever the profile service needs to get a profile from the network, this event is triggered.
-    // this.profileService.profileRequested$.subscribe(async (pubkey) => {
-    //   if (!pubkey) {
-    //     return;
-    //   }
-    //   console.log('PROFILE REQUESTED:', pubkey);
-    //   await this.downloadProfile(pubkey);
-    // });
   }
 
   async initialize() {
     setTimeout(async () => {
       await this.cleanProfiles();
     }, this.cleanProfileInterval);
-
-    // setTimeout(async () => {
-    //   await this.downloadProfiles();
-    // }, this.downloadProfileInterval);
-
-    // On set interval, add the user's own profile to download.
-    // setTimeout(async () => {
-    //   this.profileQueue.push(this.appState.getPublicKey());
-    // }, this.refreshUserProfile);
-
-    // If at startup we don't have the logged on user profile, queue it up for retreival.
-    // When requesting the profile, it will be auto-requested from relays.
-    // setTimeout(async () => {
-    //   await this.profileService.getProfile(this.appState.getPublicKey());
-    // }, 2000);
   }
-
-  // async downloadProfiles() {
-  //   console.log('downloadProfiles!!');
-  //   this.processProfilesQueue();
-
-  //   setTimeout(async () => {
-  //     console.log('Download Profiles Interval');
-  //     await this.downloadProfiles();
-  //   }, this.downloadProfileInterval);
-  // }
 
   isFetching = false;
   profileQueue: string[] = [];
@@ -180,14 +143,7 @@ export class DataService {
           jobs[i].callback(event);
         }
       }
-
-      // this.ui.putEvent(event);
     });
-
-    // this.downloadNewestEvents()
-    // this.downloadNewestEventsByQuery()
-    // this.downloadEventsByQuery("", );
-    // this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [pubkey], limit: 100 }]).subscribe((event) => {
   }
 
   processProfileQueue() {
@@ -267,26 +223,6 @@ export class DataService {
           }
         }
       });
-  }
-
-  processProfilesQueue() {
-    // console.log('processProfilesQueue', this.isFetching);
-
-    // If currently fetching, just skip until next interval.
-    if (this.isFetching) {
-      return;
-    }
-
-    // Grab all queued up profiles and ask for them, or should we have a maximum item?
-    // For now, let us grab 10 and process those until next interval.
-
-    console.log('BEFORE:', JSON.stringify(this.profileQueue));
-    const pubkeys = this.profileQueue.splice(0, this.profileBatchSize);
-    console.log('AFTER:', JSON.stringify(this.profileQueue));
-
-    for (let i = 0; i < this.relayService.relays.length; i++) {
-      this.fetchProfiles(this.relayService.relays[i], pubkeys);
-    }
   }
 
   /** Creates an observable that will attempt to get newest profile entry across all relays and perform multiple callbacks if newer is found. */
@@ -475,64 +411,6 @@ export class DataService {
       };
     });
   }
-
-  // downloadFromRelay2(query: any, relay: NostrRelay): Observable<NostrEventDocument[]> {
-  //   return new Observable<NostrEventDocument[]>((observer: Observer<NostrEventDocument[]>) => {
-  //     const totalEvents: NostrEventDocument[] = [];
-
-  //     const sub = relay.sub([query], {}) as NostrSubscription;
-
-  //     sub.on('event', (originalEvent: any) => {
-  //       // console.log('downloadFromRelayIndex: event', id);
-  //       const event = this.eventService.processEvent(originalEvent);
-  //       // console.log('downloadFromRelayIndex: event', event);
-
-  //       if (!event) {
-  //         return;
-  //       }
-
-  //       totalEvents.unshift(event);
-  //       observer.next(totalEvents);
-  //       // sub.unsub();
-  //     });
-
-  //     sub.on('eose', () => {
-  //       // console.log('downloadFromRelayIndex: eose', id);
-  //       observer.complete();
-  //       sub.unsub();
-  //     });
-  //   });
-  // }
-
-  // downloadProfile(pubkey: string) {
-  //   if (!pubkey) {
-  //     return;
-  //   }
-
-  //   console.log('profileQueue.length1:', JSON.stringify(this.profileQueue));
-
-  //   // Skip if array already includes this pubkey.
-  //   if (this.profileQueue.includes(pubkey)) {
-  //     return;
-  //   }
-
-  //   console.log(this);
-  //   console.log('ADD DOWNLOAD PROFILE:', pubkey);
-  //   this.profileQueue.push(pubkey);
-
-  //   console.log('profileQueue.length2:', JSON.stringify(this.profileQueue));
-
-  //   this.processProfilesQueue();
-
-  //   // Wait some CPU cycles for potentially more profiles before we process.
-  //   // setTimeout(() => {
-  //   //   console.log('processProfilesQueue!!!', this.profileQueue.length);
-  //   //   this.processProfilesQueue();
-  //   // }, 1000);
-
-  //   // TODO: Loop all relays until we find the profile.
-  //   // return this.fetchProfiles(this.relays[0], [pubkey]);
-  // }
 
   fetchProfiles(relay: Relay, authors: string[]) {
     if (!authors || authors.length === 0) {

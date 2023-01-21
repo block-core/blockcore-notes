@@ -101,6 +101,13 @@ import { MessageBubbleComponent } from './shared/message-bubble/message-bubble.c
 import { ChatService } from './services/chat.service';
 import { UserService } from './services/user.service';
 import { StatusComponent } from './shared/status/status.component';
+import { ContentMusicComponent } from './shared/content-music/content-music';
+import { MediaPlayerComponent } from './shared/media-player/media-player';
+import { DateComponent } from './shared/date/date';
+import { ContentPodcastComponent } from './shared/content-podcast/content-podcast';
+import { MatSliderModule } from '@angular/material/slider';
+import { TimePipe } from './shared/time.pipe';
+import { QueueComponent } from './queue/queue';
 
 @NgModule({
   declarations: [
@@ -157,6 +164,12 @@ import { StatusComponent } from './shared/status/status.component';
     ChatListComponent,
     MessageBubbleComponent,
     StatusComponent
+    ContentMusicComponent,
+    MediaPlayerComponent,
+    DateComponent,
+    ContentPodcastComponent,
+    TimePipe,
+    QueueComponent,
   ],
   imports: [
     HttpClientModule,
@@ -194,6 +207,7 @@ import { StatusComponent } from './shared/status/status.component';
     LayoutModule,
     MatBottomSheetModule,
     NgxLoadingButtonsModule,
+    MatSliderModule,
     MatSnackBarModule,
     MatProgressBarModule,
     MatDialogModule,

@@ -185,6 +185,11 @@ export class Utilities {
     return this.bypassUrl(cleanedUrl);
   }
 
+  sanitizeUrlAndBypassFrame(url?: string) {
+    const cleanedUrl = this.sanitizeUrl(url);
+    return this.bypassFrameUrl(cleanedUrl);
+  }
+
   sanitizeUrl(url?: string, appendHttpsIfMissing?: boolean) {
     if (!url) {
       return '';
@@ -208,7 +213,8 @@ export class Utilities {
       return undefined;
     }
 
-    const urlLower = url.toLowerCase();
+    let urlLower = url.toLowerCase();
+    urlLower = urlLower.split('?')[0]; // Remove the query part.
 
     if (urlLower.endsWith('jpg') || urlLower.endsWith('jpeg') || urlLower.endsWith('png') || urlLower.endsWith('webp') || urlLower.endsWith('gif')) {
       return url;

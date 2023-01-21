@@ -11,9 +11,9 @@
         <!-- <mat-slide-toggle class="options-slider" (change)="feedChanged($event, 'private')" [(ngModel)]="settings.options.privateFeed">My feed</mat-slide-toggle>
         <mat-slide-toggle class="options-slider" (change)="feedChanged($event, 'public')" [(ngModel)]="settings.options.publicFeed">Public feed</mat-slide-toggle>
         <br /><br /> -->
-        <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.paused">Pause feed</mat-slide-toggle>
-        <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
-        <mat-slide-toggle class="options-slider" [(ngModel)]="options.options.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" [(ngModel)]="options.values.paused">Pause feed</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" [(ngModel)]="options.values.hideSpam" (ngModelChange)="optionsUpdated()">Hide spam</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" [(ngModel)]="options.values.hideInvoice" (ngModelChange)="optionsUpdated()">Hide LN invoices</mat-slide-toggle>
 
         <!-- <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Only </mat-checkbox>
         <mat-checkbox [(ngModel)]="settings.options.hideSpam" color="primary" (ngModelChange)="optionsUpdated()"> Hide spam </mat-checkbox>

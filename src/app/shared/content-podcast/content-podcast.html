@@ -1,0 +1,147 @@
+<div class="music-list feed-page">
+  <mat-card class="events">
+    <div class="events-header">
+      <div class="music-item">
+        <img class="music-album" src="https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673891743030-8e480bcd5cf47.jpg?w=400" />
+        <div class="music-details">
+          <div class="music-title">Resolving 'Attachment Trauma', and Delivering Orange-Pills, w/ 'Honest Sharing'</div>
+          <div class="music-artist">@bennibtc</div>
+          <div class="podcast-abstract">
+            I've recently been trying a new method of booking guests for the show, by posting a Calendly link, and allowing anyone who wishes to come on to book themselves in. I ask them to give a brief summary of what they'd like to
+            discuss, and if it sounds interesting (and has nothing to do with shitcoins),...
+          </div>
+        </div>
+      </div>
+      <div>
+        <button (click)="play('Resolving \'Attachment Trauma\', and Delivering Orange-Pills, w/ \'Honest Sharing\'', 'Bitcoin Rapid-Fire', 'https://anchor.fm/s/d6b3354/podcast/play/63537906/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-0-15%2F7f1c6f7b-5933-491b-0c4c-9a75e99a804c.mp3', 'https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673891743030-8e480bcd5cf47.jpg?w=400')" class="action-button" mat-icon-button>
+          <mat-icon class="action-button-icon">play_arrow</mat-icon>
+        </button>
+
+        <button (click)="queue('Resolving \'Attachment Trauma\', and Delivering Orange-Pills, w/ \'Honest Sharing\'', 'Bitcoin Rapid-Fire', 'https://anchor.fm/s/d6b3354/podcast/play/63537906/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-0-15%2F7f1c6f7b-5933-491b-0c4c-9a75e99a804c.mp3', 'https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673891743030-8e480bcd5cf47.jpg?w=400')" class="action-button" mat-icon-button>
+          <mat-icon class="action-button-icon">playlist_add</mat-icon>
+        </button>
+
+        <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon class="action-button-icon">more_vert</mat-icon>
+        </button>
+      </div>
+      <!-- <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header> -->
+    </div>
+  </mat-card>
+  <mat-card class="events">
+    <div class="events-header">
+      <div class="music-item">
+        <img class="music-album" src="https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673395914791-e4b9606d5df43.jpg?w=400" />
+        <div class="music-details">
+          <div class="music-title">MADEIRA UPDATE w/ Andre, Niko, & Rob</div>
+          <div class="music-artist">Madeira Update</div>
+          <div class="podcast-abstract">
+            At the bitcoin 2022 conference, the President of Madeira got on stage, and announced that Madeira was 'adopting' bitcoin. While this led to much excitement about another potential 'bitcoin citadel' emerging, it also left many
+            questions. Since that time, a number of bitcoiners who are either from ...
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button (click)="play('MADEIRA UPDATE w/ Andre, Niko, & Rob', 'Bitcoin Rapid-Fire', 'https://anchor.fm/s/d6b3354/podcast/play/63313937/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-0-10%2F598e4f78-8910-92a3-72c4-969e47a5f868.mp3', 'https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673395914791-e4b9606d5df43.jpg?w=400')" class="action-button" mat-icon-button>
+          <mat-icon class="action-button-icon">play_arrow</mat-icon>
+        </button>
+
+        <button (click)="queue('MADEIRA UPDATE w/ Andre, Niko, & Rob', 'Bitcoin Rapid-Fire', 'https://anchor.fm/s/d6b3354/podcast/play/63313937/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-0-10%2F598e4f78-8910-92a3-72c4-969e47a5f868.mp3', 'https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673395914791-e4b9606d5df43.jpg?w=400')" class="action-button" mat-icon-button>
+          <mat-icon class="action-button-icon">playlist_add</mat-icon>
+        </button>
+
+        <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon class="action-button-icon">more_vert</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="events">
+    <div class="events-header">
+      <div class="music-item">
+        <img class="music-album" src="https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673318163134-74d83f9a9216b.jpg?w=400" />
+        <div class="music-details">
+          <div class="music-title">Bitcoin is a Source of Creative Inspiration w/ @ReelRichard</div>
+          <div class="music-artist">@reelrichard</div>
+          <div class="podcast-abstract">
+            Richard is the creator of some of the most awesome bitcoin-inspired music videos, which are always a big hit with the ‘bitcoin maximalists’ on twitter. I really enjoy his work, and feel its another beautiful example of how
+            bitcoin is inspiring people, and granting them the freedom, to express the...
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button (click)="play('Bitcoin is a Source of Creative Inspiration w/ @ReelRichard', 'Bitcoin Rapid-Fire', 'https://anchor.fm/s/d6b3354/podcast/play/63277939/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-0-10%2F8d033a85-6f04-cfa6-10e5-52ddf6a9ab91.mp3', 'https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673318163134-74d83f9a9216b.jpg?w=400')" class="action-button" mat-icon-button>
+          <mat-icon class="action-button-icon">play_arrow</mat-icon>
+        </button>
+
+        <button (click)="queue('Bitcoin is a Source of Creative Inspiration w/ @ReelRichard', 'Bitcoin Rapid-Fire', 'https://anchor.fm/s/d6b3354/podcast/play/63277939/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2023-0-10%2F8d033a85-6f04-cfa6-10e5-52ddf6a9ab91.mp3', 'https://images.podcastpage.io/fetch/https%3A%2F%2Fd3t3ozftmdmh3i.cloudfront.net%2Fproduction%2Fpodcast_uploaded_episode400%2F2151293%2F2151293-1673318163134-74d83f9a9216b.jpg?w=400')" class="action-button" mat-icon-button>
+          <mat-icon class="action-button-icon">playlist_add</mat-icon>
+        </button>
+
+        <button class="action-button" mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon class="action-button-icon">more_vert</mat-icon>
+        </button>
+      </div>
+
+      <mat-menu #menu="matMenu">
+        <button disabled="disabled" mat-menu-item>
+          <mat-icon>bookmark_add</mat-icon>
+          <span>Add to queue</span>
+        </button>
+
+        <button disabled="disabled" mat-menu-item>
+          <mat-icon>bookmark_remove</mat-icon>
+          <span>Play now</span>
+        </button>
+
+        <button disabled="disabled" mat-menu-item>
+          <mat-icon>ios_share</mat-icon>
+          <span>Share</span>
+        </button>
+      </mat-menu>
+    </div>
+  </mat-card>
+
+  <br /><br />
+
+  <!-- <button mat-flat-button (click)="mediaConnect()">Connect Media Events</button>
+  <br /><br />
+  <button mat-flat-button (click)="toggleMediaPlayer()">Toggle Media Player</button> -->
+
+  <!-- <div class="music-item">
+    <img src="https://cdn.pixabay.com/user/2022/04/24/14-49-29-962_250x250.jpg" />
+
+    <div class="music-title">EasyToLove</div>
+    <div class="music-artist">AlexiAction</div>
+
+    <audio controls src="https://cdn.pixabay.com/download/audio/2022/12/15/audio_dd5b9f6f3a.mp3?filename=easy-to-love-129414.mp3">
+      <a href="https://cdn.pixabay.com/download/audio/2022/12/15/audio_dd5b9f6f3a.mp3?filename=easy-to-love-129414.mp3"> Download audio </a>
+    </audio>
+  </div> -->
+</div>
+
+<!-- <button mat-flat-button (click)="play()">Play</button> -->
+
+<!-- <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
+  <div class="image-grid-item" *ngFor="let image of images2" [photoGallery]="image"><img [src]="image" /></div>
+</div> -->
+
+<!-- <app-content-photos [events]="items.value" class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }" [event]="event" *ngFor="let event of items.value; trackBy: trackByFn"> </app-content-photos> -->
+
+<!-- <div class="image-grid-item" *ngFor="let image of images2" [photoGallery]="image"><img [src]="image" alt="" /></div> -->
+
+<!-- <div class="content clickable" *ngIf="event"> -->
+<!-- {{ content }}<span *ngIf="event.contentCut">... (message was truncated)</span> -->
+<!-- <div class="event-images" *ngIf="images2 && images2.length > 0">
+    <span *ngFor="let image of images2" [photoGallery]="image.toString()"> <img class="event-image" [src]="image" (click)="expandImage(image)" /></span>
+  </div> -->
+
+<!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->
+
+<!-- <mat-chip-set class="hashtags">
+    <mat-chip *ngFor="let tag of hashtags(event.tags)">#{{ tag }}</mat-chip>
+  </mat-chip-set> -->
+<!-- </div> -->

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { boolean } from 'joi';
 
 export interface Options {
   hideSpam?: boolean;
@@ -9,13 +10,30 @@ export interface Options {
   flatfeed?: boolean;
   ascending?: boolean;
   showLines: boolean;
+  showMediaPlayer?: boolean;
+  enableSpotify?: boolean;
+  hideSideLabels?: boolean;
+  primaryRelay?: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class OptionsService {
-  constructor() {}
+  constructor() {
+    this.load();
+  }
 
-  options: Options = { showLines: true };
+  values: Options = { showLines: true };
+
+  load() {
+    let options = localStorage.getItem('blockcore:notes:nostr:options');
+    if (options) {
+      this.values = JSON.parse(options);
+    }
+  }
+
+  save() {
+    localStorage.setItem('blockcore:notes:nostr:options', JSON.stringify(this.values));
+  }
 }

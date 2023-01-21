@@ -3,22 +3,26 @@ import { CircleStyle } from '../services/interfaces';
 export const circleStyles: CircleStyle[] = [
   {
     id: 1,
-    name: 'Pipes',
+    name: 'Pipe',
   },
   {
     id: 2,
-    name: 'Photographs',
+    name: 'Text',
   },
   {
     id: 3,
-    name: 'Films',
+    name: 'Photo',
   },
   {
     id: 4,
-    name: 'Blogs',
+    name: 'Film',
   },
   {
     id: 5,
-    name: 'News',
+    name: 'Music',
+  },
+  {
+    id: 6,
+    name: 'Podcast',
   },
 ];

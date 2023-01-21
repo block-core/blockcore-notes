@@ -11,6 +11,11 @@
   margin-left: 8px;
 }
 
+.online {
+  margin-left: 0.2em;
+  margin-bottom: -0.2em;
+}
+
 .relay-status-0 {
   color: silver;
 }
@@ -25,6 +30,27 @@
 
 .relay-status-3 {
   color: red;
+}
+
+.relay-status-4 {
+  color: rgb(49, 49, 210);
+}
+
+.relay-read-disabled {
+  color: rgb(49, 49, 210) !important;
+}
+
+.relay-disabled {
+  color: rgb(234, 136, 9) !important;
+}
+
+.primary-relay {
+  color: rgb(198, 3, 181);
+}
+
+.relay-options {
+  margin-top: 0.4em;
+  margin-bottom: 0.2em;
 }
 
 .settings-action-buttons {
@@ -43,9 +69,17 @@
     width: 100%;
     margin-right: 0;
   }
+
+  .mat-expansion-panel-header-title {
+    flex-grow: 2 !important;
+  }
+
+  .mat-expansion-panel-header-description {
+    flex-grow: 1 !important;
+  }
 }
 
-.delete-button {
+.relay-button {
   margin-top: 0.8em;
 }
 .options-slider {

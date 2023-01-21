@@ -1,0 +1,1 @@
+<span class="event-date" (click)="toggle()" *ngIf="!isoDate">{{ date | ago }}</span> <span class="event-date" (click)="toggle()" *ngIf="isoDate">{{ date*1000 | date: 'yyyy-MM-dd HH:mm:ss' }}</span>

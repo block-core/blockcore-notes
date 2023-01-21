@@ -1,7 +1,7 @@
-<div class="thread-actions" [ngClass]="{ 'no-lines': !optionsService.options.showLines, 'lines': optionsService.options.showLines }">
+<div class="thread-actions" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
   <ng-template [ngIf]="!replyOpen">
     <mat-icon class="reaction-icon toolbar-icon" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Reaction to post">sentiment_satisfied</mat-icon>
-    <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [showPreview]="true" (emojiSelect)="addEmoji($event)" title="Choose your reaction"></emoji-mart>
+    <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="true" (emojiSelect)="addEmoji($event)" title="Choose your reaction"></emoji-mart>
     <button (click)="openReply()" mat-button>Reply</button>
   </ng-template>
   <!-- <button mat-button>
@@ -17,7 +17,7 @@
 
     <div class="reply-widget-buttons">
       <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerTextVisible = !isEmojiPickerTextVisible;" matTooltip="Insert emoji in text">sentiment_satisfied</mat-icon>
-      <emoji-mart class="picker" *ngIf="isEmojiPickerTextVisible" emoji="point_up" [showPreview]="false" (emojiSelect)="addEmojiInText($event)" title="Choose your emoji"></emoji-mart>
+      <emoji-mart class="picker" *ngIf="isEmojiPickerTextVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiInText($event)" title="Choose your emoji"></emoji-mart>
       <div class="reply-widget-middle"></div>
       <small class="error" *ngIf="error">{{ error }}</small>
       <button mat-stroked-button (click)="hideReply()" color="primary">Cancel</button>

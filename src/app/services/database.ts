@@ -22,6 +22,7 @@ export class DatabaseService extends Dexie {
   }
 
   async populate() {
+    // TODO: Add the default Circles here instead of within Circle service.
     // const todoListId = await this.relays.add({
     //   url: 'To Do Today',
     // });

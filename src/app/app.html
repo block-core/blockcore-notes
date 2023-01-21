@@ -2,20 +2,28 @@
   <router-outlet></router-outlet>
 </div>
 
-<mat-sidenav-container fullscreen class="sidenav-container" *ngIf="authenticated">
-  <mat-sidenav #drawer class="sidenav print-hidden" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+<mat-sidenav-container #sidenavContainer autosize="true" fullscreen class="sidenav-container" *ngIf="authenticated">
+  <mat-sidenav
+    #drawer
+    [ngClass]="{ 'sidenav-labels': displayLabels, 'sidenav-small': !displayLabels  }"
+    class="sidenav print-hidden"
+    fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false"
+  >
     <mat-toolbar class="logo-icon">
-      <img src="assets/icons/icon-128x128.png" />
-      <div>Blockcore Notes</div>
+      <img height="38" width="38" src="assets/icons/icon-128x128.webp" />
+      <div *ngIf="displayLabels">Blockcore Notes</div>
     </mat-toolbar>
     <mat-nav-list>
       <a [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>home</mat-icon>
-        <span>Home</span>
+        <span *ngIf="displayLabels">Home</span>
       </a>
       <a [routerLink]="['/feed']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>notes</mat-icon>
-        <span>Feed</span>
+        <span *ngIf="displayLabels">Feed</span>
       </a>
       <!-- <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>chat</mat-icon>
@@ -23,20 +31,24 @@
       </a> -->
       <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>people</mat-icon>
-        <span>People</span>
+        <span *ngIf="displayLabels">People</span>
       </a>
       <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>animation</mat-icon>
-        <span>Circles</span>
+        <span *ngIf="displayLabels">Circles</span>
       </a>
       <a [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>bookmark_border</mat-icon>
-        <span>Notes</span>
+        <span *ngIf="displayLabels">Notes</span>
+      </a>
+      <a mat-menu-item (click)="toggleMenuSize()">
+        <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
+        <mat-icon *ngIf="!displayLabels">chevron_right</mat-icon>
       </a>
     </mat-nav-list>
 
-    <div class="new-post">
-      <img tabindex="10" (click)="navigationService.createNote()" src="/assets/post.svg" class="new-post-button" />
+    <div class="new-post" [ngClass]="{ 'new-post-small': !displayLabels  }">
+      <img tabindex="10" width="92" height="92" (click)="navigationService.createNote()" src="/assets/post.svg" class="new-post-button" />
     </div>
   </mat-sidenav>
 
@@ -60,7 +72,7 @@
         </div>
         <a [routerLink]="['/profile']" (click)="toggleProfileMenu()">
           <div class="avatarcontainer">
-            <img [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="avatar" />
+            <img [src]="profile?.picture" width="96" height="96" onerror="this.src='/assets/profile.png'" alt="avatar" class="avatar" />
           </div>
         </a>
       </header>
@@ -148,12 +160,13 @@
 
       <button *ngIf="!appState.connected" [mtBasicSpinner]="true" mat-icon-button></button>
 
-      <img *ngIf="!appState.showSearch" mat-icon-button (click)="draweraccount.toggle()" [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="topavatar" />
+      <img *ngIf="!appState.showSearch" width="38" height="38" mat-icon-button (click)="draweraccount.toggle()" [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="topavatar" />
     </mat-toolbar>
 
     <div class="scrolling-content" infiniteScroll (scrollAction)="onInfiniteScroll()">
       <router-outlet></router-outlet>
     </div>
+    <app-media-player *ngIf="options.values.showMediaPlayer"></app-media-player>
 
     <!-- <div class="scrolling-content" appDetectScroll (onScroll)="onScroll($event)" [bottomOffset]="300" [topOffset]="300">
       <router-outlet></router-outlet>

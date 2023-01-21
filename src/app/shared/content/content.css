@@ -1,20 +1,37 @@
 .event-image {
-  width: 100%;
+  /* width: 100%;
   max-width: 480px;
   display: inline-block;
-  margin-top: 0.2em;
+  margin-top: 0.2em; */
 }
 
 .event-images {
-  text-align: left;
+  /* text-align: left; */
 }
 
 .event-video {
   width: 100%;
   display: inline-block;
   margin-top: 0.2em;
-  min-height: 320px;
-  height: 480px;
+  aspect-ratio: 16 / 9;
+}
+
+/* .animate {
+  animation: scale 1.5s both;
+}
+
+@keyframes scale {
+  50% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+} */
+
+.embed-iframe {
+  min-width: 300px;
+  min-height: 300px;
 }
 
 .events-videos {
@@ -29,7 +46,7 @@
 }
 
 .event-content-big {
-  font-size: 3.2em;
+  font-size: 2.2em;
 }
 
 @media only screen and (max-width: 599px) {

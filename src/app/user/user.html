@@ -1,5 +1,27 @@
 <app-profile-header></app-profile-header>
 
+<ng-template [ngIf]="layout == 5">
+  <app-content-music></app-content-music>
+  <!-- <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
+    <ng-template [ngIf]="items.value && items.value.length > 0">
+      <app-content-music [events]="items.value"> </app-content-music>
+    </ng-template>
+    <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+    <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+  </div> -->
+</ng-template>
+
+<ng-template [ngIf]="layout == 6">
+  <app-content-podcast></app-content-podcast>
+  <!-- <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
+    <ng-template [ngIf]="items.value && items.value.length > 0">
+      <app-content-music [events]="items.value"> </app-content-music>
+    </ng-template>
+    <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+    <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+  </div> -->
+</ng-template>
+
 <ng-template [ngIf]="layout == 2">
   <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
     <ng-template [ngIf]="items.value && items.value.length > 0">

@@ -369,21 +369,5 @@ export class ThreadService {
         this.loadEventThread(eventId);
       }
     }
-
-    // Get the event itself.
-    // const event = await this.storage.get<NostrEventDocument>(eventId, 'events');
-
-    // if (event) {
-    //   this.#event = event;
-    //   this.#eventChanged.next(this.#event);
-    // } else {
-    //   // console.log('DOWNLOADING2:', eventId);
-    //   // Go grab it from relays.
-    //   this.feedService.downloadEvent(eventId).subscribe((event) => {
-    //     // console.log('DOWNLOAD EVENT CALLBACK 2:', event);
-    //     this.#event = event;
-    //     this.#eventChanged.next(this.#event);
-    //   });
-    // }
   }
 }

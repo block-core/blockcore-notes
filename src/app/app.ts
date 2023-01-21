@@ -1,15 +1,15 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ApplicationState } from './services/applicationstate';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavContainer } from '@angular/material/sidenav';
 import { Router, TitleStrategy } from '@angular/router';
 import { AuthenticationService } from './services/authentication';
 import { AppUpdateService } from './services/app-update';
 import { CheckForUpdateService } from './services/check-for-update';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
-import { Observable, map, shareReplay, startWith } from 'rxjs';
+import { Observable, map, shareReplay, startWith, debounceTime, tap } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Location } from '@angular/common';
+import { JsonPipe, Location } from '@angular/common';
 import { RelayService } from './services/relay';
 import { DataService } from './services/data';
 import { ProfileService } from './services/profile';
@@ -24,6 +24,7 @@ import { StorageService } from './services/storage';
 import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UIService } from './services/ui';
+import { OptionsService } from './services/options';
 
 @Component({
   selector: 'app-root',
@@ -39,8 +40,11 @@ export class AppComponent {
   profile: NostrProfileDocument | undefined;
   visibilityHandler: any;
   searchControl: FormControl = new FormControl();
+  @ViewChild('sidenavContainer') private sidenavContainer!: MatSidenavContainer;
 
   constructor(
+    private cd: ChangeDetectorRef,
+    public options: OptionsService,
     private db: StorageService,
     public appState: ApplicationState,
     public authService: AuthenticationService,
@@ -65,6 +69,8 @@ export class AppComponent {
         this.appState.visibility(document.visibilityState === 'visible');
       });
     }
+
+    this.displayLabels = !this.options.values.hideSideLabels;
 
     // This must happen in the constructor on app component, or when loading in PWA, it won't
     // be possible to read the query parameters.
@@ -100,11 +106,38 @@ export class AppComponent {
     });
   }
 
+  displayLabels = true;
+
+  toggleMenuSize() {
+    this.displayLabels = !this.displayLabels;
+    this.cd.detectChanges();
+
+    setTimeout(() => {
+      this.options.values.hideSideLabels = !this.displayLabels;
+      this.options.save();
+    }, 250);
+
+    // this._container._ngZone.onMicrotaskEmpty.subscribe(() => {
+    //   this._container._updateStyles();
+    //   this._container._changeDetectorRef.markForCheck();
+    // });
+  }
+
   searchInputChanged() {
     if (this.appState.searchText) {
       this.searchService.search(this.appState.searchText);
     }
   }
+
+  // ngAfterViewInit() {
+  //   setTimeout(() => {
+  //     this.showMenu = true;
+  //   }, 0);
+  //   this._container._ngZone.onMicrotaskEmpty.subscribe(() => {
+  //     this._container._updateStyles();
+  //     this._container._changeDetectorRef.markForCheck();
+  //   });
+  // }
 
   searchVisibility(visible: boolean) {
     this.appState.showSearch = visible;
@@ -162,7 +195,7 @@ export class AppComponent {
     // await this.relayStorage.initialize();
 
     await this.relayService.initialize();
-    this.relayService.connect();
+    await this.relayService.connect();
 
     // await this.feedService.initialize();
 
@@ -192,11 +225,30 @@ export class AppComponent {
       identifier: this.appState.getPublicKey(),
       type: 'Contacts',
       callback: (data: any) => {
-        const following = this.profileService.profile?.following;
-        const pubkeys = data.tags.map((t: any[]) => t[1]);
+        // The callback is called for all contacts lists, not just the one we call for.
+        if (data.pubkey !== this.appState.getPublicKey()) {
+          return;
+        }
 
-        if (!following) {
-          this.openImportSheet({ pubkeys: pubkeys, pubkey: data.pubkey });
+        // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
+        if (this.discoveredProfileDate < data.created_at) {
+          this.discoveredProfileDate = data.created_at;
+
+          const following = this.profileService.profile?.following;
+          const pubkeys = data.tags.map((t: any[]) => t[1]);
+
+          console.log('FOLLOWING:' + JSON.stringify(following));
+
+          if (!following) {
+            const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
+
+            if (data.content) {
+              dialogData.relays = JSON.parse(data.content);
+              dialogData.relaysCount = Object.keys(dialogData.relays).length;
+            }
+
+            this.openImportSheet(dialogData);
+          }
         }
       },
     });
@@ -212,6 +264,8 @@ export class AppComponent {
     //   await this.profileService.updateProfile(p.pubkey, p);
     // });
   }
+
+  discoveredProfileDate = 0;
 
   async ngOnInit() {
     this.theme.init();
