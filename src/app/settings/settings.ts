@@ -45,6 +45,11 @@ export class SettingsComponent {
     }
   }
 
+  async primaryRelay(relay: NostrRelay) {
+    this.optionsService.values.primaryRelay = relay.url;
+    this.optionsService.save();
+  }
+
   async deleteRelay(relay: Relay) {
     await this.relayService.deleteRelay(relay.url);
   }
@@ -59,8 +64,10 @@ export class SettingsComponent {
   }
 
   async onRelayChanged(relay: NostrRelay) {
-    if (relay.metadata.enabled) {
+    if (relay.metadata.enabled && relay.metadata.read) {
       await relay.connect();
+    } else if (!relay.metadata.read) {
+      await relay.close();
     } else {
       await relay.close();
     }

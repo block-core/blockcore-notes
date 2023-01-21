@@ -17,14 +17,17 @@ import { mergeNsAndName } from '@angular/compiler';
 export class RelayService {
   /** Default relays that the app has for users without extension. This follows the document structure as extension data. */
   defaultRelays: any = {
-    // 'wss://relay.damus.io': { read: true, write: false },
-    // 'wss://relay.nostr.info': { read: true, write: true },
     'wss://nostr-pub.wellorder.net': { read: true, write: true },
+    'wss://no.str.cr': { read: true, write: true },
+    // 'wss://relay.nostr.info': { read: true, write: true },
     'wss://nostr.nordlysln.net': { read: true, write: true },
     'wss://relay.nostr.ch': { read: true, write: true },
-    'wss://nostr.v0l.io': { read: true, write: true },
-    'wss://nostr-relay.wlvs.space': { read: true, write: true },
-    // 'wss://nostrex.fly.dev': { read: true, write: true },
+    'wss://e.nos.lol': { read: true, write: true },
+    'wss://nostr.mom': { read: true, write: true },
+    'wss://relay.snort.social': { read: true, write: true },
+    'wss://relay.nostr.bg': { read: true, write: true },
+    'wss://relay.damus.io': { read: true, write: true },
+    'wss://nostr.fmt.wiz.biz': { read: true, write: true },
   };
 
   private get table() {
@@ -335,8 +338,6 @@ export class RelayService {
   //   });
   // }
 
-  
-
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async appendRelays(relays: any) {
     let preparedRelays = relays;
@@ -354,14 +355,14 @@ export class RelayService {
     for (var i = 0; i < entries.length; i++) {
       const key = entries[i];
       const val = preparedRelays[key];
-      await this.table.put({ url: key, write: val.write, read: val.read });
+      await this.table.put({ url: key, write: val.write, read: val.read, public: true });
     }
 
     this.relaysUpdated();
   }
 
   async appendRelay(url: string, read: boolean, write: boolean) {
-    await this.table.put({ url: url, read: read, write: write });
+    await this.table.put({ url: url, read: read, write: write, public: true });
     this.relaysUpdated();
   }
 

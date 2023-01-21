@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 import { Observable, map, shareReplay, startWith, debounceTime, tap } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Location } from '@angular/common';
+import { JsonPipe, Location } from '@angular/common';
 import { RelayService } from './services/relay';
 import { DataService } from './services/data';
 import { ProfileService } from './services/profile';
@@ -236,6 +236,8 @@ export class AppComponent {
 
           const following = this.profileService.profile?.following;
           const pubkeys = data.tags.map((t: any[]) => t[1]);
+
+          console.log('FOLLOWING:' + JSON.stringify(following));
 
           if (!following) {
             const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };

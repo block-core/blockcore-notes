@@ -74,6 +74,8 @@ export interface NostrRelayDocument {
   nip11?: any;
   error?: string;
   enabled?: boolean;
+  public?: boolean;
+  profile?: boolean;
 }
 
 /** OBSOLETE */

@@ -13,6 +13,7 @@ export interface Options {
   showMediaPlayer?: boolean;
   enableSpotify?: boolean;
   hideSideLabels?: boolean;
+  primaryRelay?: string;
 }
 
 @Injectable({
