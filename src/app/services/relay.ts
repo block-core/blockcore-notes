@@ -335,6 +335,8 @@ export class RelayService {
   //   });
   // }
 
+  
+
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async appendRelays(relays: any) {
     let preparedRelays = relays;

@@ -195,7 +195,7 @@ export class AppComponent {
     // await this.relayStorage.initialize();
 
     await this.relayService.initialize();
-    this.relayService.connect();
+    await this.relayService.connect();
 
     // await this.feedService.initialize();
 
@@ -238,7 +238,14 @@ export class AppComponent {
           const pubkeys = data.tags.map((t: any[]) => t[1]);
 
           if (!following) {
-            this.openImportSheet({ pubkeys: pubkeys, pubkey: data.pubkey });
+            const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
+
+            if (data.content) {
+              dialogData.relays = JSON.parse(data.content);
+              dialogData.relaysCount = Object.keys(dialogData.relays).length;
+            }
+
+            this.openImportSheet(dialogData);
           }
         }
       },

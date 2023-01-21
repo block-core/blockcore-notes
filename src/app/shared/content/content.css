@@ -1,12 +1,12 @@
 .event-image {
-  width: 100%;
+  /* width: 100%;
   max-width: 480px;
   display: inline-block;
-  margin-top: 0.2em;
+  margin-top: 0.2em; */
 }
 
 .event-images {
-  text-align: left;
+  /* text-align: left; */
 }
 
 .event-video {

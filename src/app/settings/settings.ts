@@ -136,7 +136,7 @@ export class SettingsComponent {
 
       await this.relayService.appendRelay(result.url, result.read, result.write);
 
-      this.relayService.connect();
+      await this.relayService.connect();
     });
   }
 }
