@@ -1,0 +1,10 @@
+<div class="bubble" [class.me]="message.id==0">
+  <div class="bubble cover">
+    <img class="bubble picture" [src]="message.cover" alt="">
+  </div>
+  <div class="bubble container">
+    <mat-card class="bubble card">
+      {{message.message}}
+    </mat-card>
+  </div>
+</div>

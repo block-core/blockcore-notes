@@ -187,3 +187,34 @@ export enum ProfileStatus {
   Mute = 2,
   Block = 3,
 }
+
+export interface UserModel {
+  id: number;
+  username: string;
+  name: string;
+  cover: string;
+  status: string;
+  bio: string;
+}
+
+export interface MessageModel {
+  id: number;
+  cover: string;
+  message: string;
+}
+
+export interface CustomObjectModel {
+  tmpl: string;
+  data: any;
+  formatted?: string
+}
+
+export class ChatModel {
+  "id": number;
+  "targetUserId": number;
+  "username": string;
+  "cover": string;
+  "lastMessage": string;
+  "lastMessageLength": string | number;
+  "chat": Array<MessageModel>
+}

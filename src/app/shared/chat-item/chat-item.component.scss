@@ -1,0 +1,13 @@
+.last-message {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 90%;
+  white-space: nowrap;
+}
+.user-avatar{
+  height: 50px;
+  width: 50px;
+}
+mat-list-item{
+  height: 90px !important;
+}

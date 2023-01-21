@@ -1,10 +1,38 @@
-<mat-tab-group mat-align-tabs="center">
-  <mat-tab label="Messages">
-    COMING SOON!
-  </mat-tab>
-  <mat-tab label="Channels">
-    COMING SOON!
-  </mat-tab>
-</mat-tab-group>
+<mat-sidenav-container class="drawer-container" autosize>
+  <mat-tab-group mat-align-tabs="center">
+    <mat-tab label="Messages">
+      <app-chat-list (openChatSidebar)="open.chatSideBar($event)"></app-chat-list>
+    </mat-tab>
+    <mat-tab label="Users">
+      <app-user-list (openUserSidebar)="open.userSideBar($event)"></app-user-list>
+    </mat-tab>
+  </mat-tab-group>
+  <mat-sidenav #chatSidebar class="sidebar sidebar--message" mode="side" position="start" >
+    <mat-toolbar class="zIndexTop" color="primary">
+      <mat-toolbar-row>
+        <mat-icon class="button" aria-hidden="false" (click)="chatSidebar.close()">arrow_back_ios</mat-icon>
+        <span class="spacer">
+           {{sidebarTitles.chat}}
+      </span>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <app-chat-detail></app-chat-detail>
+  </mat-sidenav>
+  <mat-sidenav #userSidebar class="sidebar sidebar--user" mode="over" position="end">
+    <mat-toolbar class="zIndexTop" color="primary">
+      <mat-toolbar-row>
+        <span class="spacer">
+           {{sidebarTitles.user}}
+        </span>
+        <mat-icon class="button" aria-hidden="false" (click)="userSidebar.close()">close</mat-icon>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <app-user-profile (openChatWindow)="open.chatSideBar($event)"></app-user-profile>
+  </mat-sidenav>
+</mat-sidenav-container>
+
+
+
+
 
 

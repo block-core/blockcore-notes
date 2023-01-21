@@ -1,0 +1,30 @@
+.profile {
+  padding: 16px;
+
+  &__picture-container {
+    width: 180px;
+    height: 180px;
+    border-radius: 120px;
+    overflow: hidden;
+    margin: 0 auto 12px;
+  }
+
+  &__picture {
+    width: 100%;
+    height: auto;
+  }
+
+  &__username {
+    margin: 0;
+  }
+
+  &__status {
+    margin-bottom: 16px;
+  }
+
+  &__button {
+    margin: 8px auto 16px;
+    display: flex;
+    justify-content: center;
+  }
+}

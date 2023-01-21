@@ -1,0 +1,42 @@
+.status {
+  &:before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 4px;
+    position: relative;
+    top: -4px;
+    margin-right: 3px;
+  }
+
+  &--online {
+    $color: #27f32f;
+
+    &:before {
+      background-color: $color;
+    }
+
+    color: $color;
+  }
+
+  &--offline {
+    $color: #acacac;
+
+    &:before {
+      background-color: $color;
+    }
+
+    color: $color;
+  }
+
+  &--busy {
+    $color: #ff451e;
+
+    &:before {
+      background-color: $color;
+    }
+
+    color: $color;
+  }
+}

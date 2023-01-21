@@ -1,0 +1,52 @@
+.bubble {
+  $this: &;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 12px;
+
+  &.cover {
+    width: 36px;
+    height: 36px;
+    margin-right: 16px;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  &.picture {
+    display: block;
+    max-width: 100%;
+    margin-bottom: 0;
+  }
+
+  &.container {
+    flex: 1;
+  }
+
+  &.card {
+    display: inline-block !important;
+    padding: 12px;
+  }
+
+  &.me {
+    flex-direction: row-reverse;
+
+    #{$this}.picture {
+      display: block;
+      max-width: 100%;
+    }
+
+    #{$this}.container {
+      display: flex;
+      justify-content: flex-end;
+
+      .mat-card {
+        background-color: rgba(255, 255, 255, 0.55);;
+      }
+    }
+
+    #{$this}.cover {
+      margin-right: 0;
+      margin-left: 16px;
+    }
+  }
+}

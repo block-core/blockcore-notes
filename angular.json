@@ -22,7 +22,11 @@
               "moment",
               "browser-level",
               "qrcode",
-              "qs"
+              "qs",
+              "photoswipe",
+              "photoswipe/dist/photoswipe-ui-default",
+              "@scure/bip39",
+              "@scure/bip39/wordlists/english.js"
             ],
             "outputPath": "dist",
             "index": "src/index.html",
