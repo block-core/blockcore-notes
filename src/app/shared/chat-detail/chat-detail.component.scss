@@ -95,4 +95,10 @@
     }
   }
 }
-
+.emoji-picker {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  bottom: 90px;
+  right: 10px;
+}

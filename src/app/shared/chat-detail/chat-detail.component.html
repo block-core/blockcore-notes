@@ -9,12 +9,32 @@
   </div>
 
   <div class="message-send">
-      <mat-form-field class="input-full-width">
-        <input autocomplete="off" #message type="text" matInput placeholder="Write a message" (keypress)="saveMessage($event)">
-        <mat-hint align="end" class="hint">Length : {{message.value.length}}</mat-hint>
-        <mat-icon class="toolbar-icon" matSuffix>sentiment_satisfied</mat-icon>
-        <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>
-        <mat-icon class="toolbar-icon" matSuffix>attach_file_add</mat-icon>
-      </mat-form-field>
+    <emoji-mart class="emoji-picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false"
+      (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+    <mat-form-field class="input-full-width">
+      <mat-icon class="toolbar-icon" [matMenuTriggerFor]="menu" matPrefix>attach_file_add</mat-icon>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>imagesmode</mat-icon>
+          <span>Image</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>videocam</mat-icon>
+          <span>Video</span>
+        </button>
+        <button mat-menu-item disabled>
+          <mat-icon>file_present</mat-icon>
+          <span>Document</span>
+        </button>
+      </mat-menu>
+      <input autocomplete="off" type="text" matInput placeholder="Write a message" [(ngModel)]="message"
+        (keypress)="saveMessage($event)">
+      <mat-hint align="end" class="hint">Length : {{message.length}}</mat-hint>
+      <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;"
+        matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+      <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>
+
+      <mat-icon class="toolbar-icon" (click)="send(message)" matSuffix>send</mat-icon>
+    </mat-form-field>
   </div>
 </div>
