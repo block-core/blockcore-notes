@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
-import { SettingsService } from '../services/settings';
 import { OptionsService } from '../services/options';
 import { NavigationService } from '../services/navigation';
 import { CircleService } from '../services/circle';

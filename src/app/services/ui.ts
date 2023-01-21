@@ -88,14 +88,4 @@ export class UIService {
     this.events = [];
     this.#eventsChanged.next(this.events);
   }
-
-  //   get profile$(): Observable<NostrProfileDocument | undefined> {
-  //     return this.#pubkeyChanged.pipe((pubkey) => {
-  //       if (!pubkey) {
-  //         return null;
-  //       }
-
-  //       return this.profileService.getProfile(pubkey);
-  //     });
-  //   }
 }

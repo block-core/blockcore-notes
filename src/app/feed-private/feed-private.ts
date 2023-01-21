@@ -2,12 +2,9 @@ import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
-import { SettingsService } from '../services/settings';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
@@ -62,12 +59,8 @@ export class FeedPrivateComponent {
     private snackBar: MatSnackBar,
     private ngZone: NgZone
   ) {
-    console.log('HOME constructor!!'); // Hm.. called twice, why?
+    // console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
-
-  // get eventsView$(): Observable<NostrEventDocument[]> {
-  //   return this.feedService.events$.pipe(map((x) => x.slice(0, this.eventsCount)));
-  // }
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit');
@@ -153,16 +146,6 @@ export class FeedPrivateComponent {
     }
   }
 
-  // async optionsUpdated($event: any, type: any) {
-  //   if (type == 1) {
-  //     this.showCached = false;
-  //   } else {
-  //     this.showBlocked = false;
-  //   }
-
-  //   await this.load();
-  // }
-
   subscriptions: Subscription[] = [];
   hasFollowers = false;
 
@@ -175,11 +158,5 @@ export class FeedPrivateComponent {
         this.showMore();
       })
     );
-
-    // const followList = await this.profileService.followList();
-    // this.hasFollowers = followList.length > 0;
-
-    // useReactiveContext // New construct in Angular 14 for subscription.
-    // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
   }
 }

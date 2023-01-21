@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NostrEvent, NostrProfile } from './interfaces';
 import * as sanitizeHtml from 'sanitize-html';
-import { SettingsService } from './settings';
 import { OptionsService } from './options';
 
 @Injectable({
