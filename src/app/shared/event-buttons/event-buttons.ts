@@ -107,8 +107,8 @@ export class EventButtonsComponent {
       return;
     }
 
-    // Clone the existing tags.
-    replyEvent.tags = Object.assign([], this.event.tags);
+    // Clone the existing e and p tags.
+    replyEvent.tags = Object.assign([], this.eventService.getPublicKeyAndEventTags(this.event.tags));
 
     // Add the public key of who we are reacting to.
     replyEvent.tags.push(['p', this.event.pubkey]);

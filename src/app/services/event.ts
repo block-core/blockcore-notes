@@ -44,6 +44,15 @@ export class EventService {
     return event;
   }
 
+  getPublicKeyAndEventTags(tags?: string[][]) {
+    if (!tags) {
+      return [];
+    }
+
+    const epTags = tags.filter((t) => t[0] === 'e' || t[0] === 'p');
+    return epTags;
+  }
+
   /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
   eTags(event: NostrEventDocument | null) {
     if (!event) {
