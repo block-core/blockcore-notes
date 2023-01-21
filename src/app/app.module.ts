@@ -163,7 +163,7 @@ import { QueueComponent } from './queue/queue';
     ChatItemComponent,
     ChatListComponent,
     MessageBubbleComponent,
-    StatusComponent
+    StatusComponent,
     ContentMusicComponent,
     MediaPlayerComponent,
     DateComponent,
@@ -225,12 +225,6 @@ import { QueueComponent } from './queue/queue';
     }),
   ],
   exports: [
-    ChatListComponent,
-    ChatDetailComponent,
-    UserListComponent,
-    UserProfileComponent,
-    UserItemComponent,
-    StatusComponent
   ],
   providers: [AuthGuardService, AppUpdateService, CheckForUpdateService,ChatService,UserService],
   bootstrap: [AppComponent],

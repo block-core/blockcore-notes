@@ -1,18 +1,17 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatModel } from 'src/app/services/interfaces';
 import { MessageControlService } from 'src/app/services/message-control.service';
 
-
 @Component({
   selector: 'app-chat-detail',
   templateUrl: './chat-detail.component.html',
-  styleUrls: ['./chat-detail.component.scss']
+  styleUrls: ['./chat-detail.component.scss'],
 })
 export class ChatDetailComponent implements OnInit, OnDestroy {
-  @ViewChild("scrollable", { static: false }) scrollable!: { nativeElement: { scrollTop: any; scrollHeight: any; }; };
+  @ViewChild('scrollable', { static: false }) scrollable!: { nativeElement: { scrollTop: any; scrollHeight: any } };
   @ViewChild('picker') picker: unknown;
 
   isEmojiPickerVisible: boolean | undefined;
@@ -20,11 +19,10 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
   chat!: ChatModel;
   sending: boolean = false;
   message: any;
-  constructor(private service: ChatService, private control: MessageControlService, private appState: ApplicationState) {
-  }
+  constructor(private service: ChatService, private control: MessageControlService, private appState: ApplicationState) {}
 
   ngOnInit() {
-    this.subscription = this.service.chat.subscribe(messages => {
+    this.subscription = this.service.chat.subscribe((messages) => {
       this.chat = messages;
       this.sending = false;
       this.message = '';
@@ -40,11 +38,11 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
 
   saveMessage($event: any) {
     this.message = $event.target.value;
-    if ($event.key == "Enter" && this.control.isSendable(this.message)) {
+    if ($event.key == 'Enter' && this.control.isSendable(this.message)) {
       this.scrollToBottom();
       this.service.saveMessage(this.chat.id, this.message);
       this.sending = true;
-      $event.target.value = "";
+      $event.target.value = '';
     }
   }
 
@@ -54,7 +52,7 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
       this.scrollToBottom();
       this.service.saveMessage(this.chat.id, this.message);
       this.sending = true;
-      this.message = "";
+      this.message = '';
     }
   }
   public addEmoji(event: { emoji: { native: any } }) {
@@ -62,7 +60,6 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
     this.message = `${this.message}${event.emoji.native}`;
     this.isEmojiPickerVisible = false;
   }
-
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
