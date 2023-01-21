@@ -19,6 +19,7 @@ import { FollowingComponent } from './following/following';
 import { FollowersComponent } from './followers/followers';
 import { QueueComponent } from './queue/queue';
 import { MessagesComponent } from './messages/messages';
+import { MessageComponent } from './message/message';
 
 const routes: Routes = [
   {
@@ -56,8 +57,13 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'messages',
+    path: 'm',
     component: MessagesComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'm/:id',
+    component: MessageComponent,
     canActivate: [AuthGuard],
   },
   {

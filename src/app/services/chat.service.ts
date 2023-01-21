@@ -1,15 +1,28 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { ChatModel, UserModel } from './interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  chats: BehaviorSubject<ChatModel[]> = new BehaviorSubject<ChatModel[]>([]);
-  chat: BehaviorSubject<ChatModel> = new BehaviorSubject<ChatModel>(null as any);
+  // chats: BehaviorSubject<ChatModel[]> = new BehaviorSubject<ChatModel[]>([]);
+  // chat: BehaviorSubject<ChatModel> = new BehaviorSubject<ChatModel>(null as any);
 
-  constructor() {}
+  chats: ChatModel[] = [];
+  #chatsChanged: BehaviorSubject<ChatModel[]> = new BehaviorSubject<ChatModel[]>(this.chats);
+
+  get chats$(): Observable<ChatModel[]> {
+    return this.#chatsChanged.asObservable().pipe();
+  }
+
+  constructor() {
+    this.chats = this.data.chats as any[];
+    this.#chatsChanged.next(this.chats);
+
+    console.log(this.data.chats);
+    // this.chats$ = this.chats.asObservable();
+  }
 
   saveMessage(chatId: number, message: string) {
     // this.http.saveMessage(chatId, message).then(response => {

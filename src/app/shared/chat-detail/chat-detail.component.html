@@ -29,7 +29,7 @@
       </mat-menu>
       <input autocomplete="off" type="text" matInput placeholder="Write a message" [(ngModel)]="message"
         (keypress)="saveMessage($event)">
-      <mat-hint align="end" class="hint">Length : {{message.length}}</mat-hint>
+      <mat-hint align="end" class="hint">Length : {{message?.length}}</mat-hint>
       <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;"
         matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
       <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>

@@ -10,13 +10,8 @@ import { ChatModel } from 'src/app/services/interfaces';
 })
 export class ChatListComponent implements OnInit {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();
-  chats$: Observable<ChatModel[]>;
 
-  constructor(private service: ChatService) {
-    this.chats$ = service.chats.asObservable();
-  }
+  constructor(public chatService: ChatService) {}
 
-  ngOnInit() {
-    this.service.getChats();
-  }
+  ngOnInit() {}
 }

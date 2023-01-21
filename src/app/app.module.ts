@@ -108,6 +108,8 @@ import { ContentPodcastComponent } from './shared/content-podcast/content-podcas
 import { MatSliderModule } from '@angular/material/slider';
 import { TimePipe } from './shared/time.pipe';
 import { QueueComponent } from './queue/queue';
+import { MessagesComponent } from './messages/messages';
+import { MessageComponent } from './message/message';
 
 @NgModule({
   declarations: [
@@ -170,6 +172,8 @@ import { QueueComponent } from './queue/queue';
     ContentPodcastComponent,
     TimePipe,
     QueueComponent,
+    MessagesComponent,
+    MessageComponent
   ],
   imports: [
     HttpClientModule,
@@ -224,9 +228,8 @@ import { QueueComponent } from './queue/queue';
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
-  exports: [
-  ],
-  providers: [AuthGuardService, AppUpdateService, CheckForUpdateService,ChatService,UserService],
+  exports: [],
+  providers: [AuthGuardService, AppUpdateService, CheckForUpdateService, ChatService, UserService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

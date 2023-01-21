@@ -15,6 +15,6 @@ export class ChatItemComponent {
 
   showMessageDetail() {
     this.openChatSidebar.emit(this.chat.username);
-    this.service.chat.next(this.chat);
+    // this.service.chat.next(this.chat);
   }
 }

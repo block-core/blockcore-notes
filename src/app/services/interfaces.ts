@@ -206,15 +206,15 @@ export interface MessageModel {
 export interface CustomObjectModel {
   tmpl: string;
   data: any;
-  formatted?: string
+  formatted?: string;
 }
 
 export class ChatModel {
-  "id": number;
-  "targetUserId": number;
-  "username": string;
-  "cover": string;
-  "lastMessage": string;
-  "lastMessageLength": string | number;
-  "chat": Array<MessageModel>
+  'id': number;
+  'targetUserId': number;
+  'username': string;
+  'cover': string;
+  'lastMessage': string;
+  'lastMessageLength': string | number;
+  'chat': Array<MessageModel>;
 }

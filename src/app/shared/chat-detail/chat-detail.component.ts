@@ -22,12 +22,13 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
   constructor(private service: ChatService, private control: MessageControlService, private appState: ApplicationState) {}
 
   ngOnInit() {
-    this.subscription = this.service.chat.subscribe((messages) => {
-      this.chat = messages;
-      this.sending = false;
-      this.message = '';
-      this.scrollToBottom();
-    });
+
+    // this.subscription = this.service.chat.subscribe((messages) => {
+    //   this.chat = messages;
+    //   this.sending = false;
+    //   this.message = '';
+    //   this.scrollToBottom();
+    // });
   }
 
   scrollToBottom() {
@@ -62,6 +63,6 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscription?.unsubscribe();
   }
 }
