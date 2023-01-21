@@ -7,7 +7,6 @@ import { Utilities } from './utilities';
 import { StorageService } from './storage';
 import { liveQuery } from 'dexie';
 import { CacheService } from './cache';
-import { FetchService } from './fetch';
 import { dexieToRx } from '../shared/utilities';
 import { QueueService } from './queue';
 import { UIService } from './ui';
@@ -207,7 +206,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private fetchService: FetchService, private appState: ApplicationState, private utilities: Utilities) {
+  constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private appState: ApplicationState, private utilities: Utilities) {
     this.ui.pubkey$.subscribe((pubkey) => {
       if (!pubkey) {
         this.ui.setProfile(undefined);

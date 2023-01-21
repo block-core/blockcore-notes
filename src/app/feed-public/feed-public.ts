@@ -109,7 +109,7 @@ export class FeedPublicComponent {
 
       // If not initial load, we'll grab the profile.
       // if (!this.initialLoad) {
-      this.fetchProfiles(relay, [event.pubkey]);
+      // this.fetchProfiles(relay, [event.pubkey]);
       // }
 
       this.events.unshift(event);
@@ -161,76 +161,6 @@ export class FeedPublicComponent {
 
   toggleDetails() {
     this.details = !this.details;
-  }
-
-  fetchProfiles(relay: Relay, authors: string[]) {
-    // const filteredAuthors = authors.filter((a) => {
-    //   return this.profile.profiles[a] == null;
-    // });
-
-    // console.log('authors:', authors);
-    // console.log('filteredAuthors:', filteredAuthors);
-
-    // if (filteredAuthors.length === 0) {
-    //   return;
-    // }
-
-    const profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
-
-    profileSub.on('event', async (originalEvent: NostrEvent) => {
-      const event = this.processEvent(originalEvent);
-
-      if (!event) {
-        return;
-      }
-
-      // const parsed = this.validator.sanitizeProfile(event);
-      // const test1 = JSON.parse('{"name":"stat","picture":"https://i.imgur.com/s1scsdH_d.webp?maxwidth=640&amp;shape=thumb&amp;fidelity=medium","about":"senior software engineer at amazon\\n\\n#bitcoin","nip05":"stat@no.str.cr"}');
-      // console.log('WHAT IS WRONG WITH THIS??');
-      // console.log(test1);
-
-      try {
-        const profile = this.validator.sanitizeProfile(JSON.parse(event.content) as NostrProfileDocument) as NostrProfileDocument;
-
-        // Persist the profile.
-        await this.profile.updateProfile(event.pubkey, profile);
-
-        const displayName = encodeURIComponent(profile.name);
-        const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
-
-        const rawResponse = await fetch(url, {
-          method: 'GET',
-          mode: 'cors',
-        });
-
-        if (rawResponse.status === 200) {
-          const content = await rawResponse.json();
-          const directoryPublicKey = content.names[displayName];
-
-          if (event.pubkey === directoryPublicKey) {
-            if (!profile.verifications) {
-              profile.verifications = [];
-            }
-
-            profile.verifications.push('@nostr.directory');
-
-            // Update the profile with verification data.
-            await this.profile.updateProfile(event.pubkey, profile);
-          } else {
-            // profile.verified = false;
-            console.warn('Nickname reuse:', url);
-          }
-        } else {
-          // profile.verified = false;
-        }
-      } catch (err) {
-        console.warn('This profile event was not parsed due to errors:', event);
-      }
-    });
-
-    profileSub.on('eose', () => {
-      profileSub.unsub();
-    });
   }
 
   ngOnDestroy() {
