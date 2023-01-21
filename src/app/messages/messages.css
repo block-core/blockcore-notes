@@ -1,0 +1,80 @@
+.chat-thumbnail {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.chat-left {
+  border-left: 1px solid silver;
+  width: 64px;
+  position: fixed;
+}
+
+.chat-left-small {
+  width: 64px;
+}
+
+.chat-left-labels {
+  width: 360px;
+}
+
+.chat-right {
+  flex: 2 2 0;
+  padding-left: 100px;
+}
+
+.chat-right-labels {
+  padding-left: 400px;
+}
+
+.chat-list-scrollable {
+  overflow-y: scroll;
+  height: calc(100vh - 48px);
+}
+
+.chat-list-item {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: 1px solid rgb(0, 255, 42);
+}
+
+.chat-list-item-text {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid purple;
+  width: 100%;
+  flex-flow: row nowrap;
+  overflow: hidden;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.chat-list-item-header {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid green;
+  width: 100%;
+}
+
+.chat-list-item-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  border: 1px solid yellow;
+}
+
+.chat-list-item-date {
+  border: 1px solid red;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.5);
+}

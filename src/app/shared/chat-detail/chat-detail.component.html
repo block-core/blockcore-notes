@@ -9,8 +9,7 @@
   </div>
 
   <div class="message-send">
-    <emoji-mart class="emoji-picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false"
-      (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+    <emoji-mart class="emoji-picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
     <mat-form-field class="input-full-width">
       <mat-icon class="toolbar-icon" [matMenuTriggerFor]="menu" matPrefix>attach_file_add</mat-icon>
       <mat-menu #menu="matMenu">
@@ -27,11 +26,9 @@
           <span>Document</span>
         </button>
       </mat-menu>
-      <input autocomplete="off" type="text" matInput placeholder="Write a message" [(ngModel)]="message"
-        (keypress)="saveMessage($event)">
-      <mat-hint align="end" class="hint">Length : {{message.length}}</mat-hint>
-      <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;"
-        matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+      <input autocomplete="off" type="text" matInput placeholder="Write a message" [(ngModel)]="message" (keypress)="saveMessage($event)" />
+      <mat-hint align="end" class="hint">Length : {{ message.length }}</mat-hint>
+      <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
       <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>
 
       <mat-icon class="toolbar-icon" (click)="send(message)" matSuffix>send</mat-icon>

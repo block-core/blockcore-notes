@@ -29,3 +29,35 @@
 .spacer {
   flex: 1;
 }
+
+.chat-thumbnail {
+  width: 64px;
+  height: 64px;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.chat-left {
+  // flex: 1 0 64px;
+  border-left: 1px solid silver;
+  height: 100%;
+  border: 2px solid blue !important;
+  box-sizing: border-box;
+}
+
+.chat-left-small {
+  width: 80px;
+}
+
+.chat-left-labels {
+  width: 200px;
+}
+
+.chat-right {
+  flex: 2 2 0;
+}

@@ -108,6 +108,7 @@ import { ContentPodcastComponent } from './shared/content-podcast/content-podcas
 import { MatSliderModule } from '@angular/material/slider';
 import { TimePipe } from './shared/time.pipe';
 import { QueueComponent } from './queue/queue';
+import { MessagesComponent } from './messages/messages';
 
 @NgModule({
   declarations: [
@@ -170,6 +171,7 @@ import { QueueComponent } from './queue/queue';
     ContentPodcastComponent,
     TimePipe,
     QueueComponent,
+    MessagesComponent
   ],
   imports: [
     HttpClientModule,

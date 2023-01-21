@@ -1,1 +1,23 @@
-Coming soon.
+<div class="chat-container">
+  <div class="chat-left" [ngClass]="{ 'chat-left-labels': displayLabels, 'chat-left-small': !displayLabels  }">
+    <div class="chat-list-scrollable">
+      <div class="chat-list-item" *ngFor="let profile of profileService.items$ | async">
+        <img onerror="this.src='/assets/profile.png'" class="chat-thumbnail" [src]="profile.picture" />
+        <div class="chat-list-item-text" *ngIf="displayLabels">
+          <div class="chat-list-item-header">
+            <div class="chat-list-item-name">{{ profile.name }}</div>
+            <div class="chat-list-item-date">2023-01-21</div>
+          </div>
+          <div>See you tomorrow!</div>
+        </div>
+      </div>
+    </div>
+    <a mat-menu-item (click)="toggleChannelSize()">
+      <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
+      <mat-icon *ngIf="!displayLabels">chevron_right</mat-icon>
+    </a>
+  </div>
+  <div class="chat-right" [ngClass]="{ 'chat-right-labels': displayLabels  }">
+    <app-chat-detail></app-chat-detail>
+  </div>
+</div>

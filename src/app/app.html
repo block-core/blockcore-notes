@@ -27,11 +27,11 @@
       </a>
       <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>chat</mat-icon>
-        <span>Chat</span>
+        <span *ngIf="displayLabels">Channels</span>
       </a>
       <a [routerLink]="['/messages']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>mail</mat-icon>
-        <span>Messages</span>
+        <span *ngIf="displayLabels">Messages</span>
       </a>
       <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>people</mat-icon>
