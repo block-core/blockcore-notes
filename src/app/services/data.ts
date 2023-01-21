@@ -412,64 +412,6 @@ export class DataService {
     });
   }
 
-  // downloadFromRelay2(query: any, relay: NostrRelay): Observable<NostrEventDocument[]> {
-  //   return new Observable<NostrEventDocument[]>((observer: Observer<NostrEventDocument[]>) => {
-  //     const totalEvents: NostrEventDocument[] = [];
-
-  //     const sub = relay.sub([query], {}) as NostrSubscription;
-
-  //     sub.on('event', (originalEvent: any) => {
-  //       // console.log('downloadFromRelayIndex: event', id);
-  //       const event = this.eventService.processEvent(originalEvent);
-  //       // console.log('downloadFromRelayIndex: event', event);
-
-  //       if (!event) {
-  //         return;
-  //       }
-
-  //       totalEvents.unshift(event);
-  //       observer.next(totalEvents);
-  //       // sub.unsub();
-  //     });
-
-  //     sub.on('eose', () => {
-  //       // console.log('downloadFromRelayIndex: eose', id);
-  //       observer.complete();
-  //       sub.unsub();
-  //     });
-  //   });
-  // }
-
-  // downloadProfile(pubkey: string) {
-  //   if (!pubkey) {
-  //     return;
-  //   }
-
-  //   console.log('profileQueue.length1:', JSON.stringify(this.profileQueue));
-
-  //   // Skip if array already includes this pubkey.
-  //   if (this.profileQueue.includes(pubkey)) {
-  //     return;
-  //   }
-
-  //   console.log(this);
-  //   console.log('ADD DOWNLOAD PROFILE:', pubkey);
-  //   this.profileQueue.push(pubkey);
-
-  //   console.log('profileQueue.length2:', JSON.stringify(this.profileQueue));
-
-  //   this.processProfilesQueue();
-
-  //   // Wait some CPU cycles for potentially more profiles before we process.
-  //   // setTimeout(() => {
-  //   //   console.log('processProfilesQueue!!!', this.profileQueue.length);
-  //   //   this.processProfilesQueue();
-  //   // }, 1000);
-
-  //   // TODO: Loop all relays until we find the profile.
-  //   // return this.fetchProfiles(this.relays[0], [pubkey]);
-  // }
-
   fetchProfiles(relay: Relay, authors: string[]) {
     if (!authors || authors.length === 0) {
       return;

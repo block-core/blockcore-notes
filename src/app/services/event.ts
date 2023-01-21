@@ -41,7 +41,6 @@ export class EventService {
     // TODO: Store the raw event.
     // const nostrEvent = event as NostrEventDocument;
     // nostrEvent.raw = originalEvent;
-
     return event;
   }
 
