@@ -1,5 +1,6 @@
 import { Filter } from 'nostr-tools';
 import { RelayRequest, RelayResponse } from '../services/messages';
+import { v4 as uuidv4 } from 'uuid';
 
 /** Relay type that holds a connection to the Web Worker and abstracts calling different actions to the Web Worker. */
 export class RelayType {
@@ -38,11 +39,13 @@ export class RelayType {
   }
 
   subscribe(filters: Filter[]) {
-    this.action('subscribe', filters);
+    const id = uuidv4();
+    this.action('subscribe', { filters, id });
+    return id;
   }
 
-  unsubscribe(queryId: string) {
-    this.action('unsubscribe', queryId);
+  unsubscribe(id: string) {
+    this.action('unsubscribe', id);
   }
 
   action(type: string, data?: any) {

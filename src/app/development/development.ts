@@ -118,11 +118,15 @@ export class DevelopmentComponent {
     // scheduler.postTask(validateForm, { priority: 'user-blocking' });
   }
 
+  sub?: string;
+
   subscription() {
-    this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
+    this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
   }
 
-  unsubscribe() {}
+  unsubscribe() {
+    this.relayService.workers[0].unsubscribe(this.sub!);
+  }
 
   terminate() {
     this.relayService.workers[0].terminate();

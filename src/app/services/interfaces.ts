@@ -85,6 +85,10 @@ export interface NostrEvent extends Event {
   tagsCut: boolean;
 }
 
+export interface NostrSub extends Sub {
+  id: string;
+}
+
 export interface NostrEventDocument extends Event {
   contentCut: boolean;
   tagsCut: boolean;

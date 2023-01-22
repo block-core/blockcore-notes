@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
-import { Event, relayInit, Filter } from 'nostr-tools';
-import { NostrRelay } from '../services/interfaces';
+import { Event, relayInit, Filter, Sub } from 'nostr-tools';
+import { NostrRelay, NostrSub } from '../services/interfaces';
 import { RelayRequest, RelayResponse } from '../services/messages';
 import { Storage } from '../types/storage';
 
@@ -71,7 +71,10 @@ addEventListener('message', async (ev: MessageEvent) => {
       await relayWorker.publish(request.data);
       break;
     case 'subscribe':
-      await relayWorker.subscribe(request.data);
+      await relayWorker.subscribe(request.data.filters, request.data.id);
+      break;
+    case 'unsubscribe':
+      await relayWorker.unsubscribe(request.data);
       break;
     case 'terminate':
       await relayWorker.disconnect();
@@ -90,6 +93,7 @@ addEventListener('message', async (ev: MessageEvent) => {
 
 export class RelayWorker {
   relay!: NostrRelay;
+  subscriptions: NostrSub[] = [];
 
   constructor(public url: string) {}
 
@@ -109,7 +113,7 @@ export class RelayWorker {
   async connect() {
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit(this.url) as NostrRelay;
-    relay.subscriptions = [];
+    // relay.subscriptions = [];
 
     relay.on('connect', () => {
       console.log(`connected to ${relay?.url}`);
@@ -155,8 +159,27 @@ export class RelayWorker {
     return this.relay.close();
   }
 
-  subscribe(filters: Filter[]) {
-    const sub = this.relay.sub(filters);
+  unsubscribe(id: string) {
+    const index = this.subscriptions.findIndex((s) => s.id === id);
+
+    if (index == -1) {
+      return;
+    }
+
+    const sub = this.subscriptions[index];
+    this.subscriptions.splice(index, 1);
+    sub.unsub();
+
+    console.log('Unsubscribed: ', id);
+  }
+
+  subscribe(filters: Filter[], id: string) {
+    const sub = this.relay.sub(filters) as NostrSub;
+
+    sub.id = id;
+
+    console.log('SUBSCRIPTION:', sub);
+    this.subscriptions.push(sub);
 
     // const sub = relay.sub(filters, {}) as NostrSubscription;
     // relay.subscriptions.push(sub);
