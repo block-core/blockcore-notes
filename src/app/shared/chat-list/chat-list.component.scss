@@ -3,11 +3,13 @@
 }
 
 .input-full-width {
-position: relative;
-margin: auto;
+  position: relative;
+  margin: auto;
 }
 
-.search
-{
+.search {
+  position: sticky;
+  top: 0;
   padding: 10px;
+  z-index: 999;
 }
