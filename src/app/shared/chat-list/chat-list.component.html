@@ -1,6 +1,13 @@
 <mat-nav-list>
+  <div class="search">
+    <mat-form-field appearance="fill" class="input-full-width">
+      <input matInput type="text" autocomplete="off" placeholder="Search...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
   <ng-container *ngFor="let chat of chatService.chats$ | async; let lastItem = last">
-    <app-chat-item [routerLink]="['/m', '5f432a9f39b58ff132fc0a4c8af10d42efd917d8076f68bb7f2f91ed7d4f6a41']" [chat]="chat"></app-chat-item>
+    <app-chat-item [routerLink]="['/m', chat.id]" [chat]="chat"></app-chat-item>
     <mat-divider *ngIf="!lastItem"></mat-divider>
   </ng-container>
 </mat-nav-list>

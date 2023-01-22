@@ -11,7 +11,8 @@ import { ChatModel } from 'src/app/services/interfaces';
 export class ChatListComponent implements OnInit {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();
 
-  constructor(public chatService: ChatService) {}
+  constructor(public chatService: ChatService) {
+  }
 
   ngOnInit() {}
 }

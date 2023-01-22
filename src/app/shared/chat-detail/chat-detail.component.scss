@@ -1,3 +1,19 @@
+.chat-detail-container {
+  height: 100%;
+  width: 100%;
+}
+
+.chat-detail-sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-detail-sidenav {
+  width: 275px;
+}
+
 :host {
   display: flex;
   height: 100%;
@@ -96,4 +112,10 @@
   z-index: 3;
   bottom: 90px;
   right: 10px;
+}
+
+@media only screen and (max-width: 960px) {
+  .list-hide-small {
+    display: none !important;
+  }
 }

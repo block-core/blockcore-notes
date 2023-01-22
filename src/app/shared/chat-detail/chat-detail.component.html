@@ -1,40 +1,62 @@
-<div class="messages-list-container">
-  <div #scrollable class="scrollable">
-    <ng-container *ngIf="chat">
-      <ng-container *ngFor="let message of chat.chat">
-        <app-message-bubble [message]="message"></app-message-bubble>
-      </ng-container>
-    </ng-container>
-    <mat-spinner diameter="24" color="warn" *ngIf="sending"></mat-spinner>
+
+
+<mat-drawer-container class="chat-detail-container" autosize>
+  <mat-drawer #drawer class="chat-detail-sidenav list-hide-small" opened mode="side">
+    <app-chat-list></app-chat-list>
+  </mat-drawer>
+
+  <div class="chat-detail-sidenav-content">
+    <div class="messages-list-container">
+      <div #scrollable class="scrollable">
+        <ng-container *ngIf="chat">
+          <ng-container *ngFor="let message of chat.chat">
+            <app-message-bubble [message]="message"></app-message-bubble>
+          </ng-container>
+        </ng-container>
+        <mat-spinner diameter="24" color="warn" *ngIf="sending"></mat-spinner>
+      </div>
+
+      <div class="message-send">
+        <emoji-mart class="emoji-picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false"
+          (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+
+          <button type="button" class="list-hide-small" style="margin: 5px;" mat-icon-button (click)="toggle()">
+            <mat-icon *ngIf="displayList">chevron_left</mat-icon>
+            <mat-icon *ngIf="!displayList">chevron_right</mat-icon>
+          </button>
+
+            <mat-form-field class="input-full-width">
+          <mat-icon class="toolbar-icon" [matMenuTriggerFor]="menu" matPrefix>attach_file_add</mat-icon>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>imagesmode</mat-icon>
+              <span>Image</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>videocam</mat-icon>
+              <span>Video</span>
+            </button>
+            <button mat-menu-item disabled>
+              <mat-icon>file_present</mat-icon>
+              <span>Document</span>
+            </button>
+          </mat-menu>
+          <input autocomplete="off" type="text" matInput placeholder="Write a message" [(ngModel)]="message"
+            (keypress)="saveMessage($event)">
+          <mat-hint align="end" class="hint">Length : {{message?.length}}</mat-hint>
+          <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;"
+            matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+          <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>
+
+          <mat-icon class="toolbar-icon" (click)="send(message)" matSuffix>send</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
   </div>
 
-  <div class="message-send">
-    <emoji-mart class="emoji-picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false"
-      (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
-    <mat-form-field class="input-full-width">
-      <mat-icon class="toolbar-icon" [matMenuTriggerFor]="menu" matPrefix>attach_file_add</mat-icon>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>
-          <mat-icon>imagesmode</mat-icon>
-          <span>Image</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon>videocam</mat-icon>
-          <span>Video</span>
-        </button>
-        <button mat-menu-item disabled>
-          <mat-icon>file_present</mat-icon>
-          <span>Document</span>
-        </button>
-      </mat-menu>
-      <input autocomplete="off" type="text" matInput placeholder="Write a message" [(ngModel)]="message"
-        (keypress)="saveMessage($event)">
-      <mat-hint align="end" class="hint">Length : {{message?.length}}</mat-hint>
-      <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;"
-        matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
-      <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>
+</mat-drawer-container>
 
-      <mat-icon class="toolbar-icon" (click)="send(message)" matSuffix>send</mat-icon>
-    </mat-form-field>
-  </div>
-</div>
+
+
+
+
