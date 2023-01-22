@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { ChatService } from 'src/app/services/chat.service';
@@ -19,7 +20,10 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
   chat!: ChatModel;
   sending: boolean = false;
   message: any;
-  constructor(private service: ChatService, private control: MessageControlService, private appState: ApplicationState) {}
+  displayList = true;
+
+  constructor(private service: ChatService, private control: MessageControlService, private appState: ApplicationState) { }
+  @ViewChild('drawer') drawer!: MatSidenav;
 
   ngOnInit() {
 
@@ -60,6 +64,11 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
     // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
     this.message = `${this.message}${event.emoji.native}`;
     this.isEmojiPickerVisible = false;
+  }
+
+  public toggle() {
+    this.displayList = !this.displayList;
+    this.drawer.toggle();
   }
 
   ngOnDestroy(): void {
