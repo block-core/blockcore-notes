@@ -266,7 +266,7 @@ export class DataService {
 
     return this.connected$
       .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
-      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay, requestTimeout)))
       .pipe(
         filter((data) => {
           // Only trigger the reply once.
@@ -277,11 +277,14 @@ export class DataService {
             return false;
           }
         })
+      )
+      .pipe(
+        timeout(requestTimeout),
+        catchError((error) => {
+          console.warn('The observable was timed out.');
+          return of(undefined);
+        }) // Simply return undefined when the timeout is reached.
       );
-    // .pipe(
-    //   timeout(requestTimeout),
-    //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
-    // );
   }
 
   /** Creates an observable that will attempt to get newest events across all relays and perform multiple callbacks if newer is found. */
@@ -385,7 +388,7 @@ export class DataService {
     });
   }
 
-  downloadFromRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
+  downloadFromRelay(filters: Filter[], relay: NostrRelay, requestTimeout = 10000): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([...filters], {}) as NostrSubscription;
       relay.subscriptions.push(sub);
@@ -409,7 +412,13 @@ export class DataService {
         // When the observable is finished, this return function is called.
         sub.unsub();
       };
-    });
+    }).pipe(
+      timeout(requestTimeout),
+      catchError((error) => {
+        console.warn('The observable was timed out.');
+        return of();
+      }) // Simply return undefined when the timeout is reached.
+    );
   }
 
   fetchProfiles(relay: Relay, authors: string[]) {

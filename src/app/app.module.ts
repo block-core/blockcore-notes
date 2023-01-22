@@ -110,6 +110,7 @@ import { TimePipe } from './shared/time.pipe';
 import { QueueComponent } from './queue/queue';
 import { MessagesComponent } from './messages/messages';
 import { MessageComponent } from './message/message';
+import { DevelopmentComponent } from './development/development';
 
 @NgModule({
   declarations: [
@@ -173,7 +174,8 @@ import { MessageComponent } from './message/message';
     TimePipe,
     QueueComponent,
     MessagesComponent,
-    MessageComponent
+    MessageComponent,
+    DevelopmentComponent
   ],
   imports: [
     HttpClientModule,

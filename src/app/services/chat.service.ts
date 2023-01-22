@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable } from 'rxjs';
-import { ChatModel, UserModel } from './interfaces';
+import { BehaviorSubject, finalize, distinct, flatMap, from, groupBy, map, Observable, of, Subscription, switchMap } from 'rxjs';
+import { ChatModel, NostrEventDocument, UserModel } from './interfaces';
+import { QueueService } from './queue';
+import { DataService } from './data';
+import { ApplicationState } from './applicationstate';
 
 @Injectable({
   providedIn: 'root',
@@ -16,12 +19,71 @@ export class ChatService {
     return this.#chatsChanged.asObservable().pipe();
   }
 
-  constructor() {
+  #chats: NostrEventDocument[] = [];
+  // #chatsChanged2: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.chats2);
+
+  chats3: NostrEventDocument[] = [];
+
+  get chats2$() {
+    return of(this.#chats);
+  }
+
+  get uniqueChats$() {
+    return this.chats2$.pipe(
+      map((data) => {
+        const sorted = data.sort((a, b) => {
+          return a.created_at < b.created_at ? -1 : 1;
+        });
+
+        const filtered = sorted.filter((item, index) => sorted.findIndex((e) => e.pubkey == item.pubkey) === index);
+        return filtered;
+      })
+    );
+  }
+
+  constructor(private queueService: QueueService, private dataService: DataService, private appState: ApplicationState) {
     this.chats = this.data.chats as any[];
     this.#chatsChanged.next(this.chats);
-
     console.log(this.data.chats);
     // this.chats$ = this.chats.asObservable();
+  }
+
+  subscriptions: Subscription[] = [];
+
+  download() {
+    // this.chats2 = [];
+    this.#chats = [];
+
+    this.dataService
+      .downloadEventsByQuery([{ kinds: [4], ['#p']: [this.appState.getPublicKey()] }], 3000)
+      .pipe(
+        finalize(async () => {
+          debugger;
+          for (let index = 0; index < this.#chats.length; index++) {
+            const event = this.#chats[index];
+            const gt = globalThis as any;
+            const content = await gt.nostr.nip04.decrypt(event.pubkey, event.content);
+            event.content = content;
+            console.log('DECRYPTED EVENT:', event);
+          }
+        })
+      )
+      .subscribe(async (event) => {
+        if (this.#chats.findIndex((e) => e.id === event.id) > -1) {
+          return;
+        }
+
+        // const gt = globalThis as any;
+        // const content = await gt.nostr.nip04.decrypt(event.pubkey, event.content);
+        // event.content = content;
+
+        this.#chats.unshift(event);
+
+        // this.chats2.push(event);
+        // this.#chatsChanged2.next(this.chats2);
+      });
+
+    // this.subscriptions.push(this.dataService.downloadEventsByQuery([{}]));
   }
 
   saveMessage(chatId: number, message: string) {

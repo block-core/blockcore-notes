@@ -195,7 +195,7 @@ export class AppComponent {
     // await this.relayStorage.initialize();
 
     await this.relayService.initialize();
-    await this.relayService.connect();
+    // await this.relayService.connect();
 
     // await this.feedService.initialize();
 
@@ -266,9 +266,16 @@ export class AppComponent {
   }
 
   discoveredProfileDate = 0;
+  sharedWorker?: SharedWorker;
 
   async ngOnInit() {
     this.theme.init();
+
+    this.sharedWorker = new SharedWorker('/assets/shared.worker.js');
+    this.sharedWorker.port.onmessage = (ev: any) => {
+      console.log(ev.data);
+    };
+    this.sharedWorker.port.start();
 
     this.searchControl.valueChanges.subscribe(async (value) => {
       this.appState.searchText = value;

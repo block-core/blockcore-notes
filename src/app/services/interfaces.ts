@@ -76,6 +76,7 @@ export interface NostrRelayDocument {
   enabled?: boolean;
   public?: boolean;
   profile?: boolean;
+  status?: number;
 }
 
 /** OBSOLETE */
@@ -218,3 +219,4 @@ export class ChatModel {
   'lastMessageLength': string | number;
   'chat': Array<MessageModel>;
 }
+

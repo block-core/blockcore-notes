@@ -20,6 +20,7 @@ import { FollowersComponent } from './followers/followers';
 import { QueueComponent } from './queue/queue';
 import { MessagesComponent } from './messages/messages';
 import { MessageComponent } from './message/message';
+import { DevelopmentComponent } from './development/development';
 
 const routes: Routes = [
   {
@@ -116,7 +117,11 @@ const routes: Routes = [
     component: SettingsComponent,
     canActivate: [AuthGuard],
   },
-
+  {
+    path: 'development',
+    component: DevelopmentComponent,
+    canActivate: [AuthGuard],
+  },
   {
     path: 'queue',
     component: QueueComponent,

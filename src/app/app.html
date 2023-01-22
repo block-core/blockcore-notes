@@ -25,10 +25,10 @@
         <mat-icon>notes</mat-icon>
         <span *ngIf="displayLabels">Feed</span>
       </a>
-      <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+      <!-- <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>chat</mat-icon>
         <span *ngIf="displayLabels">Channels</span>
-      </a>
+      </a> -->
       <a [routerLink]="['/m']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>mail</mat-icon>
         <span *ngIf="displayLabels">Messages</span>
@@ -44,6 +44,10 @@
       <a [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>bookmark_border</mat-icon>
         <span *ngIf="displayLabels">Notes</span>
+      </a>
+      <a [routerLink]="['/development']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <mat-icon>construction</mat-icon>
+        <span *ngIf="displayLabels">Development</span>
       </a>
       <a mat-menu-item (click)="toggleMenuSize()">
         <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>

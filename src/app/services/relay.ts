@@ -9,6 +9,8 @@ import { CacheService } from './cache';
 import { liveQuery, Subscription } from 'dexie';
 import { StorageService } from './storage';
 import { dexieToRx } from '../shared/utilities';
+import { RelayType } from '../types/relay';
+import { RelayResponse } from './messages';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,7 @@ import { dexieToRx } from '../shared/utilities';
 export class RelayService {
   /** Default relays that the app has for users without extension. This follows the document structure as extension data. */
   defaultRelays: any = {
-    'wss://nostr-pub.wellorder.net': { read: true, write: true },
+    // 'wss://nostr-pub.wellorder.net': { read: true, write: true },
     'wss://no.str.cr': { read: true, write: true },
     // 'wss://relay.nostr.info': { read: true, write: true },
     'wss://nostr.nordlysln.net': { read: true, write: true },
@@ -75,6 +77,125 @@ export class RelayService {
         this.connect();
       }
     });
+  }
+
+  workers: RelayType[] = [];
+
+  async setRelayStatus(url: string, status: number) {
+    const relay = await this.db.storage.getRelay(url);
+
+    if (relay) {
+      relay.status = status;
+      await this.db.storage.putRelay(relay);
+    } else {
+      await this.db.storage.putRelay({ url: url, status: status, read: true, write: true });
+    }
+  }
+
+  async processEvent(response: RelayResponse) {
+    console.log('FROM:', response.url);
+    const originalEvent = response.data;
+
+    const event = this.eventService.processEvent(originalEvent);
+
+    if (!event) {
+      return;
+    }
+
+    console.log('SAVE EVENT?:', event);
+
+    // If the event we received is from someone the user is following, always persist it if not already persisted.
+    if (event.pubkey === this.appState.getPublicKey()) {
+      await this.db.storage.putEvents(event);
+    }
+  }
+
+  async handleRelayMessage(ev: MessageEvent, url: string) {
+    const response = ev.data as RelayResponse;
+
+    switch (response.type) {
+      case 'status':
+        console.log(`Relay ${url} changed status to ${response.data}.`);
+        await this.setRelayStatus(url, response.data);
+        break;
+      case 'terminated':
+        // When being terminated, we'll remove this worker from the array.
+        console.log('WE HAVE TERMINATED:', url);
+        const index = this.workers.findIndex((v) => v.url == url);
+
+        // Set the status and then terminate this instance.
+        const worker = this.workers[index];
+        worker.status = 'terminated';
+
+        // Perform the actual termination of the Web Worker.
+        worker.worker?.terminate();
+
+        // Remove from list of workers.
+        if (index > -1) {
+          this.workers.splice(index, 1);
+        }
+
+        await this.setRelayStatus(url, -1);
+
+        break;
+      case 'event':
+        console.log('EVENT FROM:', url);
+        await this.processEvent(response);
+        break;
+    }
+  }
+
+  async handleRelayError(ev: ErrorEvent, url: string) {
+    const response = ev.error as RelayResponse;
+    await this.setRelayStatus(url, -1);
+
+    console.warn('ERROR IN WEB WORKER FOR RELAY!', ev);
+    console.warn('ERROR IN WEB WORKER FOR RELAY22!', ev.error);
+  }
+
+  createRelayWorker(url: string) {
+    if (!url) {
+      console.warn('SUPPLIED EMPTY URL TO CREATE RELAY WORKER!');
+      return;
+    }
+
+    // Avoid adding duplicate workers.
+    if (this.workers.findIndex((v) => v.url == url) > -1) {
+      return;
+    }
+
+    const relayType = new RelayType(url);
+    const worker = relayType.start();
+
+    worker.onmessage = async (ev) => {
+      await this.handleRelayMessage(ev, relayType.url);
+    };
+
+    worker.onerror = async (ev) => {
+      await this.handleRelayError(ev, relayType.url);
+    };
+
+    this.workers.push(relayType);
+
+    relayType.connect();
+
+    // if (typeof Worker !== 'undefined') {
+    //   // Create a new
+    //   const worker = new Worker(new URL('../workers/relay.worker', import.meta.url));
+
+    //   worker.onmessage = ({ data }) => {
+    //     console.log(`page got message: ${JSON.stringify(data)}`);
+    //   };
+
+    //   // worker.postMessage({ url: url, message: 'hello world' });
+    //   return worker;
+    // } else {
+    //   // Web Workers are not supported in this environment.
+    //   // You should add a fallback so that your program still executes correctly.
+    //   alert('Your browser does not support Web Workers and the app cannot continue to work.');
+    // }
+
+    // return undefined;
   }
 
   getActiveRelay(url: string) {
