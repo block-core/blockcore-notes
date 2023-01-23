@@ -82,14 +82,66 @@ export class RelayService {
   workers: RelayType[] = [];
 
   async setRelayStatus(url: string, status: number) {
+    console.log('setRelayStatus:', status);
     const relay = await this.db.storage.getRelay(url);
+    const item = this.items2.find(r => r.url == url);
 
     if (relay) {
       relay.status = status;
+      item!.status = status;
       await this.db.storage.putRelay(relay);
-    } else {
-      await this.db.storage.putRelay({ url: url, status: status, read: true, write: true });
     }
+  }
+
+  async setRelayNIP11(url: string, data: any) {
+    console.log('setRelayNIP11:', data);
+
+    const relay = await this.db.storage.getRelay(url);
+    const item = this.items2.find(r => r.url == url);
+
+    if (relay) {
+      if (data.error) {
+        relay.error = data.error;
+        item!.error = data.error;
+      }
+      else {
+        relay.nip11 = data;
+        item!.nip11 = data;
+      }
+
+      await this.db.storage.putRelay(relay);
+
+      console.log('Relay updated witn NIP11');
+    }
+  }
+
+  async addRelay2(url: string) {
+    let relay = this.items2.find(r => r.url == url);
+
+    if (!relay) {
+      relay = {
+        read: true,
+        write: true,
+        url: url,
+        enabled: true,
+      };
+
+      this.db.storage.putRelay(relay);
+      this.items2.push(relay);
+    }
+
+    this.createRelayWorker(relay.url);
+  }
+
+  async deleteRelays() {
+    await this.db.storage.deleteRelays();
+
+    for (let i = 0; i < this.workers.length; i++) {
+      const worker = this.workers[i];
+      worker.terminate();
+    }
+
+    this.items2 = [];
   }
 
   async processEvent(response: RelayResponse) {
@@ -141,6 +193,10 @@ export class RelayService {
       case 'event':
         console.log('EVENT FROM:', url);
         await this.processEvent(response);
+        break;
+      case 'nip11':
+        console.log('EVENT FROM:', url);
+        await this.setRelayNIP11(url, response.data);
         break;
     }
   }
@@ -295,6 +351,20 @@ export class RelayService {
     this.#relaysChanged.next(this.relays);
   }
 
+  async deleteRelay2(url: string) {
+    const index = this.items2.findIndex(r => r.url == url);
+
+    if (index == -1) {
+      return;
+    }
+
+    const worker = this.workers.find(w => w.url == url);
+    worker?.terminate();
+
+    await this.db.storage.deleteRelay(url);
+    this.items2.splice(index, 1);
+  }
+
   /** Takes relay in the format used for extensions and adds to persistent storage. This method does not connect to relays. */
   async deleteRelay(url: string) {
     await this.table.delete(url);
@@ -445,7 +515,16 @@ export class RelayService {
 
   subscriptions: any = {};
 
+  items2: NostrRelayDocument[] = [];
+
   async initialize() {
+    this.items2 = await this.db.storage.getRelays();
+
+    for (let index = 0; index < this.items2.length; index++) {
+      const relay = this.items2[index];
+      this.createRelayWorker(relay.url);
+    }
+
     // If there are no relay metatadata in database, get it from extension or default
     const items = await this.table.toArray();
 

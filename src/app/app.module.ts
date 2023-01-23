@@ -111,6 +111,8 @@ import { QueueComponent } from './queue/queue';
 import { MessagesComponent } from './messages/messages';
 import { MessageComponent } from './message/message';
 import { DevelopmentComponent } from './development/development';
+import { RelayComponent } from './shared/relay/relay';
+import { RelaysComponent } from './shared/relays/relays';
 
 @NgModule({
   declarations: [
@@ -175,7 +177,9 @@ import { DevelopmentComponent } from './development/development';
     QueueComponent,
     MessagesComponent,
     MessageComponent,
-    DevelopmentComponent
+    DevelopmentComponent,
+    RelayComponent,
+    RelaysComponent
   ],
   imports: [
     HttpClientModule,

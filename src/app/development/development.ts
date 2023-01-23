@@ -13,7 +13,7 @@ export class DevelopmentComponent {
   worker?: Worker;
   storage?: Storage;
 
-  constructor(private appState: ApplicationState, private relayService: RelayService) {}
+  constructor(private appState: ApplicationState, public relayService: RelayService) { }
 
   ngOnInit() {
     this.appState.updateTitle('Development & Debug');
@@ -84,7 +84,7 @@ export class DevelopmentComponent {
     // worker.download('');
   }
 
-  schedule() {
+  async addRelays() {
     let relays = this.relayService.defaultRelays;
     let preparedRelays = relays;
 
@@ -101,8 +101,7 @@ export class DevelopmentComponent {
     for (var i = 0; i < entries.length; i++) {
       const key = entries[i];
       const val = preparedRelays[key];
-
-      this.relayService.createRelayWorker(key);
+      await this.relayService.addRelay2(key);
 
       // await this.table.put({ url: key, write: val.write, read: val.read, public: true });
     }
@@ -111,7 +110,7 @@ export class DevelopmentComponent {
     //   this.worker = this.relayService.createRelayWorker('wss://nostr-pub.wellorder.net');
     // }
 
-    this.worker?.postMessage({ type: 'connect' });
+    // this.worker?.postMessage({ type: 'connect' });
 
     // const worker = new Worker(new URL('../workers/relay.worker', import.meta.url));
 
@@ -134,5 +133,9 @@ export class DevelopmentComponent {
 
   ngOnDestroy() {
     this.worker?.terminate();
+  }
+
+  async deleteRelays() {
+    return this.relayService.deleteRelays();
   }
 }

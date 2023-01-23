@@ -77,6 +77,7 @@ export interface NostrRelayDocument {
   public?: boolean;
   profile?: boolean;
   status?: number;
+  modified?: number;
 }
 
 /** OBSOLETE */

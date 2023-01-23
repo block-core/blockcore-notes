@@ -3,6 +3,10 @@ import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, No
 
 /** Make sure you read and learn: https://github.com/jakearchibald/idb */
 
+export function now() {
+  return Math.floor(Date.now() / 1000);
+}
+
 interface NotesDB extends DBSchema {
   relays: {
     value: NostrRelayDocument;
@@ -31,7 +35,7 @@ interface NotesDB extends DBSchema {
 export class Storage {
   public db!: IDBPDatabase<NotesDB>;
 
-  constructor(private name: string, private version: number) {}
+  constructor(private name: string, private version: number) { }
 
   async open() {
     this.db = await openDB<NotesDB>(this.name, this.version, {
@@ -63,48 +67,63 @@ export class Storage {
     this.db.close();
   }
 
-  getCircle(key: number) {
+  async getCircle(key: number) {
     return this.db.get('circles', key);
   }
 
-  putCircle(value: Circle) {
+  async putCircle(value: Circle) {
+    value.modified = now();
     return this.db.put('circles', value);
   }
 
-  getProfile(key: string) {
+  async getProfile(key: string) {
     return this.db.get('profiles', key);
   }
 
-  putProfile(value: NostrProfileDocument) {
+  async putProfile(value: NostrProfileDocument) {
+    value.modified = now();
     return this.db.put('profiles', value);
   }
 
-  getProfilesByStatus(status: number) {
+  async getProfilesByStatus(status: number) {
     return this.db.getAllFromIndex('profiles', 'status', status);
   }
 
-  getEvent(key: string) {
+  async getEvent(key: string) {
     return this.db.get('events', key);
   }
 
-  putEvents(value: NostrEventDocument) {
+  async putEvents(value: NostrEventDocument) {
     return this.db.put('events', value);
   }
 
-  getEventsByPubKey(pubkey: string, count?: number) {
+  async getEventsByPubKey(pubkey: string, count?: number) {
     return this.db.getAllFromIndex('events', 'pubkey', pubkey, count);
   }
 
-  getEventsByCreated(pubkey: string, query: IDBKeyRange, count?: number) {
+  async getEventsByCreated(pubkey: string, query: IDBKeyRange, count?: number) {
     return this.db.getAllFromIndex('events', 'created', query, count);
   }
 
-  getRelay(key: string) {
+  async getRelay(key: string) {
     return this.db.get('relays', key);
   }
 
-  putRelay(value: NostrRelayDocument) {
+  async getRelays() {
+    return this.db.getAll('relays');
+  }
+
+  async putRelay(value: NostrRelayDocument) {
+    value.modified = now();
     return this.db.put('relays', value);
+  }
+
+  async deleteRelay(key: string) {
+    return this.db.delete('relays', key);
+  }
+
+  async deleteRelays() {
+    return this.db.clear(`relays`);
   }
 
   async delete() {

@@ -12,6 +12,10 @@ export function sleep(durationInMillisecond: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, durationInMillisecond));
 }
 
+export function now() {
+  return Math.floor(Date.now() / 1000);
+}
+
 @Injectable({
   providedIn: 'root',
 })

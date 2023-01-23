@@ -5,7 +5,7 @@ import { NostrRelay, NostrSub } from '../services/interfaces';
 import { RelayRequest, RelayResponse } from '../services/messages';
 import { Storage } from '../types/storage';
 
-let relayWorker: RelayWorker;
+  let relayWorker: RelayWorker;
 let relay = undefined;
 let storage = undefined;
 
@@ -60,6 +60,8 @@ addEventListener('message', async (ev: MessageEvent) => {
     case 'connect':
       relayWorker = new RelayWorker(request.data);
       await relayWorker.connect();
+      await relayWorker.info();
+
       // relayWorker = {};
       // postMessage({ type: 'connect', result: true } as RelayResponse);
       break;
@@ -95,7 +97,7 @@ export class RelayWorker {
   relay!: NostrRelay;
   subscriptions: NostrSub[] = [];
 
-  constructor(public url: string) {}
+  constructor(public url: string) { }
 
   async publish(event: Event) {
     let pub = this.relay.publish(event);
@@ -206,5 +208,30 @@ export class RelayWorker {
     //     relay.subscriptions.splice(subIndex, 1);
     //   }
     // };
+  }
+
+  async info() {
+    try {
+      const url = new URL(this.url);
+      const infoUrl = `https://${url.hostname}`;
+
+      const rawResponse = await fetch(infoUrl, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          Accept: 'application/nostr+json',
+        },
+      });
+
+      if (rawResponse.status === 200) {
+        const content = await rawResponse.json();
+        postMessage({ type: 'nip11', data: content, url: this.url } as RelayResponse);
+      } else {
+        postMessage({ type: 'nip11', data: { error: `Unable to get NIP-11 data. Status: ${rawResponse.statusText}` }, url: this.url } as RelayResponse);
+      }
+    } catch (err) {
+      console.warn(err);
+      postMessage({ type: 'nip11', data: { error: `Unable to get NIP-11 data. Status: ${err}` }, url: this.url } as RelayResponse);
+    }
   }
 }
