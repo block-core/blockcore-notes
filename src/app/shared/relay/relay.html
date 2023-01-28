@@ -1,9 +1,12 @@
 <mat-expansion-panel>
   <mat-expansion-panel-header>
-    <mat-panel-title [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">{{ relay.nip11?.name }}</mat-panel-title>
+    <mat-panel-title [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">
+      <span *ngIf="relay.nip11">{{ relay.nip11.name }}</span>
+      <span *ngIf="!relay.nip11">{{ relay.url.substring(6) }}</span>
+    </mat-panel-title>
     <mat-panel-description>
       <span class="hide-small" [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">{{ relay.url }}</span>
-      <mat-icon class="online" [ngClass]="['relay-status-' + relay.status, 'relay-type-' + relay.type]">radio_button_checked</mat-icon>
+      <mat-icon class="online" [ngClass]="['relay-status-' + relay.status, 'relay-type-' + relay.type]">dns</mat-icon>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <div *ngIf="relay.error" class="error">{{ relay.error }}</div>

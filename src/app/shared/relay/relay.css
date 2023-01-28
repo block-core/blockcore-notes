@@ -66,7 +66,7 @@
   }
 
   .mat-expansion-panel-header-title {
-    flex-grow: 2 !important;
+    flex-grow: 3 !important;
   }
 
   .mat-expansion-panel-header-description {
