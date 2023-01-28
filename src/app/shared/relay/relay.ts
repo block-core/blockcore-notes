@@ -54,26 +54,22 @@ export class RelayComponent {
 
   ngOnInit() {}
 
-  async onRelayTypeChange(model: any) {
-    console.log('onRelayTypeChange');
-    if (model.length > 0) {
-      this.relay.type = model[0];
-      console.log('SAVING:', this.relay);
-      await this.relayService.setRelayType(this.relay.url, this.relay.type);
-    }
+  async onRelayTypeChange(change: MatSelectionListChange) {
+    console.log('onRelayTypeChange', change.options[0].value);
+    this.relay.type = change.options[0].value;
+    console.log('SAVING:', this.relay);
+    await this.relayService.setRelayType(this.relay.url, this.relay.type);
 
-    console.log(this.relay);
+    if (this.relay.type !== 1) {
+      this.relayService.terminate(this.relay.url);
+    }
   }
 
-  async onRelayPublicChange(model: any) {
-    console.log('onRelayPublicChange');
-    if (model.length > 0) {
-      this.relay.public = model[0];
-      console.log('SAVING:', this.relay);
-      await this.relayService.setRelayPublic(this.relay.url, this.relay.public);
-    }
-
-    console.log(this.relay);
+  async onRelayPublicChange(change: MatSelectionListChange) {
+    console.log('onRelayPublicChange', change.options[0].value);
+    this.relay.public = change.options[0].value;
+    console.log('SAVING:', this.relay);
+    await this.relayService.setRelayPublic(this.relay.url, this.relay.public);
   }
 
   async onRelayChanged(relay: NostrRelayDocument) {

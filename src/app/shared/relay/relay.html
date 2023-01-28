@@ -26,7 +26,7 @@
       <!-- <mat-card-subtitle>Control if this relay is used for reading, writing and if it should be part of your public relay list. Additionally you can keep the relay in your list but disable it to not use.</mat-card-subtitle> -->
     </mat-card-header>
     <mat-card-content>
-      <mat-selection-list (ngModelChange)="onRelayTypeChange($event)" [(ngModel)]="selectedRelayType" [multiple]="false">
+      <mat-selection-list (selectionChange)="onRelayTypeChange($event)" [multiple]="false">
         <mat-list-option *ngFor="let item of typesOfRelays" [selected]="relay.type == item.type" [value]="item.type">
           <span matListItemTitle>{{item.title}}</span>
           <span matListItemLine>{{item.description}}</span>
@@ -47,7 +47,7 @@
       <!-- <mat-card-subtitle>Control if this relay is used for reading, writing and if it should be part of your public relay list. Additionally you can keep the relay in your list but disable it to not use.</mat-card-subtitle> -->
     </mat-card-header>
     <mat-card-content>
-      <mat-selection-list (ngModelChange)="onRelayPublicChange($event)" [(ngModel)]="selectedRelayPublic" [multiple]="false">
+      <mat-selection-list (selectionChange)="onRelayPublicChange($event)" [multiple]="false">
         <mat-list-option *ngFor="let item of typesOfPrivacy" [selected]="relay.public == item.type" [value]="item.type">
           <span matListItemTitle>{{item.title}}</span>
           <span matListItemLine>{{item.description}}</span>

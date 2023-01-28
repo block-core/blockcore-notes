@@ -81,6 +81,14 @@ export class RelayService {
 
   workers: RelayType[] = [];
 
+  terminate(url: string) {
+    const worker = this.workers.find((r) => r.url == url);
+
+    if (worker) {
+      worker.terminate();
+    }
+  }
+
   async setRelayType(url: string, type: number) {
     const relay = await this.db.storage.getRelay(url);
     const item = this.items2.find((r) => r.url == url);
@@ -557,7 +565,10 @@ export class RelayService {
 
     for (let index = 0; index < this.items2.length; index++) {
       const relay = this.items2[index];
-      this.createRelayWorker(relay.url);
+
+      if (relay.type === 1) {
+        this.createRelayWorker(relay.url);
+      }
     }
 
     // If there are no relay metatadata in database, get it from extension or default
