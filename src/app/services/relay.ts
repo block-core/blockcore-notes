@@ -526,20 +526,20 @@ export class RelayService {
     }
 
     // If there are no relay metatadata in database, get it from extension or default
-    const items = await this.table.toArray();
+    // const items = await this.table.toArray();
 
-    if (items.length === 0) {
-      let relays;
+    // if (items.length === 0) {
+    //   let relays;
 
-      try {
-        const gt = globalThis as any;
-        relays = await gt.nostr.getRelays();
-      } catch (err) {
-        relays = this.defaultRelays;
-      }
+    //   try {
+    //     const gt = globalThis as any;
+    //     relays = await gt.nostr.getRelays();
+    //   } catch (err) {
+    //     relays = this.defaultRelays;
+    //   }
 
-      // First append whatever the extension give us of relays.
-      await this.appendRelays(relays);
-    }
+    //   // First append whatever the extension give us of relays.
+    //   await this.appendRelays(relays);
+    // }
   }
 }
