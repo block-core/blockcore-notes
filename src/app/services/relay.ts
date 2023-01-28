@@ -6,7 +6,6 @@ import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
 import { CacheService } from './cache';
-import { liveQuery, Subscription } from 'dexie';
 import { StorageService } from './storage';
 import { dexieToRx } from '../shared/utilities';
 import { RelayType } from '../types/relay';
@@ -37,7 +36,7 @@ export class RelayService {
 
   cache = new CacheService();
 
-  items$ = dexieToRx(liveQuery(() => this.list()));
+  // items$ = dexieToRx(liveQuery(() => this.list()));
 
   async list() {
     return await this.table.toArray();
@@ -81,10 +80,32 @@ export class RelayService {
 
   workers: RelayType[] = [];
 
+  async setRelayType(url: string, type: number) {
+    const relay = await this.db.storage.getRelay(url);
+    const item = this.items2.find((r) => r.url == url);
+
+    if (relay) {
+      relay.type = type;
+      item!.type = type;
+      await this.db.storage.putRelay(relay);
+    }
+  }
+
+  async setRelayPublic(url: string, publicRelay: boolean) {
+    const relay = await this.db.storage.getRelay(url);
+    const item = this.items2.find((r) => r.url == url);
+
+    if (relay) {
+      relay.public = publicRelay;
+      item!.public = publicRelay;
+      await this.db.storage.putRelay(relay);
+    }
+  }
+
   async setRelayStatus(url: string, status: number) {
     console.log('setRelayStatus:', status);
     const relay = await this.db.storage.getRelay(url);
-    const item = this.items2.find(r => r.url == url);
+    const item = this.items2.find((r) => r.url == url);
 
     if (relay) {
       relay.status = status;
@@ -97,14 +118,13 @@ export class RelayService {
     console.log('setRelayNIP11:', data);
 
     const relay = await this.db.storage.getRelay(url);
-    const item = this.items2.find(r => r.url == url);
+    const item = this.items2.find((r) => r.url == url);
 
     if (relay) {
       if (data.error) {
         relay.error = data.error;
         item!.error = data.error;
-      }
-      else {
+      } else {
         relay.nip11 = data;
         item!.nip11 = data;
       }
@@ -116,14 +136,13 @@ export class RelayService {
   }
 
   async addRelay2(url: string) {
-    let relay = this.items2.find(r => r.url == url);
+    let relay = this.items2.find((r) => r.url == url);
 
     if (!relay) {
       relay = {
-        read: true,
-        write: true,
+        public: true,
         url: url,
-        enabled: true,
+        type: 1,
       };
 
       this.db.storage.putRelay(relay);
@@ -327,7 +346,7 @@ export class RelayService {
       preparedRelays = {};
 
       for (let i = 0; i < relays.length; i++) {
-        preparedRelays[relays[i]] = { read: true, write: true };
+        preparedRelays[relays[i]] = {  };
       }
     }
 
@@ -336,14 +355,14 @@ export class RelayService {
     for (var i = 0; i < entries.length; i++) {
       const key = entries[i];
       const val = preparedRelays[key];
-      await this.table.put({ url: key, write: val.write, read: val.read, public: true });
+      await this.table.put({ url: key, public: true, type: 1 });
     }
 
     this.relaysUpdated();
   }
 
   async appendRelay(url: string, read: boolean, write: boolean) {
-    await this.table.put({ url: url, read: read, write: write, public: true });
+    await this.table.put({ url: url, public: true, type: 1 });
     this.relaysUpdated();
   }
 
@@ -352,13 +371,13 @@ export class RelayService {
   }
 
   async deleteRelay2(url: string) {
-    const index = this.items2.findIndex(r => r.url == url);
+    const index = this.items2.findIndex((r) => r.url == url);
 
     if (index == -1) {
       return;
     }
 
-    const worker = this.workers.find(w => w.url == url);
+    const worker = this.workers.find((w) => w.url == url);
     worker?.terminate();
 
     await this.db.storage.deleteRelay(url);
@@ -385,44 +404,35 @@ export class RelayService {
   }
 
   async connect() {
-    const items = await this.table.toArray();
-
-    let relayCountCountdown = items.filter((i) => i.enabled !== false).length;
-
-    const observables = [];
-
-    for (var i = 0; i < items.length; i++) {
-      const entry = items[i];
-      const existingConnection = this.relays.find((r) => r.url == entry.url);
-
-      // If we are already connected, skip opening connection again.
-      if (existingConnection && (existingConnection.status == 1 || existingConnection.metadata.enabled === false)) {
-        continue;
-      }
-
-      observables.push(this.openConnection(entry));
-    }
-
-    let timer: any;
-
-    merge(...observables).subscribe(() => {
-      // As we receive an initial connection, let's create a new observable that will trigger the connection status
-      // update either when everything is connected or a timeout is reached.
-      relayCountCountdown--;
-
-      // If we reach zero, update the status immediately.
-      if (relayCountCountdown == 0) {
-        clearTimeout(timer);
-        this.appState.updateConnectionStatus(true);
-      }
-
-      if (!timer) {
-        // Wait a maximum of 3 seconds for all connections to finish.
-        timer = setTimeout(() => {
-          this.appState.updateConnectionStatus(true);
-        }, 3000);
-      }
-    });
+    // const items = await this.table.toArray();
+    // let relayCountCountdown = items.filter((i: { enabled: boolean }) => i.enabled !== false).length;
+    // const observables = [];
+    // for (var i = 0; i < items.length; i++) {
+    //   const entry = items[i];
+    //   const existingConnection = this.relays.find((r) => r.url == entry.url);
+    //   // If we are already connected, skip opening connection again.
+    //   if (existingConnection && (existingConnection.status == 1 || existingConnection.metadata.enabled === false)) {
+    //     continue;
+    //   }
+    //   observables.push(this.openConnection(entry));
+    // }
+    // let timer: any;
+    // merge(...observables).subscribe(() => {
+    //   // As we receive an initial connection, let's create a new observable that will trigger the connection status
+    //   // update either when everything is connected or a timeout is reached.
+    //   relayCountCountdown--;
+    //   // If we reach zero, update the status immediately.
+    //   if (relayCountCountdown == 0) {
+    //     clearTimeout(timer);
+    //     this.appState.updateConnectionStatus(true);
+    //   }
+    //   if (!timer) {
+    //     // Wait a maximum of 3 seconds for all connections to finish.
+    //     timer = setTimeout(() => {
+    //       this.appState.updateConnectionStatus(true);
+    //     }, 3000);
+    //   }
+    // });
   }
 
   async reset() {
@@ -472,12 +482,12 @@ export class RelayService {
     // Keep a reference of the metadata on the relay instance.
     relay.metadata = server;
 
-    if (relay.metadata.enabled == undefined) {
-      relay.metadata.enabled = true;
-    }
+    // if (relay.metadata.enabled == undefined) {
+    //   relay.metadata.enabled = true;
+    // }
 
     try {
-      if (relay.metadata.enabled) {
+      if (relay.metadata.type == 1) {
         await relay.connect();
       }
     } catch (err) {

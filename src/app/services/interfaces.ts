@@ -69,15 +69,16 @@ export interface NostrRelay extends Relay {
 
 export interface NostrRelayDocument {
   url: string;
-  read: boolean;
-  write: boolean;
+  // read: boolean;
+  // write: boolean;
   nip11?: any;
   error?: string;
-  enabled?: boolean;
-  public?: boolean;
+  // enabled?: boolean;
+  public: boolean;
   profile?: boolean;
   status?: number;
   modified?: number;
+  type: number;
 }
 
 /** OBSOLETE */

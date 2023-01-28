@@ -11,7 +11,7 @@
 
         <p>NOTE: Read/Write/Public/Primary options currently has NO EFFECT.</p>
 
-        <mat-accordion class="example-headers-align" multi>
+        <!-- <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel *ngFor="let relay of relayService.relays">
             <mat-expansion-panel-header>
               <mat-panel-title [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">{{ relay.metadata.nip11?.name }}</mat-panel-title>
@@ -54,11 +54,8 @@
             </mat-card>
             <button class="relay-button" [disabled]="optionsService.values.primaryRelay == relay.url" mat-raised-button color="primary" (click)="primaryRelay(relay)">Primary Relay</button>&nbsp;
             <button class="relay-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">Delete</button>
-            <!-- <button (click)="deleteRelay(relay)" mat-icon-button matTooltip="Remove from queue" color="grey">
-              <mat-icon>delete</mat-icon>
-            </button> -->
           </mat-expansion-panel>
-        </mat-accordion>
+        </mat-accordion> -->
 
         <div class="settings-action-buttons">
           <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
