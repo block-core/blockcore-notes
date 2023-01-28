@@ -120,11 +120,13 @@ export class DevelopmentComponent {
   sub?: string;
 
   subscription() {
-    this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
+    this.sub = this.relayService.subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
+    // this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
   }
 
   unsubscribe() {
-    this.relayService.workers[0].unsubscribe(this.sub!);
+    this.relayService.unsubscribe(this.sub!);
+    // this.relayService.workers[0].unsubscribe(this.sub!);
   }
 
   terminate() {

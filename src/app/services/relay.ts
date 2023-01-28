@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, NostrRelay, NostrRelayDocument } from './interfaces';
 import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
-import { Relay, relayInit, Sub } from 'nostr-tools';
+import { Filter, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
@@ -10,6 +10,7 @@ import { StorageService } from './storage';
 import { dexieToRx } from '../shared/utilities';
 import { RelayType } from '../types/relay';
 import { RelayResponse } from './messages';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root',
@@ -346,7 +347,7 @@ export class RelayService {
       preparedRelays = {};
 
       for (let i = 0; i < relays.length; i++) {
-        preparedRelays[relays[i]] = {  };
+        preparedRelays[relays[i]] = {};
       }
     }
 
@@ -524,6 +525,30 @@ export class RelayService {
   }
 
   subscriptions: any = {};
+
+  subs2: any[] = [];
+
+  subscribe(filters: Filter[]) {
+    const id = uuidv4();
+    // this.action('subscribe', { filters, id });
+
+    this.subs2.push({ id: id, filters: filters });
+
+    for (let index = 0; index < this.workers.length; index++) {
+      const worker = this.workers[index];
+      worker.subscribe(filters, id);
+    }
+
+    // this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
+    return id;
+  }
+
+  unsubscribe(id: string) {
+    for (let index = 0; index < this.workers.length; index++) {
+      const worker = this.workers[index];
+      worker.unsubscribe(id);
+    }
+  }
 
   items2: NostrRelayDocument[] = [];
 
