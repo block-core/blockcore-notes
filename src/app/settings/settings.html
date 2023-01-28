@@ -6,6 +6,9 @@
     </ng-template>
     <ng-template matTabContent>
       <div class="page">
+
+        <app-relays [relays]="relayService.items2"></app-relays>
+
         <p>NOTE: Read/Write/Public/Primary options currently has NO EFFECT.</p>
 
         <mat-accordion class="example-headers-align" multi>

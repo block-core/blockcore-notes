@@ -5,7 +5,7 @@ import { NostrRelay, NostrSub } from '../services/interfaces';
 import { RelayRequest, RelayResponse } from '../services/messages';
 import { Storage } from '../types/storage';
 
-  let relayWorker: RelayWorker;
+let relayWorker: RelayWorker;
 let relay = undefined;
 let storage = undefined;
 
@@ -97,7 +97,7 @@ export class RelayWorker {
   relay!: NostrRelay;
   subscriptions: NostrSub[] = [];
 
-  constructor(public url: string) { }
+  constructor(public url: string) {}
 
   async publish(event: Event) {
     let pub = this.relay.publish(event);
@@ -176,6 +176,11 @@ export class RelayWorker {
   }
 
   subscribe(filters: Filter[], id: string) {
+    if (!this.relay) {
+      console.warn('This relay does not have active connection and subscription cannot be created at this time.');
+      return;
+    }
+
     const sub = this.relay.sub(filters) as NostrSub;
 
     sub.id = id;

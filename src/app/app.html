@@ -49,6 +49,10 @@
         <mat-icon>construction</mat-icon>
         <span *ngIf="displayLabels">Development</span>
       </a>
+      <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <mat-icon>settings</mat-icon>
+        <span *ngIf="displayLabels">Settings</span>
+      </a>
       <a mat-menu-item (click)="toggleMenuSize()">
         <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
         <mat-icon *ngIf="!displayLabels">chevron_right</mat-icon>

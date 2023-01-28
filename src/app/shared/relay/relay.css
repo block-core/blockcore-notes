@@ -49,8 +49,9 @@
   }
   
   .relay-options {
-    margin-top: 0.4em;
-    margin-bottom: 0.2em;
+    margin-top: 1em;
+    margin-bottom: 0.6em;
+    background-color: rgba(255, 255, 255, 0.1);
   }
   
   .settings-action-buttons {
