@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import Dexie, { Table } from 'dexie';
 import { ApplicationState } from './applicationstate';
-import { DatabaseService } from './database';
 import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, StateDocument } from './interfaces';
 import { Storage } from '../types/storage';
 import * as moment from 'moment';
@@ -11,31 +9,9 @@ import * as moment from 'moment';
 })
 export class StorageService {
   storage!: Storage;
+  state!: StateDocument;
 
   constructor(private appState: ApplicationState) {}
-
-  get events(): Table<NostrEventDocument, string> {
-    return this.db.events;
-  }
-
-  get notes(): Table<NostrNoteDocument, string> {
-    return this.db.notes;
-  }
-
-  get profiles(): Table<NostrProfileDocument, string> {
-    return this.db.profiles;
-  }
-
-  get circles(): Table<Circle, number> {
-    return this.db.circles;
-  }
-
-  get relays(): Table<NostrRelayDocument, string> {
-    return this.db.relays;
-  }
-
-  db!: DatabaseService;
-  state!: StateDocument;
 
   async initialize(databaseName: string) {
     // Open the new storage database.
@@ -74,10 +50,10 @@ export class StorageService {
   }
 
   close() {
-    this.db.close();
+    this.storage.close();
   }
 
   async delete() {
-    return this.db.delete();
+    await this.storage.delete();
   }
 }

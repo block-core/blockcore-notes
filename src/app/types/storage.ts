@@ -90,6 +90,15 @@ export class Storage {
     return this.db.getAll('circles');
   }
 
+  async putNote(value: NostrNoteDocument) {
+    value.saved = now();
+    return this.db.put('notes', value);
+  }
+
+  async deleteNote(key: string) {
+    return this.db.delete('notes', key);
+  }
+
   async putCircle(value: Circle) {
     value.modified = now();
     return this.db.put('circles', value);
@@ -120,7 +129,7 @@ export class Storage {
     return this.db.getAllFromIndex('events', 'pubkey', pubkey, count);
   }
 
-  async getEventsByCreated(pubkey: string, query: IDBKeyRange, count?: number) {
+  async getEventsByCreated(query?: IDBKeyRange, count?: number) {
     return this.db.getAllFromIndex('events', 'created', query, count);
   }
 
@@ -132,6 +141,10 @@ export class Storage {
     return this.db.getAll('relays');
   }
 
+  async getNotes() {
+    return this.db.getAll('notes');
+  }
+
   async putRelay(value: NostrRelayDocument) {
     value.modified = now();
     return this.db.put('relays', value);
@@ -141,12 +154,20 @@ export class Storage {
     return this.db.delete('circles', key);
   }
 
+  async deleteProfile(key: string) {
+    return this.db.delete('profiles', key);
+  }
+
   async deleteRelay(key: string) {
     return this.db.delete('relays', key);
   }
 
   async deleteRelays() {
-    return this.db.clear(`relays`);
+    return this.db.clear('relays');
+  }
+
+  async deleteNotes() {
+    return this.db.clear('notes');
   }
 
   async delete() {

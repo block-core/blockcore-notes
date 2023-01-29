@@ -50,12 +50,12 @@ export class SettingsComponent {
     this.optionsService.save();
   }
 
-  async deleteRelay(relay: Relay) {
-    await this.relayService.deleteRelay(relay.url);
-  }
+  // async deleteRelay(relay: Relay) {
+  //   await this.relayService.deleteRelay(relay.url);
+  // }
 
   async deleteRelays() {
-    await this.relayService.reset();
+    await this.relayService.deleteRelays();
   }
 
   async clearProfileCache() {

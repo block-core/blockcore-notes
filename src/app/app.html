@@ -92,8 +92,8 @@
         <div class="data">
           <ul>
             <li>0 <span>Followers</span></li>
-            <li *ngIf="profileService.items$ | async as following">
-              <a class="opposite-link" [routerLink]="['/following', appState.getPublicKey()]" (click)="toggleProfileMenu()"> {{ following.length }} <span>Following</span></a>
+            <li>
+              <a class="opposite-link" [routerLink]="['/following', appState.getPublicKey()]" (click)="toggleProfileMenu()"> {{ profileService.following.length }} <span>Following</span></a>
             </li>
           </ul>
         </div>

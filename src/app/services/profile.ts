@@ -4,7 +4,6 @@ import { BehaviorSubject, from, map, Observable, tap, shareReplay } from 'rxjs';
 import { ApplicationState } from './applicationstate';
 import { Utilities } from './utilities';
 import { StorageService } from './storage';
-import { liveQuery } from 'dexie';
 import { CacheService } from './cache';
 import { dexieToRx } from '../shared/utilities';
 import { QueueService } from './queue';
@@ -14,41 +13,43 @@ import { UIService } from './ui';
   providedIn: 'root',
 })
 export class ProfileService {
-  private get table() {
-    return this.db.profiles;
-  }
-
   initialized = false;
 
   cache = new CacheService();
 
-  items$ = dexieToRx(liveQuery(() => this.list(ProfileStatus.Follow)));
+  // items$ = dexieToRx(liveQuery(() => this.list(ProfileStatus.Follow)));
 
   /** Returns a list of profiles based upon status. 0 = public, 1 = follow, 2 = mute, 3 = block */
-  async list(status: ProfileStatus) {
-    return await this.table.where('status').equals(status).toArray();
-  }
+  // async list(status: ProfileStatus) {
+  //   return await this.table.where('status').equals(status).toArray();
+  // }
 
-  async query(equalityCriterias: { [key: string]: any }) {
-    return await this.table.where(equalityCriterias).toArray();
-  }
+  // async query(equalityCriterias: { [key: string]: any }) {
+  //   return await this.table.where(equalityCriterias).toArray();
+  // }
 
-  blockedProfiles$() {
-    return dexieToRx(liveQuery(() => this.list(ProfileStatus.Block)));
-  }
+  // blockedProfiles$() {
+  //   return dexieToRx(liveQuery(() => this.list(ProfileStatus.Block)));
+  // }
 
-  publicProfiles$() {
-    return dexieToRx(liveQuery(() => this.list(ProfileStatus.Public)));
-  }
+  // publicProfiles$() {
+  //   return dexieToRx(liveQuery(() => this.list(ProfileStatus.Public)));
+  // }
 
-  mutedProfiles$() {
-    return dexieToRx(liveQuery(() => this.list(ProfileStatus.Mute)));
-  }
+  // mutedProfiles$() {
+  //   return dexieToRx(liveQuery(() => this.list(ProfileStatus.Mute)));
+  // }
 
   /** The profiles the user is following. */
-  profiles: NostrProfileDocument[] = [];
+  following: NostrProfileDocument[] = [];
 
-  #followingChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.profiles);
+  /** Public key of blocked profiles. */
+  blocked: string[] = [];
+
+  /** Public key of muted profiles. */
+  muted: string[] = [];
+
+  #followingChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.following);
 
   get following$(): Observable<NostrProfileDocument[]> {
     // value.follow == true
@@ -74,7 +75,7 @@ export class ProfileService {
     this.#profileChanged.next(profile);
   }
 
-  #profilesChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.profiles);
+  #profilesChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.following);
 
   get profiles$(): Observable<NostrProfileDocument[]> {
     return this.#profilesChanged.asObservable();
@@ -91,8 +92,8 @@ export class ProfileService {
   }
 
   #updated() {
-    this.#profilesChanged.next(this.profiles);
-    this.#followingChanged.next(this.profiles);
+    this.#profilesChanged.next(this.following);
+    this.#followingChanged.next(this.following);
   }
 
   /** Called whenever a profile has been updated, but only replace and trigger
@@ -106,55 +107,61 @@ export class ProfileService {
     this.ui.setProfile(item);
   }
 
+  getProfilesByStatus(status: ProfileStatus) {
+    return this.db.storage.getProfilesByStatus(status);
+  }
+
   async search(searchText: string) {
+    // TODO: Implement search on new database logic.
+    return;
     // this.table.filter((x) => x.name.toLowerCase().indexOf(searchText) > -1).toArray();
-    return this.table
-      .filter((profile) => {
-        if (profile.status == 3) {
-          // Filter out blocked results.
-          return false;
-        }
+    // return this.table
+    //   .filter((profile) => {
+    //     if (profile.status == 3) {
+    //       // Filter out blocked results.
+    //       return false;
+    //     }
 
-        let index = profile.name?.toLocaleLowerCase().indexOf(searchText);
+    //     let index = profile.name?.toLocaleLowerCase().indexOf(searchText);
 
-        if (index > -1) {
-          return true;
-        }
+    //     if (index > -1) {
+    //       return true;
+    //     }
 
-        index = profile.nip05?.toLocaleLowerCase().indexOf(searchText);
+    //     index = profile.nip05?.toLocaleLowerCase().indexOf(searchText);
 
-        if (index > -1) {
-          return true;
-        }
+    //     if (index > -1) {
+    //       return true;
+    //     }
 
-        index = profile.display_name?.toLocaleLowerCase().indexOf(searchText);
+    //     index = profile.display_name?.toLocaleLowerCase().indexOf(searchText);
 
-        if (index > -1) {
-          return true;
-        }
+    //     if (index > -1) {
+    //       return true;
+    //     }
 
-        return false;
-      })
-      .toArray();
+    //     return false;
+    //   })
+    //   .toArray();
   }
 
-  mutedProfiles() {
-    return this.query({ status: ProfileStatus.Mute });
-  }
+  // mutedProfiles() {
+  //   return this.query({ status: ProfileStatus.Mute });
+  // }
 
-  blockedProfiles() {
-    return this.query({ status: ProfileStatus.Block });
-  }
+  // blockedProfiles() {
+  //   return this.query({ status: ProfileStatus.Block });
+  // }
 
-  async blockedPublicKeys() {
-    const profiles = await this.blockedProfiles();
-    return profiles.map((p) => p.pubkey);
-  }
+  // async blockedPublicKeys() {
+  //   const profiles = await this.blockedProfiles();
+  //   return profiles.map((p) => p.pubkey);
+  // }
 
-  async mutedPublicKeys() {
-    const profiles = await this.mutedProfiles();
-    return profiles.map((p) => p.pubkey);
-  }
+  // async mutedPublicKeys() {
+  //   const profiles = await this.mutedProfiles();
+  //   return profiles.map((p) => p.pubkey);
+  // }
 
   // Just a basic observable that triggers whenever any profile has changed.
   #profilesChangedSubject: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
@@ -182,8 +189,8 @@ export class ProfileService {
   getProfileOrDownload(pubkey: string) {
     return (
       new Observable((observer) => {
-        this.table
-          .get(pubkey)
+        this.db.storage
+          .getProfile(pubkey)
           .then((profile) => {
             if (profile) {
               observer.next(profile);
@@ -216,7 +223,7 @@ export class ProfileService {
   }
 
   async getLocalProfile(pubkey: string) {
-    return this.table.get(pubkey);
+    return this.db.storage.getProfile(pubkey);
   }
 
   getProfile(pubkey: string) {
@@ -233,7 +240,7 @@ export class ProfileService {
     profile.npub = this.utilities.getNostrIdentifier(profile.pubkey);
 
     this.cache.set(profile.pubkey, profile);
-    await this.table.put(profile);
+    await this.db.storage.putProfile(profile);
     this.#putFollowingProfile(profile);
 
     this.updateItemIfSelected(profile);
@@ -245,13 +252,19 @@ export class ProfileService {
     this.userProfileUpdated(profile);
 
     // Perform initial population of .profiles, which contains profile the user is following.
-    const items = await this.table.where('status').equals(1).toArray();
-    this.profiles = items;
-    this.#profilesChanged.next(this.profiles);
+    const items = await this.db.storage.getProfilesByStatus(ProfileStatus.Follow);
+    this.following = items;
+    this.#profilesChanged.next(this.following);
+
+    const blocked = await this.db.storage.getProfilesByStatus(ProfileStatus.Block);
+    const muted = await this.db.storage.getProfilesByStatus(ProfileStatus.Mute);
+
+    this.blocked = blocked.map((p) => p.pubkey);
+    this.muted = muted.map((p) => p.pubkey);
   }
 
   async #setStatus(pubkey: string, status: ProfileStatus, circle?: number) {
-    let profile = await this.table.get(pubkey);
+    let profile = await this.db.storage.getProfile(pubkey);
     const now = Math.floor(Date.now() / 1000);
 
     if (!profile) {
@@ -271,12 +284,12 @@ export class ProfileService {
   }
 
   #putFollowingProfile(profile: NostrProfileDocument) {
-    const existingIndex = this.profiles.findIndex((p) => p.pubkey == profile.pubkey);
+    const existingIndex = this.following.findIndex((p) => p.pubkey == profile.pubkey);
 
     if (existingIndex === -1) {
-      this.profiles.push(profile);
+      this.following.push(profile);
     } else {
-      this.profiles[existingIndex] = profile;
+      this.following[existingIndex] = profile;
     }
   }
 
@@ -301,7 +314,7 @@ export class ProfileService {
       existingProfile.npub = this.utilities.getNostrIdentifier(existingProfile.pubkey);
 
       // Save directly, don't put in cache.
-      await this.table.put(existingProfile);
+      await this.db.storage.putProfile(existingProfile);
       this.#putFollowingProfile(existingProfile);
 
       // Queue up to get this profile.
@@ -317,7 +330,7 @@ export class ProfileService {
     }
   }
 
-  async following(pubkey: string, pubkeys: string[]) {
+  async setFollowing(pubkey: string, pubkeys: string[]) {
     return this.#updateProfileValues(pubkey, (profile) => {
       profile.following = pubkeys;
       return profile;
@@ -379,17 +392,17 @@ export class ProfileService {
   }
 
   async deleteProfile(pubkey: string) {
-    await this.table.delete(pubkey);
+    await this.db.storage.deleteProfile(pubkey);
   }
 
   isFollowing(pubkey: string) {
-    const existingIndex = this.profiles.findIndex((p) => p.pubkey == pubkey);
+    const existingIndex = this.following.findIndex((p) => p.pubkey == pubkey);
 
     if (existingIndex === -1) {
       return false;
     }
 
-    const profile = this.profiles[existingIndex];
+    const profile = this.following[existingIndex];
 
     if (!profile) {
       return false;
@@ -400,7 +413,7 @@ export class ProfileService {
 
   /** Update the profile if it already exists, ensuring we don't loose follow and block states. */
   async updateProfile(pubkey: string, document: NostrProfileDocument) {
-    let profile = await this.table.get(pubkey);
+    let profile = await this.db.storage.getProfile(pubkey);
     const now = this.utilities.now();
 
     if (!profile) {
@@ -436,7 +449,7 @@ export class ProfileService {
   }
 
   async #updateProfileValues(pubkey: string, predicate: (value: NostrProfileDocument, key?: string) => NostrProfileDocument): Promise<void> {
-    let profile = await this.table.get(pubkey);
+    let profile = await this.db.storage.getProfile(pubkey);
 
     if (!profile) {
       return undefined;
@@ -469,9 +482,9 @@ export class ProfileService {
   }
 
   /** Wipes all profiles. */
-  async wipe() {
-    await this.table.clear();
-    this.profiles = [];
-    this.#changed();
-  }
+  // async wipe() {
+  //   await this.table.clear();
+  //   this.profiles = [];
+  //   this.#changed();
+  // }
 }

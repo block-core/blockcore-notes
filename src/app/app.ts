@@ -185,7 +185,9 @@ export class AppComponent {
 
   /** Run initialize whenever user has been authenticated. */
   async initialize() {
+    console.log('INITIALIZE IS RUNNING....');
     debugger;
+
     // await this.storage.open();
     // await this.storage.initialize();
     await this.db.initialize('blockcore-' + this.appState.getPublicKey());
@@ -254,12 +256,10 @@ export class AppComponent {
       },
     });
 
-    debugger;
-
     // Create the listeners (filters) for relays:
     // TODO: There is limit on maximum following, we need a strategy to handle that.
     // potentially subscribing and unsubscribing on intervals with a .since field between each interval.
-    const pubKeys = this.profileService.profiles.map((p) => p.pubkey);
+    const pubKeys = this.profileService.following.map((p) => p.pubkey);
 
     // Add self to the top of listening list:
     pubKeys.unshift(this.appState.getPublicKey());
@@ -284,6 +284,8 @@ export class AppComponent {
 
     //   await this.profileService.updateProfile(p.pubkey, p);
     // });
+
+    this.appState.initialized();
   }
 
   discoveredProfileDate = 0;

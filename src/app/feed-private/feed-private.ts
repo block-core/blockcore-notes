@@ -12,7 +12,6 @@ import { NavigationService } from '../services/navigation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from '../services/storage';
 import { dexieToRx } from '../shared/utilities';
-import { liveQuery } from 'dexie';
 
 @Component({
   selector: 'app-feed-private',
@@ -20,30 +19,26 @@ import { liveQuery } from 'dexie';
   styleUrls: ['./feed-private.css'],
 })
 export class FeedPrivateComponent {
-  private get table() {
-    return this.db.events;
-  }
-
   publicKey?: string | null;
   offset = 0;
   pageSize = 12;
   currentItems: NostrEventDocument[] = [];
 
-  currentItems$ = dexieToRx(liveQuery(() => this.table.orderBy('created_at').offset(this.offset).limit(this.pageSize).toArray()));
+  // currentItems$ = dexieToRx(liveQuery(() => this.table.orderBy('created_at').offset(this.offset).limit(this.pageSize).toArray()));
 
-  items$ = dexieToRx(liveQuery(() => this.items())).pipe(
-    map((data) => {
-      data.sort((a, b) => {
-        return a.created_at < b.created_at ? 1 : -1;
-      });
+  // items$ = dexieToRx(liveQuery(() => this.items())).pipe(
+  //   map((data) => {
+  //     data.sort((a, b) => {
+  //       return a.created_at < b.created_at ? 1 : -1;
+  //     });
 
-      return data;
-    })
-  );
+  //     return data;
+  //   })
+  // );
 
-  async items() {
-    return this.table.toArray();
-  }
+  // async items() {
+  //   return this.table.toArray();
+  // }
 
   constructor(
     public db: StorageService,
@@ -71,15 +66,15 @@ export class FeedPrivateComponent {
   }
 
   async showMore() {
-    const items = await this.table.orderBy('created_at').reverse().offset(this.offset).limit(this.pageSize).toArray();
-    this.currentItems.push(...items);
+    // const items = await this.table.orderBy('created_at').reverse().offset(this.offset).limit(this.pageSize).toArray();
+    // this.currentItems.push(...items);
 
-    // Half the page size after initial load.
-    if (this.offset === 0) {
-      this.pageSize = Math.floor(this.pageSize / 2);
-    }
+    // // Half the page size after initial load.
+    // if (this.offset === 0) {
+    //   this.pageSize = Math.floor(this.pageSize / 2);
+    // }
 
-    this.offset += this.pageSize;
+    // this.offset += this.pageSize;
   }
 
   optionsUpdated() {
@@ -91,7 +86,7 @@ export class FeedPrivateComponent {
   activeOptions() {
     let options = '';
 
-    const peopleCount = this.profileService.profiles.length;
+    const peopleCount = this.profileService.following.length;
 
     // options += `Viewing ${peopleCount} people`;
 

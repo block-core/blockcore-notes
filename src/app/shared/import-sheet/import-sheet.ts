@@ -17,7 +17,7 @@ export class ImportSheet {
 
     if (this.data.relaysCount > 0) {
       // Reset all existing default connections.
-      await this.relayService.reset();
+      await this.relayService.deleteRelays();
 
       await this.relayService.appendRelays(this.data.relays);
 

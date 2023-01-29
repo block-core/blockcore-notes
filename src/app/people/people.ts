@@ -5,7 +5,7 @@ import { Utilities } from '../services/utilities';
 import { relayInit } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
-import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { NostrEvent, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { map, Observable, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,29 +28,31 @@ export class PeopleComponent {
   showAbout = true;
   showFollowingDate = true;
 
-  items$ = this.profileService.items$;
+  items: NostrProfileDocument[] = [];
+  sortedItems: NostrProfileDocument[] = [];
+  // items$ = this.profileService.items$;
 
-  sortedItems$ = this.items$.pipe(
-    map((data) => {
-      data.sort((a, b) => {
-        // if (a.name && !b.name) {
-        //   return -1;
-        // }
+  // sortedItems$ = this.items$.pipe(
+  //   map((data) => {
+  //     data.sort((a, b) => {
+  //       // if (a.name && !b.name) {
+  //       //   return -1;
+  //       // }
 
-        // if (b.name && !a.name) {
-        //   return 1;
-        // }
+  //       // if (b.name && !a.name) {
+  //       //   return 1;
+  //       // }
 
-        // if (!a.name && !b.name) {
-        //   return 0;
-        // }
+  //       // if (!a.name && !b.name) {
+  //       //   return 0;
+  //       // }
 
-        return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
-      });
+  //       return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
+  //     });
 
-      return data;
-    })
-  );
+  //     return data;
+  //   })
+  // );
 
   selected = 'name-asc';
 
@@ -77,77 +79,29 @@ export class PeopleComponent {
     const sorting = this.selected;
 
     if (sorting === 'name-asc') {
-      this.sortedItems$ = this.items$.pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
-          });
-
-          return data;
-        })
-      );
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
+      });
     } else if (sorting === 'name-desc') {
-      this.sortedItems$ = this.items$.pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            return a.name?.toLowerCase() < b.name?.toLowerCase() ? 1 : -1;
-          });
-
-          return data;
-        })
-      );
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.name?.toLowerCase() < b.name?.toLowerCase() ? 1 : -1;
+      });
     } else if (sorting === 'followed-asc') {
-      this.sortedItems$ = this.items$.pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            return a.followed! < b.followed! ? 1 : -1;
-          });
-
-          return data;
-        })
-      );
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.followed! < b.followed! ? 1 : -1;
+      });
     } else if (sorting === 'followed-desc') {
-      this.sortedItems$ = this.items$.pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            return a.followed! < b.followed! ? -1 : 1;
-          });
-
-          return data;
-        })
-      );
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.followed! < b.followed! ? -1 : 1;
+      });
     } else if (sorting === 'created-asc') {
-      this.sortedItems$ = this.items$.pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            return a.created_at! < b.created_at! ? -1 : 1;
-          });
-
-          return data;
-        })
-      );
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.created_at! < b.created_at! ? -1 : 1;
+      });
     } else if (sorting === 'created-desc') {
-      this.sortedItems$ = this.items$.pipe(
-        map((data) => {
-          data.sort((a, b) => {
-            // if (!a.name) {
-            //   return 1;
-            // }
-
-            // if (!b.name) {
-            //   return 2;
-            // }
-
-            // if (!a.name && !b.name) {
-            //   return 0;
-            // }
-
-            return a.created_at! < b.created_at! ? 1 : -1;
-          });
-
-          return data;
-        })
-      );
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.created_at! < b.created_at! ? 1 : -1;
+      });
     }
   }
 
@@ -179,13 +133,13 @@ export class PeopleComponent {
     this.loading = true;
 
     if (this.showBlocked) {
-      this.items$ = this.profileService.blockedProfiles$();
+      this.items = await this.profileService.getProfilesByStatus(ProfileStatus.Block);
     } else if (this.showMuted) {
-      this.items$ = this.profileService.mutedProfiles$();
+      this.items = await this.profileService.getProfilesByStatus(ProfileStatus.Mute);
     } else if (this.showCached) {
-      this.items$ = this.profileService.publicProfiles$();
+      this.items = await this.profileService.getProfilesByStatus(ProfileStatus.Public);
     } else {
-      this.items$ = this.profileService.items$;
+      this.items = this.profileService.following;
     }
 
     this.updateSorting();

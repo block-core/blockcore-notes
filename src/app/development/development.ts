@@ -13,7 +13,7 @@ export class DevelopmentComponent {
   worker?: Worker;
   storage?: Storage;
 
-  constructor(private appState: ApplicationState, public relayService: RelayService) { }
+  constructor(private appState: ApplicationState, public relayService: RelayService) {}
 
   ngOnInit() {
     this.appState.updateTitle('Development & Debug');
@@ -51,13 +51,13 @@ export class DevelopmentComponent {
 
     const start2 = performance.now();
 
-    const events = await this.storage.getEventsByCreated('123', IDBKeyRange.bound(100, 200));
+    const events = await this.storage.getEventsByCreated(IDBKeyRange.bound(100, 200));
     console.log('FOUND EVENTS:', events);
 
     const end2 = performance.now();
     console.log(`Execution time 2: ${end2 - start2} ms`);
 
-    const events2 = await this.storage.getEventsByCreated('123', IDBKeyRange.bound(0, 100));
+    const events2 = await this.storage.getEventsByCreated(IDBKeyRange.bound(0, 100));
     console.log('FOUND EVENTS2:', events2);
 
     // await this.storage.initialize();
@@ -85,36 +85,7 @@ export class DevelopmentComponent {
   }
 
   async addRelays() {
-    let relays = this.relayService.defaultRelays;
-    let preparedRelays = relays;
-
-    if (Array.isArray(preparedRelays)) {
-      preparedRelays = {};
-
-      for (let i = 0; i < relays.length; i++) {
-        preparedRelays[relays[i]] = { read: true, write: true };
-      }
-    }
-
-    const entries = Object.keys(preparedRelays);
-
-    for (var i = 0; i < entries.length; i++) {
-      const key = entries[i];
-      const val = preparedRelays[key];
-      await this.relayService.addRelay2(key);
-
-      // await this.table.put({ url: key, write: val.write, read: val.read, public: true });
-    }
-
-    // if (!this.worker) {
-    //   this.worker = this.relayService.createRelayWorker('wss://nostr-pub.wellorder.net');
-    // }
-
-    // this.worker?.postMessage({ type: 'connect' });
-
-    // const worker = new Worker(new URL('../workers/relay.worker', import.meta.url));
-
-    // scheduler.postTask(validateForm, { priority: 'user-blocking' });
+    this.relayService.appendRelays(this.relayService.defaultRelays);
   }
 
   sub?: string;

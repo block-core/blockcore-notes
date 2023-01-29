@@ -17,7 +17,6 @@ import { DataService } from '../services/data';
 import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { dexieToRx } from '../shared/utilities';
-import { liveQuery } from 'dexie';
 
 interface DefaultProfile {
   pubkey: string;
@@ -158,7 +157,7 @@ export class HomeComponent {
     return item.id;
   }
 
-  latestItems$ = dexieToRx(liveQuery(() => this.db.events.orderBy('created_at').reverse().limit(7).toArray()));
+  latestItems: NostrEventDocument[] = []; // = dexieToRx(liveQuery(() => this.db.events.orderBy('created_at').reverse().limit(7).toArray()));
 
   sub: any;
   relay?: Relay;
@@ -170,19 +169,23 @@ export class HomeComponent {
   }
 
   async clearDatabase() {
-    this.db
-      .delete()
-      .then(() => {
-        console.log('Database successfully deleted');
-      })
-      .catch((err) => {
-        console.error('Could not delete database');
-      })
-      .finally(() => {
-        // Do what should be done next...
-      });
+    // this.db
+    //   .delete()
+    //   .then(() => {
+    //     console.log('Database successfully deleted');
+    //   })
+    //   .catch((err) => {
+    //     console.error('Could not delete database');
+    //   })
+    //   .finally(() => {
+    //     // Do what should be done next...
+    //   });
+
+    console.log('Deleting storage...');
 
     await this.db.storage.delete();
+
+    console.log('Reloading!');
 
     location.reload();
   }
@@ -267,5 +270,14 @@ export class HomeComponent {
         },
       },
     ];
+
+    this.subscriptions.push(
+      this.appState.initialized$.subscribe(async (value) => {
+        debugger;
+        if (value) {
+          this.latestItems = await this.db.storage.getEventsByCreated(undefined, 7);
+        }
+      })
+    );
   }
 }

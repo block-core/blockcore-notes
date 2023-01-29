@@ -135,7 +135,7 @@ export class DataService {
       // If we are following this user, we'll persist this event.
       const following = this.profileService.isFollowing(event.pubkey);
       if (following) {
-        await this.storage.events.put(event, event.id);
+        await this.storage.storage.putEvents(event);
       }
 
       for (let i = 0; i < jobs.length; i++) {
