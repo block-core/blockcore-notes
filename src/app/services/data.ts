@@ -9,7 +9,7 @@ import { ApplicationState } from './applicationstate';
 import { timeout, map, merge, Observable, delay, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter, from } from 'rxjs';
 import { Utilities } from './utilities';
 import { StorageService } from './storage';
-import { QueueService } from './queue';
+import { QueueService } from './queue.service';
 import { UIService } from './ui';
 
 @Injectable({
@@ -42,6 +42,8 @@ export class DataService {
       this.connected = connected;
 
       if (this.connected) {
+        this.initialDataLoad();
+
         console.log('Connection established, start processing queues.');
         this.processQueues();
       }
@@ -53,6 +55,71 @@ export class DataService {
         this.processQueues();
       }, 250);
     });
+  }
+
+  async initialDataLoad() {
+    // Download the profile of the user.
+    this.enque({
+      identifier: this.appState.getPublicKey(),
+      type: 'Profile',
+      // callback: (data: any) => {
+      //   // This call back is only called if we found a newer profile than already exists.
+      //   // So when this happens, we'll show the import sheet.
+      //   console.log(data);
+      //   debugger;
+
+      //   this.openImportSheet();
+
+      //   // if (!this.profileService.profile?.following || this.profileService.profile?.following.length === 0) {
+
+      //   // }
+      // },
+    });
+
+    // Download the following of the user.
+    this.enque({
+      identifier: this.appState.getPublicKey(),
+      type: 'Contacts',
+      callback: (data: any) => {
+        // TODO: MIGRATE THIS LOGIC!!
+        // The callback is called for all contacts lists, not just the one we call for.
+        // if (data.pubkey !== this.appState.getPublicKey()) {
+        //   return;
+        // }
+        // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
+        // if (this.discoveredProfileDate < data.created_at) {
+        //   this.discoveredProfileDate = data.created_at;
+        //   const following = this.profileService.profile?.following;
+        //   const pubkeys = data.tags.map((t: any[]) => t[1]);
+        //   console.log('FOLLOWING:' + JSON.stringify(following));
+        //   if (!following) {
+        //     const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
+        //     if (data.content) {
+        //       dialogData.relays = JSON.parse(data.content);
+        //       dialogData.relaysCount = Object.keys(dialogData.relays).length;
+        //     }
+        //     this.openImportSheet(dialogData);
+        //   }
+        // }
+      },
+    });
+
+    // Create the listeners (filters) for relays:
+    // TODO: There is limit on maximum following, we need a strategy to handle that.
+    // potentially subscribing and unsubscribing on intervals with a .since field between each interval.
+    const pubKeys = this.profileService.following.map((p) => p.pubkey);
+
+    // Add self to the top of listening list:
+    pubKeys.unshift(this.appState.getPublicKey());
+
+    console.log('PUB KEYS:', pubKeys);
+
+    // Subscribe to new events but don't get any history (limit: 0).
+
+    console.log('queueSubscription:', { authors: pubKeys, since: this.storage.state.since });
+
+    // this.relayService.queueSubscription([{ authors: pubKeys, since: this.storage.state.since }]);
+    this.relayService.subscribe([{ authors: pubKeys, since: this.storage.state.since }]);
   }
 
   async initialize() {
@@ -78,6 +145,9 @@ export class DataService {
       throw Error(`This type of job (${job.type}) is currently not supported.`);
     }
 
+    // Enque the job on all web workers.
+    this.relayService.action('enque', job);
+
     // We always delay the processing in case we receive
     setTimeout(() => {
       this.processQueues();
@@ -99,6 +169,7 @@ export class DataService {
       return;
     }
 
+    // Processing queues basically just copies the jobs from data service to the individual web workers.
     if (this.queueService.queues.profile.jobs.length > 0) {
       this.processProfileQueue();
     }

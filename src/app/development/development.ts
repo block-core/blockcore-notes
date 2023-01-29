@@ -88,6 +88,10 @@ export class DevelopmentComponent {
     this.relayService.appendRelays(this.relayService.defaultRelays);
   }
 
+  downloadProfile() {
+    this.relayService.enque({ identifier: this.appState.getPublicKey(), type: 'Profile' });
+  }
+
   sub?: string;
 
   subscription() {

@@ -1,8 +1,9 @@
 /// <reference lib="webworker" />
 
 import { Event, relayInit, Filter, Sub } from 'nostr-tools';
-import { NostrRelay, NostrRelaySubscription, NostrSub } from '../services/interfaces';
+import { NostrRelay, NostrRelaySubscription, NostrSub, QueryJob } from '../services/interfaces';
 import { RelayRequest, RelayResponse } from '../services/messages';
+import { Queue } from '../services/queue';
 import { Storage } from '../types/storage';
 
 let relayWorker: RelayWorker;
@@ -77,6 +78,9 @@ addEventListener('message', async (ev: MessageEvent) => {
     case 'publish':
       await relayWorker.publish(request.data);
       break;
+    case 'enque':
+      await relayWorker.enque(request.data);
+      break;
     case 'subscribe':
       await relayWorker.subscribe(request.data.filters, request.data.id);
       break;
@@ -98,6 +102,12 @@ addEventListener('message', async (ev: MessageEvent) => {
   // postMessage(response);
 });
 
+function yieldToMain() {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+}
+
 export class RelayWorker {
   relay!: NostrRelay;
 
@@ -106,7 +116,11 @@ export class RelayWorker {
   /** These are the subscriptions the app has requested and manages. */
   subscriptions: NostrRelaySubscription[] = [];
 
-  constructor(public url: string) {}
+  queue: Queue;
+
+  constructor(public url: string) {
+    this.queue = new Queue();
+  }
 
   async publish(event: Event) {
     let pub = this.relay.publish(event);
@@ -120,6 +134,68 @@ export class RelayWorker {
       console.log(`failed to publish to ${this.relay.url}: ${reason}`);
     });
   }
+
+  /** Enques a job to be processed against connected relays. */
+  enque(job: QueryJob) {
+    // It is way more optimal to just delegate jobs into separate queues when enquing than querying later.
+    if (job.type == 'Profile') {
+      this.queue.queues.profile.jobs.push(job);
+    } else if (job.type == 'Contacts') {
+      this.queue.queues.contacts.jobs.push(job);
+    } else if (job.type == 'Event') {
+      this.queue.queues.event.jobs.push(job);
+    } else {
+      throw Error(`This type of job (${job.type}) is currently not supported.`);
+    }
+
+    this.processProfiles();
+    this.processContacts();
+
+    // We always delay the processing in case we receive more.
+    // setTimeout(() => {
+    //   this.processQueues();
+    // }, 100);
+  }
+
+  processProfiles() {
+    if (this.queue.queues.profile.active) {
+      return;
+    }
+
+    if (this.queue.queues.profile.jobs.length == 0) {
+      this.queue.queues.profile.active = false;
+      return;
+    }
+
+    this.queue.queues.profile.active = true;
+    const job = this.queue.queues.profile.jobs.shift();
+
+    this.downloadProfile(job!.identifier, () => {
+      this.queue.queues.profile.active = false;
+      this.processProfiles();
+    });
+  }
+
+  processContacts() {
+    if (this.queue.queues.contacts.active) {
+      return;
+    }
+
+    if (this.queue.queues.contacts.jobs.length == 0) {
+      this.queue.queues.contacts.active = false;
+      return;
+    }
+
+    this.queue.queues.contacts.active = true;
+    const job = this.queue.queues.contacts.jobs.shift();
+
+    this.downloadContacts(job!.identifier, () => {
+      this.queue.queues.contacts.active = false;
+      this.processContacts();
+    });
+  }
+
+  processEvents() {}
 
   async connect() {
     // const relay = relayInit('wss://relay.nostr.info');
@@ -198,6 +274,121 @@ export class RelayWorker {
   //     this.subscribe(sub.filters, sub.id);
   //   }
   // }
+
+  profileSub?: NostrSub;
+  profileTimer?: any;
+
+  contactsSub?: NostrSub;
+  contactsTimer?: any;
+
+  clearProfileSub() {
+    this.profileSub?.unsub();
+    this.profileSub = undefined;
+  }
+
+  clearContactsSub() {
+    this.contactsSub?.unsub();
+    this.contactsSub = undefined;
+  }
+
+  downloadProfile(pubkey: string, finalized: any, timeoutSeconds: number = 3000) {
+    console.log('DOWNLOAD PROFILE....');
+    let finalizedCalled = false;
+
+    if (!this.relay) {
+      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      return;
+    }
+
+    // If the profilesub already exists, unsub and remove.
+    if (this.profileSub) {
+      this.clearProfileSub();
+    }
+
+    // Skip if the subscription is already added.
+    // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
+    //   debugger;
+    //   console.log('This subscription is already added!');
+    //   return;
+    // }
+
+    const sub = this.relay.sub([{ kinds: [0], authors: [pubkey] }]) as NostrSub;
+    this.profileSub = sub;
+    // sub.id = id;
+    // console.log('SUBSCRIPTION:', sub);
+    // this.subscriptions.push({ id: id, filters: filters, sub: sub });
+
+    // const sub = relay.sub(filters, {}) as NostrSubscription;
+    // relay.subscriptions.push(sub);
+
+    sub.on('event', (originalEvent: any) => {
+      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+
+      this.clearProfileSub();
+      clearTimeout(this.profileTimer);
+
+      if (!finalizedCalled) {
+        finalizedCalled = true;
+        finalized();
+      }
+
+      // const event = this.eventService.processEvent(originalEvent);
+      // if (!event) {
+      //   return;
+      // }
+      // observer.next(event);
+    });
+
+    // sub.on('eose', () => {
+    //   clearTimeout(this.profileTimer);
+    //   this.profileSub?.unsub();
+    //   this.profileSub = undefined;
+    // });
+
+    this.profileTimer = setTimeout(() => {
+      this.clearProfileSub();
+      if (!finalizedCalled) {
+        finalizedCalled = true;
+        finalized();
+      }
+    }, timeoutSeconds * 1000);
+  }
+
+  downloadContacts(pubkey: string, finalized: any, timeoutSeconds: number = 3000) {
+    console.log('DOWNLOAD CONTACTS....');
+    let finalizedCalled = false;
+
+    if (!this.relay) {
+      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      return;
+    }
+
+    // If the profilesub already exists, unsub and remove.
+    if (this.contactsSub) {
+      this.clearContactsSub();
+    }
+
+    const sub = this.relay.sub([{ kinds: [3], authors: [pubkey] }]) as NostrSub;
+    this.contactsSub = sub;
+
+    sub.on('event', (originalEvent: any) => {
+      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+      this.clearContactsSub();
+      clearTimeout(this.contactsTimer);
+      if (!finalizedCalled) {
+        finalizedCalled = true;
+        finalized();
+      }
+    });
+
+    this.contactsTimer = setTimeout(() => {
+      this.clearContactsSub();
+      if (!finalizedCalled) {
+        finalizedCalled = true;
+        finalized();
+      }
+    }, timeoutSeconds * 1000);
+  }
 
   subscribe(filters: Filter[], id: string) {
     console.log('SUBSCRIBE....');

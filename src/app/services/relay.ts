@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription } from './interfaces';
+import { NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, QueryJob } from './interfaces';
 import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
-import { Filter, Relay, relayInit, Sub } from 'nostr-tools';
+import { Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
@@ -9,6 +9,8 @@ import { CacheService } from './cache';
 import { StorageService } from './storage';
 import { RelayType } from '../types/relay';
 import { RelayResponse } from './messages';
+import { ProfileService } from './profile';
+import { Utilities } from './utilities';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
@@ -59,7 +61,7 @@ export class RelayService {
     return this.#relaysChanged.asObservable();
   }
 
-  constructor(private db: StorageService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
+  constructor(private utilities: Utilities, private profileService: ProfileService, private db: StorageService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
       if (visible) {
@@ -173,10 +175,26 @@ export class RelayService {
 
     console.log('SAVE EVENT?:', event);
 
-    // If the event we received is from someone the user is following, always persist it if not already persisted.
-    if (event.pubkey === this.appState.getPublicKey()) {
-      await this.db.storage.putEvents(event);
+    if (event.kind == Kind.Metadata) {
+      // This is a profile event, store it.
+      const nostrProfileDocument = this.utilities.mapProfileEvent(event);
+
+      if (nostrProfileDocument) {
+        await this.profileService.updateProfile(nostrProfileDocument.pubkey, nostrProfileDocument);
+      }
+    } else if (event.kind == Kind.Contacts) {
+      // TODO: Implement the contacts handling.
+    } else {
+      // If the event we received is from someone the user is following, always persist it if not already persisted.
+      if (event.pubkey === this.appState.getPublicKey()) {
+        await this.db.storage.putEvents(event);
+      }
     }
+  }
+
+  enque(job: QueryJob) {
+    // Enque the job on all web workers.
+    this.action('enque', job);
   }
 
   async handleRelayMessage(ev: MessageEvent, url: string) {
@@ -570,6 +588,13 @@ export class RelayService {
 
     // this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
     return id;
+  }
+
+  action(action: string, data: any) {
+    for (let index = 0; index < this.workers.length; index++) {
+      const worker = this.workers[index];
+      worker.action(action, data);
+    }
   }
 
   unsubscribe(id: string) {

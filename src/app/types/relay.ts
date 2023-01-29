@@ -1,5 +1,5 @@
 import { Filter } from 'nostr-tools';
-import { NostrRelaySubscription } from '../services/interfaces';
+import { NostrRelaySubscription, QueryJob } from '../services/interfaces';
 import { RelayRequest, RelayResponse } from '../services/messages';
 
 /** Relay type that holds a connection to the Web Worker and abstracts calling different actions to the Web Worker. */
@@ -28,6 +28,10 @@ export class RelayType {
     // this.worker?.onmessage?.call(this.worker, { type: 'status', data: 1, url: this.url } as RelayResponse);
     // this.worker?.postMessage({ type: 'status', data: -1 } as RelayRequest);
     this.action('terminate');
+  }
+
+  enque(data: QueryJob) {
+    this.action('enque', data);
   }
 
   publish(data: any) {

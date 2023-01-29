@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, finalize, distinct, flatMap, from, groupBy, map, Observable, of, Subscription, switchMap } from 'rxjs';
 import { ChatModel, NostrEventDocument, UserModel } from './interfaces';
-import { QueueService } from './queue';
+import { QueueService } from './queue.service';
 import { DataService } from './data';
 import { ApplicationState } from './applicationstate';
 

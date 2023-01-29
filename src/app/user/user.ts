@@ -14,7 +14,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { map, Observable, of, Subscription, tap, BehaviorSubject, finalize } from 'rxjs';
 import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
-import { QueueService } from '../services/queue';
+import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
 import { StorageService } from '../services/storage';
 
