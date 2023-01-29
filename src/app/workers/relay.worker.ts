@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import { Event, relayInit, Filter, Sub } from 'nostr-tools';
-import { NostrRelay, NostrSub } from '../services/interfaces';
+import { NostrRelay, NostrRelaySubscription, NostrSub } from '../services/interfaces';
 import { RelayRequest, RelayResponse } from '../services/messages';
 import { Storage } from '../types/storage';
 
@@ -63,9 +63,11 @@ addEventListener('message', async (ev: MessageEvent) => {
         console.log('Already connected...');
         break;
       } else {
-        relayWorker = new RelayWorker(request.data);
+        relayWorker = new RelayWorker(request.data.url);
         await relayWorker.connect();
         await relayWorker.info();
+        // debugger;
+        // relayWorker.subscribeAll(request.data.subscriptions);
         break;
       }
     case 'disconnect':
@@ -76,6 +78,7 @@ addEventListener('message', async (ev: MessageEvent) => {
       await relayWorker.publish(request.data);
       break;
     case 'subscribe':
+      debugger;
       await relayWorker.subscribe(request.data.filters, request.data.id);
       break;
     case 'unsubscribe':
@@ -98,7 +101,11 @@ addEventListener('message', async (ev: MessageEvent) => {
 
 export class RelayWorker {
   relay!: NostrRelay;
-  subscriptions: NostrSub[] = [];
+
+  /** These are the subscription instances connected to the relay. */
+  // subs: NostrSub[] = [];
+  /** These are the subscriptions the app has requested and manages. */
+  subscriptions: NostrRelaySubscription[] = [];
 
   constructor(public url: string) {}
 
@@ -129,7 +136,8 @@ export class RelayWorker {
 
     relay.on('disconnect', () => {
       console.log(`DISCONNECTED! ${relay?.url}`);
-      relay.subscriptions = [];
+      debugger;
+      this.subscriptions = [];
       postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
     });
 
@@ -161,6 +169,7 @@ export class RelayWorker {
   }
 
   async disconnect() {
+    // this.subscriptions = [];
     return this.relay.close();
   }
 
@@ -173,23 +182,45 @@ export class RelayWorker {
 
     const sub = this.subscriptions[index];
     this.subscriptions.splice(index, 1);
-    sub.unsub();
 
+    // Unsub from the relay.
+    sub.sub?.unsub();
     console.log('Unsubscribed: ', id);
   }
 
+  // subscribeAll(subscriptions: NostrRelaySubscription[]) {
+  //   debugger;
+
+  //   if (!subscriptions) {
+  //     return;
+  //   }
+
+  //   for (let index = 0; index < subscriptions.length; index++) {
+  //     const sub = subscriptions[index];
+  //     this.subscribe(sub.filters, sub.id);
+  //   }
+  // }
+
   subscribe(filters: Filter[], id: string) {
+    console.log('SUBSCRIBE....');
+
     if (!this.relay) {
       console.warn('This relay does not have active connection and subscription cannot be created at this time.');
       return;
     }
 
-    const sub = this.relay.sub(filters) as NostrSub;
+    // Skip if the subscription is already added.
+    if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
+      debugger;
+      console.log('This subscription is already added!');
+      return;
+    }
 
-    sub.id = id;
+    const sub = this.relay.sub(filters) as NostrSub;
+    // sub.id = id;
 
     console.log('SUBSCRIPTION:', sub);
-    this.subscriptions.push(sub);
+    this.subscriptions.push({ id: id, filters: filters, sub: sub });
 
     // const sub = relay.sub(filters, {}) as NostrSubscription;
     // relay.subscriptions.push(sub);

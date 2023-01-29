@@ -1,4 +1,5 @@
 import { Filter } from 'nostr-tools';
+import { NostrRelaySubscription } from '../services/interfaces';
 import { RelayRequest, RelayResponse } from '../services/messages';
 
 /** Relay type that holds a connection to the Web Worker and abstracts calling different actions to the Web Worker. */
@@ -12,8 +13,8 @@ export class RelayType {
     return this.worker;
   }
 
-  connect() {
-    this.action('connect', this.url);
+  connect(subscriptions?: NostrRelaySubscription[]) {
+    this.action('connect', { url: this.url, subscriptions });
   }
 
   disconnect() {

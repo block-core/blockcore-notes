@@ -1,4 +1,4 @@
-import { Event, Relay, Sub } from 'nostr-tools';
+import { Event, Filter, Relay, Sub } from 'nostr-tools';
 
 export interface Circle {
   id?: number;
@@ -64,7 +64,14 @@ export interface NostrRelay extends Relay {
   // nip11: any;
   // error: string;
   metadata: NostrRelayDocument;
-  subscriptions: Sub[];
+  // subscriptions: Sub[];
+}
+
+export interface NostrRelaySubscription {
+  id: string;
+  // subid: string;
+  sub?: NostrSub;
+  filters: Filter[];
 }
 
 export interface NostrRelayDocument {
@@ -88,7 +95,7 @@ export interface NostrEvent extends Event {
 }
 
 export interface NostrSub extends Sub {
-  id: string;
+  // id: string;
 }
 
 export interface NostrEventDocument extends Event {
@@ -225,4 +232,3 @@ export class ChatModel {
   'lastMessageLength': string | number;
   'chat': Array<MessageModel>;
 }
-

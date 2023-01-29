@@ -253,6 +253,20 @@ export class AppComponent {
       },
     });
 
+    // Create the listeners (filters) for relays:
+    // TODO: There is limit on maximum following, we need a strategy to handle that.
+    // potentially subscribing and unsubscribing on intervals with a .since field between each interval.
+    const pubKeys = this.profileService.profiles.map((p) => p.pubkey);
+
+    // Add self to the top of listening list:
+    pubKeys.unshift(this.appState.getPublicKey());
+
+    console.log('PUB KEYS:', pubKeys);
+
+    this.relayService.queueSubscription([{ authors: pubKeys }]);
+
+    // this.relayService.
+
     // .subscribe(async (profile) => {
     //   // TODO: Figure out why we get promises from this observable.
     //   const p = await profile;

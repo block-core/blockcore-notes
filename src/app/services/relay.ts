@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEventDocument, NostrRelay, NostrRelayDocument } from './interfaces';
+import { NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription } from './interfaces';
 import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
 import { Filter, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
@@ -199,8 +199,19 @@ export class RelayService {
         await this.setRelayStatus(url, response.data);
 
         // Upon first successful connection, we'll set the status to online.
+        // Upon status set to 1, make sure we subscribe to the existing subscriptions.
         if (response.data === 1) {
           this.appState.updateConnectionStatus(true);
+
+          const index = this.workers.findIndex((v) => v.url == url);
+          const worker = this.workers[index];
+
+          debugger;
+
+          for (let index = 0; index < this.subs2.length; index++) {
+            const sub = this.subs2[index];
+            worker.subscribe(sub.filters, sub.id);
+          }
         }
 
         break;
@@ -254,6 +265,8 @@ export class RelayService {
     // Avoid adding duplicate workers, but make sure we initiate a connect action.
     if (index > -1) {
       this.workers[index].connect();
+
+      // TODO: Make sure we also re-create subscriptions.
       return;
     }
 
@@ -270,7 +283,7 @@ export class RelayService {
 
     this.workers.push(relayType);
 
-    relayType.connect();
+    relayType.connect(this.subs2);
 
     // if (typeof Worker !== 'undefined') {
     //   // Create a new
@@ -488,7 +501,7 @@ export class RelayService {
 
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit(server.url) as NostrRelay;
-    relay.subscriptions = [];
+    // relay.subscriptions = [];
 
     relay.on('connect', () => {
       // console.log(`connected to ${relay?.url}`);
@@ -498,7 +511,7 @@ export class RelayService {
 
     relay.on('disconnect', () => {
       console.log(`DISCONNECTED! ${relay?.url}`);
-      relay.subscriptions = [];
+      // relay.subscriptions = [];
     });
 
     relay.on('notice', (msg: any) => {
@@ -551,7 +564,14 @@ export class RelayService {
 
   subscriptions: any = {};
 
-  subs2: any[] = [];
+  subs2: NostrRelaySubscription[] = [];
+
+  /** Queues up subscription that will be activated whenever the relay is connected. */
+  queueSubscription(filters: Filter[]) {
+    const id = uuidv4();
+    this.subs2.push({ id: id, filters: filters });
+    return id;
+  }
 
   subscribe(filters: Filter[]) {
     const id = uuidv4();
