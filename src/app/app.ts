@@ -186,7 +186,6 @@ export class AppComponent {
   /** Run initialize whenever user has been authenticated. */
   async initialize() {
     console.log('INITIALIZE IS RUNNING....');
-    debugger;
 
     // await this.storage.open();
     // await this.storage.initialize();

@@ -59,7 +59,7 @@ addEventListener('message', async (ev: MessageEvent) => {
   switch (request.type) {
     case 'connect':
       // If the relay worker is already connected and valid, avoid re-creating.
-      if (relayWorker && relayWorker.relay.status == 1) {
+      if (relayWorker && relayWorker.relay && relayWorker.relay.status == 1) {
         console.log('Already connected...');
         break;
       } else {

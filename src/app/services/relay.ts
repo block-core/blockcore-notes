@@ -584,6 +584,21 @@ export class RelayService {
   async initialize() {
     this.items2 = await this.db.storage.getRelays();
 
+    // If there are no relay metatadata in database, get it from extension or default
+    if (this.items2.length == 0) {
+      let relays;
+
+      try {
+        const gt = globalThis as any;
+        relays = await gt.nostr.getRelays();
+      } catch (err) {
+        relays = this.defaultRelays;
+      }
+
+      // First append whatever the extension give us of relays.
+      await this.appendRelays(relays);
+    }
+
     for (let index = 0; index < this.items2.length; index++) {
       const relay = this.items2[index];
 
@@ -591,22 +606,5 @@ export class RelayService {
         this.createRelayWorker(relay.url);
       }
     }
-
-    // If there are no relay metatadata in database, get it from extension or default
-    // const items = await this.table.toArray();
-
-    // if (items.length === 0) {
-    //   let relays;
-
-    //   try {
-    //     const gt = globalThis as any;
-    //     relays = await gt.nostr.getRelays();
-    //   } catch (err) {
-    //     relays = this.defaultRelays;
-    //   }
-
-    //   // First append whatever the extension give us of relays.
-    //   await this.appendRelays(relays);
-    // }
   }
 }

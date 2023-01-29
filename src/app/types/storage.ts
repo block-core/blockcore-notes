@@ -173,7 +173,7 @@ export class Storage {
   async delete() {
     await deleteDB(this.name, {
       blocked() {
-        // …
+        console.log('BLOCKED...');
       },
     });
   }

@@ -169,24 +169,16 @@ export class HomeComponent {
   }
 
   async clearDatabase() {
-    // this.db
-    //   .delete()
-    //   .then(() => {
-    //     console.log('Database successfully deleted');
-    //   })
-    //   .catch((err) => {
-    //     console.error('Could not delete database');
-    //   })
-    //   .finally(() => {
-    //     // Do what should be done next...
-    //   });
-
     console.log('Deleting storage...');
 
-    await this.db.storage.delete();
+    try {
+      this.db.close();
+      await this.db.storage.delete();
+    } catch (err) {
+      console.error(err);
+    }
 
     console.log('Reloading!');
-
     location.reload();
   }
 
@@ -273,7 +265,6 @@ export class HomeComponent {
 
     this.subscriptions.push(
       this.appState.initialized$.subscribe(async (value) => {
-        debugger;
         if (value) {
           this.latestItems = await this.db.storage.getEventsByCreated(undefined, 7);
         }
