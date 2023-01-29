@@ -197,6 +197,12 @@ export class RelayService {
       case 'status':
         console.log(`Relay ${url} changed status to ${response.data}.`);
         await this.setRelayStatus(url, response.data);
+
+        // Upon first successful connection, we'll set the status to online.
+        if (response.data === 1) {
+          this.appState.updateConnectionStatus(true);
+        }
+
         break;
       case 'terminated':
         // When being terminated, we'll remove this worker from the array.
@@ -243,8 +249,11 @@ export class RelayService {
       return;
     }
 
-    // Avoid adding duplicate workers.
-    if (this.workers.findIndex((v) => v.url == url) > -1) {
+    const index = this.workers.findIndex((v) => v.url == url);
+
+    // Avoid adding duplicate workers, but make sure we initiate a connect action.
+    if (index > -1) {
+      this.workers[index].connect();
       return;
     }
 
@@ -413,6 +422,14 @@ export class RelayService {
   }
 
   async connect() {
+    const enabledRelays = this.items2.filter((r) => r.type == 1);
+
+    for (let index = 0; index < enabledRelays.length; index++) {
+      const relay = enabledRelays[index];
+
+      this.createRelayWorker(relay.url);
+    }
+
     // const items = await this.table.toArray();
     // let relayCountCountdown = items.filter((i: { enabled: boolean }) => i.enabled !== false).length;
     // const observables = [];

@@ -65,7 +65,7 @@ export class AppComponent {
     public theme: ThemeService
   ) {
     if (!this.visibilityHandler) {
-      addEventListener('visibilitychange', (event) => {
+      this.visibilityHandler = addEventListener('visibilitychange', (event) => {
         this.appState.visibility(document.visibilityState === 'visible');
       });
     }

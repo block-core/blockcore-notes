@@ -58,13 +58,16 @@ addEventListener('message', async (ev: MessageEvent) => {
 
   switch (request.type) {
     case 'connect':
-      relayWorker = new RelayWorker(request.data);
-      await relayWorker.connect();
-      await relayWorker.info();
-
-      // relayWorker = {};
-      // postMessage({ type: 'connect', result: true } as RelayResponse);
-      break;
+      // If the relay worker is already connected and valid, avoid re-creating.
+      if (relayWorker && relayWorker.relay.status == 1) {
+        console.log('Already connected...');
+        break;
+      } else {
+        relayWorker = new RelayWorker(request.data);
+        await relayWorker.connect();
+        await relayWorker.info();
+        break;
+      }
     case 'disconnect':
       await relayWorker.disconnect();
       // postMessage({ type: 'disconnect', result: true } as RelayResponse);
