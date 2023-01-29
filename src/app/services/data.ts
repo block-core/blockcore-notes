@@ -45,16 +45,16 @@ export class DataService {
         this.initialDataLoad();
 
         console.log('Connection established, start processing queues.');
-        this.processQueues();
+        // this.processQueues();
       }
     });
 
     // Schedule a timeout whenever the queues has been triggered, to wait for additional items that might arrive in a loop.
-    this.queueService.queues$.subscribe(() => {
-      setTimeout(() => {
-        this.processQueues();
-      }, 250);
-    });
+    // this.queueService.queues$.subscribe(() => {
+    //   setTimeout(() => {
+    //     this.processQueues();
+    //   }, 250);
+    // });
   }
 
   async initialDataLoad() {
@@ -80,28 +80,28 @@ export class DataService {
     this.enque({
       identifier: this.appState.getPublicKey(),
       type: 'Contacts',
-      callback: (data: any) => {
-        // TODO: MIGRATE THIS LOGIC!!
-        // The callback is called for all contacts lists, not just the one we call for.
-        // if (data.pubkey !== this.appState.getPublicKey()) {
-        //   return;
-        // }
-        // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
-        // if (this.discoveredProfileDate < data.created_at) {
-        //   this.discoveredProfileDate = data.created_at;
-        //   const following = this.profileService.profile?.following;
-        //   const pubkeys = data.tags.map((t: any[]) => t[1]);
-        //   console.log('FOLLOWING:' + JSON.stringify(following));
-        //   if (!following) {
-        //     const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
-        //     if (data.content) {
-        //       dialogData.relays = JSON.parse(data.content);
-        //       dialogData.relaysCount = Object.keys(dialogData.relays).length;
-        //     }
-        //     this.openImportSheet(dialogData);
-        //   }
-        // }
-      },
+      // callback: (data: any) => {
+      //   // TODO: MIGRATE THIS LOGIC!!
+      //   // The callback is called for all contacts lists, not just the one we call for.
+      //   // if (data.pubkey !== this.appState.getPublicKey()) {
+      //   //   return;
+      //   // }
+      //   // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
+      //   // if (this.discoveredProfileDate < data.created_at) {
+      //   //   this.discoveredProfileDate = data.created_at;
+      //   //   const following = this.profileService.profile?.following;
+      //   //   const pubkeys = data.tags.map((t: any[]) => t[1]);
+      //   //   console.log('FOLLOWING:' + JSON.stringify(following));
+      //   //   if (!following) {
+      //   //     const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
+      //   //     if (data.content) {
+      //   //       dialogData.relays = JSON.parse(data.content);
+      //   //       dialogData.relaysCount = Object.keys(dialogData.relays).length;
+      //   //     }
+      //   //     this.openImportSheet(dialogData);
+      //   //   }
+      //   // }
+      // },
     });
 
     // Create the listeners (filters) for relays:
@@ -135,23 +135,23 @@ export class DataService {
   /** Enques a job to be processed against connected relays. */
   enque(job: QueryJob) {
     // It is way more optimal to just delegate jobs into separate queues when enquing than querying later.
-    if (job.type == 'Profile') {
-      this.queueService.queues.profile.jobs.push(job);
-    } else if (job.type == 'Contacts') {
-      this.queueService.queues.contacts.jobs.push(job);
-    } else if (job.type == 'Event') {
-      this.queueService.queues.event.jobs.push(job);
-    } else {
-      throw Error(`This type of job (${job.type}) is currently not supported.`);
-    }
+    // if (job.type == 'Profile') {
+    //   this.queueService.queues.profile.jobs.push(job);
+    // } else if (job.type == 'Contacts') {
+    //   this.queueService.queues.contacts.jobs.push(job);
+    // } else if (job.type == 'Event') {
+    //   this.queueService.queues.event.jobs.push(job);
+    // } else {
+    //   throw Error(`This type of job (${job.type}) is currently not supported.`);
+    // }
 
     // Enque the job on all web workers.
     this.relayService.action('enque', job);
 
     // We always delay the processing in case we receive
-    setTimeout(() => {
-      this.processQueues();
-    }, 100);
+    // setTimeout(() => {
+    //   this.processQueues();
+    // }, 100);
   }
 
   /**
@@ -194,7 +194,7 @@ export class DataService {
       return {
         kinds: [1],
         authors: [j.identifier],
-        limit: j.limit,
+        // limit: j.limit,
       } as Filter;
     });
 
@@ -209,11 +209,11 @@ export class DataService {
         await this.storage.storage.putEvents(event);
       }
 
-      for (let i = 0; i < jobs.length; i++) {
-        if (jobs[i].callback) {
-          jobs[i].callback(event);
-        }
-      }
+      // for (let i = 0; i < jobs.length; i++) {
+      //   if (jobs[i].callback) {
+      //     jobs[i].callback(event);
+      //   }
+      // }
     });
   }
 
@@ -243,11 +243,11 @@ export class DataService {
       // Make sure we run update and not put whenever we download the latest profile.
       await this.profileService.updateProfile(event.pubkey, event);
 
-      for (let i = 0; i < jobs.length; i++) {
-        if (jobs[i].callback) {
-          jobs[i].callback(event);
-        }
-      }
+      // for (let i = 0; i < jobs.length; i++) {
+      //   if (jobs[i].callback) {
+      //     jobs[i].callback(event);
+      //   }
+      // }
     });
   }
 
@@ -288,11 +288,11 @@ export class DataService {
         // Make sure we run update and not put whenever we download the latest profile.
         this.profileService.followingAndRelays(event.pubkey, following, event.content);
 
-        for (let i = 0; i < jobs.length; i++) {
-          if (jobs[i].callback) {
-            jobs[i].callback(event);
-          }
-        }
+        // for (let i = 0; i < jobs.length; i++) {
+        //   if (jobs[i].callback) {
+        //     jobs[i].callback(event);
+        //   }
+        // }
       });
   }
 

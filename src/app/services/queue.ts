@@ -1,23 +1,23 @@
 import { QueryJob } from './interfaces';
 
 export class Queue {
-  enqueProfile(identifier: string, callback?: any) {
-    this.queues.profile.jobs.push({ identifier: identifier, type: 'Profile', callback: callback });
+  enqueProfile(identifier: string) {
+    this.queues.profile.jobs.push({ identifier: identifier, type: 'Profile' });
   }
 
-  enqueEvent(identifier: string, callback?: any, limit?: number) {
-    this.queues.event.jobs.push({ identifier: identifier, type: 'Event', callback: callback, limit: limit });
+  enqueEvent(identifier: string) {
+    this.queues.event.jobs.push({ identifier: identifier, type: 'Event' });
   }
 
-  enqueContacts(identifier: string, callback?: any) {
-    this.queues.contacts.jobs.push({ identifier: identifier, type: 'Contacts', callback: callback });
+  enqueContacts(identifier: string) {
+    this.queues.contacts.jobs.push({ identifier: identifier, type: 'Contacts' });
   }
 
-  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts', limit?: number) {
+  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts') {
     if (type === 'Profile') {
       this.enqueProfile(identifier);
     } else if (type === 'Event') {
-      this.enqueEvent(identifier, undefined, limit);
+      this.enqueEvent(identifier);
     } else if (type === 'Contacts') {
       this.enqueContacts(identifier);
     }

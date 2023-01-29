@@ -149,7 +149,7 @@ export class RelayWorker {
     }
 
     this.processProfiles();
-    this.processContacts();
+    // this.processContacts();
 
     // We always delay the processing in case we receive more.
     // setTimeout(() => {

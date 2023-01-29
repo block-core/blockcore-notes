@@ -186,16 +186,17 @@ export class HomeComponent {
     this.dataService.enque({
       identifier: pubkey,
       type: 'Contacts',
-      callback: (data: NostrEventDocument) => {
-        console.log('DATA RECEIVED', data);
+      // TODO: MIGRATE LOGIC!!!
+      // callback: (data: NostrEventDocument) => {
+      //   console.log('DATA RECEIVED', data);
 
-        const following = data.tags.map((t) => t[1]);
+      //   const following = data.tags.map((t) => t[1]);
 
-        for (let i = 0; i < following.length; i++) {
-          const publicKey = following[i];
-          this.profileService.follow(publicKey);
-        }
-      },
+      //   for (let i = 0; i < following.length; i++) {
+      //     const publicKey = following[i];
+      //     this.profileService.follow(publicKey);
+      //   }
+      // },
     });
   }
 
