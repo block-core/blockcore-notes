@@ -74,6 +74,12 @@ export interface NostrRelaySubscription {
   filters: Filter[];
 }
 
+export interface StateDocument {
+  id: number;
+  since: number;
+  modified?: number;
+}
+
 export interface NostrRelayDocument {
   url: string;
   // read: boolean;

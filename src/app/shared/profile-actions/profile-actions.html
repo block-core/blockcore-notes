@@ -68,7 +68,7 @@
 </mat-menu>
 
 <mat-menu #categories="matMenu">
-  <button *ngFor="let circle of circleService.items$ | async" mat-menu-item (click)="follow(circle.id)">
+  <button *ngFor="let circle of circleService.circles" mat-menu-item (click)="follow(circle.id)">
     <mat-icon [style.color]="circle.color">trip_origin</mat-icon>
     <span>{{ circle.name }}</span>
   </button>

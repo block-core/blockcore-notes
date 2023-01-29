@@ -18,7 +18,7 @@ import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { dexieToRx } from '../shared/utilities';
 import { liveQuery } from 'dexie';
-  
+
 interface DefaultProfile {
   pubkey: string;
   pubkeynpub: string;
@@ -181,6 +181,8 @@ export class HomeComponent {
       .finally(() => {
         // Do what should be done next...
       });
+
+    await this.db.storage.delete();
 
     location.reload();
   }

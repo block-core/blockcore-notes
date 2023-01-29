@@ -1,5 +1,5 @@
 import { openDB, deleteDB, wrap, unwrap, IDBPDatabase, DBSchema } from 'idb';
-import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument } from '../services/interfaces';
+import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, StateDocument } from '../services/interfaces';
 
 /** Make sure you read and learn: https://github.com/jakearchibald/idb */
 
@@ -8,6 +8,10 @@ export function now() {
 }
 
 interface NotesDB extends DBSchema {
+  state: {
+    value: StateDocument;
+    key: number;
+  };
   relays: {
     value: NostrRelayDocument;
     key: string;
@@ -35,7 +39,7 @@ interface NotesDB extends DBSchema {
 export class Storage {
   public db!: IDBPDatabase<NotesDB>;
 
-  constructor(private name: string, private version: number) { }
+  constructor(private name: string, private version: number) {}
 
   async open() {
     this.db = await openDB<NotesDB>(this.name, this.version, {
@@ -43,6 +47,7 @@ export class Storage {
         db.createObjectStore('relays', { keyPath: 'url' });
         db.createObjectStore('notes', { keyPath: 'id' });
         db.createObjectStore('circles', { keyPath: 'id' });
+        db.createObjectStore('state', { keyPath: 'id' });
 
         const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
         eventsStore.createIndex('pubkey', 'pubkey');
@@ -67,8 +72,22 @@ export class Storage {
     this.db.close();
   }
 
+  async getState() {
+    return this.db.get('state', 1);
+  }
+
+  async putState(value: StateDocument) {
+    value.id = 1;
+    value.modified = now();
+    return this.db.put('state', value);
+  }
+
   async getCircle(key: number) {
     return this.db.get('circles', key);
+  }
+
+  async getCircles() {
+    return this.db.getAll('circles');
   }
 
   async putCircle(value: Circle) {
@@ -116,6 +135,10 @@ export class Storage {
   async putRelay(value: NostrRelayDocument) {
     value.modified = now();
     return this.db.put('relays', value);
+  }
+
+  async deleteCircle(key: number) {
+    return this.db.delete('circles', key);
   }
 
   async deleteRelay(key: string) {

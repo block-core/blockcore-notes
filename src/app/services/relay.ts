@@ -206,8 +206,6 @@ export class RelayService {
           const index = this.workers.findIndex((v) => v.url == url);
           const worker = this.workers[index];
 
-          debugger;
-
           for (let index = 0; index < this.subs2.length; index++) {
             const sub = this.subs2[index];
             worker.subscribe(sub.filters, sub.id);

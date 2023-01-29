@@ -78,7 +78,6 @@ addEventListener('message', async (ev: MessageEvent) => {
       await relayWorker.publish(request.data);
       break;
     case 'subscribe':
-      debugger;
       await relayWorker.subscribe(request.data.filters, request.data.id);
       break;
     case 'unsubscribe':
@@ -136,7 +135,6 @@ export class RelayWorker {
 
     relay.on('disconnect', () => {
       console.log(`DISCONNECTED! ${relay?.url}`);
-      debugger;
       this.subscriptions = [];
       postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
     });

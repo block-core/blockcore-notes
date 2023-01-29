@@ -185,6 +185,7 @@ export class AppComponent {
 
   /** Run initialize whenever user has been authenticated. */
   async initialize() {
+    debugger;
     // await this.storage.open();
     // await this.storage.initialize();
     await this.db.initialize('blockcore-' + this.appState.getPublicKey());
@@ -253,6 +254,8 @@ export class AppComponent {
       },
     });
 
+    debugger;
+
     // Create the listeners (filters) for relays:
     // TODO: There is limit on maximum following, we need a strategy to handle that.
     // potentially subscribing and unsubscribing on intervals with a .since field between each interval.
@@ -263,7 +266,11 @@ export class AppComponent {
 
     console.log('PUB KEYS:', pubKeys);
 
-    this.relayService.queueSubscription([{ authors: pubKeys }]);
+    // Subscribe to new events but don't get any history (limit: 0).
+
+    console.log('queueSubscription:', { authors: pubKeys, since: this.db.state.since });
+
+    this.relayService.queueSubscription([{ authors: pubKeys, since: this.db.state.since }]);
 
     // this.relayService.
 
