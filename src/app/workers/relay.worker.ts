@@ -11,7 +11,7 @@ let relay = undefined;
 let storage = undefined;
 
 addEventListener('message', async (ev: MessageEvent) => {
-  console.log('MESSAGE RECEIVED IN RELAY WORKER!!', ev);
+  console.log('MESSAGE RECEIVED IN RELAY WORKER!!', JSON.stringify(ev.data));
 
   // postMessage(ev.data);
 
@@ -148,6 +148,8 @@ export class RelayWorker {
       throw Error(`This type of job (${job.type}) is currently not supported.`);
     }
 
+    console.log(`${this.url}: Job enqued...processing...`);
+
     this.process();
 
     // We always delay the processing in case we receive more.
@@ -159,12 +161,34 @@ export class RelayWorker {
   process() {
     this.processProfiles();
     this.processContacts();
+    this.processSubscriptions();
+  }
+
+  processSubscriptions() {
+    if (!this.relay || this.relay.status != 1) {
+      return;
+    }
+
+    if (this.queue.queues.subscriptions.jobs.length == 0) {
+      return;
+    }
+
+    while (this.queue.queues.subscriptions.jobs.length) {
+      const job = this.queue.queues.subscriptions.jobs.shift();
+
+      if (job) {
+        this.subscribe(job.filters, job.id);
+      }
+    }
   }
 
   processProfiles() {
     if (!this.relay || this.relay.status != 1 || this.queue.queues.profile.active) {
+      console.log(`${this.url}: processProfiles: Relay not ready or currently active: ${this.queue.queues.profile.active}.`, this.relay);
       return;
     }
+
+    console.log(`${this.url}: processProfiles: Processing with downloading... Count: ` + this.queue.queues.profile.jobs.length);
 
     if (this.queue.queues.profile.jobs.length == 0) {
       this.queue.queues.profile.active = false;
@@ -174,7 +198,10 @@ export class RelayWorker {
     this.queue.queues.profile.active = true;
     const job = this.queue.queues.profile.jobs.shift();
 
+    console.log(`${this.url}: processProfiles: Job: `, job);
+
     this.downloadProfile(job!.identifier, () => {
+      console.log(`${this.url}: downloadProfile completed! .. continue with next!`);
       this.queue.queues.profile.active = false;
       this.processProfiles();
     });
@@ -206,9 +233,14 @@ export class RelayWorker {
     const relay = relayInit(this.url) as NostrRelay;
     // relay.subscriptions = [];
 
+    this.relay = relay;
+
     relay.on('connect', () => {
-      console.log(`connected to ${relay?.url}`);
+      console.log(`${this.url}: Connected.`);
       postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
+
+      // Make sure we set the relay as well before processing.
+      // this.relay = relay;
 
       // Upon connection, make sure we process anything that is in the queue immediately:
       this.process();
@@ -217,13 +249,13 @@ export class RelayWorker {
     });
 
     relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${relay?.url}`);
+      console.log(`${this.url}: DISCONNECTED!`);
       this.subscriptions = [];
       postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
     });
 
     relay.on('notice', (msg: any) => {
-      console.log(`NOTICE FROM ${relay?.url}: ${msg}`);
+      console.log(`${this.url}: NOTICE: ${msg}`);
       postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
     });
 
@@ -245,7 +277,8 @@ export class RelayWorker {
       // relay.metadata.error = 'Unable to connect.';
     }
 
-    this.relay = relay;
+    // this.relay = relay;
+    // console.log(`${this.url}: THIS.RELAY WAS SET:`, this.relay);
     // await this.addRelay(relay);
   }
 
@@ -400,8 +433,10 @@ export class RelayWorker {
   subscribe(filters: Filter[], id: string) {
     console.log('SUBSCRIBE....');
 
-    if (!this.relay) {
-      console.warn('This relay does not have active connection and subscription cannot be created at this time.');
+    if (!this.relay || this.relay.status != 1) {
+      // If we don't have a connection yet, schedule the subscription to be added later.
+      this.queue.queues.subscriptions.jobs.push({ id: id, filters: filters });
+      console.warn('This relay does not have active connection and subscription cannot be created at this time. Subscription has been scheduled for adding later.');
       return;
     }
 

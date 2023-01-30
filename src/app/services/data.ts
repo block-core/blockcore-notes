@@ -44,7 +44,7 @@ export class DataService {
       if (this.connected) {
         this.initialDataLoad();
 
-        console.log('Connection established, start processing queues.');
+        // console.log('Connection established, start processing queues.');
         // this.processQueues();
       }
     });

@@ -172,7 +172,7 @@ export class HomeComponent {
     console.log('Deleting storage...');
 
     try {
-      this.db.close();
+      // this.db.close();
       await this.db.storage.delete();
     } catch (err) {
       console.error(err);

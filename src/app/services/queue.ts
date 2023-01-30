@@ -1,4 +1,4 @@
-import { QueryJob } from './interfaces';
+import { NostrRelaySubscription, QueryJob } from './interfaces';
 
 export class Queue {
   enqueProfile(identifier: string) {
@@ -35,6 +35,10 @@ export class Queue {
     contacts: {
       active: false,
       jobs: [] as QueryJob[],
+    },
+    subscriptions: {
+      active: false,
+      jobs: [] as NostrRelaySubscription[],
     },
   };
 }
