@@ -67,7 +67,7 @@ import { CircleStylePipe } from './shared/circle-style';
 import { ReplyListComponent } from './shared/reply-list/reply-list';
 import { ContentComponent } from './shared/content/content';
 import { InfiniteScrollDirective } from './shared/scroll.directive';
-import { ImportFollowDialog } from './circles/import-follow-dialog/import-follow-dialog';
+import { ImportFollowDialog } from './people/import-follow-dialog/import-follow-dialog';
 import { ProfileHeaderComponent } from './shared/profile-header/profile-header';
 import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { ProfileImageDialog } from './shared/profile-image-dialog/profile-image-dialog';

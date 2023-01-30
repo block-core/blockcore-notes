@@ -41,3 +41,8 @@
   background-size: cover;
   margin-top: -2em;
 }
+
+.people-actions button {
+  margin-right: 0.4em;
+  margin-bottom: 0.4em;
+}

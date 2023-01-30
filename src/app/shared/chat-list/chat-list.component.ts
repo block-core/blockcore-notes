@@ -15,13 +15,8 @@ interface ChatModel {
 export class ChatListComponent implements OnInit {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();
 
-  #chats: ChatModel[] = [];
-
-  get chats$() {
-    return of(this.#chats);
+  constructor(public chatService: ChatService) {
   }
-
-  constructor(public chatService: ChatService) {}
 
   ngOnInit() {
     this.chatService.download();
