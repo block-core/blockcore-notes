@@ -65,16 +65,53 @@ export class FeedPrivateComponent {
     console.log('ngAfterContentInit');
   }
 
+  // cursor: any;
+  // finished = false;
+
   async showMore() {
+    // 'prev' direction on cursor shows latest on top.
+    let cursor: any = await this.db.storage.db.transaction('events').store.index('created').openCursor(undefined, 'prev');
+
+    // Proceed to offset.
+    if (this.offset > 0) {
+      cursor = await cursor?.advance(this.offset);
+    }
+
+    for (let index = 0; index < this.pageSize; index++) {
+      if (!cursor) {
+        break;
+      }
+
+      if (cursor.value) {
+        this.currentItems.push(cursor.value);
+      }
+
+      if (cursor) {
+        cursor = await cursor.continue();
+      }
+    }
+
+    // while (this.cursor) {
+    //   console.log(cursor.key, cursor.value);
+    //   cursor = await cursor.continue();
+    // }
+
+    //     let cursor = await db.transaction(storeName).store.openCursor();
+
+    // while (cursor) {
+    //   console.log(cursor.key, cursor.value);
+    //   cursor = await cursor.continue();
+    // }
+
     // const items = await this.table.orderBy('created_at').reverse().offset(this.offset).limit(this.pageSize).toArray();
     // this.currentItems.push(...items);
 
-    // // Half the page size after initial load.
-    // if (this.offset === 0) {
-    //   this.pageSize = Math.floor(this.pageSize / 2);
-    // }
+    // Half the page size after initial load.
+    if (this.offset === 0) {
+      this.pageSize = Math.floor(this.pageSize / 2);
+    }
 
-    // this.offset += this.pageSize;
+    this.offset += this.pageSize;
   }
 
   optionsUpdated() {
@@ -149,8 +186,14 @@ export class FeedPrivateComponent {
     this.options.values.privateFeed = true;
 
     this.subscriptions.push(
-      this.navigation.showMore$.subscribe(() => {
-        this.showMore();
+      this.appState.initialized$.subscribe((initialized) => {
+        if (initialized) {
+          this.subscriptions.push(
+            this.navigation.showMore$.subscribe(() => {
+              this.showMore();
+            })
+          );
+        }
       })
     );
   }

@@ -43,6 +43,8 @@ export class ProfileService {
   /** The profiles the user is following. */
   following: NostrProfileDocument[] = [];
 
+  followingKeys: string[] = [];
+
   /** Public key of blocked profiles. */
   blocked: string[] = [];
 
@@ -261,6 +263,7 @@ export class ProfileService {
 
     this.blocked = blocked.map((p) => p.pubkey);
     this.muted = muted.map((p) => p.pubkey);
+    this.followingKeys = this.following.map((p) => p.pubkey);
   }
 
   async #setStatus(pubkey: string, status: ProfileStatus, circle?: number) {

@@ -272,9 +272,15 @@ export class RelayService {
         this.profileService.followingAndRelays(event.pubkey, following, event.content);
       }
     } else {
-      // If the event we received is from someone the user is following, always persist it if not already persisted.
-      if (event.pubkey === this.appState.getPublicKey()) {
+      const index = this.profileService.followingKeys.indexOf(event.pubkey);
+
+      if (index > -1) {
         await this.db.storage.putEvents(event);
+      } else {
+        // If the event we received is from someone the user is following, always persist it if not already persisted.
+        if (event.pubkey === this.appState.getPublicKey()) {
+          await this.db.storage.putEvents(event);
+        }
       }
     }
   }
