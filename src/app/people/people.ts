@@ -164,7 +164,7 @@ export class PeopleComponent {
       },
     ];
 
-    // this.load();
+    await this.load();
 
     // TODO: Until we changed to using observable (DataService) for all data,
     // we have this basic observable whenever the profiles changes.

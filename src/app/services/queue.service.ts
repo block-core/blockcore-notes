@@ -5,29 +5,24 @@ import { QueryJob } from './interfaces';
   providedIn: 'root',
 })
 export class QueueService {
-  #queuesChanged: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
+  #queuesChanged: BehaviorSubject<QueryJob | undefined> = new BehaviorSubject<QueryJob | undefined>(undefined);
 
-  get queues$(): Observable<void> {
+  get queues$(): Observable<QueryJob | undefined> {
     return this.#queuesChanged.asObservable();
   }
 
-  trigger() {
-    this.#queuesChanged.next();
-  }
+  constructor() {}
 
   enqueProfile(identifier: string) {
-    this.queues.profile.jobs.push({ identifier: identifier, type: 'Profile' });
-    this.trigger();
+    this.#queuesChanged.next({ identifier: identifier, type: 'Profile' });
   }
 
   enqueEvent(identifier: string) {
-    this.queues.event.jobs.push({ identifier: identifier, type: 'Event' });
-    this.trigger();
+    this.#queuesChanged.next({ identifier: identifier, type: 'Event' });
   }
 
   enqueContacts(identifier: string) {
-    this.queues.contacts.jobs.push({ identifier: identifier, type: 'Contacts' });
-    this.trigger();
+    this.#queuesChanged.next({ identifier: identifier, type: 'Contacts' });
   }
 
   enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts') {
@@ -39,19 +34,4 @@ export class QueueService {
       this.enqueContacts(identifier);
     }
   }
-
-  queues = {
-    profile: {
-      active: false,
-      jobs: [] as QueryJob[],
-    },
-    event: {
-      active: false,
-      jobs: [] as QueryJob[],
-    },
-    contacts: {
-      active: false,
-      jobs: [] as QueryJob[],
-    },
-  };
 }

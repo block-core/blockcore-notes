@@ -407,7 +407,6 @@ export class RelayWorker {
 
     // Skip if the subscription is already added.
     if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
-      debugger;
       console.log('This subscription is already added!');
       return;
     }

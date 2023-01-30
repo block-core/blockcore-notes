@@ -22,8 +22,6 @@ export class ImportSheet {
       await this.relayService.deleteRelays();
 
       await this.relayService.appendRelays(this.data.relays);
-
-      await this.relayService.connect();
     }
 
     const following = this.data.pubkeys;

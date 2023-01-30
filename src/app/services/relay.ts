@@ -14,6 +14,7 @@ import { Utilities } from './utilities';
 import { v4 as uuidv4 } from 'uuid';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ImportSheet } from '../shared/import-sheet/import-sheet';
+import { QueueService } from './queue.service';
 
 @Injectable({
   providedIn: 'root',
@@ -64,6 +65,7 @@ export class RelayService {
   }
 
   constructor(
+    private queue: QueueService,
     private bottomSheet: MatBottomSheet,
     private utilities: Utilities,
     private profileService: ProfileService,
@@ -76,6 +78,12 @@ export class RelayService {
     this.appState.visibility$.subscribe((visible) => {
       if (visible) {
         this.connect();
+      }
+    });
+
+    this.queue.queues$.subscribe((job) => {
+      if (job) {
+        this.enque(job);
       }
     });
   }
@@ -203,11 +211,18 @@ export class RelayService {
 
       // If the event is for logged on user...
       if (event.pubkey === pubkey) {
-        debugger;
         let existingContacts = await this.db.storage.getContacts(pubkey);
 
         if (!existingContacts || existingContacts.created_at < event.created_at) {
           await this.db.storage.putContacts(event);
+
+          // Whenever we download the contacts document, we'll refresh the RELAYS and FOLLOWING
+          // on the profile in question.
+          const following = event.tags.map((t) => t[1]);
+
+          // Make sure we run update and not put whenever we download the latest profile.
+          this.profileService.followingAndRelays(event.pubkey, following, event.content);
+
           existingContacts = event;
         }
 
@@ -248,6 +263,13 @@ export class RelayService {
         // }
       } else {
         await this.db.storage.putContacts(event);
+
+        // Whenever we download the contacts document, we'll refresh the RELAYS and FOLLOWING
+        // on the profile in question.
+        const following = event.tags.map((t) => t[1]);
+
+        // Make sure we run update and not put whenever we download the latest profile.
+        this.profileService.followingAndRelays(event.pubkey, following, event.content);
       }
     } else {
       // If the event we received is from someone the user is following, always persist it if not already persisted.
