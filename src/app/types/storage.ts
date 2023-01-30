@@ -12,6 +12,10 @@ interface NotesDB extends DBSchema {
     value: StateDocument;
     key: number;
   };
+  contacts: {
+    value: NostrEventDocument;
+    key: string;
+  };
   relays: {
     value: NostrRelayDocument;
     key: string;
@@ -48,6 +52,7 @@ export class Storage {
         db.createObjectStore('notes', { keyPath: 'id' });
         db.createObjectStore('circles', { keyPath: 'id' });
         db.createObjectStore('state', { keyPath: 'id' });
+        db.createObjectStore('contacts', { keyPath: 'pubkey' });
 
         const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
         eventsStore.createIndex('pubkey', 'pubkey');
@@ -104,6 +109,18 @@ export class Storage {
     return this.db.put('circles', value);
   }
 
+  async getContacts(key: string) {
+    return this.db.get('contacts', key);
+  }
+
+  async putContacts(value: NostrEventDocument) {
+    return this.db.put('contacts', value);
+  }
+
+  async deleteContacts(key: string) {
+    return this.db.delete('contacts', key);
+  }
+
   async getProfile(key: string) {
     return this.db.get('profiles', key);
   }
@@ -115,6 +132,10 @@ export class Storage {
 
   async getProfilesByStatus(status: number) {
     return this.db.getAllFromIndex('profiles', 'status', status);
+  }
+
+  async getProfilesByStatusCount(status: number) {
+    return this.db.countFromIndex('profiles', 'status', status);
   }
 
   async getEvent(key: string) {

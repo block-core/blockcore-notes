@@ -148,8 +148,7 @@ export class RelayWorker {
       throw Error(`This type of job (${job.type}) is currently not supported.`);
     }
 
-    this.processProfiles();
-    // this.processContacts();
+    this.process();
 
     // We always delay the processing in case we receive more.
     // setTimeout(() => {
@@ -157,8 +156,13 @@ export class RelayWorker {
     // }, 100);
   }
 
+  process() {
+    this.processProfiles();
+    this.processContacts();
+  }
+
   processProfiles() {
-    if (this.queue.queues.profile.active) {
+    if (!this.relay || this.relay.status != 1 || this.queue.queues.profile.active) {
       return;
     }
 
@@ -177,7 +181,7 @@ export class RelayWorker {
   }
 
   processContacts() {
-    if (this.queue.queues.contacts.active) {
+    if (!this.relay || this.relay.status != 1 || this.queue.queues.contacts.active) {
       return;
     }
 
@@ -205,6 +209,9 @@ export class RelayWorker {
     relay.on('connect', () => {
       console.log(`connected to ${relay?.url}`);
       postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
+
+      // Upon connection, make sure we process anything that is in the queue immediately:
+      this.process();
       // onConnected(relay);
       //this.onConnected(relay);
     });

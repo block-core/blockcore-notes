@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, QueryJob } from './interfaces';
+import { NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, ProfileStatus, QueryJob } from './interfaces';
 import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
 import { Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
@@ -183,7 +183,40 @@ export class RelayService {
         await this.profileService.updateProfile(nostrProfileDocument.pubkey, nostrProfileDocument);
       }
     } else if (event.kind == Kind.Contacts) {
-      // TODO: Implement the contacts handling.
+      // If the event is for logged on user...
+      if (event.pubkey === this.appState.getPublicKey()) {
+        debugger;
+        const existingContacts = await this.db.storage.getContacts(this.appState.getPublicKey());
+
+        if (!existingContacts || existingContacts.created_at < event.created_at) {
+          await this.db.storage.putContacts(event);
+        }
+
+        const following = await this.db.storage.getProfilesByStatusCount(ProfileStatus.Follow);
+
+        if (following == 0) {
+          // Ask if user want to import!
+          console.log('Zero following... ask to import!');
+        }
+
+        // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
+        // if (this.discoveredProfileDate < data.created_at) {
+        //   this.discoveredProfileDate = data.created_at;
+        //   const following = this.profileService.profile?.following;
+        //   const pubkeys = data.tags.map((t: any[]) => t[1]);
+        //   console.log('FOLLOWING:' + JSON.stringify(following));
+        //   if (!following) {
+        //     const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
+        //     if (data.content) {
+        //       dialogData.relays = JSON.parse(data.content);
+        //       dialogData.relaysCount = Object.keys(dialogData.relays).length;
+        //     }
+        //     this.openImportSheet(dialogData);
+        //   }
+        // }
+      } else {
+        await this.db.storage.putContacts(event);
+      }
     } else {
       // If the event we received is from someone the user is following, always persist it if not already persisted.
       if (event.pubkey === this.appState.getPublicKey()) {
