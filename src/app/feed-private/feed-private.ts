@@ -12,7 +12,6 @@ import { NavigationService } from '../services/navigation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from '../services/storage';
 import { dexieToRx } from '../shared/utilities';
-import { liveQuery } from 'dexie';
 
 @Component({
   selector: 'app-feed-private',
@@ -20,30 +19,26 @@ import { liveQuery } from 'dexie';
   styleUrls: ['./feed-private.css'],
 })
 export class FeedPrivateComponent {
-  private get table() {
-    return this.db.events;
-  }
-
   publicKey?: string | null;
   offset = 0;
   pageSize = 12;
   currentItems: NostrEventDocument[] = [];
 
-  currentItems$ = dexieToRx(liveQuery(() => this.table.orderBy('created_at').offset(this.offset).limit(this.pageSize).toArray()));
+  // currentItems$ = dexieToRx(liveQuery(() => this.table.orderBy('created_at').offset(this.offset).limit(this.pageSize).toArray()));
 
-  items$ = dexieToRx(liveQuery(() => this.items())).pipe(
-    map((data) => {
-      data.sort((a, b) => {
-        return a.created_at < b.created_at ? 1 : -1;
-      });
+  // items$ = dexieToRx(liveQuery(() => this.items())).pipe(
+  //   map((data) => {
+  //     data.sort((a, b) => {
+  //       return a.created_at < b.created_at ? 1 : -1;
+  //     });
 
-      return data;
-    })
-  );
+  //     return data;
+  //   })
+  // );
 
-  async items() {
-    return this.table.toArray();
-  }
+  // async items() {
+  //   return this.table.toArray();
+  // }
 
   constructor(
     public db: StorageService,
@@ -70,9 +65,46 @@ export class FeedPrivateComponent {
     console.log('ngAfterContentInit');
   }
 
+  // cursor: any;
+  // finished = false;
+
   async showMore() {
-    const items = await this.table.orderBy('created_at').reverse().offset(this.offset).limit(this.pageSize).toArray();
-    this.currentItems.push(...items);
+    // 'prev' direction on cursor shows latest on top.
+    let cursor: any = await this.db.storage.db.transaction('events').store.index('created').openCursor(undefined, 'prev');
+
+    // Proceed to offset.
+    if (this.offset > 0) {
+      cursor = await cursor?.advance(this.offset);
+    }
+
+    for (let index = 0; index < this.pageSize; index++) {
+      if (!cursor) {
+        break;
+      }
+
+      if (cursor.value) {
+        this.currentItems.push(cursor.value);
+      }
+
+      if (cursor) {
+        cursor = await cursor.continue();
+      }
+    }
+
+    // while (this.cursor) {
+    //   console.log(cursor.key, cursor.value);
+    //   cursor = await cursor.continue();
+    // }
+
+    //     let cursor = await db.transaction(storeName).store.openCursor();
+
+    // while (cursor) {
+    //   console.log(cursor.key, cursor.value);
+    //   cursor = await cursor.continue();
+    // }
+
+    // const items = await this.table.orderBy('created_at').reverse().offset(this.offset).limit(this.pageSize).toArray();
+    // this.currentItems.push(...items);
 
     // Half the page size after initial load.
     if (this.offset === 0) {
@@ -91,7 +123,7 @@ export class FeedPrivateComponent {
   activeOptions() {
     let options = '';
 
-    const peopleCount = this.profileService.profiles.length;
+    const peopleCount = this.profileService.following.length;
 
     // options += `Viewing ${peopleCount} people`;
 
@@ -154,8 +186,14 @@ export class FeedPrivateComponent {
     this.options.values.privateFeed = true;
 
     this.subscriptions.push(
-      this.navigation.showMore$.subscribe(() => {
-        this.showMore();
+      this.appState.initialized$.subscribe((initialized) => {
+        if (initialized) {
+          this.subscriptions.push(
+            this.navigation.showMore$.subscribe(() => {
+              this.showMore();
+            })
+          );
+        }
       })
     );
   }

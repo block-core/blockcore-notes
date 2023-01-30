@@ -6,7 +6,7 @@ import { ApplicationState } from '../services/applicationstate';
 import { DataService } from '../services/data';
 import { NostrEventDocument, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
-import { QueueService } from '../services/queue';
+import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
 
 @Component({

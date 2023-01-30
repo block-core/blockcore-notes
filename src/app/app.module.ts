@@ -1,14 +1,12 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MtxTooltipModule } from '@ng-matero/extensions/tooltip';
 import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
-
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -110,6 +108,9 @@ import { TimePipe } from './shared/time.pipe';
 import { QueueComponent } from './queue/queue';
 import { MessagesComponent } from './messages/messages';
 import { MessageComponent } from './message/message';
+import { DevelopmentComponent } from './development/development';
+import { RelayComponent } from './shared/relay/relay';
+import { RelaysComponent } from './shared/relays/relays';
 
 @NgModule({
   declarations: [
@@ -173,7 +174,10 @@ import { MessageComponent } from './message/message';
     TimePipe,
     QueueComponent,
     MessagesComponent,
-    MessageComponent
+    MessageComponent,
+    DevelopmentComponent,
+    RelayComponent,
+    RelaysComponent,
   ],
   imports: [
     HttpClientModule,

@@ -1,40 +1,23 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { QueryJob } from './interfaces';
-@Injectable({
-  providedIn: 'root',
-})
-export class QueueService {
-  #queuesChanged: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
+import { NostrRelaySubscription, QueryJob } from './interfaces';
 
-  get queues$(): Observable<void> {
-    return this.#queuesChanged.asObservable();
+export class Queue {
+  enqueProfile(identifier: string) {
+    this.queues.profile.jobs.push({ identifier: identifier, type: 'Profile' });
   }
 
-  trigger() {
-    this.#queuesChanged.next();
+  enqueEvent(identifier: string) {
+    this.queues.event.jobs.push({ identifier: identifier, type: 'Event' });
   }
 
-  enqueProfile(identifier: string, callback?: any) {
-    this.queues.profile.jobs.push({ identifier: identifier, type: 'Profile', callback: callback });
-    this.trigger();
+  enqueContacts(identifier: string) {
+    this.queues.contacts.jobs.push({ identifier: identifier, type: 'Contacts' });
   }
 
-  enqueEvent(identifier: string, callback?: any, limit?: number) {
-    this.queues.event.jobs.push({ identifier: identifier, type: 'Event', callback: callback, limit: limit });
-    this.trigger();
-  }
-
-  enqueContacts(identifier: string, callback?: any) {
-    this.queues.contacts.jobs.push({ identifier: identifier, type: 'Contacts', callback: callback });
-    this.trigger();
-  }
-
-  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts', limit?: number) {
+  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts') {
     if (type === 'Profile') {
       this.enqueProfile(identifier);
     } else if (type === 'Event') {
-      this.enqueEvent(identifier, undefined, limit);
+      this.enqueEvent(identifier);
     } else if (type === 'Contacts') {
       this.enqueContacts(identifier);
     }
@@ -52,6 +35,10 @@ export class QueueService {
     contacts: {
       active: false,
       jobs: [] as QueryJob[],
+    },
+    subscriptions: {
+      active: false,
+      jobs: [] as NostrRelaySubscription[],
     },
   };
 }

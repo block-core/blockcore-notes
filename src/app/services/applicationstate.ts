@@ -25,6 +25,8 @@ export class ApplicationState {
     this.visibility$ = this.visibilityChanged.asObservable();
 
     this.title$ = this.titleChanged.asObservable();
+
+    this.initialized$ = this.initializedChanged.asObservable();
   }
 
   getPublicKey(): string {
@@ -67,9 +69,13 @@ export class ApplicationState {
 
   connected$: Observable<boolean>;
 
+  initialized$: Observable<boolean>;
+
   connected = false;
 
   connectedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.connected);
+
+  initializedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   /** This will check if status has changed and trigger. If status is the same, the observable is not triggered. */
   updateConnectionStatus(status: boolean) {
@@ -85,5 +91,9 @@ export class ApplicationState {
 
   visibility(status: boolean) {
     this.visibilityChanged.next(status);
+  }
+
+  initialized() {
+    this.initializedChanged.next(true);
   }
 }

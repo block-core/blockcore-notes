@@ -25,12 +25,12 @@ export class CirclesComponent {
   following: NostrProfileDocument[] = [];
   searchTerm: any;
 
-  items: Circle[] = [];
-  items$ = this.circleService.items$.pipe(
-    tap((items) => {
-      this.items = items;
-    })
-  );
+  // items: Circle[] = [];
+  // items$ = this.circleService.items$.pipe(
+  //   tap((items) => {
+  //     this.items = items;
+  //   })
+  // );
 
   constructor(
     public appState: ApplicationState,
@@ -102,13 +102,28 @@ export class CirclesComponent {
     return pubkeys;
   }
 
- 
+  private getPublicPublicKeys() {
+    // console.log(this.items);
+    console.log(this.following);
+
+    const items: string[] = [];
+
+    for (let i = 0; i < this.circleService.circles.length; i++) {
+      const circle = this.circleService.circles[i];
+
+      if (circle.public) {
+        const profiles = this.getFollowingInCircle(circle.id);
+        const pubkeys = profiles.map((p) => p.pubkey);
+        items.push(...pubkeys);
+      }
+    }
+
+    return items;
+  }
 
   getNpub(hex: string) {
     return this.utilities.getNostrIdentifier(hex);
   }
-
-
 
   createCircle(): void {
     const dialogRef = this.dialog.open(CircleDialog, {
@@ -139,6 +154,6 @@ export class CirclesComponent {
       },
     ];
 
-    this.subscriptions.push(this.profileService.items$.subscribe((profiles) => (this.following = profiles)) as Subscription);
+    // this.subscriptions.push(this.profileService.items$.subscribe((profiles) => (this.following = profiles)) as Subscription);
   }
 }

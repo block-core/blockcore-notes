@@ -14,7 +14,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { map, Observable, of, Subscription, tap, BehaviorSubject, finalize } from 'rxjs';
 import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
-import { QueueService } from '../services/queue';
+import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
 import { StorageService } from '../services/storage';
 
@@ -285,18 +285,18 @@ export class UserComponent {
         // });
 
         // First load all events from the persistent storage
-        const events = await this.storage.events.where('pubkey').equals(pubkey).toArray();
+        const events = await this.storage.storage.getEventsByPubKey(pubkey);
         this.ui.putEvents(events);
 
         // Then query for the latest events.
         this.queueService.enqueEvent(
-          pubkey,
-          (data: NostrEventDocument) => {
-            this.ui.putEvent(data);
-            // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-            // this.#changed();
-          },
-          200
+          pubkey
+          // (data: NostrEventDocument) => {
+          //   this.ui.putEvent(data);
+          //   // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+          //   // this.#changed();
+          // },
+          // 200
         );
 
         // setTimeout(async () => {

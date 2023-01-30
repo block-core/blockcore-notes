@@ -26,7 +26,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Sorting</mat-label>
-          <mat-select  (selectionChange)="updateSorting()" [(value)]="selected">
+          <mat-select (selectionChange)="updateSorting()" [(value)]="selected">
             <mat-option value="name-asc">Name (A-Z)</mat-option>
             <mat-option value="name-desc">Name (Z-A)</mat-option>
             <mat-option value="followed-asc">Followed (Newest)</mat-option>
@@ -43,9 +43,9 @@
     <button mat-stroked-button (click)="publishFollowList()">Publish Follow List</button>
   </p>
 
-  <div class="people-list" *ngIf="sortedItems$ | withStatus | async as items">
-    <ng-template [ngIf]="items.value">
-      <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of items.value; trackBy: trackByFn">
+  <div class="people-list">
+    <ng-template [ngIf]="!loading">
+      <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of sortedItems; trackBy: trackByFn">
         <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
         <div class="events-header">
           <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
@@ -57,8 +57,7 @@
         <div *ngIf="showAbout" class="content clickable">{{ profile.about }}</div>
       </mat-card>
     </ng-template>
-    <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
-    <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    <ng-template [ngIf]="loading"><mat-spinner class="loading"></mat-spinner></ng-template>
   </div>
   <!-- 
   <div *ngIf="items$ | withLoading | async as items">
@@ -68,12 +67,12 @@
   </div> -->
 
   <!-- <div *ngIf="items$ | async as profiles"> -->
-    <!-- <div class="centered" style="width: 100%">
+  <!-- <div class="centered" style="width: 100%">
       <br />
       <mat-spinner class="loading"></mat-spinner>
     </div> -->
 
-    <!-- Count: {{ profiles.length }} -->
+  <!-- Count: {{ profiles.length }} -->
   <!-- </div> -->
 
   <p class="dimmed">People are those you are following. You can use circles to organize your people.</p>

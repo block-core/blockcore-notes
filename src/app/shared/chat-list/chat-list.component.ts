@@ -1,7 +1,11 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { ChatService } from 'src/app/services/chat.service';
-import { ChatModel } from 'src/app/services/interfaces';
+
+interface ChatModel {
+  id: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-chat-list',
@@ -14,5 +18,19 @@ export class ChatListComponent implements OnInit {
   constructor(public chatService: ChatService) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.chatService.download();
+
+    // this.chatService.uniqueChats$.subscribe((data) => {
+    //   console.log('YEEH!', data);
+    // });
+  }
+
+  add() {
+    this.#chats.unshift({ id: '123', name: 'Yes!' });
+  }
+
+  reset() {
+    this.#chats = [];
+  }
 }

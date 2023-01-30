@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChatService } from 'src/app/services/chat.service';
-import { ChatModel } from 'src/app/services/interfaces';
+import { ChatModel, NostrEventDocument } from 'src/app/services/interfaces';
 
 @Component({
   selector: 'app-chat-item',
@@ -10,6 +10,7 @@ import { ChatModel } from 'src/app/services/interfaces';
 export class ChatItemComponent {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();
   @Input() chat!: ChatModel;
+  @Input() event!: NostrEventDocument;
 
   constructor(private service: ChatService) {}
 

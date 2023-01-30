@@ -9,7 +9,7 @@ import { ApplicationState } from './applicationstate';
 import { timeout, map, merge, Observable, delay, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter, from } from 'rxjs';
 import { Utilities } from './utilities';
 import { StorageService } from './storage';
-import { QueueService } from './queue';
+import { QueueService } from './queue.service';
 import { UIService } from './ui';
 
 @Injectable({
@@ -42,17 +42,84 @@ export class DataService {
       this.connected = connected;
 
       if (this.connected) {
-        console.log('Connection established, start processing queues.');
-        this.processQueues();
+        this.initialDataLoad();
+
+        // console.log('Connection established, start processing queues.');
+        // this.processQueues();
       }
     });
 
     // Schedule a timeout whenever the queues has been triggered, to wait for additional items that might arrive in a loop.
-    this.queueService.queues$.subscribe(() => {
-      setTimeout(() => {
-        this.processQueues();
-      }, 250);
+    // this.queueService.queues$.subscribe(() => {
+    //   setTimeout(() => {
+    //     this.processQueues();
+    //   }, 250);
+    // });
+  }
+
+  async initialDataLoad() {
+    // Download the profile of the user.
+    this.enque({
+      identifier: this.appState.getPublicKey(),
+      type: 'Profile',
+      // callback: (data: any) => {
+      //   // This call back is only called if we found a newer profile than already exists.
+      //   // So when this happens, we'll show the import sheet.
+      //   console.log(data);
+      //   debugger;
+
+      //   this.openImportSheet();
+
+      //   // if (!this.profileService.profile?.following || this.profileService.profile?.following.length === 0) {
+
+      //   // }
+      // },
     });
+
+    // Download the following of the user.
+    this.enque({
+      identifier: this.appState.getPublicKey(),
+      type: 'Contacts',
+      // callback: (data: any) => {
+      //   // TODO: MIGRATE THIS LOGIC!!
+      //   // The callback is called for all contacts lists, not just the one we call for.
+      //   // if (data.pubkey !== this.appState.getPublicKey()) {
+      //   //   return;
+      //   // }
+      //   // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
+      //   // if (this.discoveredProfileDate < data.created_at) {
+      //   //   this.discoveredProfileDate = data.created_at;
+      //   //   const following = this.profileService.profile?.following;
+      //   //   const pubkeys = data.tags.map((t: any[]) => t[1]);
+      //   //   console.log('FOLLOWING:' + JSON.stringify(following));
+      //   //   if (!following) {
+      //   //     const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
+      //   //     if (data.content) {
+      //   //       dialogData.relays = JSON.parse(data.content);
+      //   //       dialogData.relaysCount = Object.keys(dialogData.relays).length;
+      //   //     }
+      //   //     this.openImportSheet(dialogData);
+      //   //   }
+      //   // }
+      // },
+    });
+
+    // Create the listeners (filters) for relays:
+    // TODO: There is limit on maximum following, we need a strategy to handle that.
+    // potentially subscribing and unsubscribing on intervals with a .since field between each interval.
+    const pubKeys = this.profileService.following.map((p) => p.pubkey);
+
+    // Add self to the top of listening list:
+    pubKeys.unshift(this.appState.getPublicKey());
+
+    console.log('PUB KEYS:', pubKeys);
+
+    // Subscribe to new events but don't get any history (limit: 0).
+
+    console.log('queueSubscription:', { authors: pubKeys, since: this.storage.state.since });
+
+    // this.relayService.queueSubscription([{ authors: pubKeys, since: this.storage.state.since }]);
+    this.relayService.subscribe([{ authors: pubKeys, since: this.storage.state.since }]);
   }
 
   async initialize() {
@@ -68,20 +135,23 @@ export class DataService {
   /** Enques a job to be processed against connected relays. */
   enque(job: QueryJob) {
     // It is way more optimal to just delegate jobs into separate queues when enquing than querying later.
-    if (job.type == 'Profile') {
-      this.queueService.queues.profile.jobs.push(job);
-    } else if (job.type == 'Contacts') {
-      this.queueService.queues.contacts.jobs.push(job);
-    } else if (job.type == 'Event') {
-      this.queueService.queues.event.jobs.push(job);
-    } else {
-      throw Error(`This type of job (${job.type}) is currently not supported.`);
-    }
+    // if (job.type == 'Profile') {
+    //   this.queueService.queues.profile.jobs.push(job);
+    // } else if (job.type == 'Contacts') {
+    //   this.queueService.queues.contacts.jobs.push(job);
+    // } else if (job.type == 'Event') {
+    //   this.queueService.queues.event.jobs.push(job);
+    // } else {
+    //   throw Error(`This type of job (${job.type}) is currently not supported.`);
+    // }
+
+    // Enque the job on all web workers.
+    this.relayService.action('enque', job);
 
     // We always delay the processing in case we receive
-    setTimeout(() => {
-      this.processQueues();
-    }, 100);
+    // setTimeout(() => {
+    //   this.processQueues();
+    // }, 100);
   }
 
   /**
@@ -94,135 +164,136 @@ export class DataService {
    */
 
   processQueues() {
-    if (!this.connected) {
-      console.warn('Cannot process queues, no connection to relays.');
-      return;
-    }
+    // if (!this.connected) {
+    //   console.warn('Cannot process queues, no connection to relays.');
+    //   return;
+    // }
 
-    if (this.queueService.queues.profile.jobs.length > 0) {
-      this.processProfileQueue();
-    }
+    // // Processing queues basically just copies the jobs from data service to the individual web workers.
+    // if (this.queueService.queues.profile.jobs.length > 0) {
+    //   this.processProfileQueue();
+    // }
 
-    if (this.queueService.queues.contacts.jobs.length > 0) {
-      this.processContactsQueue();
-    }
+    // if (this.queueService.queues.contacts.jobs.length > 0) {
+    //   this.processContactsQueue();
+    // }
 
-    if (this.queueService.queues.event.jobs.length > 0) {
-      this.processEventQueue();
-    }
+    // if (this.queueService.queues.event.jobs.length > 0) {
+    //   this.processEventQueue();
+    // }
   }
 
   processEventQueue() {
-    if (this.queueService.queues.event.active) {
-      console.log('Events are already active... Skipping.');
-      return;
-    }
+    // if (this.queueService.queues.event.active) {
+    //   console.log('Events are already active... Skipping.');
+    //   return;
+    // }
 
-    const jobs = this.queueService.queues.event.jobs.splice(0, 10);
-    const filters = jobs.map((j) => {
-      return {
-        kinds: [1],
-        authors: [j.identifier],
-        limit: j.limit,
-      } as Filter;
-    });
+    // const jobs = this.queueService.queues.event.jobs.splice(0, 10);
+    // const filters = jobs.map((j) => {
+    //   return {
+    //     kinds: [1],
+    //     authors: [j.identifier],
+    //     // limit: j.limit,
+    //   } as Filter;
+    // });
 
-    return this.downloadNewestEventsByQuery(filters).subscribe(async (event) => {
-      if (!event) {
-        return;
-      }
+    // return this.downloadNewestEventsByQuery(filters).subscribe(async (event) => {
+    //   if (!event) {
+    //     return;
+    //   }
 
-      // If we are following this user, we'll persist this event.
-      const following = this.profileService.isFollowing(event.pubkey);
-      if (following) {
-        await this.storage.events.put(event, event.id);
-      }
+    //   // If we are following this user, we'll persist this event.
+    //   const following = this.profileService.isFollowing(event.pubkey);
+    //   if (following) {
+    //     await this.storage.storage.putEvents(event);
+    //   }
 
-      for (let i = 0; i < jobs.length; i++) {
-        if (jobs[i].callback) {
-          jobs[i].callback(event);
-        }
-      }
-    });
+    //   // for (let i = 0; i < jobs.length; i++) {
+    //   //   if (jobs[i].callback) {
+    //   //     jobs[i].callback(event);
+    //   //   }
+    //   // }
+    // });
   }
 
   processProfileQueue() {
-    console.log('processProfileQueue');
-    // If already active, just skip processing for now.
-    if (this.queueService.queues.profile.active) {
-      console.log('processProfileQueue: skip');
-      return;
-    }
+    // console.log('processProfileQueue');
+    // // If already active, just skip processing for now.
+    // if (this.queueService.queues.profile.active) {
+    //   console.log('processProfileQueue: skip');
+    //   return;
+    // }
 
-    // Grab a batch of jobs.
-    const jobs = this.queueService.queues.profile.jobs.splice(0, 50);
-    const pubkeys = jobs.map((j) => j.identifier);
+    // // Grab a batch of jobs.
+    // const jobs = this.queueService.queues.profile.jobs.splice(0, 50);
+    // const pubkeys = jobs.map((j) => j.identifier);
 
-    console.log('processProfileQueue: pubkeys', pubkeys);
+    // console.log('processProfileQueue: pubkeys', pubkeys);
 
-    // Download the profiles that was queued up.
-    this.downloadNewestProfiles(pubkeys, 10000, pubkeys.length).subscribe(async (event) => {
-      // const e = await event;
-      console.log('processProfileQueue: event', event);
+    // // Download the profiles that was queued up.
+    // this.downloadNewestProfiles(pubkeys, 10000, pubkeys.length).subscribe(async (event) => {
+    //   // const e = await event;
+    //   console.log('processProfileQueue: event', event);
 
-      if (!event) {
-        return;
-      }
+    //   if (!event) {
+    //     return;
+    //   }
 
-      // Make sure we run update and not put whenever we download the latest profile.
-      await this.profileService.updateProfile(event.pubkey, event);
+    //   // Make sure we run update and not put whenever we download the latest profile.
+    //   await this.profileService.updateProfile(event.pubkey, event);
 
-      for (let i = 0; i < jobs.length; i++) {
-        if (jobs[i].callback) {
-          jobs[i].callback(event);
-        }
-      }
-    });
+    //   // for (let i = 0; i < jobs.length; i++) {
+    //   //   if (jobs[i].callback) {
+    //   //     jobs[i].callback(event);
+    //   //   }
+    //   // }
+    // });
   }
 
   processContactsQueue() {
-    console.log('processContactsQueue');
-    // If already active, just skip processing for now.
-    if (this.queueService.queues.contacts.active) {
-      console.log('processContactsQueue: skip');
-      return;
-    }
+    // console.log('processContactsQueue');
+    // // If already active, just skip processing for now.
+    // if (this.queueService.queues.contacts.active) {
+    //   console.log('processContactsQueue: skip');
+    //   return;
+    // }
 
-    this.queueService.queues.contacts.active = true;
+    // this.queueService.queues.contacts.active = true;
 
-    // Grab a batch of jobs.
-    const jobs = this.queueService.queues.contacts.jobs.splice(0, 50);
-    const pubkeys = jobs.map((j) => j.identifier);
+    // // Grab a batch of jobs.
+    // const jobs = this.queueService.queues.contacts.jobs.splice(0, 50);
+    // const pubkeys = jobs.map((j) => j.identifier);
 
-    // Use a dynamic timeout depending on the number of pubkeys requested.
-    // const timeout = pubkeys.length * 1000;
-    const timeout = pubkeys.length < 10 ? 10000 : 20000;
+    // // Use a dynamic timeout depending on the number of pubkeys requested.
+    // // const timeout = pubkeys.length * 1000;
+    // const timeout = pubkeys.length < 10 ? 10000 : 20000;
 
-    // Download the profiles that was queued up.
-    this.downloadNewestContactsEvents(pubkeys, timeout)
-      .pipe(
-        finalize(() => {
-          this.queueService.queues.contacts.active = false;
-        })
-      )
-      .subscribe(async (event) => {
-        if (!event) {
-          return;
-        }
+    // // Download the profiles that was queued up.
+    // this.downloadNewestContactsEvents(pubkeys, timeout)
+    //   .pipe(
+    //     finalize(() => {
+    //       this.queueService.queues.contacts.active = false;
+    //     })
+    //   )
+    //   .subscribe(async (event) => {
+    //     if (!event) {
+    //       return;
+    //     }
 
-        // Whenever we download the contacts document, we'll refresh the RELAYS and FOLLOWING
-        // on the profile in question.
-        const following = event.tags.map((t) => t[1]);
+    //     // Whenever we download the contacts document, we'll refresh the RELAYS and FOLLOWING
+    //     // on the profile in question.
+    //     const following = event.tags.map((t) => t[1]);
 
-        // Make sure we run update and not put whenever we download the latest profile.
-        this.profileService.followingAndRelays(event.pubkey, following, event.content);
+    //     // Make sure we run update and not put whenever we download the latest profile.
+    //     this.profileService.followingAndRelays(event.pubkey, following, event.content);
 
-        for (let i = 0; i < jobs.length; i++) {
-          if (jobs[i].callback) {
-            jobs[i].callback(event);
-          }
-        }
-      });
+    //     // for (let i = 0; i < jobs.length; i++) {
+    //     //   if (jobs[i].callback) {
+    //     //     jobs[i].callback(event);
+    //     //   }
+    //     // }
+    //   });
   }
 
   /** Creates an observable that will attempt to get newest profile entry across all relays and perform multiple callbacks if newer is found. */
@@ -266,7 +337,7 @@ export class DataService {
 
     return this.connected$
       .pipe(mergeMap(() => this.relayService.connectedRelays())) // TODO: Time this, it appears to take a lot of time??
-      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)))
+      .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay, requestTimeout)))
       .pipe(
         filter((data) => {
           // Only trigger the reply once.
@@ -277,11 +348,14 @@ export class DataService {
             return false;
           }
         })
+      )
+      .pipe(
+        timeout(requestTimeout),
+        catchError((error) => {
+          console.warn('The observable was timed out.');
+          return of(undefined);
+        }) // Simply return undefined when the timeout is reached.
       );
-    // .pipe(
-    //   timeout(requestTimeout),
-    //   catchError((error) => of(`The query timed out before it could complete: ${JSON.stringify(query)}.`))
-    // );
   }
 
   /** Creates an observable that will attempt to get newest events across all relays and perform multiple callbacks if newer is found. */
@@ -359,7 +433,7 @@ export class DataService {
   subscribeToRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub(filters, {}) as NostrSubscription;
-      relay.subscriptions.push(sub);
+      // relay.subscriptions.push(sub);
 
       sub.on('event', (originalEvent: any) => {
         const event = this.eventService.processEvent(originalEvent);
@@ -377,18 +451,18 @@ export class DataService {
         console.log('subscribeToRelay:finished:unsub');
         // When the observable is finished, this return function is called.
         sub.unsub();
-        const subIndex = relay.subscriptions.findIndex((s) => s == sub);
-        if (subIndex > -1) {
-          relay.subscriptions.splice(subIndex, 1);
-        }
+        // const subIndex = relay.subscriptions.findIndex((s) => s == sub);
+        // if (subIndex > -1) {
+        //   relay.subscriptions.splice(subIndex, 1);
+        // }
       };
     });
   }
 
-  downloadFromRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
+  downloadFromRelay(filters: Filter[], relay: NostrRelay, requestTimeout = 10000): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([...filters], {}) as NostrSubscription;
-      relay.subscriptions.push(sub);
+      // relay.subscriptions.push(sub);
 
       sub.on('event', (originalEvent: any) => {
         const event = this.eventService.processEvent(originalEvent);
@@ -409,7 +483,13 @@ export class DataService {
         // When the observable is finished, this return function is called.
         sub.unsub();
       };
-    });
+    }).pipe(
+      timeout(requestTimeout),
+      catchError((error) => {
+        console.warn('The observable was timed out.');
+        return of();
+      }) // Simply return undefined when the timeout is reached.
+    );
   }
 
   fetchProfiles(relay: Relay, authors: string[]) {

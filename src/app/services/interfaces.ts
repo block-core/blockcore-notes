@@ -1,4 +1,4 @@
-import { Event, Relay, Sub } from 'nostr-tools';
+import { Event, Filter, Relay, Sub } from 'nostr-tools';
 
 export interface Circle {
   id?: number;
@@ -27,8 +27,8 @@ export interface Contact {
 export interface QueryJob {
   type: 'Profile' | 'Event' | 'Contacts';
   identifier: string;
-  callback?: any;
-  limit?: number;
+  // callback?: any;
+  // limit?: number;
   // id?: string;
   // pubkeys: string[]; // Using array instead of singular job makes everything harder.
   // ids: string[];
@@ -64,24 +64,44 @@ export interface NostrRelay extends Relay {
   // nip11: any;
   // error: string;
   metadata: NostrRelayDocument;
-  subscriptions: Sub[];
+  // subscriptions: Sub[];
+}
+
+export interface NostrRelaySubscription {
+  id: string;
+  // subid: string;
+  sub?: NostrSub;
+  filters: Filter[];
+}
+
+export interface StateDocument {
+  id: number;
+  since: number;
+  modified?: number;
 }
 
 export interface NostrRelayDocument {
   url: string;
-  read: boolean;
-  write: boolean;
+  // read: boolean;
+  // write: boolean;
   nip11?: any;
   error?: string;
-  enabled?: boolean;
-  public?: boolean;
+  // enabled?: boolean;
+  public: boolean;
   profile?: boolean;
+  status?: number;
+  modified?: number;
+  type: number;
 }
 
 /** OBSOLETE */
 export interface NostrEvent extends Event {
   contentCut: boolean;
   tagsCut: boolean;
+}
+
+export interface NostrSub extends Sub {
+  // id: string;
 }
 
 export interface NostrEventDocument extends Event {

@@ -50,12 +50,12 @@ export class SettingsComponent {
     this.optionsService.save();
   }
 
-  async deleteRelay(relay: Relay) {
-    await this.relayService.deleteRelay(relay.url);
-  }
+  // async deleteRelay(relay: Relay) {
+  //   await this.relayService.deleteRelay(relay.url);
+  // }
 
   async deleteRelays() {
-    await this.relayService.reset();
+    await this.relayService.deleteRelays();
   }
 
   async clearProfileCache() {
@@ -63,17 +63,17 @@ export class SettingsComponent {
     this.wipedNonFollow = true;
   }
 
-  async onRelayChanged(relay: NostrRelay) {
-    if (relay.metadata.enabled && relay.metadata.read) {
-      await relay.connect();
-    } else if (!relay.metadata.read) {
-      await relay.close();
-    } else {
-      await relay.close();
-    }
+  // async onRelayChanged(relay: NostrRelay) {
+  //   if (relay.metadata.enabled && relay.metadata.read) {
+  //     await relay.connect();
+  //   } else if (!relay.metadata.read) {
+  //     await relay.close();
+  //   } else {
+  //     await relay.close();
+  //   }
 
-    await this.relayService.putRelayMetadata(relay.metadata);
-  }
+  //   await this.relayService.putRelayMetadata(relay.metadata);
+  // }
 
   async clearDatabase() {
     await this.db.delete();

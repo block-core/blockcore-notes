@@ -11,22 +11,25 @@ import { NotesService } from '../services/notes';
 })
 export class NotesComponent {
   details = false;
-  items: NostrNoteDocument[] = [];
-  items$ = (this.notesService.items$ as Observable<NostrNoteDocument[]>).pipe(
-    tap((items) => {
-      this.items = items;
-    })
-  );
+  // items: NostrNoteDocument[] = [];
+  // items$ = (this.notesService.items$ as Observable<NostrNoteDocument[]>).pipe(
+  //   tap((items) => {
+  //     this.items = items;
+  //   })
+  // );
 
-  constructor(private notesService: NotesService, private appState: ApplicationState) {}
+  constructor(public notesService: NotesService, private appState: ApplicationState) {}
 
   toggleDetails() {
     this.details = !this.details;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.appState.updateTitle('Saved Notes');
     this.appState.goBack = true;
     this.appState.actions = [];
+
+    // Load the notes when notes component is opened:
+    await this.notesService.load();
   }
 }

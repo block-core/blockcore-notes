@@ -17,8 +17,7 @@ import { DataService } from '../services/data';
 import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { dexieToRx } from '../shared/utilities';
-import { liveQuery } from 'dexie';
-  
+
 interface DefaultProfile {
   pubkey: string;
   pubkeynpub: string;
@@ -158,7 +157,7 @@ export class HomeComponent {
     return item.id;
   }
 
-  latestItems$ = dexieToRx(liveQuery(() => this.db.events.orderBy('created_at').reverse().limit(7).toArray()));
+  latestItems: NostrEventDocument[] = []; // = dexieToRx(liveQuery(() => this.db.events.orderBy('created_at').reverse().limit(7).toArray()));
 
   sub: any;
   relay?: Relay;
@@ -170,18 +169,16 @@ export class HomeComponent {
   }
 
   async clearDatabase() {
-    this.db
-      .delete()
-      .then(() => {
-        console.log('Database successfully deleted');
-      })
-      .catch((err) => {
-        console.error('Could not delete database');
-      })
-      .finally(() => {
-        // Do what should be done next...
-      });
+    console.log('Deleting storage...');
 
+    try {
+      // this.db.close();
+      await this.db.storage.delete();
+    } catch (err) {
+      console.error(err);
+    }
+
+    console.log('Reloading!');
     location.reload();
   }
 
@@ -189,16 +186,17 @@ export class HomeComponent {
     this.dataService.enque({
       identifier: pubkey,
       type: 'Contacts',
-      callback: (data: NostrEventDocument) => {
-        console.log('DATA RECEIVED', data);
+      // TODO: MIGRATE LOGIC!!!
+      // callback: (data: NostrEventDocument) => {
+      //   console.log('DATA RECEIVED', data);
 
-        const following = data.tags.map((t) => t[1]);
+      //   const following = data.tags.map((t) => t[1]);
 
-        for (let i = 0; i < following.length; i++) {
-          const publicKey = following[i];
-          this.profileService.follow(publicKey);
-        }
-      },
+      //   for (let i = 0; i < following.length; i++) {
+      //     const publicKey = following[i];
+      //     this.profileService.follow(publicKey);
+      //   }
+      // },
     });
   }
 
@@ -265,5 +263,13 @@ export class HomeComponent {
         },
       },
     ];
+
+    this.subscriptions.push(
+      this.appState.initialized$.subscribe(async (value) => {
+        if (value) {
+          this.latestItems = await this.db.storage.getEventsByCreated(undefined, 7);
+        }
+      })
+    );
   }
 }

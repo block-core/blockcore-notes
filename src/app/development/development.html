@@ -1,0 +1,28 @@
+<div class="page">
+  <p>This page act as examples for more specialized implementation details of the app.</p>
+
+  <button mat-stroked-button (click)="downloadProfile()">Enque Profile Download</button>
+
+  <button mat-stroked-button (click)="database()">Create Database</button>
+
+  <button mat-stroked-button (click)="databaseWorker()">Create Database in Worker</button>
+
+  <button mat-stroked-button (click)="addRelays()">Add Relays</button>
+
+  <button mat-stroked-button (click)="subscription()">Create Subscription</button>
+
+  <button mat-stroked-button (click)="unsubscribe()">Remove Subscription</button>
+
+  <button mat-stroked-button (click)="terminate()">Terminate a single Web Worker</button>
+
+  <br />
+  <br />
+
+  <button mat-stroked-button (click)="deleteRelays()">Delete Relays</button>
+
+  <app-relays [relays]="relayService.items2"></app-relays>
+
+
+
+  <mat-spinner></mat-spinner>
+</div>
