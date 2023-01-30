@@ -12,6 +12,8 @@ import { RelayResponse } from './messages';
 import { ProfileService } from './profile';
 import { Utilities } from './utilities';
 import { v4 as uuidv4 } from 'uuid';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { ImportSheet } from '../shared/import-sheet/import-sheet';
 
 @Injectable({
   providedIn: 'root',
@@ -61,7 +63,15 @@ export class RelayService {
     return this.#relaysChanged.asObservable();
   }
 
-  constructor(private utilities: Utilities, private profileService: ProfileService, private db: StorageService, private options: OptionsService, private eventService: EventService, private appState: ApplicationState) {
+  constructor(
+    private bottomSheet: MatBottomSheet,
+    private utilities: Utilities,
+    private profileService: ProfileService,
+    private db: StorageService,
+    private options: OptionsService,
+    private eventService: EventService,
+    private appState: ApplicationState
+  ) {
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
       if (visible) {
@@ -163,6 +173,12 @@ export class RelayService {
     this.items2 = [];
   }
 
+  openImportSheet(data: any): void {
+    this.bottomSheet.open(ImportSheet, {
+      data: data,
+    });
+  }
+
   async processEvent(response: RelayResponse) {
     console.log('FROM:', response.url);
     const originalEvent = response.data;
@@ -183,13 +199,16 @@ export class RelayService {
         await this.profileService.updateProfile(nostrProfileDocument.pubkey, nostrProfileDocument);
       }
     } else if (event.kind == Kind.Contacts) {
+      const pubkey = this.appState.getPublicKey();
+
       // If the event is for logged on user...
-      if (event.pubkey === this.appState.getPublicKey()) {
+      if (event.pubkey === pubkey) {
         debugger;
-        const existingContacts = await this.db.storage.getContacts(this.appState.getPublicKey());
+        let existingContacts = await this.db.storage.getContacts(pubkey);
 
         if (!existingContacts || existingContacts.created_at < event.created_at) {
           await this.db.storage.putContacts(event);
+          existingContacts = event;
         }
 
         const following = await this.db.storage.getProfilesByStatusCount(ProfileStatus.Follow);
@@ -197,9 +216,22 @@ export class RelayService {
         if (following == 0) {
           // Ask if user want to import!
           console.log('Zero following... ask to import!');
+
+          const pubkeys = existingContacts.tags.map((t: any[]) => t[1]);
+          const dialogData: any = { pubkeys: pubkeys, pubkey: pubkey, relays: [], relaysCount: 0 };
+
+          if (existingContacts.content) {
+            dialogData.relays = JSON.parse(existingContacts.content);
+            dialogData.relaysCount = Object.keys(dialogData.relays).length;
+          }
+
+          // If there are no following in the file, skip.
+          if (dialogData.pubkeys.length > 0 || dialogData.relaysCount > 0) {
+            this.openImportSheet(dialogData);
+          }
         }
 
-        // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
+        // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
         // if (this.discoveredProfileDate < data.created_at) {
         //   this.discoveredProfileDate = data.created_at;
         //   const following = this.profileService.profile?.following;
