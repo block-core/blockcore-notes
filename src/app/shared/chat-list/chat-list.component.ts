@@ -15,8 +15,7 @@ interface ChatModel {
 export class ChatListComponent implements OnInit {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();
 
-  constructor(public chatService: ChatService) {
-  }
+  constructor(public chatService: ChatService) {}
 
   ngOnInit() {
     this.chatService.download();
@@ -27,10 +26,10 @@ export class ChatListComponent implements OnInit {
   }
 
   add() {
-    this.#chats.unshift({ id: '123', name: 'Yes!' });
+    // this.#chats.unshift({ id: '123', name: 'Yes!' });
   }
 
   reset() {
-    this.#chats = [];
+    // this.#chats = [];
   }
 }

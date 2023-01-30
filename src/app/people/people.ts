@@ -5,8 +5,7 @@ import { Utilities } from '../services/utilities';
 import { relayInit } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
-import { NostrEvent, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
-import { Circle, NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument } from '../services/interfaces';
+import { Circle, NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { map, Observable, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,6 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationService } from '../services/navigation';
 import { ImportFollowDialog, ImportFollowDialogData } from './import-follow-dialog/import-follow-dialog';
 import { DataService } from '../services/data';
+import { CircleService } from '../services/circle';
 
 @Component({
   selector: 'app-people',
@@ -31,8 +31,6 @@ export class PeopleComponent {
   showAbout = true;
   showFollowingDate = true;
   following: NostrProfileDocument[] = [];
-  items: Circle[] = [];
-
   items: NostrProfileDocument[] = [];
   sortedItems: NostrProfileDocument[] = [];
   // items$ = this.profileService.items$;
@@ -63,6 +61,7 @@ export class PeopleComponent {
 
   searchTerm: any;
   constructor(
+    private circleService: CircleService,
     public navigation: NavigationService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
@@ -198,14 +197,13 @@ export class PeopleComponent {
       return this.following.filter((f) => f.circle == id);
     }
   }
-  private getPublicPublicKeys() {
-    console.log(this.items);
-    console.log(this.following);
 
+  private getPublicPublicKeys() {
+    console.log(this.following);
     const items: string[] = [];
 
-    for (let i = 0; i < this.items.length; i++) {
-      const circle = this.items[i];
+    for (let i = 0; i < this.circleService.circles.length; i++) {
+      const circle = this.circleService.circles[i];
 
       if (circle.public) {
         const profiles = this.getFollowingInCircle(circle.id);
@@ -216,6 +214,7 @@ export class PeopleComponent {
 
     return items;
   }
+
   async addFollow(pubkey: string) {
     if (pubkey.startsWith('nsec')) {
       let sb = this.snackBar.open('This is a private key, not a public key.', 'Hide', {
