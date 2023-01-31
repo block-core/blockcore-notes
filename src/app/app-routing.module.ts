@@ -21,12 +21,16 @@ import { QueueComponent } from './queue/queue';
 import { MessagesComponent } from './messages/messages';
 import { MessageComponent } from './message/message';
 import { DevelopmentComponent } from './development/development';
+import { LoadingResolverService } from './services/loading-resolver';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'connect',
@@ -36,96 +40,153 @@ const routes: Routes = [
     path: 'feed',
     component: FeedComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'notes',
     component: NotesComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'circles',
     component: CirclesComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'people',
     component: PeopleComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'chat',
     component: ChatComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'm',
     component: MessagesComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'm/:id',
     component: MessageComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'user/:id',
     component: UserComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'note/:id',
     component: NoteComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'p/:id',
     component: UserComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'e/:id',
     component: NoteComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'followers/:id',
     component: FollowersComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'following/:id',
     component: FollowingComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'about',
     component: AboutComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'about/licenses',
     component: LicensesComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'settings',
     component: SettingsComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'development',
     component: DevelopmentComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'queue',
     component: QueueComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'logout',

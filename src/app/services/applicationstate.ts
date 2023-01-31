@@ -93,7 +93,10 @@ export class ApplicationState {
     this.visibilityChanged.next(status);
   }
 
-  initialized() {
-    this.initializedChanged.next(true);
+  initialized = false;
+
+  setInitialized() {
+    this.initialized = true;
+    this.initializedChanged.next(this.initialized);
   }
 }

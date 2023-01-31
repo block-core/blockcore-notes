@@ -204,10 +204,7 @@ export class AppComponent {
     // This service will perform data cleanup, etc.
     await this.dataService.initialize();
 
-
-    this.appState.connected$.subscribe(() => {
-
-    });
+    this.appState.connected$.subscribe(() => {});
 
     // this.relayService.
 
@@ -222,7 +219,7 @@ export class AppComponent {
     //   await this.profileService.updateProfile(p.pubkey, p);
     // });
 
-    this.appState.initialized();
+    this.appState.setInitialized();
   }
 
   discoveredProfileDate = 0;

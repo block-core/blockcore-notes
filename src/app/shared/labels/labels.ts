@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class LabelsComponent {
   showNewLabel?: boolean;
   label?: string;
-  labels: LabelModel[]=[];
+  labels: LabelModel[] = [];
 
   constructor(private storageService: StorageService) {}
 
@@ -38,6 +38,6 @@ export class LabelsComponent {
   }
 
   async ngOnInit() {
-    setTimeout(async () => {this.labels = await this.storageService.storage.getLabels()}, 1000);
+    this.labels = await this.storageService.storage.getLabels();
   }
 }
