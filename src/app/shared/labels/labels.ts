@@ -35,9 +35,15 @@ export class LabelsComponent {
 
     this.label = '';
     this.showNewLabel = false;
+
+    await this.load();
   }
 
   async ngOnInit() {
+    await this.load();
+  }
+
+  async load() {
     this.labels = await this.storageService.storage.getLabels();
   }
 }
