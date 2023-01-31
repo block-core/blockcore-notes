@@ -186,14 +186,8 @@ export class FeedPrivateComponent {
     this.options.values.privateFeed = true;
 
     this.subscriptions.push(
-      this.appState.initialized$.subscribe((initialized) => {
-        if (initialized) {
-          this.subscriptions.push(
-            this.navigation.showMore$.subscribe(() => {
-              this.showMore();
-            })
-          );
-        }
+      this.navigation.showMore$.subscribe(() => {
+        this.showMore();
       })
     );
   }

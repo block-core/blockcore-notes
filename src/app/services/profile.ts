@@ -287,6 +287,7 @@ export class ProfileService {
   }
 
   #putFollowingProfile(profile: NostrProfileDocument) {
+    debugger;
     const existingIndex = this.following.findIndex((p) => p.pubkey == profile.pubkey);
 
     if (existingIndex === -1) {
@@ -318,7 +319,7 @@ export class ProfileService {
 
       // Save directly, don't put in cache.
       await this.db.storage.putProfile(existingProfile);
-      this.#putFollowingProfile(existingProfile);
+      // this.#putFollowingProfile(existingProfile);
 
       // Queue up to get this profile.
       this.queueService.enqueProfile(existingProfile.pubkey);
