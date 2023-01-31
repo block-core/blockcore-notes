@@ -40,8 +40,8 @@ interface NotesDB extends DBSchema {
   };
   labels: {
     value: LabelModel;
-    key: number; 
-  }
+    key: number;
+  };
 }
 
 export class Storage {
@@ -57,7 +57,7 @@ export class Storage {
         db.createObjectStore('circles', { keyPath: 'id' });
         db.createObjectStore('state', { keyPath: 'id' });
         db.createObjectStore('contacts', { keyPath: 'pubkey' });
-        db.createObjectStore('labels', { keyPath: 'id'});
+        db.createObjectStore('labels', { keyPath: 'id' });
 
         const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
         eventsStore.createIndex('pubkey', 'pubkey');
@@ -155,8 +155,27 @@ export class Storage {
     return this.db.getAllFromIndex('events', 'pubkey', pubkey, count);
   }
 
-  async getEventsByCreated(query?: IDBKeyRange, count?: number) {
+  async getEventsByCreated2(query?: IDBKeyRange, count?: number) {
     return this.db.getAllFromIndex('events', 'created', query, count);
+  }
+
+  async getEventsByCreated(count: number) {
+    let cursor = await this.db.transaction('events').store.index('created').openCursor(undefined, 'prev');
+    const items = [];
+    let index = 0;
+
+    while (cursor) {
+      items.push(cursor.value);
+      index++;
+
+      if (index >= count) {
+        break;
+      }
+
+      cursor = await cursor.continue();
+    }
+
+    return items;
   }
 
   async getRelay(key: string) {

@@ -267,7 +267,7 @@ export class HomeComponent {
     this.subscriptions.push(
       this.appState.initialized$.subscribe(async (value) => {
         if (value) {
-          this.latestItems = await this.db.storage.getEventsByCreated(undefined, 7);
+          this.latestItems = await this.db.storage.getEventsByCreated(7);
         }
       })
     );
