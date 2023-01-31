@@ -1,5 +1,5 @@
 import { openDB, deleteDB, wrap, unwrap, IDBPDatabase, DBSchema } from 'idb';
-import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, StateDocument } from '../services/interfaces';
+import { Circle, LabelModel, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, StateDocument } from '../services/interfaces';
 
 /** Make sure you read and learn: https://github.com/jakearchibald/idb */
 
@@ -38,6 +38,10 @@ interface NotesDB extends DBSchema {
     key: string;
     indexes: { status: number };
   };
+  labels: {
+    value: LabelModel;
+    key: number; 
+  }
 }
 
 export class Storage {
@@ -53,6 +57,7 @@ export class Storage {
         db.createObjectStore('circles', { keyPath: 'id' });
         db.createObjectStore('state', { keyPath: 'id' });
         db.createObjectStore('contacts', { keyPath: 'pubkey' });
+        db.createObjectStore('labels', { keyPath: 'id'});
 
         const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
         eventsStore.createIndex('pubkey', 'pubkey');
@@ -197,5 +202,21 @@ export class Storage {
         console.log('BLOCKED...');
       },
     });
+  }
+
+  async getLabel(key: number) {
+    return this.db.get('labels', key);
+  }
+
+  async getLabels() {
+    return this.db.getAll('labels');
+  }
+
+  async putLabel(value: LabelModel) {
+    return this.db.put('labels', value);
+  }
+
+  async deleteLabel(key: number) {
+    return this.db.delete('labels', key);
   }
 }
