@@ -285,8 +285,8 @@ mat-sidenav-content mat-toolbar {
 }
 
 ::-webkit-scrollbar {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -296,13 +296,13 @@ mat-sidenav-content mat-toolbar {
 ::-webkit-scrollbar-thumb {
   background-color: #595b5ca4;
   // border-radius: 20px;
-  border: 8px solid transparent;
+  border-left: 6px solid transparent;
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #a3a5a7c2;
-  border: 6px solid transparent;
+  border-left: 6px solid transparent;
 }
 
 .marginless {
