@@ -111,6 +111,7 @@ import { MessageComponent } from './message/message';
 import { DevelopmentComponent } from './development/development';
 import { RelayComponent } from './shared/relay/relay';
 import { RelaysComponent } from './shared/relays/relays';
+import { LabelsComponent } from './shared/labels/labels';
 
 @NgModule({
   declarations: [
@@ -178,6 +179,7 @@ import { RelaysComponent } from './shared/relays/relays';
     DevelopmentComponent,
     RelayComponent,
     RelaysComponent,
+    LabelsComponent
   ],
   imports: [
     HttpClientModule,

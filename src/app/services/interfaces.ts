@@ -238,3 +238,8 @@ export class ChatModel {
   'lastMessageLength': string | number;
   'chat': Array<MessageModel>;
 }
+
+export interface LabelModel {
+  id: string;
+  name: string;
+}

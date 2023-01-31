@@ -1,4 +1,5 @@
-<div class="feed-page" *ngIf="notesService.items">
+<div class="feed-page">
+  <app-labels></app-labels>
   <div *ngIf="notesService.items.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others.<br /></div>
   <mat-card class="events" *ngFor="let note of notesService.items">
     <div class="events-header">
