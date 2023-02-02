@@ -19,7 +19,7 @@
       <span class="wrap"> ID: {{ relay.nip11.pubkey }}</span></span
     >
   </div>
-  <div class="dimmed">Timeouts : {{ relay.timeouts }}</div>
+  <div class="dimmed" *ngIf="relay.timeouts">Timeouts : {{ relay.timeouts }}</div>
   <!-- <div>Subscriptions Count : {{ relay.subscriptions.length }}</div> -->
   <mat-card class="relay-options mat-elevation-z8">
     <mat-card-header>

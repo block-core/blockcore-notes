@@ -35,13 +35,16 @@
             <mat-option value="created-desc">Updated (Oldest)</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <p class="people-actions">
+          <button mat-stroked-button (click)="importFollowList()">Import Following (and Relays) List</button>
+          <button mat-stroked-button (click)="dataService.publishContactsAndRelays()">Publish Follow (and Relays) List</button>
+        </p>
+
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-  <p class="people-actions">
-    <button mat-stroked-button (click)="importFollowList()">Import Following (and Relays) List</button>
-    <button mat-stroked-button (click)="dataService.publishContactsAndRelays()">Publish Follow (and Relays) List</button>
-  </p>
+
 
   <div class="people-list">
     <ng-template [ngIf]="!loading">
