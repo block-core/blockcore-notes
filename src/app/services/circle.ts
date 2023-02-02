@@ -75,6 +75,15 @@ export class CircleService {
     }
 
     document.modified = now;
+
+    const index = this.circles.findIndex((c) => c.id == document.id);
+
+    if (index > -1) {
+      this.circles[index] = document;
+    } else {
+      this.circles.push(document);
+    }
+
     await this.db.storage.putCircle(document);
   }
 
