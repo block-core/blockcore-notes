@@ -411,10 +411,12 @@ export class RelayWorker {
     console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
     this.profileTimer = setTimeout(() => {
-      console.warn('Profile download timeout reached.');
+      console.warn(`${this.url}: Profile download timeout reached.`);
       this.clearProfileSub();
       this.queue.queues.profile.active = false;
       this.processProfiles();
+
+      postMessage({ url: this.url, type: 'timeout', data: { type: 'Profile', identifier: pubkey } } as RelayResponse);
 
       // if (!finalizedCalled) {
       //   finalizedCalled = true;

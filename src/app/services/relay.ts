@@ -132,6 +132,18 @@ export class RelayService {
     }
   }
 
+  setRelayTimeout(url: string, status: number) {
+    const item = this.items2.find((r) => r.url == url);
+
+    if (item) {
+      if (item.timeouts == null) {
+        item.timeouts = 0;
+      }
+
+      item.timeouts++;
+    }
+  }
+
   async setRelayNIP11(url: string, data: any) {
     console.log('setRelayNIP11:', data);
 
@@ -314,6 +326,10 @@ export class RelayService {
     const response = ev.data as RelayResponse;
 
     switch (response.type) {
+      case 'timeout':
+        console.log(`Relay ${url} timeout: ${response.data}.`);
+        this.setRelayTimeout(url, response.data);
+        break;
       case 'status':
         console.log(`Relay ${url} changed status to ${response.data}.`);
         await this.setRelayStatus(url, response.data);

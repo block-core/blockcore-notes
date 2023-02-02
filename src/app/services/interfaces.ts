@@ -92,6 +92,7 @@ export interface NostrRelayDocument {
   status?: number;
   modified?: number;
   type: number;
+  timeouts?: number;
 }
 
 /** OBSOLETE */
