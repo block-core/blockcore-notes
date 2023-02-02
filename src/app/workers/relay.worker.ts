@@ -65,7 +65,7 @@ addEventListener('message', async (ev: MessageEvent) => {
         break;
       } else {
         relayWorker = new RelayWorker(request.data.url);
-        await relayWorker.connect();
+        await relayWorker.connect(request.data.event);
         await relayWorker.info();
         // debugger;
         // relayWorker.subscribeAll(request.data.subscriptions);
@@ -78,6 +78,11 @@ addEventListener('message', async (ev: MessageEvent) => {
     case 'publish':
       await relayWorker.publish(request.data);
       break;
+    // case 'connect-and-publish':
+    //   await relayWorker.publish(request.data);
+    //   await relayWorker.disconnect();
+    //   postMessage({ type: 'terminated', url: relayWorker.url } as RelayResponse);
+    //   break;
     case 'enque':
       await relayWorker.enque(request.data);
       break;
@@ -228,24 +233,32 @@ export class RelayWorker {
 
   processEvents() {}
 
-  async connect() {
+  /** Provide event to publish and terminate immediately. */
+  async connect(event?: any) {
     // const relay = relayInit('wss://relay.nostr.info');
     const relay = relayInit(this.url) as NostrRelay;
     // relay.subscriptions = [];
 
     this.relay = relay;
 
-    relay.on('connect', () => {
+    relay.on('connect', async () => {
       console.log(`${this.url}: Connected.`);
       postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
 
-      // Make sure we set the relay as well before processing.
-      // this.relay = relay;
+      // If there was an event provided, publish it and then disconnect.
+      if (event) {
+        await this.publish(event);
+        await this.disconnect();
+        postMessage({ type: 'terminated', url: relayWorker.url } as RelayResponse);
+      } else {
+        // Make sure we set the relay as well before processing.
+        // this.relay = relay;
 
-      // Upon connection, make sure we process anything that is in the queue immediately:
-      this.process();
-      // onConnected(relay);
-      //this.onConnected(relay);
+        // Upon connection, make sure we process anything that is in the queue immediately:
+        this.process();
+        // onConnected(relay);
+        //this.onConnected(relay);
+      }
     });
 
     relay.on('disconnect', () => {

@@ -13,8 +13,12 @@ export class RelayType {
     return this.worker;
   }
 
-  connect(subscriptions?: NostrRelaySubscription[]) {
-    this.action('connect', { url: this.url, subscriptions });
+  // connectAndPublish(event: any) {
+  //   this.action('connect', { url: this.url, event: event });
+  // }
+
+  connect(subscriptions?: NostrRelaySubscription[], event?: any) {
+    this.action('connect', { url: this.url, subscriptions, event: event });
   }
 
   disconnect() {

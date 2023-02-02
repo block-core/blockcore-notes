@@ -157,9 +157,9 @@ export class RelayService {
     let relay = this.items2.find((r) => r.url == url);
     let type = 1;
 
-    if (read && !write) {
+    if (write && !read) {
       type = 2;
-    } else if (!read && !write) {
+    } else if (!write && !read) {
       type = 0;
     }
 
@@ -372,7 +372,8 @@ export class RelayService {
     console.warn('ERROR IN WEB WORKER FOR RELAY22!', ev.error);
   }
 
-  createRelayWorker(url: string) {
+  /** Provide the event for a one-shot publish and disconnect. */
+  createRelayWorker(url: string, event?: any) {
     if (!url) {
       console.warn('SUPPLIED EMPTY URL TO CREATE RELAY WORKER!');
       return;
@@ -382,7 +383,7 @@ export class RelayService {
 
     // Avoid adding duplicate workers, but make sure we initiate a connect action.
     if (index > -1) {
-      this.workers[index].connect();
+      this.workers[index].connect(undefined, event);
 
       // TODO: Make sure we also re-create subscriptions.
       return;
@@ -401,7 +402,7 @@ export class RelayService {
 
     this.workers.push(relayType);
 
-    relayType.connect(this.subs2);
+    relayType.connect(this.subs2, event);
 
     // if (typeof Worker !== 'undefined') {
     //   // Create a new
@@ -708,13 +709,21 @@ export class RelayService {
       const worker = this.workers[index];
       worker.action(action, data);
     }
+
+    // Spin up all the write-only relays temporarily when kind is contacts or metadata.
+    if (action === 'publish' && (data.kind == Kind.Contacts || data.kind == Kind.Metadata)) {
+      // Get all relays that are write-only
+      const filteredRelays = this.items2.filter((r) => r.type == 2);
+
+      for (let index = 0; index < filteredRelays.length; index++) {
+        const relay = filteredRelays[index];
+        this.createRelayWorker(relay.url, data);
+      }
+    }
   }
 
   publish(data: any) {
-    for (let index = 0; index < this.workers.length; index++) {
-      const worker = this.workers[index];
-      worker.action('publish', data);
-    }
+    this.action('publish', data);
   }
 
   unsubscribe(id: string) {
