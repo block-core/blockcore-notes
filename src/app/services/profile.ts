@@ -45,8 +45,6 @@ export class ProfileService {
 
   followingKeys: string[] = [];
 
-
-
   /** Public key of blocked profiles. */
   blocked: string[] = [];
 
@@ -442,13 +440,27 @@ export class ProfileService {
     profile.modified = now;
     profile.retrieved = now;
 
+    console.log('START PUT PROFILE');
     // Put into cache and database.
     await this.putProfile(profile);
+    console.log('END PUT PROFILE');
 
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {
       this.userProfileUpdated(profile);
     }
+
+    if (profile && profile.followed) {
+      const existingIndex = this.following.findIndex((p) => p.pubkey == profile!.pubkey);
+
+      if (existingIndex === -1) {
+        this.following.push(profile);
+      } else {
+        this.following[existingIndex] = profile;
+      }
+    }
+
+    this.#updated();
   }
 
   async #updateProfileValues(pubkey: string, predicate: (value: NostrProfileDocument, key?: string) => NostrProfileDocument): Promise<void> {

@@ -205,9 +205,7 @@ export class RelayService {
   currentDisplayedContacts: any;
 
   async processEvent(response: RelayResponse) {
-    console.log('FROM:', response.url);
     const originalEvent = response.data;
-
     const event = this.eventService.processEvent(originalEvent);
 
     if (!event) {
@@ -221,7 +219,9 @@ export class RelayService {
       const nostrProfileDocument = this.utilities.mapProfileEvent(event);
 
       if (nostrProfileDocument) {
+        console.log('START UPDATE PROFILE');
         await this.profileService.updateProfile(nostrProfileDocument.pubkey, nostrProfileDocument);
+        console.log('END UPDATE PROFILE');
       }
     } else if (event.kind == Kind.Contacts) {
       const pubkey = this.appState.getPublicKey();

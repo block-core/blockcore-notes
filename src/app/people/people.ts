@@ -173,9 +173,10 @@ export class PeopleComponent {
 
     // TODO: Until we changed to using observable (DataService) for all data,
     // we have this basic observable whenever the profiles changes.
-    // this.sub = this.profileService.profilesChanged$.subscribe(async () => {
-    //   await this.load();
-    // });
+    this.sub = this.profileService.profilesChanged$.subscribe(async () => {
+      console.log('profileService.profilesChanged$!!');
+      await this.load();
+    });
   }
 
   // async search() {

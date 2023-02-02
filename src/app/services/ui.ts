@@ -35,9 +35,14 @@ export class UIService {
   }
 
   setProfile(profile: NostrProfileDocument | undefined) {
-    const before = this.#profile
+    const before = this.#profile;
     this.#profile = profile;
-    if (JSON.stringify(before) !== JSON.stringify(profile)) this.#profileChanged.next(this.#profile);
+
+    // Only trigger this event if the pubkey is different. The profile
+    // itself might be updated with following list so we can't validate against the object themselves.
+    if (before?.pubkey != profile?.pubkey) {
+      this.#profileChanged.next(this.#profile);
+    }
   }
 
   #profile: NostrProfileDocument | undefined = undefined;

@@ -205,11 +205,7 @@ export class RelayWorker {
 
     console.log(`${this.url}: processProfiles: Job: `, job);
 
-    this.downloadProfile(job!.identifier, () => {
-      console.log(`${this.url}: downloadProfile completed! .. continue with next!`);
-      this.queue.queues.profile.active = false;
-      this.processProfiles();
-    });
+    this.downloadProfile(job!.identifier);
   }
 
   processContacts() {
@@ -344,7 +340,7 @@ export class RelayWorker {
     this.contactsSub = undefined;
   }
 
-  downloadProfile(pubkey: string, finalized: any, timeoutSeconds: number = 3000) {
+  downloadProfile(pubkey: string, timeoutSeconds: number = 12) {
     console.log('DOWNLOAD PROFILE....');
     let finalizedCalled = false;
 
@@ -355,6 +351,7 @@ export class RelayWorker {
 
     // If the profilesub already exists, unsub and remove.
     if (this.profileSub) {
+      console.log('Profile sub already existed, unsub before continue.');
       this.clearProfileSub();
     }
 
@@ -375,15 +372,26 @@ export class RelayWorker {
     // relay.subscriptions.push(sub);
 
     sub.on('event', (originalEvent: any) => {
+      console.log('POST MESSAGE BACK TO MAIN');
       postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+      console.log('FINISHED POST MESSAGE BACK TO MAIN');
+      // console.log('CLEAR PROFILE SUBSCRIPTION....');
 
-      this.clearProfileSub();
-      clearTimeout(this.profileTimer);
+      // this.clearProfileSub();
+      // clearTimeout(this.profileTimer);
+      // console.log('FINISHED CLEAR PROFILE SUBSCRIPTION....');
 
-      if (!finalizedCalled) {
-        finalizedCalled = true;
-        finalized();
-      }
+      // this.queue.queues.profile.active = false;
+      // this.processProfiles();
+
+      // if (!finalizedCalled) {
+      //   finalizedCalled = true;
+      //   console.log('Calling finalized!!!');
+      //   finalized();
+      //   console.log('Called finalized!!!');
+      // }
+
+      // console.log('Profile event received, finalized called.');
 
       // const event = this.eventService.processEvent(originalEvent);
       // if (!event) {
@@ -392,18 +400,26 @@ export class RelayWorker {
       // observer.next(event);
     });
 
-    // sub.on('eose', () => {
-    //   clearTimeout(this.profileTimer);
-    //   this.profileSub?.unsub();
-    //   this.profileSub = undefined;
-    // });
+    sub.on('eose', () => {
+      console.log('eose on profile, profile likely not found.');
+      clearTimeout(this.profileTimer);
+      this.clearProfileSub();
+      this.queue.queues.profile.active = false;
+      this.processProfiles();
+    });
+
+    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
     this.profileTimer = setTimeout(() => {
+      console.warn('Profile download timeout reached.');
       this.clearProfileSub();
-      if (!finalizedCalled) {
-        finalizedCalled = true;
-        finalized();
-      }
+      this.queue.queues.profile.active = false;
+      this.processProfiles();
+
+      // if (!finalizedCalled) {
+      //   finalizedCalled = true;
+      //   finalized();
+      // }
     }, timeoutSeconds * 1000);
   }
 
