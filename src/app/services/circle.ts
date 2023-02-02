@@ -17,6 +17,7 @@ export class CircleService {
     { id: 3, name: 'Film', color: '#26c6da', style: 4, public: true },
     { id: 4, name: 'Music', color: '#ba9eea', style: 5, public: true },
     { id: 5, name: 'Podcast', color: '#ff8a65', style: 6, public: true },
+    { id: 6, name: 'Private', color: '#607d8b', style: 1, public: false },
   ];
 
   circles: Circle[] = [];
