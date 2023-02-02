@@ -171,15 +171,17 @@ export class HomeComponent {
   async clearDatabase() {
     console.log('Deleting storage...');
 
+    setTimeout(() => {
+      console.log('Reloading!');
+      location.reload();
+    }, 1000);
+
     try {
       // this.db.close();
       await this.db.storage.delete();
     } catch (err) {
       console.error(err);
     }
-
-    console.log('Reloading!');
-    location.reload();
   }
 
   import(pubkey: string) {

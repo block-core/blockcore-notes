@@ -153,21 +153,36 @@ export class RelayService {
     }
   }
 
-  async addRelay2(url: string) {
+  async addRelay2(url: string, read: boolean, write: boolean) {
     let relay = this.items2.find((r) => r.url == url);
+    let type = 1;
+
+    if (read && !write) {
+      type = 2;
+    } else if (!read && !write) {
+      type = 0;
+    }
 
     if (!relay) {
       relay = {
         public: true,
         url: url,
-        type: 1,
+        type: type,
       };
 
       this.db.storage.putRelay(relay);
       this.items2.push(relay);
+    } else {
+      if (relay.type !== type) {
+        this.db.storage.putRelay(relay);
+      }
     }
 
-    this.createRelayWorker(relay.url);
+    if (type === 1) {
+      this.createRelayWorker(relay.url);
+    } else {
+      this.terminate(relay.url);
+    }
   }
 
   async deleteRelays() {
@@ -489,13 +504,13 @@ export class RelayService {
     for (var i = 0; i < entries.length; i++) {
       const key = entries[i];
       const val = preparedRelays[key];
-      await this.addRelay2(key);
+      await this.addRelay2(key, val.read, val.write);
     }
   }
 
   /** read/write is currently ignored, should be changed to type. */
   async appendRelay(url: string, read: boolean, write: boolean) {
-    await this.addRelay2(url);
+    await this.addRelay2(url, read, write);
   }
 
   // relaysUpdated() {
