@@ -26,7 +26,7 @@ export class ImportSheet {
       // to the deleteRelays above, or implement some logic to wait for all relays to
       // fully terminate before we continue. Until then, let's sleep for 3 seconds as a temporary
       // fix for this issue.
-      await sleep(3000);
+      await sleep(1500);
 
       await this.relayService.appendRelays(this.data.relays);
     }

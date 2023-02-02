@@ -11,6 +11,7 @@ import { Utilities } from './utilities';
 import { StorageService } from './storage';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
+import { CircleService } from './circle';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class DataService {
 
   constructor(
     private ui: UIService,
+    private circleService: CircleService,
     private storage: StorageService,
     private queueService: QueueService,
     private profileService: ProfileService,
@@ -55,6 +57,67 @@ export class DataService {
     //     this.processQueues();
     //   }, 250);
     // });
+  }
+
+  /** Get's all following and all public relays. */
+  async publishContactsAndRelays() {
+    const nonPublicCircles = this.circleService.circles.filter((c) => !c.public).map((c) => c.id);
+    const publicFollowing = this.profileService.following.filter((p) => nonPublicCircles.indexOf(p.circle) == -1).map((p) => p.pubkey);
+    const mappedContacts = publicFollowing.map((c) => {
+      return ['p', c];
+    });
+
+    let mappedRelays: any = {};
+
+    this.relayService.items2
+      .filter((r) => r.public)
+      .map((r) => {
+        mappedRelays[r.url] = {
+          read: r.type === 1,
+          write: r.type === 1 || r.type === 2,
+        };
+      });
+
+    console.table(mappedRelays);
+
+    let originalEvent: Event = {
+      kind: Kind.Contacts,
+      created_at: Math.floor(Date.now() / 1000),
+      content: JSON.stringify(mappedRelays),
+      pubkey: this.appState.getPublicKey(),
+      tags: mappedContacts,
+    };
+
+    originalEvent.id = getEventHash(originalEvent);
+
+    const gt = globalThis as any;
+
+    // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
+    const signedEvent = await gt.nostr.signEvent(originalEvent);
+    originalEvent = signedEvent;
+
+    // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
+    // We must do this before we run nostr-tools validate and signature validation.
+    const event = this.eventService.processEvent(originalEvent as NostrEventDocument);
+
+    let ok = validateEvent(originalEvent);
+
+    if (!ok) {
+      throw new Error('The event is not valid. Cannot publish.');
+    }
+
+    let veryOk = await verifySignature(originalEvent as any); // Required .id and .sig, which we know has been added at this stage.
+
+    if (!veryOk) {
+      throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
+    }
+
+    if (!event) {
+      return;
+    }
+
+    console.log('PUBLISH EVENT:', originalEvent);
+    this.relayService.publish(originalEvent);
   }
 
   async initialDataLoad() {
@@ -168,16 +231,13 @@ export class DataService {
     //   console.warn('Cannot process queues, no connection to relays.');
     //   return;
     // }
-
     // // Processing queues basically just copies the jobs from data service to the individual web workers.
     // if (this.queueService.queues.profile.jobs.length > 0) {
     //   this.processProfileQueue();
     // }
-
     // if (this.queueService.queues.contacts.jobs.length > 0) {
     //   this.processContactsQueue();
     // }
-
     // if (this.queueService.queues.event.jobs.length > 0) {
     //   this.processEventQueue();
     // }
@@ -188,7 +248,6 @@ export class DataService {
     //   console.log('Events are already active... Skipping.');
     //   return;
     // }
-
     // const jobs = this.queueService.queues.event.jobs.splice(0, 10);
     // const filters = jobs.map((j) => {
     //   return {
@@ -197,18 +256,15 @@ export class DataService {
     //     // limit: j.limit,
     //   } as Filter;
     // });
-
     // return this.downloadNewestEventsByQuery(filters).subscribe(async (event) => {
     //   if (!event) {
     //     return;
     //   }
-
     //   // If we are following this user, we'll persist this event.
     //   const following = this.profileService.isFollowing(event.pubkey);
     //   if (following) {
     //     await this.storage.storage.putEvents(event);
     //   }
-
     //   // for (let i = 0; i < jobs.length; i++) {
     //   //   if (jobs[i].callback) {
     //   //     jobs[i].callback(event);
@@ -224,25 +280,19 @@ export class DataService {
     //   console.log('processProfileQueue: skip');
     //   return;
     // }
-
     // // Grab a batch of jobs.
     // const jobs = this.queueService.queues.profile.jobs.splice(0, 50);
     // const pubkeys = jobs.map((j) => j.identifier);
-
     // console.log('processProfileQueue: pubkeys', pubkeys);
-
     // // Download the profiles that was queued up.
     // this.downloadNewestProfiles(pubkeys, 10000, pubkeys.length).subscribe(async (event) => {
     //   // const e = await event;
     //   console.log('processProfileQueue: event', event);
-
     //   if (!event) {
     //     return;
     //   }
-
     //   // Make sure we run update and not put whenever we download the latest profile.
     //   await this.profileService.updateProfile(event.pubkey, event);
-
     //   // for (let i = 0; i < jobs.length; i++) {
     //   //   if (jobs[i].callback) {
     //   //     jobs[i].callback(event);
@@ -258,17 +308,13 @@ export class DataService {
     //   console.log('processContactsQueue: skip');
     //   return;
     // }
-
     // this.queueService.queues.contacts.active = true;
-
     // // Grab a batch of jobs.
     // const jobs = this.queueService.queues.contacts.jobs.splice(0, 50);
     // const pubkeys = jobs.map((j) => j.identifier);
-
     // // Use a dynamic timeout depending on the number of pubkeys requested.
     // // const timeout = pubkeys.length * 1000;
     // const timeout = pubkeys.length < 10 ? 10000 : 20000;
-
     // // Download the profiles that was queued up.
     // this.downloadNewestContactsEvents(pubkeys, timeout)
     //   .pipe(
@@ -280,14 +326,11 @@ export class DataService {
     //     if (!event) {
     //       return;
     //     }
-
     //     // Whenever we download the contacts document, we'll refresh the RELAYS and FOLLOWING
     //     // on the profile in question.
     //     const following = event.tags.map((t) => t[1]);
-
     //     // Make sure we run update and not put whenever we download the latest profile.
     //     this.profileService.followingAndRelays(event.pubkey, following, event.content);
-
     //     // for (let i = 0; i < jobs.length; i++) {
     //     //   if (jobs[i].callback) {
     //     //     jobs[i].callback(event);

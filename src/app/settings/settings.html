@@ -9,8 +9,6 @@
 
         <app-relays [relays]="relayService.items2"></app-relays>
 
-        <p>NOTE: "Write metadata" relay option is currently not functional.</p>
-
         <!-- <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel *ngFor="let relay of relayService.relays">
             <mat-expansion-panel-header>
@@ -58,11 +56,17 @@
         </mat-accordion> -->
 
         <div class="settings-action-buttons">
-          <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
-          <br />
+          <!-- <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
+          <br /> -->
           <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
-          <button mat-flat-button color="primary" [disabled]="true" (click)="getRelays()">Publish relay (and following) list</button><br /><br />
+          <br>
+          <button mat-flat-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button><br /><br />
           <button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
+
+          <br>
+          <p>NOTE: "Write metadata" relay option is currently not functional.</p>
+
+
         </div>
       </div>
     </ng-template>

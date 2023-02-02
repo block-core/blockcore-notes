@@ -54,7 +54,7 @@ export class Storage {
       upgrade(db, oldVersion, newVersion, transaction, event) {
         db.createObjectStore('relays', { keyPath: 'url' });
         db.createObjectStore('notes', { keyPath: 'id' });
-        db.createObjectStore('circles', { keyPath: 'id' });
+        db.createObjectStore('circles', { keyPath: 'id', autoIncrement: true });
         db.createObjectStore('state', { keyPath: 'id' });
         db.createObjectStore('contacts', { keyPath: 'pubkey' });
         db.createObjectStore('labels', { keyPath: 'id' });

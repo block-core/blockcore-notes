@@ -97,6 +97,7 @@ export class EventActionsComponent {
       about: this.profile.about,
       nip05: this.profile.nip05,
       picture: this.profile.picture,
+      banner: this.profile.banner,
       website: this.profile.website,
       lud06: this.profile.lud06,
       display_name: this.profile.display_name,

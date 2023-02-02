@@ -11,6 +11,8 @@ import { RelayService } from '../services/relay';
 import { ThemeService } from '../services/theme';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
 import { OptionsService } from '../services/options';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataService } from '../services/data';
 
 @Component({
   selector: 'app-settings',
@@ -32,7 +34,9 @@ export class SettingsComponent {
     public appState: ApplicationState,
     private profileService: ProfileService,
     public theme: ThemeService,
-    private db: StorageService
+    private db: StorageService,
+    private snackBar: MatSnackBar,
+    public dataService: DataService,
   ) {}
 
   toggle() {
@@ -93,6 +97,23 @@ export class SettingsComponent {
     // Initiate connection to the updated relay list.
     await this.relayService.connect();
   }
+
+  // private getPublicPublicKeys() {
+  //   console.log(this.profileService.following);
+  //   const items: string[] = [];
+
+  //   for (let i = 0; i < this.circleService.circles.length; i++) {
+  //     const circle = this.circleService.circles[i];
+
+  //     if (circle.public) {
+  //       const profiles = this.getFollowingInCircle(circle.id);
+  //       const pubkeys = profiles.map((p) => p.pubkey);
+  //       items.push(...pubkeys);
+  //     }
+  //   }
+
+  //   return items;
+  // }
 
   async getRelays() {
     const gt = globalThis as any;

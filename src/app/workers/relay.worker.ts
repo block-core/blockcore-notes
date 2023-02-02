@@ -271,7 +271,7 @@ export class RelayWorker {
       await relay.connect();
       // }
     } catch (err) {
-      postMessage({ relay: this, error: 'Unable to connect.' });
+      postMessage({ relay: this.url, error: 'Unable to connect.' });
       console.log(err);
       return;
       // relay.metadata.error = 'Unable to connect.';

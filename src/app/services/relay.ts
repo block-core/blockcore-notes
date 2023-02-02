@@ -187,6 +187,8 @@ export class RelayService {
     });
   }
 
+  currentDisplayedContacts: any;
+
   async processEvent(response: RelayResponse) {
     console.log('FROM:', response.url);
     const originalEvent = response.data;
@@ -229,8 +231,10 @@ export class RelayService {
         const following = await this.db.storage.getProfilesByStatusCount(ProfileStatus.Follow);
 
         if (following == 0) {
-          // Ask if user want to import!
-          console.log('Zero following... ask to import!');
+          // If we have already imported a newer, ignore the rest of the code.
+          if (this.currentDisplayedContacts && this.currentDisplayedContacts.created_at >= existingContacts.created_at) {
+            return;
+          }
 
           const pubkeys = existingContacts.tags.map((t: any[]) => t[1]);
           const dialogData: any = { pubkeys: pubkeys, pubkey: pubkey, relays: [], relaysCount: 0 };
@@ -242,6 +246,7 @@ export class RelayService {
 
           // If there are no following in the file, skip.
           if (dialogData.pubkeys.length > 0 || dialogData.relaysCount > 0) {
+            this.currentDisplayedContacts = existingContacts;
             this.openImportSheet(dialogData);
           }
         }
@@ -687,6 +692,13 @@ export class RelayService {
     for (let index = 0; index < this.workers.length; index++) {
       const worker = this.workers[index];
       worker.action(action, data);
+    }
+  }
+
+  publish(data: any) {
+    for (let index = 0; index < this.workers.length; index++) {
+      const worker = this.workers[index];
+      worker.action('publish', data);
     }
   }
 
