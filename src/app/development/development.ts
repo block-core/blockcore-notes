@@ -88,8 +88,4 @@ export class DevelopmentComponent {
   ngOnDestroy() {
     this.worker?.terminate();
   }
-
-  async deleteRelays() {
-    return this.relayService.deleteRelays();
-  }
 }

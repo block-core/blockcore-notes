@@ -43,6 +43,10 @@
 }
 
 .event-content {
+  overflow-wrap: break-word;
+  inline-size: min-content;
+  overflow: hidden;
+  word-break: break-all;
 }
 
 .event-content-big {

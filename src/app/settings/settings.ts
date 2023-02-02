@@ -36,7 +36,7 @@ export class SettingsComponent {
     public theme: ThemeService,
     private db: StorageService,
     private snackBar: MatSnackBar,
-    public dataService: DataService,
+    public dataService: DataService
   ) {}
 
   toggle() {
@@ -59,7 +59,7 @@ export class SettingsComponent {
   // }
 
   async deleteRelays() {
-    await this.relayService.deleteRelays();
+    await this.relayService.deleteRelays([]);
   }
 
   async clearProfileCache() {

@@ -17,16 +17,9 @@ export class ImportSheet {
     event.preventDefault();
 
     if (this.data.relaysCount > 0) {
-      // Reset all existing default connections.
-      await this.relayService.deleteRelays();
+      const relayUrls = this.relayService.getRelayUrls(this.data.relays);
 
-      // Delete of relays can take some time, and if we append
-      // right away, we might get terminate/disconnect event on the same relays
-      // being re-added. We can either solve this by providing "do not delete" list
-      // to the deleteRelays above, or implement some logic to wait for all relays to
-      // fully terminate before we continue. Until then, let's sleep for 3 seconds as a temporary
-      // fix for this issue.
-      await sleep(1500);
+      await this.relayService.deleteRelays(relayUrls);
 
       await this.relayService.appendRelays(this.data.relays);
     }

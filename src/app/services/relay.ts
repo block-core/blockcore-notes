@@ -186,6 +186,7 @@ export class RelayService {
       this.items2.push(relay);
     } else {
       if (relay.type !== type) {
+        relay.type = type;
         this.db.storage.putRelay(relay);
       }
     }
@@ -197,15 +198,29 @@ export class RelayService {
     }
   }
 
-  async deleteRelays() {
-    await this.db.storage.deleteRelays();
+  async deleteRelays(keepRelays: string[]) {
+    // Relays to remove
+    const relaysToRemove = this.items2.filter((r) => keepRelays.indexOf(r.url) == -1);
 
-    for (let i = 0; i < this.workers.length; i++) {
-      const worker = this.workers[i];
-      worker.terminate();
+    for (let index = 0; index < relaysToRemove.length; index++) {
+      const relay = relaysToRemove[index];
+      await this.db.storage.deleteRelay(relay.url);
+
+      const worker = this.workers.find((w) => w.url == relay.url);
+      worker?.terminate();
     }
 
-    this.items2 = [];
+    // Relays to keep
+    this.items2 = this.items2.filter((r) => keepRelays.indexOf(r.url) > -1);
+
+    // await this.db.storage.deleteRelays();
+
+    // for (let i = 0; i < this.workers.length; i++) {
+    //   const worker = this.workers[i];
+    //   worker.terminate();
+    // }
+
+    // this.items2 = [];
   }
 
   openImportSheet(data: any): void {
@@ -502,6 +517,21 @@ export class RelayService {
     this.#threadedEventsChanged.next(this.events);
     this.#rootEventsChanged.next(this.events);
     this.#replyEventsChanged.next(this.events);
+  }
+
+  getRelayUrls(relays: any) {
+    let preparedRelays = relays;
+
+    if (Array.isArray(preparedRelays)) {
+      preparedRelays = {};
+
+      for (let i = 0; i < relays.length; i++) {
+        preparedRelays[relays[i]] = {};
+      }
+    }
+
+    const entries = Object.keys(preparedRelays);
+    return entries;
   }
 
   /** Takes relay in the format used for extensions and adds to persistent storage. */
