@@ -23,15 +23,14 @@ export class RelayService {
   /** Default relays that the app has for users without extension. This follows the document structure as extension data. */
   defaultRelays: any = {
     // 'wss://nostr-pub.wellorder.net': { read: true, write: true },
-    'wss://no.str.cr': { read: true, write: true },
-    // 'wss://relay.nostr.info': { read: true, write: true },
-    'wss://nostr.nordlysln.net': { read: true, write: true },
-    'wss://relay.nostr.ch': { read: true, write: true },
+    // 'wss://relay.nostr.ch': { read: true, write: true },
+    // 'wss://relay.damus.io': { read: true, write: true },
+    'wss://relay.plebstr.com': { read: true, write: true },
+    'wss://relay.nostr.info': { read: true, write: true },
     'wss://e.nos.lol': { read: true, write: true },
     'wss://nostr.mom': { read: true, write: true },
     'wss://relay.snort.social': { read: true, write: true },
     'wss://relay.nostr.bg': { read: true, write: true },
-    'wss://relay.damus.io': { read: true, write: true },
     'wss://nostr.fmt.wiz.biz': { read: true, write: true },
   };
 
