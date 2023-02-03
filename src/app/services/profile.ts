@@ -252,8 +252,11 @@ export class ProfileService {
     const index = this.following.findIndex((f) => f.pubkey == profile.pubkey);
 
     if (profile.circle != null) {
-      if (index == -1) {
+      if (profile.status == 1 && index == -1) {
         this.following.push(profile);
+        this.#updated();
+      } else if (profile.status == 2 && index > -1) {
+        this.following.splice(index, 1);
         this.#updated();
       } else {
         this.following[index] = profile;
