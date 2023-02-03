@@ -14,6 +14,10 @@ export interface Options {
   enableSpotify?: boolean;
   hideSideLabels?: boolean;
   primaryRelay?: string;
+  peopleDisplayType: number;
+  peopleDisplayAbout: boolean;
+  peopleDisplayDate: boolean;
+  peopleDisplaySort?: string;
 }
 
 @Injectable({
@@ -24,7 +28,7 @@ export class OptionsService {
     this.load();
   }
 
-  values: Options = { showLines: true };
+  values: Options = { showLines: true, peopleDisplayType: 1, peopleDisplayAbout: true, peopleDisplayDate: true };
 
   load() {
     let options = localStorage.getItem('blockcore:notes:nostr:options');

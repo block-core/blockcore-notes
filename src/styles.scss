@@ -488,6 +488,11 @@ mat-sidenav-content mat-toolbar {
 //   }
 // }
 
+.options-field {
+  margin-right: 0.4em;
+  margin-bottom: 0.4em;
+}
+
 .event-header {
   display: grid;
   grid-template-columns: 48px 1fr;
@@ -671,7 +676,8 @@ small {
   margin-top: 0.6em;
 }
 
-.input-full-width, .full-width {
+.input-full-width,
+.full-width {
   width: 100% !important;
 }
 

@@ -16,6 +16,7 @@ import { NavigationService } from '../services/navigation';
 import { ImportFollowDialog, ImportFollowDialogData } from './import-follow-dialog/import-follow-dialog';
 import { DataService } from '../services/data';
 import { CircleService } from '../services/circle';
+import { OptionsService } from '../services/options';
 
 @Component({
   selector: 'app-people',
@@ -58,8 +59,8 @@ export class PeopleComponent {
   // );
 
   selected = 'name-asc';
-
   searchTerm: any;
+
   constructor(
     private circleService: CircleService,
     public navigation: NavigationService,
@@ -71,7 +72,8 @@ export class PeopleComponent {
     public dataService: DataService,
     public utilities: Utilities,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public optionsService: OptionsService
   ) {}
 
   // async clearBlocked() {
@@ -81,7 +83,8 @@ export class PeopleComponent {
   // }
 
   updateSorting() {
-    const sorting = this.selected;
+    this.optionsService.save();
+    const sorting = this.optionsService.values.peopleDisplaySort;
 
     if (sorting === 'name-asc') {
       this.sortedItems = this.items.sort((a, b) => {
@@ -110,20 +113,25 @@ export class PeopleComponent {
     }
   }
 
-  optionsUpdated($event: any, type: any) {
-    if (type == 1) {
-      this.showCached = false;
-      this.showMuted = false;
-    } else if (type == 2) {
-      this.showCached = false;
-      this.showBlocked = false;
-    } else if (type == 3) {
-      this.showBlocked = false;
-      this.showMuted = false;
-    }
-
+  showChanged() {
     this.load();
+    this.optionsService.save();
   }
+
+  // optionsUpdated($event: any, type: any) {
+  //   if (type == 1) {
+  //     this.showCached = false;
+  //     this.showMuted = false;
+  //   } else if (type == 2) {
+  //     this.showCached = false;
+  //     this.showBlocked = false;
+  //   } else if (type == 3) {
+  //     this.showBlocked = false;
+  //     this.showMuted = false;
+  //   }
+
+  //   this.load();
+  // }
 
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);
@@ -132,20 +140,13 @@ export class PeopleComponent {
   async load() {
     this.loading = true;
 
-    if (this.showBlocked) {
-      this.items = await this.profileService.getProfilesByStatus(ProfileStatus.Block);
-    } else if (this.showMuted) {
-      this.items = await this.profileService.getProfilesByStatus(ProfileStatus.Mute);
-    } else if (this.showCached) {
-      this.items = await this.profileService.getProfilesByStatus(ProfileStatus.Public);
-    } else {
-      console.log('replacing items...');
+    if (this.optionsService.values.peopleDisplayType == 1) {
       this.items = this.profileService.following;
-      console.table(this.items);
+    } else {
+      this.items = await this.profileService.getProfilesByStatus(this.optionsService.values.peopleDisplayType);
     }
 
     this.updateSorting();
-
     this.loading = false;
   }
 
