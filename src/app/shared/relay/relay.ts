@@ -64,6 +64,7 @@ export class RelayComponent {
       this.relayService.terminate(this.relay.url);
     } else {
       this.relayService.createRelayWorker(this.relay.url);
+      
     }
   }
 

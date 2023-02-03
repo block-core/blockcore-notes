@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --hmr",
+    "start": "ng serve",
+    "hot": "ng serve --hmr",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -37,7 +38,7 @@
     "moment": "^2.29.4",
     "ngx-colors": "^3.1.4",
     "ngx-loading-buttons": "^15.0.0",
-    "nostr-tools": "1.2.0",
+    "nostr-tools": "1.2.1",
     "qrcode": "^1.5.1",
     "qs": "^6.11.0",
     "rxjs": "~7.8.0",

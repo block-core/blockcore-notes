@@ -77,7 +77,7 @@ export class RelayService {
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
       if (visible) {
-        this.connect();
+        // this.connect();
       }
     });
 
@@ -144,6 +144,18 @@ export class RelayService {
     }
   }
 
+  setRelayCounter(url: string) {
+    const item = this.items2.find((r) => r.url == url);
+
+    if (item) {
+      if (item.eventcount == null) {
+        item.eventcount = 0;
+      }
+
+      item.eventcount++;
+    }
+  }
+
   async setRelayNIP11(url: string, data: any) {
     console.log('setRelayNIP11:', data);
 
@@ -202,11 +214,17 @@ export class RelayService {
     // Relays to remove
     const relaysToRemove = this.items2.filter((r) => keepRelays.indexOf(r.url) == -1);
 
+    console.log('relaysToRemove:', relaysToRemove);
+
     for (let index = 0; index < relaysToRemove.length; index++) {
       const relay = relaysToRemove[index];
       await this.db.storage.deleteRelay(relay.url);
 
+      console.log(`${relay.url}: Deleted from database.`);
+
       const worker = this.workers.find((w) => w.url == relay.url);
+      console.log(`${relay.url}: Terminating this Web Worker!`, worker?.url);
+
       worker?.terminate();
     }
 
@@ -366,13 +384,14 @@ export class RelayService {
         break;
       case 'terminated':
         // When being terminated, we'll remove this worker from the array.
-        console.log('WE HAVE TERMINATED:', url);
+        console.log(`${url}: WE HAVE TERMINATED`);
         const index = this.workers.findIndex((v) => v.url == url);
 
         // Set the status and then terminate this instance.
         const worker = this.workers[index];
         worker.status = 'terminated';
 
+        console.log(`${url}: Calling actually TERMINATE on Web Worker!`);
         // Perform the actual termination of the Web Worker.
         worker.worker?.terminate();
 
@@ -386,6 +405,7 @@ export class RelayService {
         break;
       case 'event':
         console.log('EVENT FROM:', url);
+        this.setRelayCounter(url);
         await this.processEvent(response);
         break;
       case 'nip11':
@@ -414,44 +434,32 @@ export class RelayService {
 
     // Avoid adding duplicate workers, but make sure we initiate a connect action.
     if (index > -1) {
+      console.log(`${url}: This relay already exists, calling connect on it.`);
       this.workers[index].connect(undefined, event);
-
-      // TODO: Make sure we also re-create subscriptions.
       return;
     }
 
     const relayType = new RelayType(url);
+    console.log(`${url}: Creating this web worker.`);
+
+    // Append the worker immediately to the array.
+    this.workers.push(relayType);
+
     const worker = relayType.start();
 
     worker.onmessage = async (ev) => {
+      console.log(`${relayType.url}: onmessage`, ev.data);
       await this.handleRelayMessage(ev, relayType.url);
     };
 
     worker.onerror = async (ev) => {
+      console.log(`${relayType.url}: onerror`, ev.error);
       await this.handleRelayError(ev, relayType.url);
     };
 
-    this.workers.push(relayType);
-
     relayType.connect(this.subs2, event);
 
-    // if (typeof Worker !== 'undefined') {
-    //   // Create a new
-    //   const worker = new Worker(new URL('../workers/relay.worker', import.meta.url));
-
-    //   worker.onmessage = ({ data }) => {
-    //     console.log(`page got message: ${JSON.stringify(data)}`);
-    //   };
-
-    //   // worker.postMessage({ url: url, message: 'hello world' });
-    //   return worker;
-    // } else {
-    //   // Web Workers are not supported in this environment.
-    //   // You should add a fallback so that your program still executes correctly.
-    //   alert('Your browser does not support Web Workers and the app cannot continue to work.');
-    // }
-
-    // return undefined;
+    console.table(this.workers);
   }
 
   getActiveRelay(url: string) {
@@ -596,45 +604,15 @@ export class RelayService {
     return this.relays.filter((r) => r.status === 1);
   }
 
-  async connect() {
-    const enabledRelays = this.items2.filter((r) => r.type == 1);
+  // async connect() {
+  //   debugger;
+  //   const enabledRelays = this.items2.filter((r) => r.type == 1);
 
-    for (let index = 0; index < enabledRelays.length; index++) {
-      const relay = enabledRelays[index];
-
-      this.createRelayWorker(relay.url);
-    }
-
-    // const items = await this.table.toArray();
-    // let relayCountCountdown = items.filter((i: { enabled: boolean }) => i.enabled !== false).length;
-    // const observables = [];
-    // for (var i = 0; i < items.length; i++) {
-    //   const entry = items[i];
-    //   const existingConnection = this.relays.find((r) => r.url == entry.url);
-    //   // If we are already connected, skip opening connection again.
-    //   if (existingConnection && (existingConnection.status == 1 || existingConnection.metadata.enabled === false)) {
-    //     continue;
-    //   }
-    //   observables.push(this.openConnection(entry));
-    // }
-    // let timer: any;
-    // merge(...observables).subscribe(() => {
-    //   // As we receive an initial connection, let's create a new observable that will trigger the connection status
-    //   // update either when everything is connected or a timeout is reached.
-    //   relayCountCountdown--;
-    //   // If we reach zero, update the status immediately.
-    //   if (relayCountCountdown == 0) {
-    //     clearTimeout(timer);
-    //     this.appState.updateConnectionStatus(true);
-    //   }
-    //   if (!timer) {
-    //     // Wait a maximum of 3 seconds for all connections to finish.
-    //     timer = setTimeout(() => {
-    //       this.appState.updateConnectionStatus(true);
-    //     }, 3000);
-    //   }
-    // });
-  }
+  //   for (let index = 0; index < enabledRelays.length; index++) {
+  //     const relay = enabledRelays[index];
+  //     this.createRelayWorker(relay.url);
+  //   }
+  // }
 
   // async reset() {
   //   console.log('RESET RUNNING!');

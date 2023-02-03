@@ -93,9 +93,6 @@ export class SettingsComponent {
   async getDefaultRelays() {
     // Append the default relays.
     await this.relayService.appendRelays(this.relayService.defaultRelays);
-
-    // Initiate connection to the updated relay list.
-    await this.relayService.connect();
   }
 
   // private getPublicPublicKeys() {
@@ -121,9 +118,6 @@ export class SettingsComponent {
 
     // Append the default relays.
     await this.relayService.appendRelays(relays);
-
-    // Initiate connection to the updated relay list.
-    await this.relayService.connect();
   }
 
   ngOnInit() {
@@ -163,8 +157,6 @@ export class SettingsComponent {
       }
 
       await this.relayService.appendRelay(result.url, result.read, result.write);
-
-      await this.relayService.connect();
     });
   }
 }

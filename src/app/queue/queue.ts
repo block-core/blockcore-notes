@@ -15,10 +15,9 @@ export class QueueComponent {
 
   ngOnInit() {
     this.appState.updateTitle('Media Queue');
-
   }
 
   remove(item: MediaItem) {
-    this.media.dequeue (item);
+    this.media.dequeue(item);
   }
 }

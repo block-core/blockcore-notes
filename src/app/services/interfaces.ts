@@ -93,6 +93,7 @@ export interface NostrRelayDocument {
   modified?: number;
   type: number;
   timeouts?: number;
+  eventcount?: number;
 }
 
 /** OBSOLETE */
