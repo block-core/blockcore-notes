@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { boolean } from 'joi';
 
 export interface Options {
   hideSpam?: boolean;

@@ -155,12 +155,10 @@ export class RelayWorker {
 
     console.log(`${this.url}: Job enqued...processing...`);
 
-    this.process();
-
     // We always delay the processing in case we receive more.
-    // setTimeout(() => {
-    //   this.processQueues();
-    // }, 100);
+    setTimeout(() => {
+      this.process();
+    }, 150);
   }
 
   process() {
@@ -201,11 +199,23 @@ export class RelayWorker {
     }
 
     this.queue.queues.profile.active = true;
-    const job = this.queue.queues.profile.jobs.shift();
 
-    console.log(`${this.url}: processProfiles: Job: `, job);
+    console.log(this.relay);
 
-    this.downloadProfile(job!.identifier);
+    debugger;
+
+    const profilesToDownload = this.queue.queues.profile.jobs.splice(0, 500);
+
+    console.log('profilesToDownload:', profilesToDownload);
+
+    this.downloadProfile(
+      profilesToDownload.map((j) => j.identifier),
+      profilesToDownload.length * 3
+    );
+
+    // const job = this.queue.queues.profile.jobs.shift();
+    // console.log(`${this.url}: processProfiles: Job: `, job);
+    // this.downloadProfile(job!.identifier);
   }
 
   processContacts() {
@@ -340,11 +350,12 @@ export class RelayWorker {
     this.contactsSub = undefined;
   }
 
-  downloadProfile(pubkey: string, timeoutSeconds: number = 12) {
+  downloadProfile(pubkeys: string[], timeoutSeconds: number = 12) {
     console.log('DOWNLOAD PROFILE....');
     let finalizedCalled = false;
 
     if (!this.relay) {
+      debugger;
       console.warn('This relay does not have active connection and download cannot be executed at this time.');
       return;
     }
@@ -362,7 +373,7 @@ export class RelayWorker {
     //   return;
     // }
 
-    const sub = this.relay.sub([{ kinds: [0], authors: [pubkey] }]) as NostrSub;
+    const sub = this.relay.sub([{ kinds: [0], authors: pubkeys }]) as NostrSub;
     this.profileSub = sub;
     // sub.id = id;
     // console.log('SUBSCRIPTION:', sub);
@@ -416,7 +427,7 @@ export class RelayWorker {
       this.queue.queues.profile.active = false;
       this.processProfiles();
 
-      postMessage({ url: this.url, type: 'timeout', data: { type: 'Profile', identifier: pubkey } } as RelayResponse);
+      postMessage({ url: this.url, type: 'timeout', data: { type: 'Profile', identifier: pubkeys } } as RelayResponse);
 
       // if (!finalizedCalled) {
       //   finalizedCalled = true;

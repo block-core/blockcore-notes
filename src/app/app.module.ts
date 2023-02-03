@@ -39,7 +39,6 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AgoPipe } from './shared/ago.pipe';
-import { AboutComponent } from './about/about';
 import { SettingsComponent } from './settings/settings';
 import { ProfileComponent } from './profile/profile';
 import { ProfileImageComponent } from './shared/profile-image/profile-image';
@@ -71,7 +70,6 @@ import { ImportFollowDialog } from './people/import-follow-dialog/import-follow-
 import { ProfileHeaderComponent } from './shared/profile-header/profile-header';
 import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { ProfileImageDialog } from './shared/profile-image-dialog/profile-image-dialog';
-import { LicensesComponent } from './about/licenses/licenses';
 import { HttpClientModule } from '@angular/common/http';
 import { EventActionsComponent } from './shared/event-actions/event-actions';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -112,6 +110,7 @@ import { DevelopmentComponent } from './development/development';
 import { RelayComponent } from './shared/relay/relay';
 import { RelaysComponent } from './shared/relays/relays';
 import { LabelsComponent } from './shared/labels/labels';
+import { AboutModule } from './about/about.module';
 
 @NgModule({
   declarations: [
@@ -127,7 +126,6 @@ import { LabelsComponent } from './shared/labels/labels';
     Bech32Pipe,
     CircleStylePipe,
     WithStatusPipe,
-    AboutComponent,
     FollowDialog,
     SettingsComponent,
     UserComponent,
@@ -148,7 +146,6 @@ import { LabelsComponent } from './shared/labels/labels';
     ProfileHeaderComponent,
     AddRelayDialog,
     ProfileImageDialog,
-    LicensesComponent,
     EventActionsComponent,
     ChatComponent,
     FeedComponent,
@@ -179,9 +176,10 @@ import { LabelsComponent } from './shared/labels/labels';
     DevelopmentComponent,
     RelayComponent,
     RelaysComponent,
-    LabelsComponent
+    LabelsComponent,
   ],
   imports: [
+    AboutModule,
     HttpClientModule,
     BrowserModule,
     AppRoutingModule,

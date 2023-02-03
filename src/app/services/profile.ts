@@ -8,7 +8,6 @@ import { CacheService } from './cache';
 import { dexieToRx } from '../shared/utilities';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
-import { exist } from 'joi';
 
 @Injectable({
   providedIn: 'root',
