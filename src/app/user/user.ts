@@ -159,6 +159,9 @@ export class UserComponent {
           // this.downloadFollowingAndRelays(profile);
         }
 
+        // Get the latest version of this profile.
+        this.queueService.enqueProfile(profile.pubkey);
+
         if (this.previousPubKey != profile.pubkey) {
           setTimeout(() => {
             const element2 = document.getElementById('profile-image-anchor');
