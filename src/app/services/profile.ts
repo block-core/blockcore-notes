@@ -8,6 +8,7 @@ import { CacheService } from './cache';
 import { dexieToRx } from '../shared/utilities';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
+import { exist } from 'joi';
 
 @Injectable({
   providedIn: 'root',
@@ -242,8 +243,28 @@ export class ProfileService {
     profile.npub = this.utilities.getNostrIdentifier(profile.pubkey);
 
     this.cache.set(profile.pubkey, profile);
+
     await this.db.storage.putProfile(profile);
+
     this.updateItemIfSelected(profile);
+
+    // After updating, we'll update the following list if needed.
+    const index = this.following.findIndex((f) => f.pubkey == profile.pubkey);
+
+    if (profile.circle != null) {
+      if (index == -1) {
+        this.following.push(profile);
+        this.#updated();
+      } else {
+        this.following[index] = profile;
+        this.#updated();
+      }
+    } else {
+      if (index > -1) {
+        this.following.splice(index, 1);
+        this.#updated();
+      }
+    }
   }
 
   async initialize(pubkey: string) {
@@ -363,7 +384,7 @@ export class ProfileService {
   }
 
   async block(pubkey: string) {
-    return this.#updateProfileValues(pubkey, (profile) => {
+    await this.#updateProfileValues(pubkey, (profile) => {
       profile.status = ProfileStatus.Block;
       profile.followed = undefined;
       profile.circle = undefined;

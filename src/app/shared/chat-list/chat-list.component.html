@@ -12,7 +12,7 @@
     <mat-divider *ngIf="!lastItem"></mat-divider>
   </ng-container>
 
-  <ng-container *ngFor="let event of chatService.chats2$ | async; let lastItem = last">
+  <!-- <ng-container *ngFor="let event of chatService.chats2$ | async; let lastItem = last">
     <app-chat-item [routerLink]="['/m', '5f432a9f39b58ff132fc0a4c8af10d42efd917d8076f68bb7f2f91ed7d4f6a41']" [event]="event"></app-chat-item>
     <mat-divider *ngIf="!lastItem"></mat-divider>
   </ng-container> -->

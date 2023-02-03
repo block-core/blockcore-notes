@@ -126,13 +126,8 @@ export class PeopleComponent {
   }
 
   ngOnDestroy() {
-    if (this.sub) {
-      this.sub.unsubscribe();
-    }
+    this.utilities.unsubscribe(this.subscriptions);
   }
-
-  sub?: Subscription;
-  // profiles: NostrProfileDocument[] = [];
 
   async load() {
     this.loading = true;
@@ -144,7 +139,9 @@ export class PeopleComponent {
     } else if (this.showCached) {
       this.items = await this.profileService.getProfilesByStatus(ProfileStatus.Public);
     } else {
+      console.log('replacing items...');
       this.items = this.profileService.following;
+      console.table(this.items);
     }
 
     this.updateSorting();
@@ -153,7 +150,7 @@ export class PeopleComponent {
   }
 
   public trackByFn(index: number, item: NostrProfileDocument) {
-    return `${item.pubkey}${item.modified}`;
+    return `${item.pubkey}${item.modified}${item.circle}`;
   }
 
   async ngOnInit() {
@@ -171,13 +168,24 @@ export class PeopleComponent {
 
     await this.load();
 
+    this.subscriptions.push(
+      this.profileService.following$.subscribe(async () => {
+        console.log('FOLLOWING CHANGED!!!');
+        await this.load();
+      })
+    );
+
     // TODO: Until we changed to using observable (DataService) for all data,
     // we have this basic observable whenever the profiles changes.
-    this.sub = this.profileService.profilesChanged$.subscribe(async () => {
-      console.log('profileService.profilesChanged$!!');
-      await this.load();
-    });
+    this.subscriptions.push(
+      this.profileService.profilesChanged$.subscribe(async () => {
+        console.log('profileService.profilesChanged$!!');
+        await this.load();
+      })
+    );
   }
+
+  subscriptions: Subscription[] = [];
 
   // async search() {
   //   const text: string = this.searchTerm;
