@@ -266,6 +266,6 @@ export class HomeComponent {
       },
     ];
 
-    this.latestItems = await this.db.storage.getEventsByCreated(7);
+    this.latestItems = await this.db.storage.getEventsByCreatedAndKind(7, 1);
   }
 }

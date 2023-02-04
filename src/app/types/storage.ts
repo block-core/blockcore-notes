@@ -31,7 +31,7 @@ interface NotesDB extends DBSchema {
   events: {
     value: NostrEventDocument;
     key: string;
-    indexes: { pubkey: string; created: number };
+    indexes: { pubkey: string; created: number; kind: string };
   };
   profiles: {
     value: NostrProfileDocument;
@@ -62,6 +62,7 @@ export class Storage {
         const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
         eventsStore.createIndex('pubkey', 'pubkey');
         eventsStore.createIndex('created', 'created_at');
+        eventsStore.createIndex('kind', 'kind');
 
         const profilesStore = db.createObjectStore('profiles', { keyPath: 'pubkey' });
         profilesStore.createIndex('status', 'status');
@@ -170,6 +171,27 @@ export class Storage {
 
       if (index >= count) {
         break;
+      }
+
+      cursor = await cursor.continue();
+    }
+
+    return items;
+  }
+
+  async getEventsByCreatedAndKind(count: number, kind: number) {
+    let cursor = await this.db.transaction('events').store.index('created').openCursor(undefined, 'prev');
+    const items = [];
+    let index = 0;
+
+    while (cursor) {
+      if (cursor.value.kind == kind) {
+        items.push(cursor.value);
+        index++;
+
+        if (index >= count) {
+          break;
+        }
       }
 
       cursor = await cursor.continue();
