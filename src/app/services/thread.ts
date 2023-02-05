@@ -6,6 +6,8 @@ import { EventService } from './event';
 import { Kind } from 'nostr-tools';
 import { DataService } from './data';
 import { NavigationService } from './navigation';
+import { RelayService } from './relay';
+import { StorageService } from './storage';
 
 @Injectable({
   providedIn: 'root',
@@ -124,7 +126,7 @@ export class ThreadService {
 
   // selectedEvent$ = combineLatest(this.selectedEventChanges$, this.eventChanges$).pipe(mergeMap());
 
-  constructor(private eventService: EventService, private profileService: ProfileService, private dataService: DataService, private navigationService: NavigationService) {
+  constructor(private storage: StorageService, private relayService: RelayService, private eventService: EventService, private profileService: ProfileService, private dataService: DataService, private navigationService: NavigationService) {
     // Whenever the event has changed, we can go grab the parent and the thread itself
     this.#eventChanged.subscribe((event) => {
       if (event == null) {
@@ -351,6 +353,8 @@ export class ThreadService {
     this.#events = undefined;
     this.#eventsChanged.next(this.#events);
 
+    debugger;
+
     if (event) {
       this.event = event;
       this.#eventChanged.next(this.event);
@@ -361,12 +365,21 @@ export class ThreadService {
       this.#eventChanged.next(this.event);
 
       if (eventId) {
-        this.dataService.downloadEvent(eventId).subscribe((event) => {
+        const event = await this.storage.storage.getEvent(eventId);
+
+        if (event) {
           this.event = event;
           this.#eventChanged.next(this.event);
-        });
+          this.loadEventThread(eventId);
+        } else {
+          // Enque download of this event.
+          this.relayService.enque({ type: 'Event', identifier: eventId });
+        }
 
-        this.loadEventThread(eventId);
+        // this.dataService.downloadEvent(eventId).subscribe((event) => {
+        //   this.event = event;
+        //   this.#eventChanged.next(this.event);
+        // });
       }
     }
   }
