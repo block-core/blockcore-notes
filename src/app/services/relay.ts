@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ImportSheet } from '../shared/import-sheet/import-sheet';
 import { QueueService } from './queue.service';
+import { UIService } from './ui';
 
 @Injectable({
   providedIn: 'root',
@@ -64,6 +65,7 @@ export class RelayService {
   }
 
   constructor(
+    private ui: UIService,
     private queue: QueueService,
     private bottomSheet: MatBottomSheet,
     private utilities: Utilities,
@@ -345,6 +347,11 @@ export class RelayService {
         if (event.pubkey === this.appState.getPublicKey()) {
           await this.db.storage.putEvents(event);
         }
+      }
+
+      // If the received event is what the user is currently looking at, update it.
+      if (this.ui.selectedEventId == event.id) {
+        this.ui.setEvent(event);
       }
     }
   }

@@ -8,6 +8,8 @@ import { DataService } from './data';
 import { NavigationService } from './navigation';
 import { RelayService } from './relay';
 import { StorageService } from './storage';
+import { QueueService } from './queue.service';
+import { UIService } from './ui';
 
 @Injectable({
   providedIn: 'root',
@@ -126,7 +128,15 @@ export class ThreadService {
 
   // selectedEvent$ = combineLatest(this.selectedEventChanges$, this.eventChanges$).pipe(mergeMap());
 
-  constructor(private storage: StorageService, private relayService: RelayService, private eventService: EventService, private profileService: ProfileService, private dataService: DataService, private navigationService: NavigationService) {
+  constructor(
+    private ui: UIService,
+    private storage: StorageService,
+    private queueService: QueueService,
+    private eventService: EventService,
+    private profileService: ProfileService,
+    private dataService: DataService,
+    private navigationService: NavigationService
+  ) {
     // Whenever the event has changed, we can go grab the parent and the thread itself
     this.#eventChanged.subscribe((event) => {
       if (event == null) {
@@ -343,6 +353,16 @@ export class ThreadService {
     });
   }
 
+  // selectedEventId?: string;
+
+  setEvent(event: NostrEventDocument) {
+    this.event = event;
+    this.#eventChanged.next(this.event);
+    this.loadEventThread(event.id!);
+
+    this.ui.setProfile;
+  }
+
   async changeSelectedEvent(eventId?: string, event?: NostrEventDocument) {
     this.hasLoaded = false;
 
@@ -354,6 +374,10 @@ export class ThreadService {
     this.#eventsChanged.next(this.#events);
 
     debugger;
+
+    // This is used to determine if the async enque download should set the
+    // event or not.
+    this.ui.selectedEventId = eventId;
 
     if (event) {
       this.event = event;
@@ -368,12 +392,10 @@ export class ThreadService {
         const event = await this.storage.storage.getEvent(eventId);
 
         if (event) {
-          this.event = event;
-          this.#eventChanged.next(this.event);
-          this.loadEventThread(eventId);
+          this.setEvent(event);
         } else {
           // Enque download of this event.
-          this.relayService.enque({ type: 'Event', identifier: eventId });
+          this.queueService.enqueEvent(eventId);
         }
 
         // this.dataService.downloadEvent(eventId).subscribe((event) => {

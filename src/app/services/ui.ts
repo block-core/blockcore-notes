@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, filter } from 'rxjs';
 import { NostrEventDocument, NostrProfileDocument } from './interfaces';
 import { ProfileService } from './profile';
 
@@ -92,5 +92,25 @@ export class UIService {
   clearEvents() {
     this.events = [];
     this.#eventsChanged.next(this.events);
+  }
+
+  #event?: NostrEventDocument;
+
+  #eventChanged: BehaviorSubject<NostrEventDocument | undefined> = new BehaviorSubject<NostrEventDocument | undefined>(this.#event);
+
+  get event$(): Observable<NostrEventDocument | undefined> {
+    return this.#eventChanged.asObservable();
+  }
+
+  selectedEventId?: string;
+
+  setEvent(event: NostrEventDocument | undefined) {
+    const beforeKey = this.#event?.pubkey;
+    this.#event = event;
+
+    if (beforeKey != event?.pubkey) {
+      this.selectedEventId = this.#event?.id;
+      this.#eventChanged.next(this.#event);
+    }
   }
 }
