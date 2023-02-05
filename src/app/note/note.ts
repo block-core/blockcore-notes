@@ -126,13 +126,8 @@ export class NoteComponent {
         return;
       }
 
-      debugger;
       // Only trigger the event event ID if it's different than the navigation ID.
       if (this.navigation.currentEvent?.id != id) {
-        
-        
-        
-        
         this.ui.setEventId(id);
         // this.thread.changeSelectedEvent(id);
       }

@@ -43,11 +43,11 @@
 </div>
 <mat-divider></mat-divider>
 
-<div *ngFor="let event of ui.events$ | async">
-  e: {{event.id}}<br />
-  p: {{event.pubkey}}<br />
-  c: {{event.content}}<br />
-  t: {{event.tags | json}}<br />
+<div *ngFor="let event2 of ui.events$ | async">
+  e: {{event2.id}}<br />
+  p: {{event2.pubkey}}<br />
+  t ({{event2.tags.length}}): {{event2.tags | json}}<br />
+  c: {{event2.content}}<br /><br /><br />
 </div>
 
 <!-- <mat-progress-bar *ngIf="!thread.hasLoaded" mode="indeterminate"></mat-progress-bar> -->

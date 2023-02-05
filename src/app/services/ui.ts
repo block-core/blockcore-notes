@@ -60,7 +60,6 @@ export class UIService {
 
   /** Changes the active event ID. This will trigger subscribers, which will change the actual event. */
   setEventId(id: string | undefined) {
-    debugger;
     console.log('setEventId:', id);
 
     this.#eventId = id;

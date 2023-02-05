@@ -120,8 +120,6 @@ export class RelayService {
           this.unsubscribe(this.threadSubscription);
         }
 
-        debugger;
-
         this.threadSubscription = this.subscribe([{ ['#e']: [event.id!] }]);
       }
     });
@@ -390,7 +388,10 @@ export class RelayService {
       if (this.ui.eventId == event.id) {
         this.ui.setEvent(event);
       } else {
-        this.ui.putEvent(event);
+        // If we receive event on the thread subscription, and only then, update the events array.
+        if (response.subscription == this.threadSubscription) {
+          this.ui.putEvent(event);
+        }
       }
     }
   }

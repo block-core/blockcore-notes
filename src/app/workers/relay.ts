@@ -373,7 +373,7 @@ export class RelayWorker {
     // relay.subscriptions.push(sub);
 
     sub.on('event', (originalEvent: any) => {
-      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+      postMessage({ url: this.url, subscription: id, type: 'event', data: originalEvent } as RelayResponse);
       // const event = this.eventService.processEvent(originalEvent);
       // if (!event) {
       //   return;

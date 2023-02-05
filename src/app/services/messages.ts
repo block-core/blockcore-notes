@@ -11,4 +11,5 @@ export interface RelayResponse extends WorkerResponse {
   type: string;
   url: string;
   data?: any;
+  subscription: string;
 }
