@@ -7,8 +7,21 @@ import { ProfileService } from './profile';
 @Injectable({
   providedIn: 'root',
 })
+/** The orchestrator for UI that holds data to be rendered in different views at any given time. */
 export class UIService {
   constructor() {}
+
+  #eventId: string | undefined = undefined;
+
+  get eventId() {
+    return this.#eventId;
+  }
+
+  #eventIdChanged: BehaviorSubject<string | undefined> = new BehaviorSubject<string | undefined>(this.eventId);
+
+  get eventId$(): Observable<string | undefined> {
+    return this.#eventIdChanged.asObservable();
+  }
 
   #pubkey: string | undefined = undefined;
 
@@ -45,6 +58,21 @@ export class UIService {
     }
   }
 
+  /** Changes the active event ID. This will trigger subscribers, which will change the actual event. */
+  setEventId(id: string | undefined) {
+    debugger;
+    console.log('setEventId:', id);
+
+    this.#eventId = id;
+    this.#eventIdChanged.next(this.#eventId);
+
+    this.#event = undefined;
+    this.#eventChanged.next(this.#event);
+
+    this.events = [];
+    this.#eventsChanged.next(this.events);
+  }
+
   #profile: NostrProfileDocument | undefined = undefined;
 
   get profile() {
@@ -68,9 +96,9 @@ export class UIService {
   putEvent(event: NostrEventDocument) {
     // It might happen that async events are triggering this method after user have selected another
     // profile to watch, so we must ignore those events to avoid UI-glitches.
-    if (event.pubkey != this.pubkey) {
-      return;
-    }
+    // if (event.pubkey != this.pubkey) {
+    //   return;
+    // }
 
     const existingIndex = this.events.findIndex((e) => e.id == event.id);
 
@@ -102,14 +130,16 @@ export class UIService {
     return this.#eventChanged.asObservable();
   }
 
-  selectedEventId?: string;
+  // selectedEventId?: string;
 
   setEvent(event: NostrEventDocument | undefined) {
-    const beforeKey = this.#event?.pubkey;
+    const beforeKey = this.#event?.id;
+
+    // Change the active event ID without triggering the changed event.
+    this.#eventId = event?.id;
     this.#event = event;
 
-    if (beforeKey != event?.pubkey) {
-      this.selectedEventId = this.#event?.id;
+    if (this.#event?.id != beforeKey) {
       this.#eventChanged.next(this.#event);
     }
   }

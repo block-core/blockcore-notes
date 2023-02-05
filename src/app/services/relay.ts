@@ -39,6 +39,8 @@ export class RelayService {
 
   events: NostrEventDocument[] = [];
 
+  threadSubscription?: string;
+
   #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
 
   #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
@@ -85,6 +87,42 @@ export class RelayService {
     this.queue.queues$.subscribe((job) => {
       if (job) {
         this.enque(job);
+      }
+    });
+
+    // Whenever the event ID changes, we'll attempt to load the event.
+    this.ui.eventId$.subscribe(async (id) => {
+      if (!id) {
+        return;
+      }
+
+      const event = await this.db.storage.getEvent(id);
+
+      if (!event) {
+        this.enque({ type: 'Event', identifier: id });
+      } else {
+        this.ui.setEvent(event);
+      }
+    });
+
+    // Whenever the active UI event is changed, we'll subscribe to the thread of events and keep
+    // updating the events to render in the UI.
+    this.ui.event$.subscribe((event) => {
+      // If the event is empty, we'll clear the existing events first.
+      if (!event) {
+        this.ui.clearEvents();
+        return;
+      }
+
+      if (this.threadSubscription != event?.id) {
+        // Unsubscribe the previous thread subscription.
+        if (this.threadSubscription) {
+          this.unsubscribe(this.threadSubscription);
+        }
+
+        debugger;
+
+        this.threadSubscription = this.subscribe([{ ['#e']: [event.id!] }]);
       }
     });
   }
@@ -340,18 +378,19 @@ export class RelayService {
     } else {
       const index = this.profileService.followingKeys.indexOf(event.pubkey);
 
+      // If the event we received is from someone the user is following, always persist it if not already persisted.
       if (index > -1) {
         await this.db.storage.putEvents(event);
-      } else {
-        // If the event we received is from someone the user is following, always persist it if not already persisted.
-        if (event.pubkey === this.appState.getPublicKey()) {
-          await this.db.storage.putEvents(event);
-        }
+      } else if (event.pubkey === this.appState.getPublicKey()) {
+        // If user's own event, also persist.
+        await this.db.storage.putEvents(event);
       }
 
       // If the received event is what the user is currently looking at, update it.
-      if (this.ui.selectedEventId == event.id) {
+      if (this.ui.eventId == event.id) {
         this.ui.setEvent(event);
+      } else {
+        this.ui.putEvent(event);
       }
     }
   }

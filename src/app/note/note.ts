@@ -8,6 +8,7 @@ import { ProfileService } from '../services/profile';
 import { OptionsService } from '../services/options';
 import { ThreadService } from '../services/thread';
 import { NavigationService } from '../services/navigation';
+import { UIService } from '../services/ui';
 
 @Component({
   selector: 'app-note',
@@ -15,8 +16,8 @@ import { NavigationService } from '../services/navigation';
   styleUrls: ['./note.css'],
 })
 export class NoteComponent {
-  id?: string | null;
-  event?: NostrEventDocument;
+  // id?: string | null;
+  // event?: NostrEventDocument;
 
   constructor(
     public appState: ApplicationState,
@@ -28,7 +29,8 @@ export class NoteComponent {
     public thread: ThreadService,
     private validator: DataValidation,
     private utilities: Utilities,
-    private router: Router
+    private router: Router,
+    public ui: UIService
   ) {}
 
   // TODO: Nasty code, just fix it, quick hack before bed.
@@ -76,35 +78,35 @@ export class NoteComponent {
   parentEvent?: NostrEventDocument;
 
   /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
-  rootEvent() {
-    if (!this.event) {
-      return;
-    }
+  // rootEvent() {
+  //   if (!this.event) {
+  //     return;
+  //   }
 
-    // TODO. All of this parsing of arrays is silly and could be greatly improved with some refactoring
-    // whenever I have time for it.
-    const eTags = this.event.tags.filter((t) => t[0] === 'e');
+  //   // TODO. All of this parsing of arrays is silly and could be greatly improved with some refactoring
+  //   // whenever I have time for it.
+  //   const eTags = this.event.tags.filter((t) => t[0] === 'e');
 
-    for (let i = 0; i < eTags.length; i++) {
-      const tag = eTags[i];
+  //   for (let i = 0; i < eTags.length; i++) {
+  //     const tag = eTags[i];
 
-      // If more than 4, we likely have "root" or "reply"
-      if (tag.length > 3) {
-        if (tag[3] == 'root') {
-          return tag[1];
-        }
-      }
-    }
+  //     // If more than 4, we likely have "root" or "reply"
+  //     if (tag.length > 3) {
+  //       if (tag[3] == 'root') {
+  //         return tag[1];
+  //       }
+  //     }
+  //   }
 
-    return eTags[0][1];
-  }
+  //   return eTags[0][1];
+  // }
 
   ngOnInit() {
     console.log('CURRENT EVENT:', this.navigation.currentEvent);
 
     if (this.navigation.currentEvent) {
-      this.id = this.navigation.currentEvent.id;
-      this.thread.changeSelectedEvent(undefined, this.navigation.currentEvent);
+      // If the event is already set, we'll use that directly and not load based upon ID.
+      this.ui.setEvent(this.navigation.currentEvent);
     }
 
     this.appState.updateTitle('Thread');
@@ -124,7 +126,16 @@ export class NoteComponent {
         return;
       }
 
-      this.thread.changeSelectedEvent(id);
+      debugger;
+      // Only trigger the event event ID if it's different than the navigation ID.
+      if (this.navigation.currentEvent?.id != id) {
+        
+        
+        
+        
+        this.ui.setEventId(id);
+        // this.thread.changeSelectedEvent(id);
+      }
     });
   }
 
