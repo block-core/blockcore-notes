@@ -226,7 +226,9 @@ export class UIService {
       event.replyEventId = eTags[1][1];
     }
 
-    event.parentEventId = eTags[eTags.length - 1][1];
+    if (eTags.length > 0) {
+      event.parentEventId = eTags[eTags.length - 1][1];
+    }
 
     return event;
   }
