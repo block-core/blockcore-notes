@@ -2,7 +2,7 @@
   <!-- <span *ngIf="thread.getEvent(entry.id) as event"> -->
   <span>
     <div class="events-header">
-      <app-event-header [pubkey]="event.pubkey"><span class="event-date">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+      <app-event-header [pubkey]="event.pubkey"><app-date [date]="event.created_at"></app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
     <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, lines: optionsService.values.showLines }" [displayRepliesTo]="false" [event]="event"></app-content>

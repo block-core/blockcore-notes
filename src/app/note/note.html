@@ -29,10 +29,6 @@
     <app-event-thread [event]="event"></app-event-thread>
   </div> -->
 
-  <span *ngIf="ui.parentEvent$ | async as event">
-    <app-event [event]="event"></app-event>
-  </span>
-
   <div class="current-event events noclick" *ngIf="ui.event$ | async as event">
     <mat-card *ngIf="event.rootEventId" class="button-card">
       <button mat-flat-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon> {{event.rootEventId}}</button>
@@ -42,8 +38,12 @@
       <button mat-flat-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon> {{event.parentEventId}}</button>
     </mat-card>
 
+    <span *ngIf="ui.parentEvent$ | async as event">
+      <app-event [event]="event"></app-event>
+    </span>
+
     <div class="events-header">
-      <app-event-header [pubkey]="event.pubkey"><app-date [date]="event.created_at"> </app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+      <app-event-header [pubkey]="event.pubkey"><app-date [date]="event.created_at"></app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
     <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }" [event]="event"></app-content>
