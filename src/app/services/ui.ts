@@ -95,6 +95,24 @@ export class UIService {
     // return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
   }
 
+  children(parentId: string): NostrEventDocument[] {
+    // if (this.events.length > 4) {
+    //   console.log('PARENT ID:', parentId);
+    //   console.log(this.events);
+    // }
+
+    const filtered = this.events.filter((d) => d.parentEventId === parentId);
+
+    // if (filtered.length > 0) {
+    //   console.log('filtered:', filtered);
+    // }
+
+    // console.log(parentId);
+    // console.log(this.events);
+
+    return filtered;
+  }
+
   children$(parentId: string): Observable<NostrEventDocument[]> {
     // const filtered = this.events$.pipe(filter((item, index) => sorted.findIndex((e) => e.pubkey == item.pubkey) === index));
     return this.events$.pipe(
@@ -219,15 +237,12 @@ export class UIService {
 
     if (eTags.length > 0) {
       event.rootEventId = eTags[0][1];
+      event.parentEventId = eTags[eTags.length - 1][1];
     }
 
     if (eTags.length < 2) {
     } else {
       event.replyEventId = eTags[1][1];
-    }
-
-    if (eTags.length > 0) {
-      event.parentEventId = eTags[eTags.length - 1][1];
     }
 
     return event;

@@ -1,4 +1,4 @@
-<div class="thread-event" *ngFor="let event of ui.children$(event!.id!) | async" [ngClass]="{ 'no-lines': !optionsService.values.showLines, lines: optionsService.values.showLines }">
+<div class="thread-event" *ngFor="let event of ui.children(event!.id!)" [ngClass]="{ 'no-lines': !optionsService.values.showLines, lines: optionsService.values.showLines }">
   <!-- <span *ngIf="thread.getEvent(entry.id) as event"> -->
   <span>
     <div class="events-header">
