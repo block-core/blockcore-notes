@@ -13,6 +13,8 @@
     </mat-expansion-panel>
   </mat-accordion>
 
+  <br />
+
   <!-- <div class="events above-event clickable" (click)="navigation.openEvent($event, event)" *ngIf="thread.above$ | async as event">
     <div class="events-header">
       <app-event-header [pubkey]="event.pubkey"> <app-date [date]="event.created_at"> </app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
@@ -23,7 +25,23 @@
     <app-event-buttons [event]="event"></app-event-buttons>
   </div> -->
 
+  <!-- <div *ngIf="ui.event$ | async as event">
+    <app-event-thread [event]="event"></app-event-thread>
+  </div> -->
+
+  <span *ngIf="ui.parentEvent$ | async as event">
+    <app-event [event]="event"></app-event>
+  </span>
+
   <div class="current-event events noclick" *ngIf="ui.event$ | async as event">
+    <mat-card *ngIf="event.rootEventId" class="button-card">
+      <button mat-flat-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon> {{event.rootEventId}}</button>
+    </mat-card>
+
+    <mat-card *ngIf="event.parentEventId" class="button-card">
+      <button mat-flat-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon> {{event.parentEventId}}</button>
+    </mat-card>
+
     <div class="events-header">
       <app-event-header [pubkey]="event.pubkey"><app-date [date]="event.created_at"> </app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
@@ -31,24 +49,26 @@
     <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }" [event]="event"></app-content>
     <!-- <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions> -->
     <app-event-buttons [event]="event"></app-event-buttons>
-    <br />
+    <!-- <br />
     e: {{event.id}}
     <br />
     p: {{event.pubkey}}
     <br />
-    t: {{event.tags | json}}<br />
+    t: {{event.tags | json}}<br /> -->
+
+    <app-event-thread [event]="event"></app-event-thread>
 
     <!-- <app-event-thread [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-thread> -->
   </div>
 </div>
 <mat-divider></mat-divider>
 
-<div *ngFor="let event2 of ui.events$ | async">
+<!-- <div *ngFor="let event2 of ui.events$ | async">
   e: {{event2.id}}<br />
   p: {{event2.pubkey}}<br />
   t ({{event2.tags.length}}): {{event2.tags | json}}<br />
   c: {{event2.content}}<br /><br /><br />
-</div>
+</div> -->
 
 <!-- <mat-progress-bar *ngIf="!thread.hasLoaded" mode="indeterminate"></mat-progress-bar> -->
 

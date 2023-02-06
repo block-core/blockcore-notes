@@ -54,6 +54,7 @@ export class RelayWorker {
   process() {
     this.processProfiles();
     this.processContacts();
+    this.processEvents();
     this.processSubscriptions();
   }
 
@@ -100,10 +101,6 @@ export class RelayWorker {
     console.log('profilesToDownload:', profilesToDownload);
 
     this.downloadProfile(profilesToDownload, profilesToDownload.length * 3);
-
-    // const job = this.queue.queues.profile.jobs.shift();
-    // console.log(`${this.url}: processProfiles: Job: `, job);
-    // this.downloadProfile(job!.identifier);
   }
 
   processContacts() {
@@ -125,7 +122,31 @@ export class RelayWorker {
     });
   }
 
-  processEvents() {}
+  processEvents() {
+    if (!this.relay || this.relay.status != 1 || this.queue.queues.event.active) {
+      console.log(`${this.url}: processProfiles: Relay not ready or currently active: ${this.queue.queues.event.active}.`, this.relay);
+      return;
+    }
+
+    console.log(`${this.url}: processEvents: Processing with downloading... Count: ` + this.queue.queues.event.jobs.length);
+
+    if (this.queue.queues.event.jobs.length == 0) {
+      this.queue.queues.event.active = false;
+      return;
+    }
+
+    this.queue.queues.event.active = true;
+
+    console.log(this.relay);
+
+    const eventsToDownload = this.queue.queues.event.jobs
+      .splice(0, 500)
+      .map((j) => j.identifier)
+      .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
+
+    console.log('eventsToDownload:', eventsToDownload);
+    this.downloadEvent(eventsToDownload, eventsToDownload.length * 3);
+  }
 
   /** Provide event to publish and terminate immediately. */
   async connect(event?: any) {
@@ -215,6 +236,9 @@ export class RelayWorker {
   contactsSub?: NostrSub;
   contactsTimer?: any;
 
+  eventSub?: NostrSub;
+  eventTimer?: any;
+
   clearProfileSub() {
     this.profileSub?.unsub();
     this.profileSub = undefined;
@@ -223,6 +247,11 @@ export class RelayWorker {
   clearContactsSub() {
     this.contactsSub?.unsub();
     this.contactsSub = undefined;
+  }
+
+  clearEventSub() {
+    this.eventSub?.unsub();
+    this.eventSub = undefined;
   }
 
   downloadProfile(pubkeys: string[], timeoutSeconds: number = 12) {
@@ -344,6 +373,63 @@ export class RelayWorker {
         finalizedCalled = true;
         finalized();
       }
+    }, timeoutSeconds * 1000);
+  }
+
+  downloadEvent(ids: string[], timeoutSeconds: number = 12) {
+    console.log('DOWNLOAD EVENT....');
+    let finalizedCalled = false;
+
+    if (!this.relay) {
+      debugger;
+      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      return;
+    }
+
+    // If the profilesub already exists, unsub and remove.
+    if (this.eventSub) {
+      console.log('Event sub already existed, unsub before continue.');
+      this.clearEventSub();
+    }
+
+    // Skip if the subscription is already added.
+    // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
+    //   debugger;
+    //   console.log('This subscription is already added!');
+    //   return;
+    // }
+
+    const sub = this.relay.sub([{ kinds: [1], ids: ids }]) as NostrSub;
+    this.eventSub = sub;
+
+    sub.on('event', (originalEvent: any) => {
+      console.log('POST MESSAGE BACK TO MAIN');
+      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+      console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    });
+
+    sub.on('eose', () => {
+      console.log('eose on event.');
+      clearTimeout(this.eventTimer);
+      this.clearEventSub();
+      this.queue.queues.event.active = false;
+      this.processEvents();
+    });
+
+    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
+
+    this.eventTimer = setTimeout(() => {
+      console.warn(`${this.url}: Event download timeout reached.`);
+      this.clearEventSub();
+      this.queue.queues.event.active = false;
+      this.processEvents();
+
+      postMessage({ url: this.url, type: 'timeout', data: { type: 'Event', identifier: ids } } as RelayResponse);
+
+      // if (!finalizedCalled) {
+      //   finalizedCalled = true;
+      //   finalized();
+      // }
     }, timeoutSeconds * 1000);
   }
 

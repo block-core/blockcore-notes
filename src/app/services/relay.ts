@@ -106,8 +106,8 @@ export class RelayService {
     });
 
     // Whenever the active UI event is changed, we'll subscribe to the thread of events and keep
-    // updating the events to render in the UI.
-    this.ui.event$.subscribe((event) => {
+    // updating the events to render in the UI. We will also load the immediate parent event.
+    this.ui.event$.subscribe(async (event) => {
       // If the event is empty, we'll clear the existing events first.
       if (!event) {
         this.ui.clearEvents();
@@ -121,6 +121,16 @@ export class RelayService {
         }
 
         this.threadSubscription = this.subscribe([{ ['#e']: [event.id!] }]);
+
+        if (event.parentEventId) {
+          const parentEvent = await this.db.storage.getEvent(event.parentEventId);
+
+          if (parentEvent) {
+            this.ui.setParentEvent(parentEvent);
+          } else {
+            this.enque({ type: 'Event', identifier: event.parentEventId! });
+          }
+        }
       }
     });
   }
@@ -384,9 +394,13 @@ export class RelayService {
         await this.db.storage.putEvents(event);
       }
 
+      console.log('EVENT:', event);
+
       // If the received event is what the user is currently looking at, update it.
       if (this.ui.eventId == event.id) {
         this.ui.setEvent(event);
+      } else if (this.ui.parentEventId == event.id) {
+        this.ui.setParentEvent(event);
       } else {
         // If we receive event on the thread subscription, and only then, update the events array.
         if (response.subscription == this.threadSubscription) {

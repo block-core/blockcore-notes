@@ -109,6 +109,10 @@ export interface NostrSub extends Sub {
 export interface NostrEventDocument extends Event {
   contentCut: boolean;
   tagsCut: boolean;
+
+  replyEventId?: string;
+  rootEventId?: string;
+  parentEventId?: string;
 }
 
 export interface NostrThreadEventDocument extends Event {

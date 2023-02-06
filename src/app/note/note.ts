@@ -33,6 +33,10 @@ export class NoteComponent {
     public ui: UIService
   ) {}
 
+  open(id: string | undefined) {
+    this.router.navigate(['/e', id]);
+  }
+
   // TODO: Nasty code, just fix it, quick hack before bed.
   likes(event: NostrEventDocument) {
     // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
