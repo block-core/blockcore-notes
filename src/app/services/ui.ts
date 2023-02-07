@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Kind } from 'nostr-tools';
 import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single } from 'rxjs';
 import { EventService } from './event';
-import { NostrEventDocument, NostrProfileDocument } from './interfaces';
+import { NostrEventDocument, NostrProfileDocument, NotificationModel } from './interfaces';
 import { ProfileService } from './profile';
 
 @Injectable({
@@ -131,6 +131,12 @@ export class UIService {
     // // return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
   }
 
+  notifications: NotificationModel[] = [];
+
+  putNotification(notification: NotificationModel) {
+    this.notifications.unshift(notification);
+  }
+
   putEvent(event: NostrEventDocument) {
     // It might happen that async events are triggering this method after user have selected another
     // profile to watch, so we must ignore those events to avoid UI-glitches.
@@ -148,9 +154,15 @@ export class UIService {
       } else {
         this.events.unshift(event);
 
-        this.events = this.events.sort((a, b) => {
-          return a.created_at < b.created_at ? -1 : 1;
-        });
+        if (this.profile) {
+          this.events = this.events.sort((a, b) => {
+            return a.created_at < b.created_at ? 1 : -1;
+          });
+        } else {
+          this.events = this.events.sort((a, b) => {
+            return a.created_at < b.created_at ? -1 : 1;
+          });
+        }
 
         // Attempting to only trigger events changed if there is an actual change in the content.
         this.#eventsChanged.next(this.events);
@@ -164,9 +176,15 @@ export class UIService {
 
     this.events = this.events.map((e) => this.calculateFields(e));
 
-    this.events = this.events.sort((a, b) => {
-      return a.created_at < b.created_at ? -1 : 1;
-    });
+    if (this.profile) {
+      this.events = this.events.sort((a, b) => {
+        return a.created_at < b.created_at ? 1 : -1;
+      });
+    } else {
+      this.events = this.events.sort((a, b) => {
+        return a.created_at < b.created_at ? -1 : 1;
+      });
+    }
 
     this.#eventsChanged.next(this.events);
   }

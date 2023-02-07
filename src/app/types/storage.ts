@@ -1,5 +1,5 @@
 import { openDB, deleteDB, wrap, unwrap, IDBPDatabase, DBSchema } from 'idb';
-import { Circle, LabelModel, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, StateDocument } from '../services/interfaces';
+import { Circle, LabelModel, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, NotificationModel, StateDocument } from '../services/interfaces';
 
 /** Make sure you read and learn: https://github.com/jakearchibald/idb */
 
@@ -12,35 +12,48 @@ interface NotesDB extends DBSchema {
     value: StateDocument;
     key: number;
   };
+
   contacts: {
     value: NostrEventDocument;
     key: string;
   };
+
   relays: {
     value: NostrRelayDocument;
     key: string;
   };
+
   circles: {
     value: Circle;
     key: number;
   };
+
   notes: {
     value: NostrNoteDocument;
     key: string;
   };
+
+  labels: {
+    value: LabelModel;
+    key: number;
+  };
+
   events: {
     value: NostrEventDocument;
     key: string;
     indexes: { pubkey: string; created: number; kind: string };
   };
+
   profiles: {
     value: NostrProfileDocument;
     key: string;
     indexes: { status: number };
   };
-  labels: {
-    value: LabelModel;
-    key: number;
+
+  notifications: {
+    value: NotificationModel;
+    key: string;
+    indexes: { created: number };
   };
 }
 
@@ -58,6 +71,8 @@ export class Storage {
         db.createObjectStore('state', { keyPath: 'id' });
         db.createObjectStore('contacts', { keyPath: 'pubkey' });
         db.createObjectStore('labels', { keyPath: 'id' });
+        const notificationsStore = db.createObjectStore('notifications', { keyPath: 'id' });
+        notificationsStore.createIndex('created', 'created');
 
         const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
         eventsStore.createIndex('pubkey', 'pubkey');
@@ -123,6 +138,10 @@ export class Storage {
     return this.db.put('contacts', value);
   }
 
+  async putNotification(value: NotificationModel) {
+    return this.db.put('notifications', value);
+  }
+
   async deleteContacts(key: string) {
     return this.db.delete('contacts', key);
   }
@@ -148,12 +167,20 @@ export class Storage {
     return this.db.get('events', key);
   }
 
+  async getNotification(key: string) {
+    return this.db.get('notifications', key);
+  }
+
   async putEvents(value: NostrEventDocument) {
     return this.db.put('events', value);
   }
 
   async getEventsByPubKey(pubkey: string, count?: number) {
     return this.db.getAllFromIndex('events', 'pubkey', pubkey, count);
+  }
+
+  async getNotifications(count?: number) {
+    return this.db.getAllFromIndex('notifications', 'created', undefined, count);
   }
 
   async getEventsByCreated2(query?: IDBKeyRange, count?: number) {

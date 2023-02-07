@@ -289,7 +289,7 @@ export class UserComponent {
 
         // First load all events from the persistent storage
         const events = await this.storage.storage.getEventsByPubKey(pubkey, 100);
-          this.ui.putEvents(events);
+        this.ui.putEvents(events);
 
         // Then query for the latest events.
         // ?? This is not going to work, this function operates on IDs, not on pubkeys.

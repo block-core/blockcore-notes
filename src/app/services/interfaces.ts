@@ -249,3 +249,14 @@ export interface LabelModel {
   id: string;
   name: string;
 }
+
+export interface NotificationModel {
+  /** The event ID or pubkey of the notification */
+  id: string;
+
+  message: string;
+
+  created: number;
+
+  seen: boolean;
+}

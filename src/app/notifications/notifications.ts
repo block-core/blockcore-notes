@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { ApplicationState } from '../services/applicationstate';
 import { RelayService } from '../services/relay';
+import { StorageService } from '../services/storage';
 import { UIService } from '../services/ui';
 
 @Component({
@@ -9,13 +10,15 @@ import { UIService } from '../services/ui';
   styleUrls: ['./notifications.css'],
 })
 export class NotificationsComponent {
-  constructor(private relayService: RelayService, private ui: UIService, private appState: ApplicationState) {}
+  constructor(private db: StorageService, private relayService: RelayService, public ui: UIService, private appState: ApplicationState) {}
 
   subscriptionId?: string;
 
-  ngOnInit() {
+  async ngOnInit() {
     this.appState.updateTitle('Notifications');
     this.appState.showBackButton = false;
+
+    this.ui.notifications = await this.db.storage.getNotifications(100);
 
     // Notifications is a hard-coded subscription identifier.
     this.subscriptionId = this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100 }], 'notifications');
