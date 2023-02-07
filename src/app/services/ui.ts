@@ -176,7 +176,7 @@ export class UIService {
       } else {
         this.events.unshift(event);
 
-        if (this.profile) {
+        if (this.pubkey) {
           this.events = this.events.sort((a, b) => {
             return a.created_at < b.created_at ? 1 : -1;
           });
@@ -198,7 +198,7 @@ export class UIService {
 
     this.events = this.events.map((e) => this.calculateFields(e));
 
-    if (this.profile) {
+    if (this.pubkey) {
       this.events = this.events.sort((a, b) => {
         return a.created_at < b.created_at ? 1 : -1;
       });
