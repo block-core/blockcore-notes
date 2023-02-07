@@ -45,10 +45,10 @@
         <mat-icon>bookmark_border</mat-icon>
         <span *ngIf="displayLabels">Notes</span>
       </a>
-      <a [routerLink]="['/development']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+      <!-- <a [routerLink]="['/development']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>construction</mat-icon>
         <span *ngIf="displayLabels">Development</span>
-      </a>
+      </a> -->
       <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>settings</mat-icon>
         <span *ngIf="displayLabels">Settings</span>
@@ -105,10 +105,10 @@
         <mat-icon>edit</mat-icon>
         <span>Edit profile</span>
       </a>
-      <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+      <!-- <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>settings</mat-icon>
         <span>Settings</span>
-      </a>
+      </a> -->
       <a [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>help_outline</mat-icon>
         <span>About</span>

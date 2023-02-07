@@ -113,7 +113,7 @@ export class RelayService {
       }
 
       // Subscribe to events for the current user profile.
-      this.profileEventSubscription = this.subscribe([{ authors: [id], kinds: [Kind.Text, Kind.Reaction, 6] }]);
+      this.profileEventSubscription = this.subscribe([{ authors: [id], kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }]);
     });
 
     // Whenever the event ID changes, we'll attempt to load the event.
