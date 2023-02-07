@@ -806,8 +806,11 @@ export class RelayService {
     return id;
   }
 
-  subscribe(filters: Filter[]) {
-    const id = uuidv4();
+  subscribe(filters: Filter[], id?: string) {
+    if (!id) {
+      id = uuidv4();
+    }
+
     // this.action('subscribe', { filters, id });
 
     this.subs2.push({ id: id, filters: filters });
