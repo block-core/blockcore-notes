@@ -22,6 +22,7 @@ import { MessagesComponent } from './messages/messages';
 import { MessageComponent } from './message/message';
 import { DevelopmentComponent } from './development/development';
 import { LoadingResolverService } from './services/loading-resolver';
+import { NotificationsComponent } from './notifications/notifications';
 
 const routes: Routes = [
   {
@@ -55,6 +56,14 @@ const routes: Routes = [
   {
     path: 'circles',
     component: CirclesComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'notifications',
+    component: NotificationsComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,
