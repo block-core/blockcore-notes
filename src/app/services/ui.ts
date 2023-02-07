@@ -159,13 +159,33 @@ export class UIService {
   }
 
   putEvents(events: NostrEventDocument[]) {
-    this.events = events;
+    // For now, filter out only text.
+    this.events = events.filter((e) => e.kind == Kind.Text);
+
+    this.events = this.events.map((e) => this.calculateFields(e));
 
     this.events = this.events.sort((a, b) => {
       return a.created_at < b.created_at ? -1 : 1;
     });
 
     this.#eventsChanged.next(this.events);
+  }
+
+  clear() {
+    this.#eventId = undefined;
+    this.#event = undefined;
+
+    this.parentEventId = undefined;
+    this.#parentEvent = undefined;
+
+    this.events = [];
+
+    this.#pubkey = undefined;
+    this.#profile = undefined;
+
+    this.#eventChanged.next(this.#event);
+    this.#eventsChanged.next(this.events);
+    this.#profileChanged.next(this.#profile);
   }
 
   clearEvents() {

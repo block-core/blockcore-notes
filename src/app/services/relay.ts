@@ -41,6 +41,8 @@ export class RelayService {
 
   threadSubscription?: string;
 
+  profileEventSubscription?: string;
+
   #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
 
   #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
@@ -88,6 +90,30 @@ export class RelayService {
       if (job) {
         this.enque(job);
       }
+    });
+
+    // Whenever the pubkey changes, we'll load the profile and start loading the user's events.
+    // If the ID is reset, we'll also unsubscribe the subscription.
+    this.ui.pubkey$.subscribe(async (id) => {
+      if (!id) {
+        if (this.profileEventSubscription) {
+          this.unsubscribe(this.profileEventSubscription);
+          this.profileEventSubscription = undefined;
+        }
+
+        return;
+      }
+
+      const profile = await this.db.storage.getProfile(id);
+
+      if (profile) {
+        this.ui.setProfile(profile);
+      } else {
+        this.enque({ type: 'Profile', identifier: id });
+      }
+
+      // Subscribe to events for the current user profile.
+      this.profileEventSubscription = this.subscribe([{ authors: [id], kinds: [Kind.Text, Kind.Reaction, 6] }]);
     });
 
     // Whenever the event ID changes, we'll attempt to load the event.
@@ -315,6 +341,10 @@ export class RelayService {
         await this.profileService.updateProfile(nostrProfileDocument.pubkey, nostrProfileDocument);
         console.log('END UPDATE PROFILE');
       }
+
+      if (this.ui.pubkey == event.pubkey) {
+        this.ui.setProfile(nostrProfileDocument);
+      }
     } else if (event.kind == Kind.Contacts) {
       const pubkey = this.appState.getPublicKey();
 
@@ -401,6 +431,9 @@ export class RelayService {
         this.ui.setEvent(event);
       } else if (this.ui.parentEventId == event.id) {
         this.ui.setParentEvent(event);
+      } else if (this.ui.pubkey == event.pubkey) {
+        // If the event belongs to current visible profile.
+        this.ui.putEvent(event);
       } else {
         // If we receive event on the thread subscription, and only then, update the events array.
         if (response.subscription == this.threadSubscription) {

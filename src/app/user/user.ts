@@ -292,15 +292,16 @@ export class UserComponent {
         this.ui.putEvents(events);
 
         // Then query for the latest events.
-        this.queueService.enqueEvent(
-          pubkey
-          // (data: NostrEventDocument) => {
-          //   this.ui.putEvent(data);
-          //   // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-          //   // this.#changed();
-          // },
-          // 200
-        );
+        // ?? This is not going to work, this function operates on IDs, not on pubkeys.
+        // this.queueService.enqueEvent(
+        //   pubkey
+        //   // (data: NostrEventDocument) => {
+        //   //   this.ui.putEvent(data);
+        //   //   // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+        //   //   // this.#changed();
+        //   // },
+        //   // 200
+        // );
 
         // setTimeout(async () => {
         //   const events = await this.storage.events.where('pubkey').equals(pubkey).toArray();
@@ -405,6 +406,9 @@ export class UserComponent {
   }
 
   ngOnDestroy() {
+    // Reset the profile selection.
+    this.ui.setPubKey(undefined);
+
     this.utilities.unsubscribe(this.subscriptions);
 
     if (this.profileSubscription) {

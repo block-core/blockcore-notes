@@ -173,5 +173,7 @@ export class NoteComponent {
     if (this.sub) {
       this.sub.unsub();
     }
+
+    this.ui.clear();
   }
 }
