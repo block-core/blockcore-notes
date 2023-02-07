@@ -3,7 +3,7 @@
     <mat-card-content>
       <div class="notification-entry">
         <div class="notification-message"><app-profile-name [pubkey]="notification.pubkey"></app-profile-name>&nbsp;{{notification.message}}</div>
-        <div class="notification-date">{{notification.created | ago}}</div>
+        <div class="notification-date"><app-date [date]="notification.created"></app-date></div>
       </div>
     </mat-card-content>
   </mat-card>
