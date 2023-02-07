@@ -2,7 +2,14 @@
   <mat-card class="notification-card" *ngFor="let notification of ui.notifications">
     <mat-card-content>
       <div class="notification-entry">
-        <div class="notification-message"><app-profile-name [pubkey]="notification.pubkey"></app-profile-name>&nbsp;{{notification.message}}</div>
+        <div class="notification-message">
+          <app-profile-name [pubkey]="notification.pubkey"></app-profile-name>
+          <span *ngIf="notification.kind > 7"> {{ notification.message }}</span>
+          <span *ngIf="notification.kind == 1"> replied to your <a [routerLink]="['/e', notification.id]">note</a>.</span>
+          <span *ngIf="notification.kind == 3"> started following you.</span>
+          <span *ngIf="notification.kind == 6"> boosted your <a [routerLink]="['/e', notification.id]">note</a></span>
+          <span *ngIf="notification.kind == 7"> reacted with {{notification.message}} to your <a [routerLink]="['/e', notification.id]">note</a>.</span>
+        </div>
         <div class="notification-date"><app-date [date]="notification.created"></app-date></div>
       </div>
     </mat-card-content>

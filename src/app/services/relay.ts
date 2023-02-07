@@ -348,17 +348,20 @@ export class RelayService {
             content = '💔';
           }
 
-          msg = `reacted with ${content} to your post.`;
+          msg = content;
         } else if (event.kind == Kind.Text) {
-          msg = `replied to your post.`;
+          msg = `replied to your note.`;
         } else if (event.kind == Kind.Contacts) {
           msg = `started following you.`;
+        } else if ((event.kind as number) == 6) {
+          msg = `boosted your note.`;
         } else {
           msg = `Event kind ${event.kind} notification.`;
         }
 
         notification = {
           id: event.id!,
+          kind: event.kind,
           pubkey: event.pubkey,
           message: msg,
           seen: false,

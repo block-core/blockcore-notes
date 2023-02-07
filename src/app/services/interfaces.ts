@@ -266,4 +266,6 @@ export interface NotificationModel {
   created: number;
 
   seen: boolean;
+
+  kind: number;
 }
