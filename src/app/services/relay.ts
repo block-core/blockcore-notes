@@ -342,8 +342,10 @@ export class RelayService {
         if (event.kind == Kind.Reaction) {
           let content = event.content;
 
-          if (content === '+') {
-            content = '👍';
+          if (content === '+' || content === '') {
+            content = '❤️';
+          } else if (content === '-') {
+            content = '💔';
           }
 
           msg = `reacted with ${content} to your post.`;

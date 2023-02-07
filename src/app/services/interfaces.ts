@@ -133,9 +133,14 @@ export interface ThreadEntry {
 }
 
 export enum EmojiEnum {
-  [`👍`] = `👍`,
-  [`👎`] = `👎`,
+  [`❤️`] = `❤️`,
+  [`💔`] = `💔`,
 }
+
+// export enum EmojiEnum {
+//   [`👍`] = `👍`,
+//   [`👎`] = `👎`,
+// }
 
 export interface NostrNoteDocument extends NostrEventDocument {
   /** The timestamp when the note was saved. */
