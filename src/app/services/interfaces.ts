@@ -251,8 +251,10 @@ export interface LabelModel {
 }
 
 export interface NotificationModel {
-  /** The event ID or pubkey of the notification */
+  /** The event ID of the notification */
   id: string;
+
+  pubkey: string;
 
   message: string;
 

@@ -134,7 +134,13 @@ export class UIService {
   notifications: NotificationModel[] = [];
 
   putNotification(notification: NotificationModel) {
-    this.notifications.unshift(notification);
+    const index = this.notifications.findIndex((n) => n.id == notification.id);
+
+    if (index == -1) {
+      this.notifications.unshift(notification);
+    } else {
+      this.notifications[index] = notification;
+    }
   }
 
   putEvent(event: NostrEventDocument) {

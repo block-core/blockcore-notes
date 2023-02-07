@@ -1,1 +1,4 @@
-<div *ngFor="let notification of ui.notifications">{{notification.message}}</div>
+<div *ngFor="let notification of ui.notifications">
+  <app-profile-name [pubkey]="notification.pubkey"></app-profile-name>
+  {{notification.message}}
+</div>

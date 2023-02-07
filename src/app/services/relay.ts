@@ -333,22 +333,25 @@ export class RelayService {
     console.log('SAVE EVENT?:', event);
 
     // If the event is a result of notification subscription, we'll parse and update the notification history.
-    if (response.subscription == 'notification') {
+    if (response.subscription == 'notifications') {
       let notification = await this.db.storage.getNotification(event.id!);
 
       if (!notification) {
         let msg = '';
 
         if (event.kind == Kind.Reaction) {
-          msg = `#[${event.pubkey}] reacted with ${event.content} to your post.`;
+          msg = `reacted with ${event.content} to your post.`;
         } else if (event.kind == Kind.Text) {
-          msg = `#[${event.pubkey}] replied to your post.`;
+          msg = `replied to your post.`;
+        } else if (event.kind == Kind.Contacts) {
+          msg = `started following you.`;
         } else {
           msg = `Event kind ${event.kind} notification.`;
         }
 
         notification = {
           id: event.id!,
+          pubkey: event.pubkey,
           message: msg,
           seen: false,
           created: event.created_at,
