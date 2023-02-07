@@ -97,7 +97,6 @@ export class Utilities {
       profile.created_at = event.created_at;
       return profile;
     } catch (err) {
-      debugger;
       console.warn(err);
     }
 

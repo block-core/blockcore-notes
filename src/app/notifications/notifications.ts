@@ -18,7 +18,8 @@ export class NotificationsComponent {
     this.appState.updateTitle('Notifications');
     this.appState.showBackButton = false;
 
-    this.ui.notifications = await this.db.storage.getNotifications(100);
+    const notifications = await this.db.storage.getNotifications(100);
+    this.ui.putNotifications(notifications);
 
     // Notifications is a hard-coded subscription identifier.
     this.subscriptionId = this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100 }], 'notifications');

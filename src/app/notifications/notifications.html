@@ -1,4 +1,10 @@
-<div *ngFor="let notification of ui.notifications">
-  <app-profile-name [pubkey]="notification.pubkey"></app-profile-name>
-  {{notification.message}}
+<div class="page">
+  <mat-card class="notification-card" *ngFor="let notification of ui.notifications">
+    <mat-card-content>
+      <div class="notification-entry">
+        <div class="notification-message"><app-profile-name [pubkey]="notification.pubkey"></app-profile-name>&nbsp;{{notification.message}}</div>
+        <div class="notification-date">{{notification.created | ago}}</div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

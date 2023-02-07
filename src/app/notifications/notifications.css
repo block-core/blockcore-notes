@@ -1,0 +1,18 @@
+.notification-card {
+  margin-bottom: 0.2em;
+}
+
+.notification-entry {
+  display: flex;
+  flex-direction: row;
+}
+
+.notification-mesage {
+  flex-grow: 2;
+}
+
+.notification-date {
+  text-align: right;
+  flex-grow: 1;
+  color: rgba(255, 255, 255, 0.5);
+}

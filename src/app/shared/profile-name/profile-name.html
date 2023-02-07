@@ -1,2 +1,4 @@
-<span *ngIf="tooltip" [matTooltip]="tooltip" matTooltipPosition="above">{{ profileName }}</span>
-<span *ngIf="!tooltip">{{ profileName }}</span>
+<a [routerLink]="['/p', pubkey]">
+  <span *ngIf="tooltip" [matTooltip]="tooltip" matTooltipPosition="above">{{ profileName }}</span>
+  <span *ngIf="!tooltip">{{ profileName }}</span>
+</a>

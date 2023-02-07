@@ -340,7 +340,13 @@ export class RelayService {
         let msg = '';
 
         if (event.kind == Kind.Reaction) {
-          msg = `reacted with ${event.content} to your post.`;
+          let content = event.content;
+
+          if (content === '+') {
+            content = '👍';
+          }
+
+          msg = `reacted with ${content} to your post.`;
         } else if (event.kind == Kind.Text) {
           msg = `replied to your post.`;
         } else if (event.kind == Kind.Contacts) {

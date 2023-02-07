@@ -131,15 +131,31 @@ export class UIService {
     // // return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
   }
 
-  notifications: NotificationModel[] = [];
+  #notifications: NotificationModel[] = [];
+
+  get notifications() {
+    return this.#notifications;
+  }
+
+  putNotifications(notifications: NotificationModel[]) {
+    notifications = notifications.sort((a, b) => {
+      return a.created < b.created ? 1 : -1;
+    });
+
+    this.#notifications = notifications;
+  }
 
   putNotification(notification: NotificationModel) {
-    const index = this.notifications.findIndex((n) => n.id == notification.id);
+    const index = this.#notifications.findIndex((n) => n.id == notification.id);
 
     if (index == -1) {
-      this.notifications.unshift(notification);
+      this.#notifications.unshift(notification);
+
+      this.#notifications = this.#notifications.sort((a, b) => {
+        return a.created < b.created ? 1 : -1;
+      });
     } else {
-      this.notifications[index] = notification;
+      this.#notifications[index] = notification;
     }
   }
 
