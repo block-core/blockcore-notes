@@ -28,6 +28,11 @@ export class NotificationsComponent {
     this.subscriptionId = this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100 }], 'notifications');
   }
 
+  async clearNotifications() {
+    await this.db.storage.deleteNotifications();
+    this.ui.putNotifications([]);
+  }
+
   async ngOnDestroy() {
     if (this.subscriptionId) {
       this.relayService.unsubscribe(this.subscriptionId);

@@ -353,6 +353,16 @@ export class RelayService {
           msg = `replied to your note.`;
         } else if (event.kind == Kind.Contacts) {
           msg = `started following you.`;
+
+          // People can get spammed with "following" you, so we'll only store a single pr public key.
+          let existingFollowingNotification = await this.db.storage.getNotification(event.pubkey);
+
+          if (existingFollowingNotification) {
+            return;
+          } else {
+            // Use the pubkey as identifier for this kind of event.
+            event.id = event.pubkey;
+          }
         } else if ((event.kind as number) == 6) {
           msg = `boosted your note.`;
         } else {

@@ -149,6 +149,9 @@ export class UIService {
     });
 
     this.#notifications = notifications;
+
+    const unread = this.#notifications.filter((n) => !n.seen).length;
+    this.#unreadNotificationsChanged.next(unread);
   }
 
   putNotification(notification: NotificationModel) {

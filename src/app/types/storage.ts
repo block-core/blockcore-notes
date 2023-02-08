@@ -283,6 +283,10 @@ export class Storage {
     return this.db.clear('notes');
   }
 
+  async deleteNotifications() {
+    return this.db.clear('notifications');
+  }
+
   async delete() {
     await deleteDB(this.name, {
       blocked() {

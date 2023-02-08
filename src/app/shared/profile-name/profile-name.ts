@@ -20,7 +20,11 @@ export class ProfileNameComponent {
     const profile = await this.db.storage.getProfile(this.pubkey);
 
     if (profile) {
-      this.profileName = profile?.display_name ?? profile.name;
+      if (profile.display_name) {
+        this.profileName = profile.display_name;
+      } else {
+        this.profileName = profile.name;
+      }
     } else {
       this.profileName = this.utilities.getShortenedIdentifier(this.pubkey);
     }
