@@ -13,6 +13,12 @@ import { ProfileService } from './profile';
 export class UIService {
   constructor(private eventService: EventService) {}
 
+  #unreadNotificationsChanged: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
+  get unreadNotifications$(): Observable<number> {
+    return this.#unreadNotificationsChanged.asObservable();
+  }
+
   #eventId: string | undefined = undefined;
 
   get eventId() {
@@ -157,6 +163,9 @@ export class UIService {
     } else {
       this.#notifications[index] = notification;
     }
+
+    const unread = this.#notifications.filter((n) => !n.seen).length;
+    this.#unreadNotificationsChanged.next(unread);
   }
 
   putEvent(event: NostrEventDocument) {

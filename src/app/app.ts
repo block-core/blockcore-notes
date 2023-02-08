@@ -59,7 +59,7 @@ export class AppComponent {
     private circleService: CircleService,
     public profileService: ProfileService,
     public navigationService: NavigationService,
-    private ui: UIService,
+    public ui: UIService,
     private bottomSheet: MatBottomSheet,
     public searchService: SearchService,
     public theme: ThemeService

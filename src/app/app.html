@@ -26,7 +26,7 @@
         <span *ngIf="displayLabels">Feed</span>
       </a>
       <a [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon matBadge="15">notifications</mat-icon>
+        <mat-icon [matBadge]="ui.unreadNotifications$ | async">notifications</mat-icon>
         <span *ngIf="displayLabels">Notifications</span>
       </a>
       <!-- <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
