@@ -25,11 +25,13 @@ export class ContentComponent {
   images: SafeResourceUrl[] = [];
   videos: SafeResourceUrl[] = [];
   spotify: SafeResourceUrl[] = [];
+  tidal: SafeResourceUrl[] = [];
 
   static regexpImage = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/gi;
   static regexpVideo = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/gim;
   static regexpThisIsTheWay = /(?:thisistheway.gif)/g;
   static regexpSpotify = /((http|https?)?(.+?\.?)(open.spotify.com)(.+?\.?)?)/gi;
+  static regexpTidal = /((http|https?)?(.+?\.?)(tidal.com)(.+?\.?)?)/gi;
   static regexpUrl = /([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#.]?[\w-]+)*\/?/gi;
 
   // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
@@ -91,8 +93,19 @@ export class ContentComponent {
       content = content.replaceAll(ContentComponent.regexpVideo, '');
       content = content.replaceAll(ContentComponent.regexpThisIsTheWay, '');
 
+      if (this.optionsService.values.enableTidal) {
+        // After doing image, video and known memes, get all URLs and handle Tidal.
+        const urls = [...content.matchAll(ContentComponent.regexpUrl)];
+        const tidalUrl = urls.filter((url) => url[0].indexOf('tidal.com') > -1);
+        this.tidal = tidalUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('tidal.com/track', 'embed.tidal.com/tracks')));
+
+        for (let index = 0; index < tidalUrl.length; index++) {
+          content = content.replace(tidalUrl[index][0], '');
+        }
+      }
+
       if (this.optionsService.values.enableSpotify) {
-        // After doing image, video and known memes, get all URLs and handle spotify.
+        // After doing image, video and known memes, get all URLs and handle Spotify.
         const urls = [...content.matchAll(ContentComponent.regexpUrl)];
         const spotifyUrl = urls.filter((url) => url[0].indexOf('open.spotify.com') > -1);
         this.spotify = spotifyUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));

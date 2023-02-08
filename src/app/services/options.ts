@@ -11,6 +11,7 @@ export interface Options {
   showLines: boolean;
   showMediaPlayer?: boolean;
   enableSpotify?: boolean;
+  enableTidal?: boolean;
   hideSideLabels?: boolean;
   primaryRelay?: string;
   peopleDisplayType: number;

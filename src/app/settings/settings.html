@@ -6,7 +6,6 @@
     </ng-template>
     <ng-template matTabContent>
       <div class="page">
-
         <app-relays [relays]="relayService.items2"></app-relays>
 
         <!-- <mat-accordion class="example-headers-align" multi>
@@ -59,10 +58,9 @@
           <!-- <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
           <br /> -->
           <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
-          <br>
+          <br />
           <button mat-flat-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button><br /><br />
           <button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
-
         </div>
       </div>
     </ng-template>
@@ -99,9 +97,14 @@
         <br />
 
         <mat-card>
+          <mat-card-header>
+            <mat-card-title>Media widgets</mat-card-title>
+            <mat-card-subtitle>Control how content are rendered</mat-card-subtitle>
+          </mat-card-header>
           <mat-card-content>
-            <p>Enable this to allow the app to render Spotify widgets when URLs linked to Spotify is seen in notes.</p>
-            <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableSpotify">Enable Spotify integration</mat-slide-toggle>
+            <p>Enable this to allow the app to render music widgets when URLs linked to the services is seen in notes.</p>
+            <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableSpotify">Enable Spotify</mat-slide-toggle>
+            <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableTidal">Enable Tidal</mat-slide-toggle>
           </mat-card-content>
         </mat-card>
       </div>

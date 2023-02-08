@@ -8,11 +8,24 @@
   </div>
 
   <ng-template [ngIf]="spotify">
-
     <!-- {{spotify | json}} -->
-
     <iframe
       *ngFor="let song of spotify"
+      style="border-radius: 12px"
+      [src]="song"
+      width="100%"
+      height="152"
+      frameborder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"
+    ></iframe>
+  </ng-template>
+
+  <ng-template [ngIf]="tidal">
+    <!-- {{spotify | json}} -->
+    <iframe
+      *ngFor="let song of tidal"
       style="border-radius: 12px"
       [src]="song"
       width="100%"
