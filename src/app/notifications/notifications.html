@@ -2,7 +2,7 @@
   <mat-card class="notification-card" *ngFor="let notification of ui.notifications">
     <mat-card-content>
       <div class="notification-entry">
-        <div class="notification-message">
+        <div class="notification-message" [ngClass]="{ 'notification-message-seen': notification.seen  }">
           <app-profile-name [pubkey]="notification.pubkey"></app-profile-name>
           <span *ngIf="notification.kind > 7"> {{ notification.message }}</span>
           <span *ngIf="notification.kind == 1"> replied to your <a [routerLink]="['/e', notification.id]">note</a>.</span>

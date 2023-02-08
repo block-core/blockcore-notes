@@ -445,7 +445,7 @@ export class ProfileService {
     } else {
       if (profile.created_at && document.created_at && profile.created_at >= document.created_at) {
         // If the existing profile is newer, ignore this update.
-        return;
+        return profile;
       }
 
       profile.name = document.name;
@@ -484,6 +484,8 @@ export class ProfileService {
     }
 
     this.#updated();
+
+    return profile;
   }
 
   async #updateProfileValues(pubkey: string, predicate: (value: NostrProfileDocument, key?: string) => NostrProfileDocument): Promise<void> {

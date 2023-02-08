@@ -378,13 +378,11 @@ export class RelayService {
       const nostrProfileDocument = this.utilities.mapProfileEvent(event);
 
       if (nostrProfileDocument) {
-        console.log('START UPDATE PROFILE');
-        await this.profileService.updateProfile(nostrProfileDocument.pubkey, nostrProfileDocument);
-        console.log('END UPDATE PROFILE');
-      }
+        const profile = await this.profileService.updateProfile(nostrProfileDocument.pubkey, nostrProfileDocument);
 
-      if (this.ui.pubkey == event.pubkey) {
-        this.ui.setProfile(nostrProfileDocument);
+        if (this.ui.pubkey == event.pubkey) {
+          this.ui.setProfile(profile);
+        }
       }
     } else if (event.kind == Kind.Contacts) {
       const pubkey = this.appState.getPublicKey();
