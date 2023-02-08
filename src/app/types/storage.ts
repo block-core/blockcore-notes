@@ -179,8 +179,27 @@ export class Storage {
     return this.db.getAllFromIndex('events', 'pubkey', pubkey, count);
   }
 
-  async getNotifications(count?: number) {
+  async getNotifications2(count?: number) {
     return this.db.getAllFromIndex('notifications', 'created', undefined, count);
+  }
+
+  async getNotifications(count: number) {
+    let cursor = await this.db.transaction('notifications').store.index('created').openCursor(undefined, 'prev');
+    const items = [];
+    let index = 0;
+
+    while (cursor) {
+      items.push(cursor.value);
+      index++;
+
+      if (index >= count) {
+        break;
+      }
+
+      cursor = await cursor.continue();
+    }
+
+    return items;
   }
 
   async getEventsByCreated2(query?: IDBKeyRange, count?: number) {
