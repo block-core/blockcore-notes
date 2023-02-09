@@ -257,6 +257,10 @@ export class PeopleComponent {
       const pubkeys = pubkey.split(',');
 
       for (let i = 0; i < pubkeys.length; i++) {
+        if (pubkeys[i].startsWith('nostr:')) {
+          pubkeys[i] = pubkeys[0].replace('nostr:', '');
+        }
+
         await this.addFollow(pubkeys[i]);
       }
 
