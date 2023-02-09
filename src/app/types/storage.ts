@@ -283,6 +283,19 @@ export class Storage {
     return this.db.clear('notes');
   }
 
+  async deleteNotesByAuthor(key: string) {
+    var tx = this.db.transaction('events', 'readwrite');
+    var index = tx.store.index('pubkey');
+    var pdestroy = index.openCursor(key);
+
+    pdestroy.then(async (cursor) => {
+      while (cursor) {
+        cursor.delete();
+        cursor = await cursor.continue();
+      }
+    });
+  }
+
   async deleteNotifications() {
     return this.db.clear('notifications');
   }

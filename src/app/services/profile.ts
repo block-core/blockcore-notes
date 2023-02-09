@@ -377,12 +377,16 @@ export class ProfileService {
   }
 
   async unfollow(pubkey: string) {
-    return this.#updateProfileValues(pubkey, (profile) => {
+    const profile = await this.#updateProfileValues(pubkey, (profile) => {
       profile.status = ProfileStatus.Public;
       profile.followed = undefined;
       profile.circle = undefined;
       return profile;
     });
+
+    await this.db.storage.deleteNotesByAuthor(pubkey);
+
+    return profile;
   }
 
   async block(pubkey: string) {
