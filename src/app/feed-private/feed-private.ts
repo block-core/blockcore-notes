@@ -82,7 +82,7 @@ export class FeedPrivateComponent {
         break;
       }
 
-      if (cursor.value) {
+      if (cursor.value && cursor.value.kind == 1) {
         this.currentItems.push(cursor.value);
       }
 

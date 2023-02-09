@@ -177,12 +177,13 @@ export class DataService {
 
     console.log('PUB KEYS:', pubKeys);
 
-    // Subscribe to new events but don't get any history (limit: 0).
+    const filter = [{ authors: pubKeys, since: this.storage.state.since, kinds: [Kind.Text, Kind.Reaction, 6] }];
 
-    console.log('queueSubscription:', { authors: pubKeys, since: this.storage.state.since });
+    // Subscribe to new events but don't get any history (limit: 0).
+    console.log('queueSubscription:', filter);
 
     // this.relayService.queueSubscription([{ authors: pubKeys, since: this.storage.state.since }]);
-    this.relayService.subscribe([{ authors: pubKeys, since: this.storage.state.since }]);
+    this.relayService.subscribe(filter);
   }
 
   async initialize() {
