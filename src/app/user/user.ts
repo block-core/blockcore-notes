@@ -222,10 +222,6 @@ export class UserComponent {
   // }
 
   ngOnInit() {
-    // setInterval(() => {
-    //   console.log('Closed:', this.feedSubscription?.closed);
-    // }, 50);
-
     this.subscriptions.push(
       this.navigation.showMore$.subscribe(() => {
         this.showMore();
@@ -248,10 +244,6 @@ export class UserComponent {
         const pubkey: any = params.get('id');
         this.ui.setPubKey(pubkey);
 
-        // if (this.feedSubscription) {
-        //   this.feedSubscription.unsubscribe();
-        // }
-
         if (pubkey.startsWith('npub')) {
           const convertedId = this.utilities.convertFromBech32ToHex(pubkey);
           this.router.navigate(['/p', convertedId]);
@@ -259,122 +251,12 @@ export class UserComponent {
         }
 
         this.appState.updateTitle(this.utilities.getShortenedIdentifier(pubkey));
-        // this.pubkey = pubkey;
-        // Reset the current profile first.
-        // this.profiles.setItem(undefined);
 
-        // this.profileSubscription = this.profiles.getProfile(pubkey).subscribe(async (profile) => {
-        //   debugger;
-
-        //   if (!profile) {
-        //     return;
-        //   }
-
-        //   // this.profiles.setItem(profile);
-        //   // this.profile = profile;
-
-        //   // if (!this.profile) {
-        //   //   this.profile = this.profiles.emptyProfile(pubkey);
-        //   //   this.circle = undefined;
-        //   // }
-
-        //   // this.npub = this.utilities.getNostrIdentifier(pubkey);
-
-        //   // if (!this.profile.name) {
-        //   //   this.profile.name = this.npub;
-        //   // }
-
-        //   // this.profileName = this.profile.name;
-        // });
-
-        // First load all events from the persistent storage
-        const events = await this.storage.storage.getEventsByPubKey(pubkey, 100);
-        this.ui.putEvents(events);
-
-        // Then query for the latest events.
-        // ?? This is not going to work, this function operates on IDs, not on pubkeys.
-        // this.queueService.enqueEvent(
-        //   pubkey
-        //   // (data: NostrEventDocument) => {
-        //   //   this.ui.putEvent(data);
-        //   //   // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-        //   //   // this.#changed();
-        //   // },
-        //   // 200
-        // );
-
-        // setTimeout(async () => {
-        //   const events = await this.storage.events.where('pubkey').equals(pubkey).toArray();
-        //   this.ui.putEvents(events);
-        // }, 0);
-
-        // setTimeout(async () => {
-        //   // First load all events from the persistent storage
-        //   // Then query for the latest events.
-        //   this.queueService.enqueEvent(
-        //     pubkey,
-        //     (data: NostrEventDocument) => {
-        //       this.ui.putEvent(data);
-        //       // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-        //       // this.#changed();
-        //     },
-        //     100
-        //   );
-        // }, 50);
-
-        // this.feedSubscription = this.dataService.downloadNewestEventsByQuery([{ kinds: [1], authors: [pubkey], limit: 100 }]).subscribe((event) => {
-        //   debugger;
-
-        //   if (!event) {
-        //     return;
-        //   }
-
-        //   const existingIndex = this.events.findIndex((e) => e.id == event.id);
-
-        //   if (existingIndex !== -1) {
-        //     return;
-        //   }
-
-        //   this.events.unshift(event);
-        //   // this.notesService.currentViewNotes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-        //   this.#changed();
-
-        //   // this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
-
-        //   // this.ngZone.run(() => {
-        //   //   // this.notesService.currentViewNotes.push(event);
-        //   //   this.notes = this.notesService.currentViewNotes.slice(0, this.eventsCount);
-        //   //   console.log(this.notes);
-        //   // });
-
-        //   // this.ite
-        //   //   .of(this.notesService.currentViewNotes)
-        //   //   // .pipe(
-        //   //   //   map((data) => {
-        //   //   //     // debugger;
-        //   //   //     return data.sort((a, b) => {
-        //   //   //       debugger;
-        //   //   //       return a.created_at > b.created_at ? 1 : -1;
-        //   //   //     });
-        //   //   //   })
-        //   //   // )
-        //   //   .pipe(map((x) => x.slice(0, this.eventsCount)));
-
-        //   // x.slice(0, this.eventsCount);
-
-        //   // this.ngZone.run(() => {
-        //   //   this.notesService.currentViewNotes.push(event);
-        //   // });
-
-        //   // console.log('LENGTH:', this.notesService.currentViewNotes.length);
-        // });
+        // First load 50 events from the persistent storage and then get latest 100 items.
+        // const events = await this.storage.storage.getEventsByPubKey(pubkey, 50);
+        // this.ui.putEvents(events);
       })
     );
-
-    // if (this.pubkey) {
-    // console.log('PIPING EVENTS...');
-    // this.userEvents$ =
-    // }
   }
 
   optionsUpdated() {
