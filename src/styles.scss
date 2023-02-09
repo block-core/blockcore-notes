@@ -438,6 +438,7 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-image {
+  object-fit: cover;
   // padding-top: 3em;
   // margin-top: 3em;
   /* border: 1px solid; */
@@ -523,6 +524,7 @@ mat-sidenav-content mat-toolbar {
 }
 
 .profile-image-large {
+  object-fit: cover;
   width: 150px;
   height: 150px;
   border-radius: 50%;
