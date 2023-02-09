@@ -390,12 +390,16 @@ export class ProfileService {
   }
 
   async block(pubkey: string) {
-    await this.#updateProfileValues(pubkey, (profile) => {
+    const profile = await this.#updateProfileValues(pubkey, (profile) => {
       profile.status = ProfileStatus.Block;
       profile.followed = undefined;
       profile.circle = undefined;
       return profile;
     });
+
+    await this.db.storage.deleteNotesByAuthor(pubkey);
+
+    return profile;
   }
 
   async unblock(pubkey: string) {
