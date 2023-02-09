@@ -91,21 +91,6 @@ export class FeedPrivateComponent {
       }
     }
 
-    // while (this.cursor) {
-    //   console.log(cursor.key, cursor.value);
-    //   cursor = await cursor.continue();
-    // }
-
-    //     let cursor = await db.transaction(storeName).store.openCursor();
-
-    // while (cursor) {
-    //   console.log(cursor.key, cursor.value);
-    //   cursor = await cursor.continue();
-    // }
-
-    // const items = await this.table.orderBy('created_at').reverse().offset(this.offset).limit(this.pageSize).toArray();
-    // this.currentItems.push(...items);
-
     // Half the page size after initial load.
     if (this.offset === 0) {
       this.pageSize = Math.floor(this.pageSize / 2);
