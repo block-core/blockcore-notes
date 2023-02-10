@@ -92,6 +92,22 @@ export class RelayService {
       }
     });
 
+    this.ui.loadMore$.subscribe((until?: number) => {
+      if (!until) {
+        return;
+      }
+
+      if (!this.profileEventSubscription) {
+        return;
+      }
+
+      // First unsubscribe the current.
+      this.unsubscribe(this.profileEventSubscription);
+
+      // Then create a new subscription:
+      this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: [Kind.Text, Kind.Reaction, 6], until: until, limit: 100 }]);
+    });
+
     // Whenever the pubkey changes, we'll load the profile and start loading the user's events.
     // If the ID is reset, we'll also unsubscribe the subscription.
     this.ui.pubkey$.subscribe(async (id) => {

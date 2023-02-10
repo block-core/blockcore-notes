@@ -49,6 +49,9 @@ export class UIService {
     // Reset the profile and events when pubkey is changed.
     this.#profile = undefined;
     this.events = [];
+    this.viewEvents = [];
+    this.previousSinceValue = 0;
+    this.exhausted = false;
 
     this.#eventsChanged.next(this.events);
     this.#profileChanged.next(this.#profile);
@@ -92,6 +95,14 @@ export class UIService {
     return this.#profileChanged.asObservable();
   }
 
+  viewEvents: NostrEventDocument[] = [];
+
+  #viewEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.viewEvents);
+
+  get viewEvents$(): Observable<NostrEventDocument[]> {
+    return this.#viewEventsChanged.asObservable();
+  }
+
   events: NostrEventDocument[] = [];
 
   #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
@@ -99,6 +110,30 @@ export class UIService {
   get events$(): Observable<NostrEventDocument[]> {
     return this.#eventsChanged.asObservable();
     // return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
+  }
+
+  #loadMore: BehaviorSubject<number | undefined> = new BehaviorSubject<number | undefined>(0);
+
+  get loadMore$(): Observable<number | undefined> {
+    return this.#loadMore.asObservable();
+  }
+
+  previousSinceValue: number = 0;
+  exhausted = false;
+
+  triggerLoadMore() {
+    const currentSinceValue = this.events[this.events.length - 1].created_at;
+
+    // If there is nothing new, don't trigger:
+    if (currentSinceValue > this.previousSinceValue) {
+      console.log('currentSinceValue:', currentSinceValue);
+      console.log('this.previousSinceValue:', this.previousSinceValue);
+      this.previousSinceValue = currentSinceValue;
+      this.#loadMore.next(currentSinceValue);
+    } else {
+      // Only when both there is nothing more to load and view events has scrolled to bottom, we'll show exhausted.
+      this.checkExhausted();
+    }
   }
 
   children(parentId: string): NostrEventDocument[] {
@@ -171,6 +206,22 @@ export class UIService {
     this.#unreadNotificationsChanged.next(unread);
   }
 
+  viewEventsStart = 0;
+  viewEventsCount = 5;
+
+  /** The view events must be completely sliced each time because we can receive events in any created order and it will be re-sorted. */
+  updateViewEvents(count: number) {
+    this.viewEventsCount = count;
+    this.viewEvents = this.events.slice(this.viewEventsStart, this.viewEventsCount);
+    this.#viewEventsChanged.next(this.viewEvents);
+
+    // If there already loaded some events and the viewEvents and events is same amount, then
+    // it's time to ask relays for even older data.
+    if (this.events.length > 50 && this.events.length == this.viewEvents.length) {
+      this.triggerLoadMore();
+    }
+  }
+
   putEvent(event: NostrEventDocument) {
     // It might happen that async events are triggering this method after user have selected another
     // profile to watch, so we must ignore those events to avoid UI-glitches.
@@ -192,21 +243,45 @@ export class UIService {
           this.events = this.events.sort((a, b) => {
             return a.created_at < b.created_at ? 1 : -1;
           });
+
+          this.viewEvents = this.viewEvents.sort((a, b) => {
+            return a.created_at < b.created_at ? 1 : -1;
+          });
         } else {
           this.events = this.events.sort((a, b) => {
             return a.created_at < b.created_at ? -1 : 1;
           });
+
+          this.viewEvents = this.viewEvents.sort((a, b) => {
+            return a.created_at < b.created_at ? -1 : 1;
+          });
         }
+
+        // Update the view events array:
+        this.viewEvents = this.events.slice(this.viewEventsStart, this.viewEventsCount);
+
+        this.checkExhausted();
 
         // Attempting to only trigger events changed if there is an actual change in the content.
         this.#eventsChanged.next(this.events);
+        this.#viewEventsChanged.next(this.viewEvents);
       }
+    }
+  }
+
+  checkExhausted() {
+    // Only when both there is nothing more to load and view events has scrolled to bottom, we'll show exhausted.
+    if (this.viewEvents.length == this.events.length) {
+      this.exhausted = true;
+    } else {
+      this.exhausted = false;
     }
   }
 
   putEvents(events: NostrEventDocument[]) {
     // For now, filter out only text.
     this.events = events.filter((e) => e.kind == Kind.Text);
+    this.viewEvents = [];
 
     this.events = this.events.map((e) => this.calculateFields(e));
 
@@ -221,6 +296,7 @@ export class UIService {
     }
 
     this.#eventsChanged.next(this.events);
+    this.#viewEventsChanged.next(this.viewEvents);
   }
 
   clear() {

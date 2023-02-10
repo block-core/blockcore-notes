@@ -197,10 +197,18 @@ export class UserComponent {
   }
 
   eventsCount = 5;
+  pageSize = 5;
 
   showMore() {
+    this.ui.updateViewEvents(this.eventsCount);
     this.eventsCount += 5;
-    this.#changed();
+
+    // const count = this.ui.viewEvents.length;
+    // const newItems = this.ui.events.slice(count, count + this.pageSize);
+    // this.ui.viewEvents.push(...newItems);
+    // this.#changed();
+    // console.log('All events:', this.ui.events);
+    // console.log('Show more!!', this.ui.viewEvents);
   }
 
   layout?: number = 1;

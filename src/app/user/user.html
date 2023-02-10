@@ -38,7 +38,7 @@
 
 <mat-tab-group *ngIf="layout == 1" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Notes">
-    <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
+    <div *ngIf="ui.viewEvents$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
         <!-- <div class="page" *ngIf="items.value.length === 0">
           <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
@@ -54,6 +54,11 @@
       </ng-template>
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
       <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    </div>
+
+    <div class="show-more centered">
+      <button *ngIf="!ui.exhausted" mat-button (click)="showMore()">Show more...</button>
+      <span *ngIf="ui.exhausted">Loading more events... or there are nothing more to show...</span>
     </div>
   </mat-tab>
   <mat-tab label="Replies">
@@ -74,6 +79,10 @@
       </ng-template>
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
       <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    </div>
+
+    <div class="show-more centered">
+      <button mat-button (click)="showMore()">Show more...</button>
     </div>
   </mat-tab>
   <!-- <mat-tab label="Likes">
