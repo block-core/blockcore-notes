@@ -57,8 +57,8 @@
     </div>
 
     <div class="show-more centered">
-      <button *ngIf="!ui.exhausted" mat-button (click)="showMore()">Show more...</button>
-      <span *ngIf="ui.exhausted">Loading more events... or there are nothing more to show...</span>
+      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
+      <span *ngIf="ui.viewCounts.rootEventsViewCountExhausted">Loading more events... or there are nothing more to show...</span>
     </div>
   </mat-tab>
   <mat-tab label="Replies">
@@ -82,7 +82,8 @@
     </div>
 
     <div class="show-more centered">
-      <button mat-button (click)="showMore()">Show more...</button>
+      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
+      <span *ngIf="ui.viewCounts.replyEventsViewCountExhausted">Loading more events... or there are nothing more to show...</span>
     </div>
   </mat-tab>
   <!-- <mat-tab label="Likes">

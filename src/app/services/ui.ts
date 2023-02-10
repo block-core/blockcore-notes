@@ -25,8 +25,11 @@ export class UIService {
 
   viewCounts = {
     followingEventsViewCount: 5,
+    followingEventsViewExhausted: false,
     rootEventsViewCount: 5,
+    rootEventsViewCountExhausted: false,
     replyEventsViewCount: 5,
+    replyEventsViewCountExhausted: false,
   };
 
   #unreadNotificationsChanged: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -249,18 +252,21 @@ export class UIService {
   updateRootEventsView(start: number, count: number) {
     this.viewCounts.rootEventsViewCount = count;
     this.#lists.rootEventsView = this.#lists.rootEvents.slice(start, count);
+    this.viewCounts.rootEventsViewCountExhausted = count >= this.#lists.rootEvents.length;
     this.#rootEventsView.next(this.#lists.rootEventsView);
   }
 
   updateReplyEventsView(start: number, count: number) {
     this.viewCounts.replyEventsViewCount = count;
     this.#lists.replyEventsView = this.#lists.replyEvents.slice(start, count);
+    this.viewCounts.replyEventsViewCountExhausted = count >= this.#lists.replyEvents.length;
     this.#replyEventsView.next(this.#lists.replyEventsView);
   }
 
   updateFollowingEventsView(start: number, count: number) {
     this.viewCounts.followingEventsViewCount = count;
     this.#lists.followingEventsView = this.#lists.followingEvents.slice(start, count);
+    this.viewCounts.followingEventsViewExhausted = count >= this.#lists.followingEvents.length;
     this.#followingEventsView.next(this.#lists.followingEventsView);
   }
 
