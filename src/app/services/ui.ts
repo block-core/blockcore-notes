@@ -69,7 +69,8 @@ export class UIService {
     this.#profile = undefined;
     this.events = [];
     this.viewEvents = [];
-    this.previousSinceValue = 0;
+    // this.previousSinceValue = 0;
+    this.previousProfileSinceValue = 0;
     this.exhausted = false;
 
     this.#eventsChanged.next(this.events);
@@ -145,21 +146,33 @@ export class UIService {
     return this.#loadMore.asObservable();
   }
 
-  previousSinceValue: number = 0;
+  previousProfileSinceValue: number = 0;
   exhausted = false;
 
-  triggerLoadMore() {
-    const currentSinceValue = this.events[this.events.length - 1].created_at;
+  triggerLoadMoreProfileEvents() {
+    let date1 = 0;
+    let date2 = 0;
+
+    if (this.#lists.rootEvents.length > 0) {
+      date1 = this.#lists.rootEvents[this.#lists.rootEvents.length - 1].created_at;
+    }
+
+    if (this.#lists.replyEvents.length > 0) {
+      date2 = this.#lists.replyEvents[this.#lists.replyEvents.length - 1].created_at;
+    }
+
+    let date = date1 > date2 ? date1 : date2;
 
     // If there is nothing new, don't trigger:
-    if (currentSinceValue > this.previousSinceValue) {
-      console.log('currentSinceValue:', currentSinceValue);
-      console.log('this.previousSinceValue:', this.previousSinceValue);
-      this.previousSinceValue = currentSinceValue;
-      this.#loadMore.next(currentSinceValue);
+    if (date > this.previousProfileSinceValue) {
+      this.previousProfileSinceValue = date;
+
+      // TODO: We should NOT do this until we have actually exhausted the current subscription which might
+      // be streaming in events...
+      // this.#loadMore.next(date);
     } else {
       // Only when both there is nothing more to load and view events has scrolled to bottom, we'll show exhausted.
-      this.checkExhausted();
+      // this.checkExhausted();
     }
   }
 
@@ -245,7 +258,7 @@ export class UIService {
     // If there already loaded some events and the viewEvents and events is same amount, then
     // it's time to ask relays for even older data.
     if (this.events.length == this.viewEvents.length) {
-      this.triggerLoadMore();
+      // this.triggerLoadMore();
     }
   }
 
@@ -254,6 +267,10 @@ export class UIService {
     this.#lists.rootEventsView = this.#lists.rootEvents.slice(start, count);
     this.viewCounts.rootEventsViewCountExhausted = count >= this.#lists.rootEvents.length;
     this.#rootEventsView.next(this.#lists.rootEventsView);
+
+    if (this.viewCounts.rootEventsViewCountExhausted) {
+      this.triggerLoadMoreProfileEvents();
+    }
   }
 
   updateReplyEventsView(start: number, count: number) {
@@ -261,6 +278,10 @@ export class UIService {
     this.#lists.replyEventsView = this.#lists.replyEvents.slice(start, count);
     this.viewCounts.replyEventsViewCountExhausted = count >= this.#lists.replyEvents.length;
     this.#replyEventsView.next(this.#lists.replyEventsView);
+
+    if (this.viewCounts.rootEventsViewCountExhausted) {
+      this.triggerLoadMoreProfileEvents();
+    }
   }
 
   updateFollowingEventsView(start: number, count: number) {
@@ -268,6 +289,10 @@ export class UIService {
     this.#lists.followingEventsView = this.#lists.followingEvents.slice(start, count);
     this.viewCounts.followingEventsViewExhausted = count >= this.#lists.followingEvents.length;
     this.#followingEventsView.next(this.#lists.followingEventsView);
+
+    if (this.viewCounts.rootEventsViewCountExhausted) {
+      // this.triggerLoadMore();
+    }
   }
 
   sortAscending(a: NostrEventDocument, b: NostrEventDocument) {
