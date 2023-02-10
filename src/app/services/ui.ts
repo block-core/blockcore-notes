@@ -13,6 +13,22 @@ import { ProfileService } from './profile';
 export class UIService {
   constructor(private eventService: EventService) {}
 
+  #lists = {
+    threadEvents: [] as NostrEventDocument[],
+    followingEvents: [] as NostrEventDocument[],
+    followingEventsView: [] as NostrEventDocument[],
+    rootEvents: [] as NostrEventDocument[],
+    replyEvents: [] as NostrEventDocument[],
+    rootEventsView: [] as NostrEventDocument[],
+    replyEventsView: [] as NostrEventDocument[],
+  };
+
+  viewCounts = {
+    followingEventsViewCount: 5,
+    rootEventsViewCount: 5,
+    replyEventsViewCount: 5,
+  };
+
   #unreadNotificationsChanged: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   get unreadNotifications$(): Observable<number> {
@@ -101,6 +117,14 @@ export class UIService {
 
   get viewEvents$(): Observable<NostrEventDocument[]> {
     return this.#viewEventsChanged.asObservable();
+  }
+
+  viewReplyEvents: NostrEventDocument[] = [];
+
+  #viewReplyEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.viewReplyEvents);
+
+  get viewReplyEvents$(): Observable<NostrEventDocument[]> {
+    return this.#viewReplyEventsChanged.asObservable();
   }
 
   events: NostrEventDocument[] = [];
@@ -217,9 +241,77 @@ export class UIService {
 
     // If there already loaded some events and the viewEvents and events is same amount, then
     // it's time to ask relays for even older data.
-    if (this.events.length > 50 && this.events.length == this.viewEvents.length) {
+    if (this.events.length == this.viewEvents.length) {
       this.triggerLoadMore();
     }
+  }
+
+  updateRootEventsView(start: number, count: number) {
+    this.viewCounts.rootEventsViewCount = count;
+    this.#lists.rootEventsView = this.#lists.rootEvents.slice(start, count);
+    this.#rootEventsView.next(this.#lists.rootEventsView);
+  }
+
+  updateReplyEventsView(start: number, count: number) {
+    this.viewCounts.replyEventsViewCount = count;
+    this.#lists.replyEventsView = this.#lists.replyEvents.slice(start, count);
+    this.#replyEventsView.next(this.#lists.replyEventsView);
+  }
+
+  updateFollowingEventsView(start: number, count: number) {
+    this.viewCounts.followingEventsViewCount = count;
+    this.#lists.followingEventsView = this.#lists.followingEvents.slice(start, count);
+    this.#followingEventsView.next(this.#lists.followingEventsView);
+  }
+
+  sortAscending(a: NostrEventDocument, b: NostrEventDocument) {
+    return a.created_at < b.created_at ? -1 : 1;
+  }
+
+  sortDescending(a: NostrEventDocument, b: NostrEventDocument) {
+    return a.created_at < b.created_at ? 1 : -1;
+  }
+
+  #rootEvents: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.rootEvents);
+
+  get rootEvents$(): Observable<NostrEventDocument[]> {
+    return this.#rootEvents.asObservable();
+  }
+
+  #rootEventsView: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.rootEventsView);
+
+  get rootEventsView$(): Observable<NostrEventDocument[]> {
+    return this.#rootEventsView.asObservable();
+  }
+
+  #replyEvents: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.replyEvents);
+
+  get replyEvents$(): Observable<NostrEventDocument[]> {
+    return this.#replyEvents.asObservable();
+  }
+
+  #replyEventsView: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.replyEventsView);
+
+  get replyEventsView$(): Observable<NostrEventDocument[]> {
+    return this.#replyEventsView.asObservable();
+  }
+
+  #threadEvents: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.threadEvents);
+
+  get threadEvents$(): Observable<NostrEventDocument[]> {
+    return this.#threadEvents.asObservable();
+  }
+
+  #followingEvents: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.followingEvents);
+
+  get followingEvents$(): Observable<NostrEventDocument[]> {
+    return this.#followingEvents.asObservable();
+  }
+
+  #followingEventsView: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.followingEventsView);
+
+  get followingEventsView$(): Observable<NostrEventDocument[]> {
+    return this.#followingEventsView.asObservable();
   }
 
   putEvent(event: NostrEventDocument) {
@@ -230,13 +322,59 @@ export class UIService {
     // }
 
     if (event.kind == Kind.Text) {
-      const existingIndex = this.events.findIndex((e) => e.id == event.id);
-
       event = this.calculateFields(event);
+
+      if (this.pubkey) {
+        // Profile
+        if (!event.rootEventId) {
+          const index = this.#lists.rootEvents.findIndex((e) => e.id == event.id);
+          if (index == -1) {
+            this.#lists.rootEvents.push(event);
+            this.#lists.rootEvents = this.#lists.rootEvents.sort(this.sortDescending);
+            this.updateRootEventsView(0, this.viewCounts.rootEventsViewCount);
+          } else {
+            this.#lists.rootEvents[index] = event;
+          }
+        } else {
+          const index = this.#lists.replyEvents.findIndex((e) => e.id == event.id);
+          if (index == -1) {
+            this.#lists.replyEvents.push(event);
+            this.#lists.replyEvents = this.#lists.replyEvents.sort(this.sortDescending);
+            this.updateReplyEventsView(0, this.viewCounts.replyEventsViewCount);
+          } else {
+            this.#lists.replyEvents[index] = event;
+          }
+        }
+      } else if (this.eventId) {
+        // Thread
+        const index = this.#lists.threadEvents.findIndex((e) => e.id == event.id);
+        if (index == -1) {
+          this.#lists.threadEvents.push(event);
+          this.#lists.threadEvents = this.#lists.threadEvents.sort(this.sortDescending);
+        } else {
+          this.#lists.threadEvents[index] = event;
+        }
+      } else {
+        // Following
+        const index = this.#lists.followingEvents.findIndex((e) => e.id == event.id);
+        if (index == -1) {
+          this.#lists.followingEvents.push(event);
+          this.#lists.followingEvents = this.#lists.followingEvents.sort(this.sortDescending);
+          this.updateFollowingEventsView(0, this.viewCounts.followingEventsViewCount);
+        } else {
+          this.#lists.followingEvents[index] = event;
+        }
+      }
+
+      const existingIndex = this.events.findIndex((e) => e.id == event.id);
 
       if (existingIndex > -1) {
         this.events[existingIndex] = event;
       } else {
+        if (!event.rootEventId) {
+        } else {
+        }
+
         this.events.unshift(event);
 
         if (this.pubkey) {
@@ -244,27 +382,37 @@ export class UIService {
             return a.created_at < b.created_at ? 1 : -1;
           });
 
-          this.viewEvents = this.viewEvents.sort((a, b) => {
-            return a.created_at < b.created_at ? 1 : -1;
-          });
+          // Update the view events array:
+          this.viewEvents = this.events.slice(this.viewEventsStart, this.viewEventsCount);
+          this.viewEvents = this.events.slice(this.viewEventsStart, this.viewEventsCount);
+
+          // this.viewEvents = this.viewEvents.sort((a, b) => {
+          //   return a.created_at < b.created_at ? 1 : -1;
+          // });
+
+          // this.viewReplyEvents = this.viewReplyEvents.sort((a, b) => {
+          //   return a.created_at < b.created_at ? 1 : -1;
+          // });
+
+          this.checkExhausted();
         } else {
           this.events = this.events.sort((a, b) => {
             return a.created_at < b.created_at ? -1 : 1;
           });
 
-          this.viewEvents = this.viewEvents.sort((a, b) => {
-            return a.created_at < b.created_at ? -1 : 1;
-          });
+          // this.viewEvents = this.viewEvents.sort((a, b) => {
+          //   return a.created_at < b.created_at ? -1 : 1;
+          // });
+
+          // this.viewReplyEvents = this.viewReplyEvents.sort((a, b) => {
+          //   return a.created_at < b.created_at ? -1 : 1;
+          // });
         }
-
-        // Update the view events array:
-        this.viewEvents = this.events.slice(this.viewEventsStart, this.viewEventsCount);
-
-        this.checkExhausted();
 
         // Attempting to only trigger events changed if there is an actual change in the content.
         this.#eventsChanged.next(this.events);
         this.#viewEventsChanged.next(this.viewEvents);
+        this.#viewReplyEventsChanged.next(this.viewReplyEvents);
       }
     }
   }
@@ -300,6 +448,16 @@ export class UIService {
   }
 
   clear() {
+    this.#lists = {
+      threadEvents: [],
+      followingEvents: [],
+      followingEventsView: [],
+      rootEvents: [],
+      replyEvents: [],
+      rootEventsView: [],
+      replyEventsView: [],
+    };
+
     this.#eventId = undefined;
     this.#event = undefined;
 

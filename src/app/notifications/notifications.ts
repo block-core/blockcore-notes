@@ -79,15 +79,16 @@ export class NotificationsComponent {
   }
 
   async ngOnDestroy() {
+    for (let index = 0; index < this.ui.notifications.length; index++) {
+      const notification = this.ui.notifications[index];
+      notification.seen = true;
+      await this.db.storage.putNotification(notification);
+    }
+
     this.utilities.unsubscribe(this.subscriptions);
 
     if (this.subscriptionId) {
       this.relayService.unsubscribe(this.subscriptionId);
-    }
-
-    for (let index = 0; index < this.ui.notifications.length; index++) {
-      const notification = this.ui.notifications[index];
-      await this.db.storage.putNotification(notification);
     }
   }
 }

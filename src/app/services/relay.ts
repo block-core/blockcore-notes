@@ -479,15 +479,15 @@ export class RelayService {
         this.profileService.followingAndRelays(event.pubkey, following, event.content);
       }
     } else {
-      const index = this.profileService.followingKeys.indexOf(event.pubkey);
+      // const index = this.profileService.followingKeys.indexOf(event.pubkey);
 
       // If the event we received is from someone the user is following, always persist it if not already persisted.
-      if (index > -1) {
-        await this.db.storage.putEvents(event);
-      } else if (event.pubkey === this.appState.getPublicKey()) {
-        // If user's own event, also persist.
-        await this.db.storage.putEvents(event);
-      }
+      // if (index > -1) {
+      //   await this.db.storage.putEvents(event);
+      // } else if (event.pubkey === this.appState.getPublicKey()) {
+      //   // If user's own event, also persist.
+      //   await this.db.storage.putEvents(event);
+      // }
 
       console.log('EVENT:', event);
 

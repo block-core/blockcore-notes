@@ -23,13 +23,13 @@
 </ng-template>
 
 <ng-template [ngIf]="layout == 2">
-  <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
+  <!-- <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
     <ng-template [ngIf]="items.value && items.value.length > 0">
       <app-content-photos [events]="items.value"> </app-content-photos>
     </ng-template>
     <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
     <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
-  </div>
+  </div> -->
 </ng-template>
 
 <!-- <div *ngIf="rootEvents$ | withStatus | async as items">
@@ -38,7 +38,7 @@
 
 <mat-tab-group *ngIf="layout == 1" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Notes">
-    <div *ngIf="ui.viewEvents$ | withStatus | async as items" class="feed-page">
+    <div *ngIf="ui.rootEventsView$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
         <!-- <div class="page" *ngIf="items.value.length === 0">
           <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
@@ -62,7 +62,7 @@
     </div>
   </mat-tab>
   <mat-tab label="Replies">
-    <div *ngIf="replyEvents$ | withStatus | async as items" class="feed-page">
+    <div *ngIf="ui.replyEventsView$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
         <div class="page" *ngIf="items.value.length === 0">
           <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>

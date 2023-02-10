@@ -40,21 +40,21 @@ export class UserComponent {
   //   return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
   // }
 
-  rootEvents$ = this.ui.events$
-    .pipe(
-      map((data) => {
-        return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length == 0);
-      })
-    )
-    .pipe(map((x) => x.slice(0, this.eventsCount)));
+  // rootEvents$ = this.ui.events$
+  //   .pipe(
+  //     map((data) => {
+  //       return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length == 0);
+  //     })
+  //   )
+  //   .pipe(map((x) => x.slice(0, this.eventsCount)));
 
-  replyEvents$ = this.ui.events$
-    .pipe(
-      map((data) => {
-        return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length > 0);
-      })
-    )
-    .pipe(map((x) => x.slice(0, this.eventsCount)));
+  // replyEvents$ = this.ui.events$
+  //   .pipe(
+  //     map((data) => {
+  //       return data.filter((e) => e.tags.filter((p) => p[0] === 'e').length > 0);
+  //     })
+  //   )
+  //   .pipe(map((x) => x.slice(0, this.eventsCount)));
 
   // let eventsWithSingleeTag = this.feedService.thread.filter((e) => e.kind == 7 && e.tags.filter((p) => p[0] === 'e').length == 1);
 
@@ -188,7 +188,7 @@ export class UserComponent {
     // Reset the events count when changing tabs.
     this.router.navigate([], { queryParams: { t: event.index }, replaceUrl: true });
 
-    this.eventsCount = 5;
+    // this.eventsCount = 5;
     this.#changed();
   }
 
@@ -196,12 +196,14 @@ export class UserComponent {
     // this.#eventsChanged.next(this.events);
   }
 
-  eventsCount = 5;
   pageSize = 5;
 
   showMore() {
-    this.ui.updateViewEvents(this.eventsCount);
-    this.eventsCount += 5;
+    if (this.tabIndex == null || Number(this.tabIndex) == 0) {
+      this.ui.updateRootEventsView(0, this.ui.viewCounts.rootEventsViewCount + this.pageSize);
+    } else {
+      this.ui.updateReplyEventsView(0, this.ui.viewCounts.replyEventsViewCount + this.pageSize);
+    }
 
     // const count = this.ui.viewEvents.length;
     // const newItems = this.ui.events.slice(count, count + this.pageSize);
