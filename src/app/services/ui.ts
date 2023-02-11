@@ -168,10 +168,7 @@ export class UIService {
     // If there is nothing new, don't trigger:
     if (date > this.previousProfileSinceValue) {
       this.previousProfileSinceValue = date;
-
-      // TODO: We should NOT do this until we have actually exhausted the current subscription which might
-      // be streaming in events...
-      // this.#loadMore.next(date);
+      this.#loadMore.next(date);
     } else {
       // Only when both there is nothing more to load and view events has scrolled to bottom, we'll show exhausted.
       // this.checkExhausted();
