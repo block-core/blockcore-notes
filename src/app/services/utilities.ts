@@ -103,6 +103,21 @@ export class Utilities {
     return undefined;
   }
 
+  getRelayUrls(relays: any) {
+    let preparedRelays = relays;
+
+    if (Array.isArray(preparedRelays)) {
+      preparedRelays = {};
+
+      for (let i = 0; i < relays.length; i++) {
+        preparedRelays[relays[i]] = {};
+      }
+    }
+
+    const entries = Object.keys(preparedRelays);
+    return entries;
+  }
+
   getNostrIdentifier(pubkey: string) {
     const key = this.hexToArray(pubkey);
     const converted = this.convertToBech32(key, 'npub');

@@ -14,8 +14,8 @@ export class EventHeaderComponent {
   @Input() profile?: NostrProfileDocument;
   @Input() displayName: boolean = true;
   @Input() displayContent: boolean = true;
-  @Input() displayOnlyIcon: boolean = false;
   @Input() iconSize: string = 'small';
+  @Input() listType: string = 'list';
 
   imagePath = '/assets/profile.png';
   tooltip = '';

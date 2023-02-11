@@ -685,21 +685,6 @@ export class RelayService {
     this.#replyEventsChanged.next(this.events);
   }
 
-  getRelayUrls(relays: any) {
-    let preparedRelays = relays;
-
-    if (Array.isArray(preparedRelays)) {
-      preparedRelays = {};
-
-      for (let i = 0; i < relays.length; i++) {
-        preparedRelays[relays[i]] = {};
-      }
-    }
-
-    const entries = Object.keys(preparedRelays);
-    return entries;
-  }
-
   /** Takes relay in the format used for extensions and adds to persistent storage. */
   async appendRelays(relays: any) {
     let preparedRelays = relays;

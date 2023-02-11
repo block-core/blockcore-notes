@@ -49,10 +49,10 @@
             <mat-option [value]="6">Large icons</mat-option>
             <mat-option [value]="5">Medium icons</mat-option>
             <mat-option [value]="4">Small icons</mat-option>
-            <mat-option [value]="3">List</mat-option>
+            <!-- <mat-option [value]="3">List</mat-option> -->
             <mat-option [value]="2">Details</mat-option>
             <mat-option [value]="0">Tiles</mat-option>
-            <mat-option [value]="1">Content</mat-option>
+            <!-- <mat-option [value]="1">Content</mat-option> -->
           </mat-select>
         </mat-form-field>
 
@@ -67,7 +67,7 @@
     </mat-accordion>
   </div>
 
-  <div class="people-list">
+  <div class="people-list" [ngClass]="['people-list-' + optionsService.values.peopleDisplayView]">
     <ng-template [ngIf]="!loading">
       <ng-template [ngIf]="optionsService.values.peopleDisplayView == 0 || optionsService.values.peopleDisplayView == null">
         <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of sortedItems; trackBy: trackByFn">
@@ -82,14 +82,27 @@
           <div class="content clickable">{{ profile.about }}</div>
         </mat-card>
       </ng-template>
+
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 1">
+        <app-event-header [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 2">
+        <app-event-header [listType]="'details'" [iconSize]="'small'" [displayName]="true" [displayContent]="true" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 3">
+        <app-event-header [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+
       <ng-template [ngIf]="optionsService.values.peopleDisplayView == 4">
-        <app-event-header [iconSize]="'small'" [displayOnlyIcon]="true" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+        <app-event-header [listType]="'icon'" [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
       </ng-template>
       <ng-template [ngIf]="optionsService.values.peopleDisplayView == 5">
-        <app-event-header [iconSize]="'medium'" [displayOnlyIcon]="true" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+        <app-event-header [listType]="'icon'" [iconSize]="'medium'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
       </ng-template>
       <ng-template [ngIf]="optionsService.values.peopleDisplayView == 6">
-        <app-event-header [iconSize]="'large'" [displayOnlyIcon]="true" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+        <app-event-header [listType]="'icon'" [iconSize]="'large'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
       </ng-template>
     </ng-template>
 

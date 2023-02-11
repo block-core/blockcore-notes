@@ -498,7 +498,7 @@ mat-sidenav-content mat-toolbar {
 .event-header {
   display: grid;
   grid-template-columns: 48px 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 24px 1fr;
   gap: 0 1em;
   // column-gap: 1em;
   grid-template-areas:
@@ -506,8 +506,17 @@ mat-sidenav-content mat-toolbar {
     "icon date";
 }
 
-.event-header-only-icon {
+.event-header-list {
+
+}
+
+.event-header-icon {
   display: inline-block;
+}
+
+.event-header-details {
+  margin-bottom: 1em;
+  // width: 100%;
 }
 
 .event-header a {

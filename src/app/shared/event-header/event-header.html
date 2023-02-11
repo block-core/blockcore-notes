@@ -1,9 +1,9 @@
 <!-- <span class="material-icons network-status" [ngClass]="class">circle</span> -->
 
-<div class="event-header" [ngClass]="{ 'event-header-only-icon': displayOnlyIcon }">
+<div class="event-header" [ngClass]="['event-header-' + listType]">
   <div class="icon" [ngClass]="['icon-' + iconSize]">
     <a [routerLink]="['/p', pubkey]">
-      <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status == 1 || profile?.status == 2" class="profile-image-follow" [matTooltip]="tooltip" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath" />
+      <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status == 1 || profile?.status == 2" class="profile-image profile-image-follow" [matTooltip]="tooltip" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath" />
       <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status != 1 && profile?.status != 2" class="profile-image" [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
       <!-- <app-profile-image [publicKey]="event.pubkey"></app-profile-image> -->
     </a>
@@ -17,6 +17,17 @@
   </div>
   <div *ngIf="displayContent" class="date clickable">
     <ng-content></ng-content>
+    <div *ngIf="listType == 'details' && profile">
+      <div *ngIf="profile.display_name">Display Name: {{profile.display_name}}</div>
+      <div *ngIf="profile.name">Name: {{profile.name}}</div>
+      <div *ngIf="profile.nip05">NIP05: {{profile.nip05}}</div>
+      <div *ngIf="profile.website">Website: {{profile.website}}</div>
+      <div *ngIf="profile.lud06">lud06: {{profile.lud06}}</div>
+      <div *ngIf="profile.lud16">lud16: {{profile.lud16}}</div>
+      <div *ngIf="profile.following">following: {{profile.following?.length}}</div>
+      <div *ngIf="profile.about">About: {{profile.about}}</div>
+      <div *ngIf="profile.relays">Relays: <app-relay-list [relays]="profile.relays"></app-relay-list></div>
+    </div>
     <!-- <span class="event-date" [matTooltip]="profile.id!" matTooltipPosition="below">{{ profile.created_at | ago }}</span>
       <app-directory-icon [publicKey]="profile.pubkey"></app-directory-icon> -->
   </div>

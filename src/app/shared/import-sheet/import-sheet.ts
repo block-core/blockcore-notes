@@ -3,21 +3,28 @@ import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bott
 import { Router } from '@angular/router';
 import { ProfileService } from 'src/app/services/profile';
 import { RelayService } from 'src/app/services/relay';
-import { sleep } from 'src/app/services/utilities';
+import { sleep, Utilities } from 'src/app/services/utilities';
 
 @Component({
   selector: 'app-import-sheet',
   templateUrl: 'import-sheet.html',
 })
 export class ImportSheet {
-  constructor(private relayService: RelayService, private router: Router, private profileService: ProfileService, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any, private bottomSheetRef: MatBottomSheetRef<ImportSheet>) {}
+  constructor(
+    private utilities: Utilities,
+    private relayService: RelayService,
+    private router: Router,
+    private profileService: ProfileService,
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
+    private bottomSheetRef: MatBottomSheetRef<ImportSheet>
+  ) {}
 
   async import(event: MouseEvent) {
     this.bottomSheetRef.dismiss();
     event.preventDefault();
 
     if (this.data.relaysCount > 0) {
-      const relayUrls = this.relayService.getRelayUrls(this.data.relays);
+      const relayUrls = this.utilities.getRelayUrls(this.data.relays);
 
       await this.relayService.deleteRelays(relayUrls);
 
