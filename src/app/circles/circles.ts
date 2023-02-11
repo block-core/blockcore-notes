@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { DataValidation } from '../services/data-validation';
-import { Circle,  NostrProfileDocument } from '../services/interfaces';
+import { Circle, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { CircleService } from '../services/circle';
 import { CircleDialog } from '../shared/create-circle-dialog/create-circle-dialog';
@@ -22,7 +22,7 @@ import { DataService } from '../services/data';
 export class CirclesComponent {
   publicKey?: string | null;
   loading = false;
-  following: NostrProfileDocument[] = [];
+  // following: NostrProfileDocument[] = [];
   searchTerm: any;
 
   // items: Circle[] = [];
@@ -79,9 +79,9 @@ export class CirclesComponent {
 
   getFollowingInCircle(id?: number) {
     if (id == null) {
-      return this.following.filter((f) => f.circle == null || f.circle == 0);
+      return this.profileService.following.filter((f) => f.circle == null || f.circle == 0);
     } else {
-      return this.following.filter((f) => f.circle == id);
+      return this.profileService.following.filter((f) => f.circle == id);
     }
   }
 
@@ -104,7 +104,7 @@ export class CirclesComponent {
 
   private getPublicPublicKeys() {
     // console.log(this.items);
-    console.log(this.following);
+    console.log(this.profileService.following);
 
     const items: string[] = [];
 
