@@ -52,7 +52,7 @@
             <!-- <mat-option [value]="3">List</mat-option> -->
             <mat-option [value]="2">Details</mat-option>
             <mat-option [value]="0">Tiles</mat-option>
-            <!-- <mat-option [value]="1">Content</mat-option> -->
+            <mat-option [value]="1">Content</mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -84,7 +84,7 @@
       </ng-template>
 
       <ng-template [ngIf]="optionsService.values.peopleDisplayView == 1">
-        <app-event-header [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+        <app-event-header [listType]="'content'" [iconSize]="'small'" [displayName]="true" [displayContent]="true" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
       </ng-template>
 
       <ng-template [ngIf]="optionsService.values.peopleDisplayView == 2">

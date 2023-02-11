@@ -3,7 +3,15 @@
 <div class="event-header" [ngClass]="['event-header-' + listType]">
   <div class="icon" [ngClass]="['icon-' + iconSize]">
     <a [routerLink]="['/p', pubkey]">
-      <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status == 1 || profile?.status == 2" class="profile-image profile-image-follow" [matTooltip]="tooltip" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath" />
+      <img
+        onerror="this.src='/assets/profile.png'"
+        *ngIf="profile?.status == 1 || profile?.status == 2"
+        class="profile-image profile-image-follow"
+        [matTooltip]="tooltip"
+        [style.borderColor]="circle?.color"
+        matTooltipPosition="above"
+        [src]="imagePath"
+      />
       <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status != 1 && profile?.status != 2" class="profile-image" [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
       <!-- <app-profile-image [publicKey]="event.pubkey"></app-profile-image> -->
     </a>
@@ -15,9 +23,22 @@
       <!-- <app-profile-name [publicKey]="pubkey"></app-profile-name> -->
     </a>
   </div>
+
+  <ng-template [ngIf]="listType == 'details'">
+    <div>{{profile?.display_name}}</div>
+    <div>{{profile?.name}}</div>
+    <div>{{profile?.nip05}}</div>
+    <div>{{profile?.website}}</div>
+    <div>{{profile?.lud06}}</div>
+    <div>{{profile?.lud16}}</div>
+    <div>{{profile?.following?.length}}</div>
+    <!-- <div>{{profile?.about}}</div> -->
+  </ng-template>
+  <!-- <div *ngIf="listType == 'details'">Relays: <app-relay-list [relays]="profile?.relays"></app-relay-list></div> -->
+
   <div *ngIf="displayContent" class="date clickable">
     <ng-content></ng-content>
-    <div *ngIf="listType == 'details' && profile">
+    <div *ngIf="profile && listType == 'content'">
       <div *ngIf="profile.display_name">Display Name: {{profile.display_name}}</div>
       <div *ngIf="profile.name">Name: {{profile.name}}</div>
       <div *ngIf="profile.nip05">NIP05: {{profile.nip05}}</div>
@@ -28,6 +49,7 @@
       <div *ngIf="profile.about">About: {{profile.about}}</div>
       <div *ngIf="profile.relays">Relays: <app-relay-list [relays]="profile.relays"></app-relay-list></div>
     </div>
+
     <!-- <span class="event-date" [matTooltip]="profile.id!" matTooltipPosition="below">{{ profile.created_at | ago }}</span>
       <app-directory-icon [publicKey]="profile.pubkey"></app-directory-icon> -->
   </div>

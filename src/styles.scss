@@ -507,16 +507,30 @@ mat-sidenav-content mat-toolbar {
 }
 
 .event-header-list {
-
 }
 
 .event-header-icon {
   display: inline-block;
 }
 
-.event-header-details {
+.event-header-content {
   margin-bottom: 1em;
   // width: 100%;
+}
+
+.event-header-details {
+  display: flex;
+  flex-direction: row;
+  // display: grid;
+  // grid-template-columns: auto;
+  // grid-template-rows: auto;
+  margin-bottom: 1em;
+  // width: 100%;
+  align-items: flex-start;
+}
+
+.event-header-details > * {
+  flex: 0 0 auto;
 }
 
 .event-header a {
