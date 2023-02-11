@@ -37,7 +37,7 @@
     <app-event [event]="parentEvent"></app-event>
   </div>
 
-  <div class="current-event events2 noclick" [ngClass]="{'is-root': !event.rootEventId, 'has-root': event.rootEventId, 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
+  <div class="current-event events2 noclick" [ngClass]="{'is-root': !event.parentEventId, 'has-root': event.parentEventId, 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
     <mat-card *ngIf="event.parentEventId" class="button-card">
       <button mat-flat-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon>View Parent</button>
     </mat-card>
