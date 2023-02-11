@@ -85,6 +85,8 @@ export class NotificationsComponent {
       await this.db.storage.putNotification(notification);
     }
 
+    this.ui.triggerUnreadNotifications();
+
     this.utilities.unsubscribe(this.subscriptions);
 
     if (this.subscriptionId) {

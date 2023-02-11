@@ -73,6 +73,8 @@ export class UIService {
     this.previousProfileSinceValue = 0;
     this.exhausted = false;
 
+    this.clearLists();
+
     this.#eventsChanged.next(this.events);
     this.#profileChanged.next(this.#profile);
     this.#pubkeyChanged.next(this.#pubkey);
@@ -225,6 +227,10 @@ export class UIService {
 
     this.#notifications = notifications;
 
+    this.triggerUnreadNotifications();
+  }
+
+  triggerUnreadNotifications() {
     const unread = this.#notifications.filter((n) => !n.seen).length;
     this.#unreadNotificationsChanged.next(unread);
   }
@@ -242,8 +248,7 @@ export class UIService {
       this.#notifications[index] = notification;
     }
 
-    const unread = this.#notifications.filter((n) => !n.seen).length;
-    this.#unreadNotificationsChanged.next(unread);
+    this.triggerUnreadNotifications();
   }
 
   viewEventsStart = 0;
@@ -478,16 +483,19 @@ export class UIService {
     this.#viewEventsChanged.next(this.viewEvents);
   }
 
+  clearLists() {
+    this.#lists.threadEvents = [];
+    this.#lists.followingEvents = [];
+    this.#lists.rootEvents = [];
+    this.#lists.replyEvents = [];
+
+    this.#lists.rootEventsView = [];
+    this.#lists.replyEventsView = [];
+    this.#lists.followingEventsView = [];
+  }
+
   clear() {
-    this.#lists = {
-      threadEvents: [],
-      followingEvents: [],
-      followingEventsView: [],
-      rootEvents: [],
-      replyEvents: [],
-      rootEventsView: [],
-      replyEventsView: [],
-    };
+    this.clearLists();
 
     this.#eventId = undefined;
     this.#event = undefined;
