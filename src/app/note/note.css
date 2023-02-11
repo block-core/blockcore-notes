@@ -30,7 +30,12 @@
 .has-root {
   margin-left: 1em;
   padding-left: 1em;
-  border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.is-root {
+  margin-left: 0em;
+  padding-left: 0em;
+  border-left: 2px solid transparent !important;
 }
 
 .options-container {
