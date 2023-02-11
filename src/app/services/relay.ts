@@ -485,8 +485,6 @@ export class RelayService {
         // Make sure we run update and not put whenever we download the latest profile.
         const profile = await this.profileService.followingAndRelays(event.pubkey, following, event.content);
 
-        debugger;
-
         // If we received the following and relays for the current user, trigger profile changed event.
         if (profile && this.ui.pubkey == profile.pubkey) {
           this.ui.setProfile(profile, true);

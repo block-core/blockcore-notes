@@ -27,7 +27,7 @@ export class NotificationsComponent {
     this.appState.showBackButton = false;
 
     const notifications = await this.db.storage.getNotifications(100);
-    notifications.map((n) => (n.seen = true));
+    // notifications.map((n) => (n.seen = true));
     this.ui.putNotifications(notifications);
 
     this.subscriptions.push(
@@ -53,7 +53,7 @@ export class NotificationsComponent {
 
       if (cursor.value) {
         // Make the notification seen as we've loaded it.
-        cursor.value.seen = true;
+        // cursor.value.seen = true;
         this.ui.notifications.push(cursor.value);
       }
 

@@ -494,13 +494,26 @@ export class UIService {
 
   clearLists() {
     this.#lists.threadEvents = [];
-    this.#lists.followingEvents = [];
-    this.#lists.rootEvents = [];
-    this.#lists.replyEvents = [];
 
+    this.#lists.rootEvents = [];
     this.#lists.rootEventsView = [];
+
+    this.#lists.replyEvents = [];
     this.#lists.replyEventsView = [];
+
+    this.#lists.followingEvents = [];
     this.#lists.followingEventsView = [];
+
+    this.#threadEvents.next(this.#lists.threadEvents);
+
+    this.#rootEvents.next(this.#lists.rootEvents);
+    this.#rootEventsView.next(this.#lists.rootEventsView);
+
+    this.#replyEvents.next(this.#lists.replyEvents);
+    this.#replyEventsView.next(this.#lists.replyEventsView);
+
+    this.#followingEvents.next(this.#lists.followingEvents);
+    this.#followingEventsView.next(this.#lists.followingEventsView);
   }
 
   clear() {
