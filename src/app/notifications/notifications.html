@@ -18,12 +18,7 @@
     <mat-card-content>
       <div class="notification-entry">
         <div class="notification-message" [ngClass]="{ 'notification-message-seen': notification.seen  }">
-          <app-profile-name [pubkey]="notification.pubkey"></app-profile-name>
-          <span *ngIf="notification.kind > 7"> {{ notification.message }}</span>
-          <span *ngIf="notification.kind == 1"> replied to your <a [routerLink]="['/e', notification.id]">note</a>.</span>
-          <span *ngIf="notification.kind == 3"> started following you.</span>
-          <span *ngIf="notification.kind == 6"> boosted your <a [routerLink]="['/e', notification.id]">note</a></span>
-          <span *ngIf="notification.kind == 7"> reacted with {{notification.message}} to your <a [routerLink]="['/e', notification.id]">note</a>.</span>
+          <app-notification-label [notification]="notification"></app-notification-label>
         </div>
         <div class="notification-date"><app-date [date]="notification.created"></app-date></div>
       </div>

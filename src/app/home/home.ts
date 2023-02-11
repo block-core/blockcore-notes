@@ -17,6 +17,7 @@ import { DataService } from '../services/data';
 import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { dexieToRx } from '../shared/utilities';
+import { UIService } from '../services/ui';
 
 interface DefaultProfile {
   pubkey: string;
@@ -102,6 +103,7 @@ export class HomeComponent {
   ];
 
   constructor(
+    public ui: UIService,
     private db: StorageService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,

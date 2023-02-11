@@ -113,6 +113,7 @@ import { LabelsComponent } from './shared/labels/labels';
 import { AboutModule } from './about/about.module';
 import { EventComponent } from './shared/event/event';
 import { NotificationsComponent } from './notifications/notifications';
+import { NotificationLabelComponent } from './shared/notification-label/notification-label';
 
 @NgModule({
   declarations: [
@@ -180,7 +181,8 @@ import { NotificationsComponent } from './notifications/notifications';
     RelaysComponent,
     LabelsComponent,
     EventComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    NotificationLabelComponent,
   ],
   imports: [
     AboutModule,

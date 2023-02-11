@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Kind } from 'nostr-tools';
-import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single } from 'rxjs';
+import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single, takeWhile, from, of } from 'rxjs';
 import { EventService } from './event';
 import { NostrEventDocument, NostrProfileDocument, NotificationModel } from './interfaces';
 import { ProfileService } from './profile';
@@ -220,12 +220,19 @@ export class UIService {
     return this.#notifications;
   }
 
+  #activityFeed: NotificationModel[] = [];
+
+  get activityFeed$(): Observable<NotificationModel[]> {
+    return of(this.#activityFeed);
+  }
+
   putNotifications(notifications: NotificationModel[]) {
     notifications = notifications.sort((a, b) => {
       return a.created < b.created ? 1 : -1;
     });
 
     this.#notifications = notifications;
+    this.#activityFeed = this.#notifications.slice(0, 5);
 
     this.triggerUnreadNotifications();
   }
@@ -247,6 +254,8 @@ export class UIService {
     } else {
       this.#notifications[index] = notification;
     }
+
+    this.#activityFeed = this.#notifications.slice(0, 5);
 
     this.triggerUnreadNotifications();
   }

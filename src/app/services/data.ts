@@ -184,6 +184,13 @@ export class DataService {
 
     // this.relayService.queueSubscription([{ authors: pubKeys, since: this.storage.state.since }]);
     this.relayService.subscribe(filter);
+
+    // Notifications is a hard-coded subscription identifier.
+    this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100 }], 'notifications');
+
+    // Load the 10 latest notifications to be displayed on home page.
+    const notifications = await this.storage.storage.getNotifications(10);
+    this.ui.putNotifications(notifications);
   }
 
   async initialize() {
