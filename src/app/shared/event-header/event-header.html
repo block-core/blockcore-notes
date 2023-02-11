@@ -4,7 +4,7 @@
   <div class="icon">
     <a [routerLink]="['/p', pubkey]">
       <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status == 1 || profile?.status == 2" class="profile-image-follow" [matTooltip]="tooltip" [style.borderColor]="circle?.color" matTooltipPosition="above" [src]="imagePath" />
-      <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status != 1 && profile?.status != 2" class="profile-image" matTooltipPosition="above" [src]="imagePath" />
+      <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status != 1 && profile?.status != 2" class="profile-image" [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
       <!-- <app-profile-image [publicKey]="event.pubkey"></app-profile-image> -->
     </a>
   </div>
