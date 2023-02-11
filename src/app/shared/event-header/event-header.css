@@ -1,0 +1,16 @@
+.icon-large .profile-image {
+  width: 256px;
+  height: 256px;
+}
+
+.icon-medium .profile-image {
+  object-fit: cover;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+}
+
+.icon-small .profile-image {
+  width: 48px;
+  height: 48px;
+}

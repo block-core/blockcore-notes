@@ -12,6 +12,10 @@ import { Circle, NostrProfile, NostrProfileDocument } from '../../services/inter
 export class EventHeaderComponent {
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
+  @Input() displayName: boolean = true;
+  @Input() displayContent: boolean = true;
+  @Input() displayOnlyIcon: boolean = false;
+  @Input() iconSize: string = 'small';
 
   imagePath = '/assets/profile.png';
   tooltip = '';

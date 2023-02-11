@@ -43,8 +43,21 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.peopleDisplayAbout">Display about</mat-slide-toggle>
-        <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.peopleDisplayDate">Display date</mat-slide-toggle>
+        <mat-form-field class="options-field" appearance="outline">
+          <mat-label>View</mat-label>
+          <mat-select (selectionChange)="showChanged()" [(value)]="optionsService.values.peopleDisplayView">
+            <mat-option [value]="6">Large icons</mat-option>
+            <mat-option [value]="5">Medium icons</mat-option>
+            <mat-option [value]="4">Small icons</mat-option>
+            <mat-option [value]="3">List</mat-option>
+            <mat-option [value]="2">Details</mat-option>
+            <mat-option [value]="0">Tiles</mat-option>
+            <mat-option [value]="1">Content</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.peopleDisplayAbout">Display about</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.peopleDisplayDate">Display date</mat-slide-toggle> -->
 
         <p class="people-actions">
           <button mat-stroked-button (click)="importFollowList()">Import Following (and Relays) List</button>
@@ -56,18 +69,30 @@
 
   <div class="people-list">
     <ng-template [ngIf]="!loading">
-      <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of sortedItems; trackBy: trackByFn">
-        <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
-        <div class="events-header">
-          <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
-          <app-event-header [profile]="profile">
-            <small *ngIf="optionsService.values.peopleDisplayDate"> <span class="clickable" *ngIf="profile.created"> Started following {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon> </small>
-          </app-event-header>
-          <app-profile-actions [profile]="profile"></app-profile-actions>
-        </div>
-        <div *ngIf="optionsService.values.peopleDisplayAbout" class="content clickable">{{ profile.about }}</div>
-      </mat-card>
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 0 || optionsService.values.peopleDisplayView == null">
+        <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of sortedItems; trackBy: trackByFn">
+          <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
+          <div class="events-header">
+            <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
+            <app-event-header [profile]="profile">
+              <small> <span class="clickable" *ngIf="profile.created">Followed {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon> </small>
+            </app-event-header>
+            <app-profile-actions [profile]="profile"></app-profile-actions>
+          </div>
+          <div class="content clickable">{{ profile.about }}</div>
+        </mat-card>
+      </ng-template>
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 4">
+        <app-event-header [iconSize]="'small'" [displayOnlyIcon]="true" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 5">
+        <app-event-header [iconSize]="'medium'" [displayOnlyIcon]="true" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 6">
+        <app-event-header [iconSize]="'large'" [displayOnlyIcon]="true" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
     </ng-template>
+
     <ng-template [ngIf]="loading"><mat-spinner class="loading"></mat-spinner></ng-template>
   </div>
   <!-- 

@@ -14,9 +14,10 @@ export interface Options {
   enableTidal?: boolean;
   hideSideLabels?: boolean;
   primaryRelay?: string;
+  peopleDisplayView: number;
   peopleDisplayType: number;
-  peopleDisplayAbout: boolean;
-  peopleDisplayDate: boolean;
+  // peopleDisplayAbout: boolean;
+  // peopleDisplayDate: boolean;
   peopleDisplaySort?: string;
 }
 
@@ -28,7 +29,7 @@ export class OptionsService {
     this.load();
   }
 
-  values: Options = { showLines: true, peopleDisplayType: 1, peopleDisplayAbout: true, peopleDisplayDate: true };
+  values: Options = { showLines: true, peopleDisplayType: 1, peopleDisplayView: 0 };
 
   load() {
     let options = localStorage.getItem('blockcore:notes:nostr:options');
