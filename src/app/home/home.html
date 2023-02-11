@@ -1,5 +1,5 @@
 <div class="page">
-  <p><button mat-flat-button color="warn" (click)="clearDatabase()">Issues? Wipe Local Database</button></p>
+  <button mat-flat-button class="wipe-button" color="warn" (click)="clearDatabase()">Issues? Wipe Local Database</button>
 
   <div class="home">
     <div class="home-left">
@@ -12,6 +12,9 @@
             <app-notification-label [notification]="notification"></app-notification-label>
           </p>
           <p class="dimmed" *ngIf="activityFeed.length == 0">No activities</p>
+          <div class="centered">
+            <button mat-button routerLink="/notifications">View more</button>
+          </div>
         </mat-card-content>
       </mat-card>
 
@@ -20,6 +23,7 @@
           <mat-card-title>News</mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <p>02-11: Activity feed and notifications has been added.</p>
           <p>01-19: <a routerLink="/e/63f78a0588f88c5e6931efcf032c8f600656eb5425785aea99b15ce0967be4a7">Nostr conference is in the planning</a>.</p>
           <p>01-20: Blockcore Notes "Home" launched as UI-mockup.</p>
         </mat-card-content>
