@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Kind } from 'nostr-tools';
 import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single, takeWhile, from, of } from 'rxjs';
 import { EventService } from './event';
-import { NostrEventDocument, NostrProfileDocument, NotificationModel } from './interfaces';
+import { NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel } from './interfaces';
 import { ProfileService } from './profile';
 
 @Injectable({
@@ -14,6 +14,8 @@ export class UIService {
   constructor(private eventService: EventService) {}
 
   #lists = {
+    feedEvents: [] as NostrEventDocument[],
+    feedEventsView: [] as NostrEventDocument[],
     threadEvents: [] as NostrEventDocument[],
     followingEvents: [] as NostrEventDocument[],
     followingEventsView: [] as NostrEventDocument[],
@@ -24,6 +26,8 @@ export class UIService {
   };
 
   viewCounts = {
+    feedEventsViewCount: 5,
+    feedEventsViewCountExhausted: false,
     followingEventsViewCount: 5,
     followingEventsViewExhausted: false,
     rootEventsViewCount: 5,
@@ -273,6 +277,17 @@ export class UIService {
     }
   }
 
+  updateFeedEventsView(start: number, count: number) {
+    this.viewCounts.feedEventsViewCount = count;
+    this.#lists.feedEventsView = this.#lists.feedEvents.slice(start, count);
+    this.viewCounts.feedEventsViewCountExhausted = count >= this.#lists.feedEvents.length;
+    this.#feedEventsView.next(this.#lists.feedEventsView);
+
+    if (this.viewCounts.rootEventsViewCountExhausted) {
+      this.triggerLoadMoreProfileEvents();
+    }
+  }
+
   updateRootEventsView(start: number, count: number) {
     this.viewCounts.rootEventsViewCount = count;
     this.#lists.rootEventsView = this.#lists.rootEvents.slice(start, count);
@@ -312,6 +327,18 @@ export class UIService {
 
   sortDescending(a: NostrEventDocument, b: NostrEventDocument) {
     return a.created_at < b.created_at ? 1 : -1;
+  }
+
+  #feedEvents: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.feedEvents);
+
+  get feedEvents$(): Observable<NostrEventDocument[]> {
+    return this.#feedEvents.asObservable();
+  }
+
+  #feedEventsView: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.feedEventsView);
+
+  get feedEventsView$(): Observable<NostrEventDocument[]> {
+    return this.#feedEventsView.asObservable();
   }
 
   #rootEvents: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.#lists.rootEvents);
@@ -354,6 +381,21 @@ export class UIService {
 
   get followingEventsView$(): Observable<NostrEventDocument[]> {
     return this.#followingEventsView.asObservable();
+  }
+
+  putFeedEvent(event: NostrEventDocument) {
+    if (event.kind == Kind.Text) {
+      event = this.calculateFields(event);
+
+      const index = this.#lists.feedEvents.findIndex((e) => e.id == event.id);
+      if (index == -1) {
+        this.#lists.feedEvents.push(event);
+        this.#lists.feedEvents = this.#lists.feedEvents.sort(this.sortDescending);
+        this.updateFeedEventsView(0, this.viewCounts.feedEventsViewCount);
+      } else {
+        this.#lists.feedEvents[index] = event;
+      }
+    }
   }
 
   putEvent(event: NostrEventDocument) {
@@ -508,6 +550,9 @@ export class UIService {
   }
 
   clearLists() {
+    this.#lists.feedEvents = [];
+    this.#lists.feedEventsView = [];
+
     this.#lists.threadEvents = [];
 
     this.#lists.rootEvents = [];
@@ -520,6 +565,9 @@ export class UIService {
     this.#lists.followingEventsView = [];
 
     this.#threadEvents.next(this.#lists.threadEvents);
+
+    this.#feedEvents.next(this.#lists.feedEvents);
+    this.#feedEventsView.next(this.#lists.feedEventsView);
 
     this.#rootEvents.next(this.#lists.rootEvents);
     this.#rootEventsView.next(this.#lists.rootEventsView);
@@ -671,5 +719,18 @@ export class UIService {
     if (this.#parentEvent?.id != beforeKey) {
       this.#parentEventChanged.next(this.#parentEvent);
     }
+  }
+
+  #circle?: number;
+
+  #circleChanged: BehaviorSubject<number | undefined> = new BehaviorSubject<number | undefined>(this.#circle);
+
+  get circle$(): Observable<number | undefined> {
+    return this.#circleChanged.asObservable();
+  }
+
+  setFeedCircle(circle?: number) {
+    this.#circle = circle;
+    this.#circleChanged.next(this.#circle);
   }
 }

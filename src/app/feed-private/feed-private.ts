@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { DataValidation } from '../services/data-validation';
@@ -12,6 +12,7 @@ import { NavigationService } from '../services/navigation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from '../services/storage';
 import { dexieToRx } from '../shared/utilities';
+import { UIService } from '../services/ui';
 
 @Component({
   selector: 'app-feed-private',
@@ -41,6 +42,8 @@ export class FeedPrivateComponent {
   // }
 
   constructor(
+    public ui: UIService,
+    private activatedRoute: ActivatedRoute,
     public db: StorageService,
     public navigation: NavigationService,
     public appState: ApplicationState,
@@ -70,33 +73,27 @@ export class FeedPrivateComponent {
 
   async showMore() {
     // 'prev' direction on cursor shows latest on top.
-    let cursor: any = await this.db.storage.db.transaction('events').store.index('created').openCursor(undefined, 'prev');
-
-    // Proceed to offset.
-    if (this.offset > 0) {
-      cursor = await cursor?.advance(this.offset);
-    }
-
-    for (let index = 0; index < this.pageSize; index++) {
-      if (!cursor) {
-        break;
-      }
-
-      if (cursor.value && cursor.value.kind == 1) {
-        this.currentItems.push(cursor.value);
-      }
-
-      if (cursor) {
-        cursor = await cursor.continue();
-      }
-    }
-
-    // Half the page size after initial load.
-    if (this.offset === 0) {
-      this.pageSize = Math.floor(this.pageSize / 2);
-    }
-
-    this.offset += this.pageSize;
+    // let cursor: any = await this.db.storage.db.transaction('events').store.index('created').openCursor(undefined, 'prev');
+    // // Proceed to offset.
+    // if (this.offset > 0) {
+    //   cursor = await cursor?.advance(this.offset);
+    // }
+    // for (let index = 0; index < this.pageSize; index++) {
+    //   if (!cursor) {
+    //     break;
+    //   }
+    //   if (cursor.value && cursor.value.kind == 1) {
+    //     this.currentItems.push(cursor.value);
+    //   }
+    //   if (cursor) {
+    //     cursor = await cursor.continue();
+    //   }
+    // }
+    // // Half the page size after initial load.
+    // if (this.offset === 0) {
+    //   this.pageSize = Math.floor(this.pageSize / 2);
+    // }
+    // this.offset += this.pageSize;
   }
 
   optionsUpdated() {
@@ -173,6 +170,20 @@ export class FeedPrivateComponent {
     this.subscriptions.push(
       this.navigation.showMore$.subscribe(() => {
         this.showMore();
+      })
+    );
+
+    this.subscriptions.push(
+      this.activatedRoute.paramMap.subscribe(async (params) => {
+        const circle: any = params.get('circle');
+
+        debugger;
+
+        if (circle != null) {
+          this.ui.setFeedCircle(Number(circle));
+        } else {
+          this.ui.setFeedCircle(-1);
+        }
       })
     );
   }

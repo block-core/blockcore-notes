@@ -175,15 +175,13 @@ export class DataService {
     // Add self to the top of listening list:
     pubKeys.unshift(this.appState.getPublicKey());
 
-    console.log('PUB KEYS:', pubKeys);
-
-    const filter = [{ authors: pubKeys, since: this.storage.state.since, kinds: [Kind.Text, Kind.Reaction, 6] }];
-
+    // console.log('PUB KEYS:', pubKeys);
+    // const filter = [{ authors: pubKeys, since: this.storage.state.since, kinds: [Kind.Text, Kind.Reaction, 6] }];
     // Subscribe to new events but don't get any history (limit: 0).
-    console.log('queueSubscription:', filter);
+    // console.log('queueSubscription:', filter);
 
     // this.relayService.queueSubscription([{ authors: pubKeys, since: this.storage.state.since }]);
-    this.relayService.subscribe(filter);
+    // this.relayService.subscribe(filter);
 
     // Notifications is a hard-coded subscription identifier.
     this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100 }], 'notifications');

@@ -23,6 +23,7 @@ import { MessageComponent } from './message/message';
 import { DevelopmentComponent } from './development/development';
 import { LoadingResolverService } from './services/loading-resolver';
 import { NotificationsComponent } from './notifications/notifications';
+import { FeedPrivateComponent } from './feed-private/feed-private';
 
 const routes: Routes = [
   {
@@ -39,7 +40,15 @@ const routes: Routes = [
   },
   {
     path: 'feed',
-    component: FeedComponent,
+    component: FeedPrivateComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'feed/:circle',
+    component: FeedPrivateComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

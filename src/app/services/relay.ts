@@ -43,6 +43,8 @@ export class RelayService {
 
   profileEventSubscription?: string;
 
+  circleEventSubscription?: string;
+
   #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
 
   #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
@@ -106,6 +108,31 @@ export class RelayService {
 
       // Then create a new subscription:
       this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: [Kind.Text, Kind.Reaction, 6], until: until, limit: 100 }]);
+    });
+
+    this.ui.circle$.subscribe((circle?: number) => {
+      if (!circle) {
+        return;
+      }
+
+      debugger;
+
+      if (this.circleEventSubscription) {
+        this.unsubscribe(this.circleEventSubscription);
+        this.circleEventSubscription = undefined;
+      }
+
+      let pubkeys = [];
+
+      // Get all authors in the circle.
+      if (circle > -1) {
+        pubkeys = this.profileService.following.filter((f) => f.circle == circle).map((p) => p.pubkey);
+      } else {
+        pubkeys = this.profileService.following.map((p) => p.pubkey);
+      }
+
+      // Then create a new feed subscription:
+      this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }], 'feed');
     });
 
     // Whenever the pubkey changes, we'll load the profile and start loading the user's events.
@@ -355,8 +382,10 @@ export class RelayService {
 
     console.log('SAVE EVENT?:', event);
 
-    // If the event is a result of notification subscription, we'll parse and update the notification history.
-    if (response.subscription == 'notifications') {
+    if (response.subscription == 'feed') {
+      this.ui.putFeedEvent(event);
+    } else if (response.subscription == 'notifications') {
+      // If the event is a result of notification subscription, we'll parse and update the notification history.
       let notification = await this.db.storage.getNotification(event.id!);
 
       if (!notification) {
