@@ -23,3 +23,16 @@
 .button-card {
   margin-bottom: 0.4em;
 }
+
+.parent-event {
+}
+
+.has-root {
+  margin-left: 1em;
+  padding-left: 1em;
+  border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.options-container {
+  margin-bottom: 1em;
+}

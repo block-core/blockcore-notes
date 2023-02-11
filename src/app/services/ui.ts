@@ -582,6 +582,10 @@ export class UIService {
       event.replyEventId = eTags[1][1];
     }
 
+    if (event.rootEventId == event.parentEventId) {
+      event.rootEventId = undefined;
+    }
+
     return event;
   }
 
