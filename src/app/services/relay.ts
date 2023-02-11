@@ -152,7 +152,14 @@ export class RelayService {
     this.ui.event$.subscribe(async (event) => {
       // If the event is empty, we'll clear the existing events first.
       if (!event) {
+        // Is this redudant?
         this.ui.clearEvents();
+
+        if (this.threadSubscription) {
+          this.unsubscribe(this.threadSubscription);
+          this.threadSubscription = undefined;
+        }
+
         return;
       }
 
@@ -501,8 +508,6 @@ export class RelayService {
       //   await this.db.storage.putEvents(event);
       // }
 
-      console.log('EVENT:', event);
-
       // If the received event is what the user is currently looking at, update it.
       if (this.ui.eventId == event.id) {
         this.ui.setEvent(event);
@@ -512,6 +517,8 @@ export class RelayService {
         // If the event belongs to current visible profile.
         this.ui.putEvent(event);
       } else {
+        // TODO: When viewing a profile, reactions of 7 will come here... Add logic to calculate reactions!
+
         // If we receive event on the thread subscription, and only then, update the events array.
         if (response.subscription == this.threadSubscription) {
           this.ui.putEvent(event);

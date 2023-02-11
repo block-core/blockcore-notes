@@ -217,7 +217,7 @@ export class ThreadService {
     if (events.length > 1000) {
       console.log('There are more than 1000 events... likely spam!');
     } else {
-      console.log('Build tree from:', events);
+      // console.log('Build tree from:', events);
     }
 
     // console.log('THREAD EVENT:', event);

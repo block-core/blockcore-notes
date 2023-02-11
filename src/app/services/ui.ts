@@ -369,6 +369,15 @@ export class UIService {
       if (this.pubkey) {
         // Profile
         if (!event.rootEventId) {
+          // Only allow events here that has correct pubkey. There might be events that
+          // are received from relays when navigating in the UI.
+          // This MIGHT be redudant...
+          if (event.pubkey != this.pubkey) {
+            debugger;
+            console.log('EVENT BY OTHERS ON PROFILE:', event);
+            return;
+          }
+
           const index = this.#lists.rootEvents.findIndex((e) => e.id == event.id);
           if (index == -1) {
             this.#lists.rootEvents.push(event);
@@ -378,6 +387,15 @@ export class UIService {
             this.#lists.rootEvents[index] = event;
           }
         } else {
+          // Only allow events here that has correct pubkey. There might be events that
+          // are received from relays when navigating in the UI.
+          // This MIGHT be redudant...
+          if (event.pubkey != this.pubkey) {
+            debugger;
+            console.log('EVENT BY OTHERS ON PROFILE:', event);
+            return;
+          }
+
           const index = this.#lists.replyEvents.findIndex((e) => e.id == event.id);
           if (index == -1) {
             this.#lists.replyEvents.push(event);

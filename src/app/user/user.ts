@@ -169,6 +169,13 @@ export class UserComponent {
             this.previousPubKey = profile.pubkey;
           }, 50);
         }
+
+        // Hook up the show more subscription fairly late in the loading process to allow events to load before it.
+        this.subscriptions.push(
+          this.navigation.showMore$.subscribe(() => {
+            this.showMore();
+          })
+        );
       })
     );
   }
@@ -232,12 +239,6 @@ export class UserComponent {
   // }
 
   ngOnInit() {
-    this.subscriptions.push(
-      this.navigation.showMore$.subscribe(() => {
-        this.showMore();
-      })
-    );
-
     this.appState.showBackButton = true;
     this.appState.actions = [];
     this.appState.updateTitle('');
