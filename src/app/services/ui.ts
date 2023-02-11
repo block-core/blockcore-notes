@@ -80,13 +80,13 @@ export class UIService {
     this.#pubkeyChanged.next(this.#pubkey);
   }
 
-  setProfile(profile: NostrProfileDocument | undefined) {
+  setProfile(profile: NostrProfileDocument | undefined, forceChanged = false) {
     const before = this.#profile;
     this.#profile = profile;
 
     // Only trigger this event if the pubkey is different. The profile
     // itself might be updated with following list so we can't validate against the object themselves.
-    if (before?.pubkey != profile?.pubkey) {
+    if (forceChanged || before?.pubkey != profile?.pubkey) {
       this.#profileChanged.next(this.#profile);
     }
   }

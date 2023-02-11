@@ -469,6 +469,13 @@ export class RelayService {
         //   }
         // }
       } else {
+        const existingContacts = await this.db.storage.getContacts(event.pubkey);
+
+        // If the existing contacts is newer, do nothing.
+        if (existingContacts && existingContacts.created_at >= event.created_at) {
+          return;
+        }
+
         await this.db.storage.putContacts(event);
 
         // Whenever we download the contacts document, we'll refresh the RELAYS and FOLLOWING
@@ -476,7 +483,14 @@ export class RelayService {
         const following = event.tags.map((t) => t[1]);
 
         // Make sure we run update and not put whenever we download the latest profile.
-        this.profileService.followingAndRelays(event.pubkey, following, event.content);
+        const profile = await this.profileService.followingAndRelays(event.pubkey, following, event.content);
+
+        debugger;
+
+        // If we received the following and relays for the current user, trigger profile changed event.
+        if (profile && this.ui.pubkey == profile.pubkey) {
+          this.ui.setProfile(profile, true);
+        }
       }
     } else {
       // const index = this.profileService.followingKeys.indexOf(event.pubkey);

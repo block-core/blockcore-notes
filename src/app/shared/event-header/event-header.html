@@ -45,7 +45,7 @@
       <div *ngIf="profile.website">Website: {{profile.website}}</div>
       <div *ngIf="profile.lud06">lud06: {{profile.lud06}}</div>
       <div *ngIf="profile.lud16">lud16: {{profile.lud16}}</div>
-      <div *ngIf="profile.following">following: {{profile.following?.length}}</div>
+      <div *ngIf="profile.following">following: {{profile.following.length}}</div>
       <div *ngIf="profile.about">About: {{profile.about}}</div>
       <div *ngIf="profile.relays">Relays: <app-relay-list [relays]="profile.relays"></app-relay-list></div>
     </div>
