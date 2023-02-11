@@ -343,6 +343,7 @@ export class ProfileService {
 
       // Queue up to get this profile.
       this.queueService.enqueProfile(existingProfile.pubkey);
+      return existingProfile;
     } else {
       profile.status = ProfileStatus.Follow;
       profile.modified = now;
@@ -351,6 +352,7 @@ export class ProfileService {
 
       // Put into cache and database.
       await this.putProfile(profile);
+      return profile;
     }
   }
 
@@ -496,7 +498,7 @@ export class ProfileService {
     return profile;
   }
 
-  async #updateProfileValues(pubkey: string, predicate: (value: NostrProfileDocument, key?: string) => NostrProfileDocument): Promise<void> {
+  async #updateProfileValues(pubkey: string, predicate: (value: NostrProfileDocument, key?: string) => NostrProfileDocument): Promise<NostrProfileDocument | undefined> {
     let profile = await this.db.storage.getProfile(pubkey);
 
     if (!profile) {
@@ -510,6 +512,8 @@ export class ProfileService {
 
     // Update cache and database.
     await this.putProfile(profile);
+
+    return profile;
   }
 
   emptyProfile(pubkey: string): NostrProfileDocument {

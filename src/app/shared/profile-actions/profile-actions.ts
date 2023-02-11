@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
 import { EventPointer } from 'nostr-tools/nip19';
+import { UIService } from 'src/app/services/ui';
 
 @Component({
   selector: 'app-profile-actions',
@@ -22,7 +23,7 @@ export class ProfileActionsComponent {
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  constructor(public circleService: CircleService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  constructor(private ui: UIService, public circleService: CircleService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
@@ -50,22 +51,21 @@ export class ProfileActionsComponent {
       return;
     }
 
+    if (circle == null) {
+      circle = 0;
+    }
+
     // If not already following, add a full follow and download recent:
     if (this.profile.status !== ProfileStatus.Follow) {
       // Update the profile so UI updates immediately.
       this.profile.circle = circle;
       this.profile.status = 1;
-
-      await this.profileService.follow(this.profile.pubkey, circle);
-      // this.feedService.downloadRecent([this.profile.pubkey]);
+      this.profile = await this.profileService.follow(this.profile.pubkey, circle);
     } else {
       this.profile.circle = circle;
-
       // If we already follow but just change the circle, do a smaller operation.
-      await this.profileService.setCircle(this.profile.pubkey, circle);
+      this.profile = await this.profileService.setCircle(this.profile.pubkey, circle);
     }
-
-    // this.updateProfile(this.profile.pubkey);
   }
 
   // updateProfile(pubkey: string) {
@@ -136,7 +136,11 @@ export class ProfileActionsComponent {
       return;
     }
 
-    await this.profileService.unfollow(this.profile.pubkey);
+    this.profile.status = ProfileStatus.Public;
+    this.profile.followed = undefined;
+    this.profile.circle = undefined;
+
+    this.profile = await this.profileService.unfollow(this.profile.pubkey);
     // this.updateProfile(this.profile.pubkey);
   }
 
