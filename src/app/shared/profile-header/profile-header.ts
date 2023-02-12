@@ -3,11 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { CircleService } from 'src/app/services/circle';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
-import { Circle, NostrProfileDocument } from '../../services/interfaces';
+import { Circle, NostrProfileDocument, ProfileStatus } from '../../services/interfaces';
 import { ProfileImageDialog, ProfileImageDialogData } from '../profile-image-dialog/profile-image-dialog';
 import * as QRCode from 'qrcode';
 import { Subscription } from 'rxjs';
 import { UIService } from 'src/app/services/ui';
+import { ApplicationState } from 'src/app/services/applicationstate';
 
 @Component({
   selector: 'app-profile-header',
@@ -25,8 +26,39 @@ export class ProfileHeaderComponent {
   // npub!: string;
   qr06?: string;
   qr16?: string;
+  userPubKey: string;
 
-  constructor(public ui: UIService, public profileService: ProfileService, public dialog: MatDialog, public circleService: CircleService, public utilities: Utilities) {}
+  constructor(private appState: ApplicationState, public ui: UIService, public profileService: ProfileService, public dialog: MatDialog, public circleService: CircleService, public utilities: Utilities) {
+    this.userPubKey = this.appState.getPublicKey();
+  }
+
+  async follow(profile?: NostrProfileDocument) {
+    if (!profile) {
+      return;
+    }
+
+    const circle = 0;
+
+    // If not already following, add a full follow and download recent:
+    if (profile.status !== ProfileStatus.Follow) {
+      // Update the profile so UI updates immediately.
+      profile.circle = circle;
+      profile.status = 1;
+      profile = await this.profileService.follow(profile.pubkey, circle);
+    } else {
+      profile.circle = circle;
+      // If we already follow but just change the circle, do a smaller operation.
+      profile = await this.profileService.setCircle(profile.pubkey, circle);
+    }
+  }
+
+  isFollowing(profile: NostrProfileDocument) {
+    if (!profile || !profile.following) {
+      return false;
+    }
+
+    return profile.following.includes(this.userPubKey);
+  }
 
   get imagePath() {
     if (this.ui.profile!.picture) {

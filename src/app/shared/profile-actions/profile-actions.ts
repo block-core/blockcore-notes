@@ -10,6 +10,7 @@ import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
 import { EventPointer } from 'nostr-tools/nip19';
 import { UIService } from 'src/app/services/ui';
+import { ApplicationState } from 'src/app/services/applicationstate';
 
 @Component({
   selector: 'app-profile-actions',
@@ -18,12 +19,34 @@ import { UIService } from 'src/app/services/ui';
 })
 export class ProfileActionsComponent {
   @Input() fab: boolean = false;
-  @Input() showFollow: boolean = false;
+  // @Input() showFollow: boolean = false;
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  constructor(private ui: UIService, public circleService: CircleService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  // get showFollowBack() {
+  //   if (!this.profile) {
+  //     return false;
+  //   }
+
+  //   const pubKey = this.appState.getPublicKey();
+
+  //   if (this.profile.following) {
+  //     return this.profile.following.includes(pubKey);
+  //   }
+
+  //   return false;
+  // }
+
+  constructor(
+    private appState: ApplicationState,
+    private ui: UIService,
+    public circleService: CircleService,
+    private snackBar: MatSnackBar,
+    private profileService: ProfileService,
+    private notesService: NotesService,
+    private utilities: Utilities
+  ) {}
 
   async saveNote() {
     if (!this.event) {
