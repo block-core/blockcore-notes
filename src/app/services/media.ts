@@ -107,6 +107,8 @@ export class MediaService {
   }
 
   youtubeUrl?: SafeResourceUrl;
+  videoUrl?: SafeResourceUrl;
+  videoMode = false;
 
   async start() {
     if (this.index === -1) {
@@ -124,8 +126,13 @@ export class MediaService {
     this.options.values.showMediaPlayer = true;
 
     if (file.type === 'YouTube') {
-      this.youtubeUrl = this.utilities.sanitizeUrlAndBypassFrame(file.source);
+      this.videoMode = true;
+      this.youtubeUrl = this.utilities.sanitizeUrlAndBypassFrame(file.source + '?autoplay=1');
+    } else if (file.type === 'Video') {
+      this.videoMode = true;
+      this.videoUrl = this.utilities.sanitizeUrlAndBypassFrame(file.source);
     } else {
+      this.videoMode = false;
       if (!this.audio) {
         this.audio = new Audio(file.source);
       } else {

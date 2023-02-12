@@ -1,5 +1,5 @@
 <div class="media-player" [ngClass]="{ 'media-player-large': expanded, 'media-player-maximized': maximized }">
-  <div class="media-info" *ngIf="media.current?.type !== 'YouTube'">
+  <div class="media-info" *ngIf="!media.videoMode">
     <img class="music-album" [src]="media.current?.artwork" />
     <div class="media-info-text hide-small">
       <div class="music-title">{{ media.current?.title }}</div>
@@ -7,7 +7,12 @@
     </div>
   </div>
   <div class="media-info" *ngIf="media.current?.type === 'YouTube'">
-    <iframe id="ytplayer" class="youtube-video" type="text/html" [src]="media.youtubeUrl" frameborder="0"></iframe>
+    <iframe id="ytplayer" class="youtube-video" type="text/html" [src]="media.youtubeUrl" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+  </div>
+  <div class="media-info" *ngIf="media.current?.type === 'Video'">
+    <video class="event-video" controls autoplay="true" preload="none">
+      <source [src]="media.videoUrl" type="video/mp4" />
+    </video>
   </div>
   <div class="media-controls" *ngIf="!maximized">
     <div class="media-controls-container">
@@ -33,7 +38,7 @@
         <mat-icon>forward_10</mat-icon>
       </button>
     </div>
-    <div class="media-timeline" *ngIf="media.current?.type !== 'YouTube'">
+    <div class="media-timeline" *ngIf="!media.videoMode">
       <div class="media-timeline-1 hide-small">{{media.time | time}}</div>
       <div class="media-timeline-2">
         <mat-slider class="media-slider" discrete [displayWith]="formatLabel" [max]="media.duration" [min]="0" [step]="1">
@@ -50,7 +55,7 @@
     </button>
   </div>
 
-  <div class="media-audio" *ngIf="!maximized && media.current?.type === 'YouTube'">
+  <div class="media-audio" *ngIf="!maximized && media.videoMode">
     <div class="media-audio-container">
       <button *ngIf="!expanded" (click)="expanded = true" class="hide-small" mat-icon-button>
         <mat-icon>expand_less</mat-icon>
@@ -72,7 +77,7 @@
       </button>
     </div>
   </div>
-  <div class="media-audio" *ngIf="!maximized && media.current?.type !== 'YouTube'">
+  <div class="media-audio" *ngIf="!maximized && !media.videoMode">
     <div class="media-audio-container">
       <button matTooltip="Mute" class="hide-small" *ngIf="media.muted" mat-icon-button (click)="media.mute()">
         <mat-icon>volume_off</mat-icon>

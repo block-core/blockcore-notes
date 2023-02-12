@@ -5,7 +5,7 @@
   </div>
   <div class="event-videos" *ngIf="youtube && youtube.length > 0">
     <ng-template ngFor let-video [ngForOf]="youtube">
-      <iframe id="ytplayer" class="event-video" type="text/html" [src]="video.url" frameborder="0"></iframe>
+      <iframe id="ytplayer" class="event-video" type="text/html" [src]="video.url" frameborder="0" allowfullscreen></iframe>
       <button mat-button (click)="enque(video.originalUrl, 'YouTube')">Add to Media Player queue</button>
     </ng-template>
   </div>
@@ -15,7 +15,7 @@
       <video class="event-video" controls preload="none">
         <source [src]="video.url" type="video/mp4" />
       </video>
-      <!-- <button mat-button (click)="enque(video.originalUrl, 'Video')">Add to Media Player queue</button> -->
+      <button mat-button (click)="enque(video.originalUrl, 'Video')">Add to Media Player queue</button>
     </ng-template>
   </div>
 
