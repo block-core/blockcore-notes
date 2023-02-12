@@ -96,7 +96,7 @@ export class ContentComponent {
       // Remove the image links from the text.
       content = content.replaceAll(ContentComponent.regexpImage, '');
       content = content.replaceAll(ContentComponent.regexpVideo, '');
-      content = content.replaceAll(ContentComponent.regexpThisIsTheWay, '');
+      // content = content.replaceAll(ContentComponent.regexpThisIsTheWay, '');
 
       if (this.optionsService.values.enableTidal) {
         // After doing image, video and known memes, get all URLs and handle Tidal.
