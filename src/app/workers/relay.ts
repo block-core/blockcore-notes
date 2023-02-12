@@ -82,7 +82,7 @@ export class RelayWorker {
       return;
     }
 
-    console.log(`${this.url}: processProfiles: Processing with downloading... Count: ` + this.queue.queues.profile.jobs.length);
+    // console.log(`${this.url}: processProfiles: Processing with downloading... Count: ` + this.queue.queues.profile.jobs.length);
 
     if (this.queue.queues.profile.jobs.length == 0) {
       this.queue.queues.profile.active = false;
@@ -91,14 +91,12 @@ export class RelayWorker {
 
     this.queue.queues.profile.active = true;
 
-    console.log(this.relay);
-
     const profilesToDownload = this.queue.queues.profile.jobs
       .splice(0, 500)
       .map((j) => j.identifier)
       .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
 
-    console.log('profilesToDownload:', profilesToDownload);
+    // console.log('profilesToDownload:', profilesToDownload);
 
     this.downloadProfile(profilesToDownload, profilesToDownload.length * 3);
   }

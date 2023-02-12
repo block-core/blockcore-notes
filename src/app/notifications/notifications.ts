@@ -25,6 +25,7 @@ export class NotificationsComponent {
   async ngOnInit() {
     this.appState.updateTitle('Notifications');
     this.appState.showBackButton = false;
+    this.appState.actions = [];
 
     const notifications = await this.db.storage.getNotifications(100);
     // notifications.map((n) => (n.seen = true));

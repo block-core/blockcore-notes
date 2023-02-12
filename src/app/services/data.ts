@@ -682,24 +682,8 @@ export class DataService {
     return signedEvent;
   }
 
-  /** Will attempt to publish to all registered events independent of their current connection status. This will fail
-   * to publish if the relay is not currently connected. Failed publish will not be retried.
-   */
   async publishEvent(event: Event) {
-    for (let i = 0; i < this.relayService.relays.length; i++) {
-      const relay = this.relayService.relays[i];
-
-      let pub = relay.publish(event);
-      pub.on('ok', () => {
-        console.log(`${relay.url} has accepted our event`);
-      });
-      pub.on('seen', () => {
-        console.log(`we saw the event on ${relay.url}`);
-      });
-      pub.on('failed', (reason: any) => {
-        console.log(`failed to publish to ${relay.url}: ${reason}`);
-      });
-    }
+    this.relayService.publish(event);
   }
 
   async publishContacts(pubkeys: string[]) {

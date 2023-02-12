@@ -663,7 +663,7 @@ export class RelayService {
 
     relayType.connect(this.subs2, event);
 
-    console.table(this.workers);
+    // console.table(this.workers);
   }
 
   getActiveRelay(url: string) {

@@ -82,6 +82,26 @@ export class NavigationService {
     this.router.navigate(['/p', event.pubkey]);
   }
 
+  /** Saves a new note and navigates to it. */
+  async saveNote(data: any) {
+    console.log('save note data:', data);
+    let note = data;
+
+    if (typeof note !== 'string') {
+      note = JSON.stringify(note);
+    }
+
+    let event = this.dataService.createEvent(Kind.Text, note);
+
+    // TODO: We should likely save this event locally to ensure user don't loose their posts
+    // if all of the network is down.
+    const signedEvent = await this.dataService.signEvent(event);
+
+    await this.dataService.publishEvent(signedEvent);
+
+    this.router.navigate(['/e', signedEvent.id]);
+  }
+
   createNote(): void {
     const dialogRef = this.dialog.open(NoteDialog, {
       data: {},
@@ -94,22 +114,7 @@ export class NavigationService {
         return;
       }
 
-      console.log('dialog data:', data);
-      let note = data.note;
-
-      if (typeof note !== 'string') {
-        note = JSON.stringify(note);
-      }
-
-      let event = this.dataService.createEvent(Kind.Text, note);
-
-      // TODO: We should likely save this event locally to ensure user don't loose their posts
-      // if all of the network is down.
-      const signedEvent = await this.dataService.signEvent(event);
-
-      await this.dataService.publishEvent(signedEvent);
-
-      this.router.navigate(['/e', signedEvent.id]);
+      await this.saveNote(data.note);
     });
   }
 }

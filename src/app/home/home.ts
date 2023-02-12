@@ -138,7 +138,7 @@ export class HomeComponent {
   }
 
   postNote() {
-    alert('coming soon!');
+    this.navigation.saveNote(this.note);
   }
 
   async follow(profile: DefaultProfile) {
