@@ -105,6 +105,10 @@
     </div>
     <mat-divider></mat-divider>
     <mat-nav-list>
+      <a [routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <mat-icon>person</mat-icon>
+        <span>View profile</span>
+      </a>
       <a [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
         <mat-icon>edit</mat-icon>
         <span>Edit profile</span>
