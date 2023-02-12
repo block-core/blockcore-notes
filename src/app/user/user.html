@@ -36,12 +36,74 @@
   <div *ngFor="let event of items.value; trackBy: trackByFn">{{event.id}}</div>
 </div> -->
 
+<mat-tab-group *ngIf="layout == 3" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
+  <mat-tab label="Notes">
+    <div *ngIf="ui.rootEventsView$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
+        </div> -->
+
+        <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
+          <span *ngFor="let event of items.value; trackBy: trackByFn">
+            <span *ngIf="parseToImage(event) as images">
+              <div class="image-grid-item" *ngFor="let image of images" [photoGallery]="image"><img [src]="image" /></div>
+            </span>
+          </span>
+        </div>
+
+        <!-- <app-content-photos [events]="items.value"></app-content-photos> -->
+
+        <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
+          <app-content [event]="event"></app-content>
+        </mat-card> -->
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    </div>
+
+    <div class="show-more centered">
+      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Loading more events... or there are nothing more to show...</button>
+    </div>
+  </mat-tab>
+  <mat-tab label="Replies">
+    <div *ngIf="ui.replyEventsView$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
+        </div> -->
+
+        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
+
+          <app-content [event]="event"></app-content>
+        </mat-card>
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    </div>
+
+    <div class="show-more centered">
+      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Loading more events... or there are nothing more to show...</button>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
 <mat-tab-group *ngIf="layout == 1" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
   <mat-tab label="Notes">
     <div *ngIf="ui.rootEventsView$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
         <!-- <div class="page" *ngIf="items.value.length === 0">
-          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ profile?.name }} has posted.</h3>
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
         </div> -->
 
         <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
@@ -64,9 +126,9 @@
   <mat-tab label="Replies">
     <div *ngIf="ui.replyEventsView$ | withStatus | async as items" class="feed-page">
       <ng-template [ngIf]="items.value">
-        <div class="page" *ngIf="items.value.length === 0">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
           <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
-        </div>
+        </div> -->
 
         <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
           <div class="events-header">
@@ -86,9 +148,4 @@
       <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Loading more events... or there are nothing more to show...</button>
     </div>
   </mat-tab>
-  <!-- <mat-tab label="Likes">
-    <div class="page">
-      <h2>To be implemented</h2>
-    </div>
-  </mat-tab> -->
 </mat-tab-group>

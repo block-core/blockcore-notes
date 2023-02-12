@@ -112,6 +112,8 @@ export class UserComponent {
 
   feedSubscription?: Subscription;
 
+  style?: string;
+
   constructor(
     public navigation: NavigationService,
     public appState: ApplicationState,
@@ -141,10 +143,14 @@ export class UserComponent {
         this.imagePath = this.ui.profile!.picture || '/assets/profile.png';
         this.circle = await this.circleService.get(this.ui.profile!.circle);
 
-        if (this.circle) {
-          this.layout = this.circle!.style;
+        if (this.style) {
+          this.layout = Number(this.style);
         } else {
-          this.layout = 1;
+          if (this.circle) {
+            this.layout = this.circle!.style;
+          } else {
+            this.layout = 1;
+          }
         }
 
         // TODO: Increase this, made low during development.
@@ -205,6 +211,13 @@ export class UserComponent {
 
   pageSize = 5;
 
+  static regexpImage = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/g;
+
+  parseToImage(event: NostrEventDocument) {
+    const images = [...event.content.matchAll(UserComponent.regexpImage)];
+    return images.map((i) => i[0]);
+  }
+
   showMore() {
     if (this.tabIndex == null || Number(this.tabIndex) == 0) {
       this.ui.updateRootEventsView(0, this.ui.viewCounts.rootEventsViewCount + this.pageSize);
@@ -245,8 +258,8 @@ export class UserComponent {
 
     this.subscriptions.push(
       this.activatedRoute.queryParams.subscribe(async (params) => {
-        const tabIndex = params['t'];
-        this.tabIndex = tabIndex;
+        this.tabIndex = params['t'];
+        this.style = params['s'];
       })
     );
 
