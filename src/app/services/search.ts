@@ -37,10 +37,16 @@ export class SearchService {
       // this.resetSearch();
       // this.router.navigate(['/p', event.data]);
     } else {
-      const result = await this.profileService.search(searchText.toLowerCase());
+      const result: any = await this.profileService.search(searchText.toLowerCase());
       // TODO: Re-enable this sort when search is added again.
       // result.sort((a, b) => (a.status > b.status ? -1 : 1));
       this.updateResults(result);
+
+      // Should we open profile or event? ...
+      if (!result) {
+        this.resetSearch();
+        this.router.navigate(['/p', searchText]);
+      }
     }
   }
 
