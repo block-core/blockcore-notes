@@ -534,19 +534,14 @@ export class RelayService {
         // }
       } else {
         const existingContacts = await this.db.storage.getContacts(event.pubkey);
-        const existingProfile = await this.db.storage.getProfile(event.pubkey);
 
-        const following = event.tags.map((t) => t[1]);
-
-        // If the existing contacts is newer, verify the list against existing profile..
         if (existingContacts && existingContacts.created_at >= event.created_at) {
-          // If the amount is same as before, just ignore this update.
-          if (existingProfile?.following?.length == following.length) {
-            return;
-          }
+          return;
         }
 
         await this.db.storage.putContacts(event);
+
+        const following = event.tags.map((t) => t[1]);
 
         const profile = await this.profileService.followingAndRelays(event.pubkey, following, event.content);
 
