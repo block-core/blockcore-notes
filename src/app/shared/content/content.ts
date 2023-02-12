@@ -30,11 +30,13 @@ export class ContentComponent {
 
   images: SafeResourceUrl[] = [];
   videos: MediaItem[] = [];
+  youtube: MediaItem[] = [];
   spotify: SafeResourceUrl[] = [];
   tidal: SafeResourceUrl[] = [];
 
+  static regexpVideo = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:mp4|webm))/gi;
   static regexpImage = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/gi;
-  static regexpVideo = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/gim;
+  static regexpYouTube = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/gim;
   static regexpThisIsTheWay = /(?:thisistheway.gif)/g;
   static regexpAlwaysHasBeen = /(?:alwayshasbeen.jpg)/g;
   static regexpSpotify = /((http|https?)?(.+?\.?)(open.spotify.com)(.+?\.?)?)/gi;
@@ -45,8 +47,8 @@ export class ContentComponent {
 
   constructor(private mediaService: MediaService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
-  enque(url: string) {
-    this.mediaService.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: url, source: url, type: 'YouTube' });
+  enque(url: string, type: any) {
+    this.mediaService.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: url, source: url, type: type });
   }
 
   async ngOnInit() {
@@ -89,6 +91,11 @@ export class ContentComponent {
       const images = [...content.matchAll(ContentComponent.regexpImage)];
       this.images = images.map((i) => this.utilities.sanitizeUrlAndBypass(i[0]));
 
+      const videos = [...content.matchAll(ContentComponent.regexpVideo)];
+      this.videos = videos.map((i) => {
+        return { url: this.utilities.sanitizeUrlAndBypass(i[0]), originalUrl: i[0] };
+      });
+
       const thisisthewayMatch = [...content.matchAll(ContentComponent.regexpThisIsTheWay)];
       const thisistheway = thisisthewayMatch.map((i) => this.utilities.bypassUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
       this.images.push(...thisistheway);
@@ -97,8 +104,8 @@ export class ContentComponent {
       const alwayshasbeen = alwaysHasBeenMatch.map((i) => this.utilities.bypassUrl(`https://imgflip.com/s/meme/Always-Has-Been.png`));
       this.images.push(...alwayshasbeen);
 
-      const videos = [...content.matchAll(ContentComponent.regexpVideo)];
-      this.videos = videos.map((i) => {
+      const youtubes = [...content.matchAll(ContentComponent.regexpYouTube)];
+      this.youtube = youtubes.map((i) => {
         return { url: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`), originalUrl: `https://www.youtube.com/embed/${i[1]}` };
       });
 
@@ -107,6 +114,7 @@ export class ContentComponent {
 
       // Remove the image links from the text.
       content = content.replaceAll(ContentComponent.regexpImage, '');
+      content = content.replaceAll(ContentComponent.regexpYouTube, '');
       content = content.replaceAll(ContentComponent.regexpVideo, '');
       // content = content.replaceAll(ContentComponent.regexpThisIsTheWay, '');
 

@@ -3,12 +3,24 @@
     <img mat-card-image class="event-image" loading="lazy" decoding="async" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
     <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" /> -->
   </div>
-  <div class="event-videos" *ngIf="videos && videos.length > 0">
-    <ng-template ngFor let-video [ngForOf]="videos">
+  <div class="event-videos" *ngIf="youtube && youtube.length > 0">
+    <ng-template ngFor let-video [ngForOf]="youtube">
       <iframe id="ytplayer" class="event-video" type="text/html" [src]="video.url" frameborder="0"></iframe>
-      <button mat-button (click)="enque(video.originalUrl)">Add to Media Player queue</button>
+      <button mat-button (click)="enque(video.originalUrl, 'YouTube')">Add to Media Player queue</button>
     </ng-template>
   </div>
+
+  <div class="event-videos" *ngIf="videos && videos.length > 0">
+    <ng-template ngFor let-video [ngForOf]="videos">
+      <video class="event-video" controls preload="none">
+        <source [src]="video.url" type="video/mp4" />
+      </video>
+      <!-- <button mat-button (click)="enque(video.originalUrl, 'Video')">Add to Media Player queue</button> -->
+    </ng-template>
+  </div>
+
+  <!-- <div class="container-16-9">
+  </div> -->
 
   <ng-template [ngIf]="spotify">
     <!-- {{spotify | json}} -->
