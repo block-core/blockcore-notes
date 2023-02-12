@@ -55,7 +55,8 @@ export class NotificationsComponent {
       if (cursor.value) {
         // Make the notification seen as we've loaded it.
         // cursor.value.seen = true;
-        this.ui.notifications.push(cursor.value);
+        this.ui.putNotification(cursor.value);
+        // this.ui.notifications.push(cursor.value);
       }
 
       if (cursor) {
