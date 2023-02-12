@@ -100,12 +100,11 @@ export class UIService {
     console.log('setEventId:', id);
 
     this.#eventId = id;
-    this.#eventIdChanged.next(this.#eventId);
-
     this.#event = undefined;
-    this.#eventChanged.next(this.#event);
-
     this.events = [];
+
+    this.#eventIdChanged.next(this.#eventId);
+    this.#eventChanged.next(this.#event);
     this.#eventsChanged.next(this.events);
   }
 
@@ -422,7 +421,7 @@ export class UIService {
 
       if (this.pubkey) {
         // Profile
-        if (!event.rootEventId) {
+        if (!event.parentEventId) {
           // Only allow events here that has correct pubkey. There might be events that
           // are received from relays when navigating in the UI.
           // This MIGHT be redudant...
