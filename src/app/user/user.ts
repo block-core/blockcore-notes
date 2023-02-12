@@ -114,6 +114,8 @@ export class UserComponent {
 
   style?: string;
 
+  isFollowing?: boolean;
+
   constructor(
     public navigation: NavigationService,
     public appState: ApplicationState,
@@ -152,6 +154,8 @@ export class UserComponent {
             this.layout = 1;
           }
         }
+
+        this.isFollowing = this.profiles.isFollowing(profile.pubkey);
 
         // TODO: Increase this, made low during development.
         const timeAgo = moment().subtract(5, 'minutes').unix();

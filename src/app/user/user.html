@@ -44,10 +44,17 @@
           <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
         </div> -->
 
+        <div *ngIf="!isFollowing" class="dimmed">You must follow the user to automatically render photos.</div><br>
+
         <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
           <span *ngFor="let event of items.value; trackBy: trackByFn">
             <span *ngIf="parseToImage(event) as images">
-              <div class="image-grid-item" *ngFor="let image of images" [photoGallery]="image"><img [src]="image" /></div>
+              <ng-template [ngIf]="isFollowing">
+                <div class="image-grid-item" *ngFor="let image of images" [photoGallery]="image"><img [src]="image" /></div>
+              </ng-template>
+              <ng-template [ngIf]="!isFollowing">
+                <div class="image-grid-item" *ngFor="let image of images">{{ image }}</div>
+              </ng-template>
             </span>
           </span>
         </div>
