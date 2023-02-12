@@ -379,6 +379,13 @@ mat-sidenav-content mat-toolbar {
   border-radius: 10px !important;
 }
 
+.circle.clickable:hover {
+  // background-color: #535353;
+  background-color: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: background-color 250ms ease;
+}
+
 .people.clickable:hover {
   // background-color: #535353;
   background-color: rgba(0, 0, 0, 0.04);

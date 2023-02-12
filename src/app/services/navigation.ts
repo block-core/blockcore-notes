@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrThreadEventDocument } from './interfaces';
+import { Circle, NostrEvent, NostrEventDocument, NostrProfileDocument, NostrThreadEventDocument } from './interfaces';
 import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
@@ -24,6 +24,26 @@ export class NavigationService {
 
   showMore() {
     this.#showMore.next();
+  }
+
+  openFeed($event: any, circle: Circle) {
+    // this.currentEvent = event;
+
+    const paths = $event.composedPath();
+
+    if (!paths || paths.length == 0) {
+      return;
+    }
+
+    if (paths[0].className.indexOf('clickable') == -1) {
+      return;
+    }
+
+    // if (!event.id) {
+    //   debugger;
+    // }
+
+    this.router.navigate(['/feed', circle.id]);
   }
 
   openEvent($event: any, event: NostrEventDocument) {

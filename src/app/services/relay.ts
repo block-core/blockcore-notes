@@ -111,11 +111,9 @@ export class RelayService {
     });
 
     this.ui.circle$.subscribe((circle?: number) => {
-      if (!circle) {
+      if (circle == null) {
         return;
       }
-
-      debugger;
 
       if (this.circleEventSubscription) {
         this.unsubscribe(this.circleEventSubscription);

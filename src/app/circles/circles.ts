@@ -13,6 +13,7 @@ import { AuthenticationService } from '../services/authentication';
 import { copyToClipboard } from '../shared/utilities';
 import { Subscription, tap } from 'rxjs';
 import { DataService } from '../services/data';
+import { NavigationService } from '../services/navigation';
 
 @Component({
   selector: 'app-circles',
@@ -22,17 +23,10 @@ import { DataService } from '../services/data';
 export class CirclesComponent {
   publicKey?: string | null;
   loading = false;
-  // following: NostrProfileDocument[] = [];
   searchTerm: any;
 
-  // items: Circle[] = [];
-  // items$ = this.circleService.items$.pipe(
-  //   tap((items) => {
-  //     this.items = items;
-  //   })
-  // );
-
   constructor(
+    public navigation: NavigationService,
     public appState: ApplicationState,
     public circleService: CircleService,
     private profileService: ProfileService,

@@ -3,15 +3,15 @@
 <div class="feed-page">
   <!-- <p>Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</p> -->
 
-  <mat-card class="circle-container" *ngFor="let circle of circleService.circles">
+  <mat-card class="circle circle-container clickable" (click)="navigation.openFeed($event, circle)" *ngFor="let circle of circleService.circles">
     <div class="circle-item"><mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon></div>
-    <div class="circle-item">
+    <div class="circle-item clickable">
       {{ circle.name }}<br />
-      <span class="dimmed"><span>Count: {{ countMembers(circle) }}</span></span
+      <span class="dimmed clickable"><span>Count: {{ countMembers(circle) }}</span></span
       ><br />
-      <span class="dimmed"><span *ngIf="circle.public">Public</span> <span *ngIf="!circle.public">Private</span> - {{ circle.style | circlestyle }} - Created: {{ circle.created | ago }}</span>
+      <span class="dimmed clickable"><span *ngIf="circle.public">Public</span> <span *ngIf="!circle.public">Private</span> - {{ circle.style | circlestyle }} - Created: {{ circle.created | ago }}</span>
     </div>
-    <div class="circle-item">
+    <div class="circle-item clickable">
       <button class="circle-button" mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon class="circle-button-icon">more_vert</mat-icon>
       </button>
@@ -77,7 +77,6 @@
       </mat-menu>
     </div>
   </mat-card> -->
-
 
   <small>Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable.</small>
 </div>

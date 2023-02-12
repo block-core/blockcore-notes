@@ -177,7 +177,7 @@ export class FeedPrivateComponent {
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const circle: any = params.get('circle');
 
-        debugger;
+        this.ui.clearFeed();
 
         if (circle != null) {
           this.ui.setFeedCircle(Number(circle));

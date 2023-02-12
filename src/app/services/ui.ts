@@ -603,6 +603,13 @@ export class UIService {
     this.#eventsChanged.next(this.events);
   }
 
+  clearFeed() {
+    this.#lists.feedEvents = [];
+    this.#lists.feedEventsView = [];
+    this.#feedEvents.next(this.#lists.feedEvents);
+    this.#feedEventsView.next(this.#lists.feedEventsView);
+  }
+
   // #parentEventId: string | undefined = undefined;
 
   // get parentEventId() {
