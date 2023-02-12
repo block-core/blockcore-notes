@@ -80,7 +80,7 @@
   display: flex;
   flex-direction: row;
   font-size: 0.8em;
-  
+
   justify-content: center;
 }
 
@@ -122,4 +122,31 @@
   .hide-small {
     display: none !important;
   }
+}
+
+.youtube-video {
+  width: 100%;
+  display: inline-block;
+  margin-top: 0.2em;
+  aspect-ratio: 16 / 9;
+}
+
+.media-player-large {
+  height: 256px;
+}
+
+.media-player-maximized {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+  height: 100%;
+}
+
+.floating-maximize {
+  position: absolute;
+  right: 10px;
+  top: 80px;
+  z-index: 1001;
 }

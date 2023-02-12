@@ -217,7 +217,13 @@ export class Utilities {
       if (appendHttpsIfMissing) {
         url = 'https://' + url;
       } else {
-        return '';
+        // Local file, maybe attempt at loading local scripts/etc?
+        // Verify that the URL must start with /assets.
+        if (url.startsWith('/assets')) {
+          return url;
+        } else {
+          return '';
+        }
       }
     }
 

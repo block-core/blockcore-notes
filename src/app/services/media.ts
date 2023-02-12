@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { findIndex } from 'rxjs';
 import { MediaItem } from './interfaces';
 import { OptionsService } from './options';
+import { Utilities } from './utilities';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +23,7 @@ export class MediaService {
     return this.index < this.media.length - 1;
   }
 
-  constructor(private options: OptionsService, private snackBar: MatSnackBar) {
+  constructor(private options: OptionsService, private snackBar: MatSnackBar, private utilities: Utilities) {
     navigator.mediaSession.setActionHandler('play', async () => {
       if (!this.audio) {
         return;
@@ -96,13 +98,15 @@ export class MediaService {
     // });
   }
 
-  dequeue (file : MediaItem) {
-    const index = this.media.findIndex((e)=>e=== file);
-    if (index === -1){
-      return
+  dequeue(file: MediaItem) {
+    const index = this.media.findIndex((e) => e === file);
+    if (index === -1) {
+      return;
     }
-    this.media.splice(index, 1)
+    this.media.splice(index, 1);
   }
+
+  youtubeUrl?: SafeResourceUrl;
 
   async start() {
     if (this.index === -1) {
@@ -110,8 +114,6 @@ export class MediaService {
     }
 
     const file = this.media[this.index];
-
-    console.log(file);
 
     if (!file) {
       return;
@@ -121,13 +123,17 @@ export class MediaService {
 
     this.options.values.showMediaPlayer = true;
 
-    if (!this.audio) {
-      this.audio = new Audio(file.source);
+    if (file.type === 'YouTube') {
+      this.youtubeUrl = this.utilities.sanitizeUrlAndBypassFrame(file.source);
     } else {
-      this.audio.src = file.source;
-    }
+      if (!this.audio) {
+        this.audio = new Audio(file.source);
+      } else {
+        this.audio.src = file.source;
+      }
 
-    await this.audio.play();
+      await this.audio.play();
+    }
 
     navigator.mediaSession.metadata = new MediaMetadata({
       title: file.title,

@@ -15,7 +15,7 @@ export interface MediaItem {
   title: string;
   artist: string;
   source: string;
-  type: 'Music' | 'Podcast';
+  type: 'Music' | 'Podcast' | 'YouTube' | 'Video';
 }
 
 export interface Contact {

@@ -1,11 +1,17 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { MediaService } from 'src/app/services/media';
 import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
+
+interface MediaItem {
+  url: SafeResourceUrl;
+  originalUrl: string;
+}
 
 @Component({
   selector: 'app-content',
@@ -23,7 +29,7 @@ export class ContentComponent {
   content?: string;
 
   images: SafeResourceUrl[] = [];
-  videos: SafeResourceUrl[] = [];
+  videos: MediaItem[] = [];
   spotify: SafeResourceUrl[] = [];
   tidal: SafeResourceUrl[] = [];
 
@@ -37,7 +43,11 @@ export class ContentComponent {
 
   // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
 
-  constructor(public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+  constructor(private mediaService: MediaService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+
+  enque(url: string) {
+    this.mediaService.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: url, source: url, type: 'YouTube' });
+  }
 
   async ngOnInit() {
     this.images = [];
@@ -88,7 +98,9 @@ export class ContentComponent {
       this.images.push(...alwayshasbeen);
 
       const videos = [...content.matchAll(ContentComponent.regexpVideo)];
-      this.videos = videos.map((i) => this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`));
+      this.videos = videos.map((i) => {
+        return { url: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`), originalUrl: `https://www.youtube.com/embed/${i[1]}` };
+      });
 
       // const spotify = [...content.matchAll(ContentComponent.regexpSpotify)];
       // this.spotify = spotify.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));

@@ -1,12 +1,15 @@
-<div class="media-player">
-  <div class="media-info">
+<div class="media-player" [ngClass]="{ 'media-player-large': expanded, 'media-player-maximized': maximized }">
+  <div class="media-info" *ngIf="media.current?.type !== 'YouTube'">
     <img class="music-album" [src]="media.current?.artwork" />
     <div class="media-info-text hide-small">
       <div class="music-title">{{ media.current?.title }}</div>
       <div class="music-artist">{{ media.current?.artist }}</div>
     </div>
   </div>
-  <div class="media-controls">
+  <div class="media-info" *ngIf="media.current?.type === 'YouTube'">
+    <iframe id="ytplayer" class="youtube-video" type="text/html" [src]="media.youtubeUrl" frameborder="0"></iframe>
+  </div>
+  <div class="media-controls" *ngIf="!maximized">
     <div class="media-controls-container">
       <button matTooltip="Change speed" (click)="media.rate()" *ngIf="media.current?.type === 'Podcast'" mat-icon-button>
         <mat-icon>speed</mat-icon>
@@ -30,7 +33,7 @@
         <mat-icon>forward_10</mat-icon>
       </button>
     </div>
-    <div class="media-timeline">
+    <div class="media-timeline" *ngIf="media.current?.type !== 'YouTube'">
       <div class="media-timeline-1 hide-small">{{media.time | time}}</div>
       <div class="media-timeline-2">
         <mat-slider class="media-slider" discrete [displayWith]="formatLabel" [max]="media.duration" [min]="0" [step]="1">
@@ -40,7 +43,36 @@
       <div class="media-timeline-3 hide-small">{{media.duration | time}}</div>
     </div>
   </div>
-  <div class="media-audio">
+
+  <div class="floating-maximize">
+    <button *ngIf="maximized" (click)="maximized = false" class="hide-small" mat-icon-button>
+      <mat-icon>open_in_full</mat-icon>
+    </button>
+  </div>
+
+  <div class="media-audio" *ngIf="!maximized && media.current?.type === 'YouTube'">
+    <div class="media-audio-container">
+      <button *ngIf="!expanded" (click)="expanded = true" class="hide-small" mat-icon-button>
+        <mat-icon>expand_less</mat-icon>
+      </button>
+      <button *ngIf="expanded" (click)="expanded = false" class="hide-small" mat-icon-button>
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <button *ngIf="!maximized" (click)="maximized = true" class="hide-small" mat-icon-button>
+        <mat-icon>open_in_full</mat-icon>
+      </button>
+      <button *ngIf="maximized" (click)="maximized = false" class="hide-small" mat-icon-button>
+        <mat-icon>open_in_full</mat-icon>
+      </button>
+      <button routerLink="/queue" class="hide-small" mat-icon-button>
+        <mat-icon>queue_music</mat-icon>
+      </button>
+      <button matTooltip="Exit Media Player" (click)="media.exit()" mat-icon-button>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="media-audio" *ngIf="!maximized && media.current?.type !== 'YouTube'">
     <div class="media-audio-container">
       <button matTooltip="Mute" class="hide-small" *ngIf="media.muted" mat-icon-button (click)="media.mute()">
         <mat-icon>volume_off</mat-icon>

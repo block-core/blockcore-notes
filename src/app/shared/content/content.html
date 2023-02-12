@@ -4,7 +4,10 @@
     <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" /> -->
   </div>
   <div class="event-videos" *ngIf="videos && videos.length > 0">
-    <iframe id="ytplayer" class="event-video" type="text/html" *ngFor="let video of videos" [src]="video" frameborder="0"></iframe>
+    <ng-template ngFor let-video [ngForOf]="videos">
+      <iframe id="ytplayer" class="event-video" type="text/html" [src]="video.url" frameborder="0"></iframe>
+      <button mat-button (click)="enque(video.originalUrl)">Add to Media Player queue</button>
+    </ng-template>
   </div>
 
   <ng-template [ngIf]="spotify">

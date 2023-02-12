@@ -18,6 +18,9 @@ export class MediaPlayerComponent {
     return TimePipe.time(value);
   }
 
+  expanded = false;
+  maximized = false;
+
   mediaConnect() {
     // new Audio('https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=lifelike-126735.mp3').play();
     const audio = document.querySelector('audio');
