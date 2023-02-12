@@ -590,6 +590,11 @@ export class UIService {
     this.#followingEventsView.next(this.#lists.followingEventsView);
   }
 
+  clearAll() {
+    this.clear();
+    this.clearFeed();
+  }
+
   clear() {
     this.clearLists();
 

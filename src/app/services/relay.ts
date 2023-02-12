@@ -242,6 +242,13 @@ export class RelayService {
     }
   }
 
+  terminateAll() {
+    for (let index = 0; index < this.workers.length; index++) {
+      const worker = this.workers[index];
+      worker.terminate();
+    }
+  }
+
   async setRelayType(url: string, type: number) {
     const relay = await this.db.storage.getRelay(url);
     const item = this.items2.find((r) => r.url == url);
