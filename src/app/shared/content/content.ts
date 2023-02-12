@@ -30,6 +30,7 @@ export class ContentComponent {
   static regexpImage = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/gi;
   static regexpVideo = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/gim;
   static regexpThisIsTheWay = /(?:thisistheway.gif)/g;
+  static regexpAlwaysHasBeen = /(?:alwayshasbeen.jpg)/g;
   static regexpSpotify = /((http|https?)?(.+?\.?)(open.spotify.com)(.+?\.?)?)/gi;
   static regexpTidal = /((http|https?)?(.+?\.?)(tidal.com)(.+?\.?)?)/gi;
   static regexpUrl = /([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#.]?[\w-]+)*\/?/gi;
@@ -81,6 +82,10 @@ export class ContentComponent {
       const thisisthewayMatch = [...content.matchAll(ContentComponent.regexpThisIsTheWay)];
       const thisistheway = thisisthewayMatch.map((i) => this.utilities.bypassUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
       this.images.push(...thisistheway);
+
+      const alwaysHasBeenMatch = [...content.matchAll(ContentComponent.regexpAlwaysHasBeen)];
+      const alwayshasbeen = alwaysHasBeenMatch.map((i) => this.utilities.bypassUrl(`https://imgflip.com/s/meme/Always-Has-Been.png`));
+      this.images.push(...alwayshasbeen);
 
       const videos = [...content.matchAll(ContentComponent.regexpVideo)];
       this.videos = videos.map((i) => this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`));
