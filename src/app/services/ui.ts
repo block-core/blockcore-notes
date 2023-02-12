@@ -66,22 +66,24 @@ export class UIService {
     return this.#pubkeyChanged.asObservable();
   }
 
-  setPubKey(pubkey: string | undefined) {
+  setPubKey(pubkey: string | undefined, reset = true) {
     this.#pubkey = pubkey;
 
-    // Reset the profile and events when pubkey is changed.
-    this.#profile = undefined;
-    this.events = [];
-    this.viewEvents = [];
-    // this.previousSinceValue = 0;
-    this.previousProfileSinceValue = 0;
-    this.exhausted = false;
+    if (reset) {
+      // Reset the profile and events when pubkey is changed.
+      this.#profile = undefined;
+      this.events = [];
+      this.viewEvents = [];
+      // this.previousSinceValue = 0;
+      this.previousProfileSinceValue = 0;
+      this.exhausted = false;
 
-    this.clearLists();
+      this.clearLists();
 
-    this.#eventsChanged.next(this.events);
-    this.#profileChanged.next(this.#profile);
-    this.#pubkeyChanged.next(this.#pubkey);
+      this.#eventsChanged.next(this.events);
+      this.#profileChanged.next(this.#profile);
+      this.#pubkeyChanged.next(this.#pubkey);
+    }
   }
 
   setProfile(profile: NostrProfileDocument | undefined, forceChanged = false) {
@@ -560,6 +562,11 @@ export class UIService {
     this.#viewEventsChanged.next(this.viewEvents);
   }
 
+  clearViewPositions() {
+    this.previousProfileSinceValue = 0;
+    this.previousFeedSinceValue = 0;
+  }
+
   clearLists() {
     this.#lists.feedEvents = [];
     this.#lists.feedEventsView = [];
@@ -624,6 +631,7 @@ export class UIService {
     this.#lists.feedEventsView = [];
     this.#feedEvents.next(this.#lists.feedEvents);
     this.#feedEventsView.next(this.#lists.feedEventsView);
+    this.previousFeedSinceValue = 0;
   }
 
   // #parentEventId: string | undefined = undefined;

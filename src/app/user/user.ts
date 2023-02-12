@@ -260,6 +260,8 @@ export class UserComponent {
     this.appState.actions = [];
     this.appState.updateTitle('');
 
+    // this.ui.clearViewPositions();
+
     this.subscriptions.push(
       this.activatedRoute.queryParams.subscribe(async (params) => {
         this.tabIndex = params['t'];

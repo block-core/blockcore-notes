@@ -108,6 +108,11 @@ export class NoteComponent {
   ngOnInit() {
     console.log('CURRENT EVENT:', this.navigation.currentEvent);
 
+    // Remove the pubkey whenever event is opened, but don't reset state data.
+    this.ui.setPubKey(undefined, false);
+
+    this.ui.clearViewPositions();
+
     if (this.navigation.currentEvent) {
       // If the event is already set, we'll use that directly and not load based upon ID.
       this.ui.setEvent(this.navigation.currentEvent);
