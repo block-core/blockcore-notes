@@ -293,33 +293,43 @@ export class UIService {
   updateFeedEventsView(start: number, count: number) {
     this.viewCounts.feedEventsViewCount = count;
     this.#lists.feedEventsView = this.#lists.feedEvents.slice(start, count);
-    this.viewCounts.feedEventsViewCountExhausted = count >= this.#lists.feedEvents.length;
+
     this.#feedEventsView.next(this.#lists.feedEventsView);
 
-    if (this.#lists.feedEvents.length > 0 && this.viewCounts.feedEventsViewCountExhausted) {
-      this.triggerLoadMoreFeedEvents();
+    // If the amount of events is still less than count, don't trigger more loading.
+    if (this.#lists.feedEvents.length >= count) {
+      this.viewCounts.feedEventsViewCountExhausted = count >= this.#lists.feedEvents.length;
+      if (this.#lists.feedEvents.length > 0 && this.viewCounts.feedEventsViewCountExhausted) {
+        this.triggerLoadMoreFeedEvents();
+      }
     }
   }
 
   updateRootEventsView(start: number, count: number) {
     this.viewCounts.rootEventsViewCount = count;
     this.#lists.rootEventsView = this.#lists.rootEvents.slice(start, count);
-    this.viewCounts.rootEventsViewCountExhausted = count >= this.#lists.rootEvents.length;
     this.#rootEventsView.next(this.#lists.rootEventsView);
 
-    if (this.#lists.rootEvents.length > 0 && this.viewCounts.rootEventsViewCountExhausted) {
-      this.triggerLoadMoreProfileEvents();
+    // If the amount of events is still less than count, don't trigger more loading.
+    if (this.#lists.rootEvents.length >= count) {
+      this.viewCounts.rootEventsViewCountExhausted = count >= this.#lists.rootEvents.length;
+      if (this.#lists.rootEvents.length > 0 && this.viewCounts.rootEventsViewCountExhausted) {
+        this.triggerLoadMoreProfileEvents();
+      }
     }
   }
 
   updateReplyEventsView(start: number, count: number) {
     this.viewCounts.replyEventsViewCount = count;
     this.#lists.replyEventsView = this.#lists.replyEvents.slice(start, count);
-    this.viewCounts.replyEventsViewCountExhausted = count >= this.#lists.replyEvents.length;
     this.#replyEventsView.next(this.#lists.replyEventsView);
 
-    if (this.#lists.replyEvents.length > 0 && this.viewCounts.replyEventsViewCountExhausted) {
-      this.triggerLoadMoreProfileEvents();
+    // If the amount of events is still less than count, don't trigger more loading.
+    if (this.#lists.replyEvents.length >= count) {
+      this.viewCounts.replyEventsViewCountExhausted = count >= this.#lists.replyEvents.length;
+      if (this.#lists.replyEvents.length > 0 && this.viewCounts.replyEventsViewCountExhausted) {
+        this.triggerLoadMoreProfileEvents();
+      }
     }
   }
 
