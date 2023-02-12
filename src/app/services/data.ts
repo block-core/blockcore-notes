@@ -184,7 +184,9 @@ export class DataService {
     // this.relayService.subscribe(filter);
 
     // Notifications is a hard-coded subscription identifier.
-    this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100 }], 'notifications');
+    // Previously there was no filter on kind, then "started following you" events was shown due to kind 3, but downloading kind 3 for everyone is
+    // fairly heavy operation so disabled for now.
+    this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100, kinds: [Kind.Text, Kind.Reaction, 6] }], 'notifications');
 
     // Load the 10 latest notifications to be displayed on home page.
     const notifications = await this.storage.storage.getNotifications(10);
