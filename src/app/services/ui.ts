@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Kind } from 'nostr-tools';
 import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single, takeWhile, from, of } from 'rxjs';
 import { EventService } from './event';
-import { NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel } from './interfaces';
+import { LoadMoreOptions, NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel } from './interfaces';
 import { ProfileService } from './profile';
 
 @Injectable({
@@ -146,13 +146,14 @@ export class UIService {
     // return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
   }
 
-  #loadMore: BehaviorSubject<number | undefined> = new BehaviorSubject<number | undefined>(0);
+  #loadMore: BehaviorSubject<LoadMoreOptions | undefined> = new BehaviorSubject<LoadMoreOptions | undefined>(undefined);
 
-  get loadMore$(): Observable<number | undefined> {
+  get loadMore$(): Observable<LoadMoreOptions | undefined> {
     return this.#loadMore.asObservable();
   }
 
   previousProfileSinceValue: number = 0;
+  previousFeedSinceValue: number = 0;
   exhausted = false;
 
   triggerLoadMoreProfileEvents() {
@@ -172,7 +173,20 @@ export class UIService {
     // If there is nothing new, don't trigger:
     if (date > this.previousProfileSinceValue) {
       this.previousProfileSinceValue = date;
-      this.#loadMore.next(date);
+      this.#loadMore.next({ until: date, type: 'profile' });
+    } else {
+      // Only when both there is nothing more to load and view events has scrolled to bottom, we'll show exhausted.
+      // this.checkExhausted();
+    }
+  }
+
+  triggerLoadMoreFeedEvents() {
+    const date = this.#lists.feedEvents[this.#lists.feedEvents.length - 1].created_at;
+
+    // If there is nothing new, don't trigger:
+    if (date > this.previousFeedSinceValue) {
+      this.previousFeedSinceValue = date;
+      this.#loadMore.next({ circle: this.#circle, until: date, type: 'feed' });
     } else {
       // Only when both there is nothing more to load and view events has scrolled to bottom, we'll show exhausted.
       // this.checkExhausted();
@@ -270,10 +284,8 @@ export class UIService {
     this.viewEvents = this.events.slice(this.viewEventsStart, this.viewEventsCount);
     this.#viewEventsChanged.next(this.viewEvents);
 
-    // If there already loaded some events and the viewEvents and events is same amount, then
-    // it's time to ask relays for even older data.
-    if (this.events.length == this.viewEvents.length) {
-      // this.triggerLoadMore();
+    if (this.viewCounts.feedEventsViewCountExhausted) {
+      // this.triggerLoadMoreFeedEvents();
     }
   }
 
@@ -283,8 +295,8 @@ export class UIService {
     this.viewCounts.feedEventsViewCountExhausted = count >= this.#lists.feedEvents.length;
     this.#feedEventsView.next(this.#lists.feedEventsView);
 
-    if (this.viewCounts.rootEventsViewCountExhausted) {
-      this.triggerLoadMoreProfileEvents();
+    if (this.#lists.feedEvents.length > 0 && this.viewCounts.feedEventsViewCountExhausted) {
+      this.triggerLoadMoreFeedEvents();
     }
   }
 
@@ -294,7 +306,7 @@ export class UIService {
     this.viewCounts.rootEventsViewCountExhausted = count >= this.#lists.rootEvents.length;
     this.#rootEventsView.next(this.#lists.rootEventsView);
 
-    if (this.viewCounts.rootEventsViewCountExhausted) {
+    if (this.#lists.rootEvents.length > 0 && this.viewCounts.rootEventsViewCountExhausted) {
       this.triggerLoadMoreProfileEvents();
     }
   }
@@ -305,7 +317,7 @@ export class UIService {
     this.viewCounts.replyEventsViewCountExhausted = count >= this.#lists.replyEvents.length;
     this.#replyEventsView.next(this.#lists.replyEventsView);
 
-    if (this.viewCounts.rootEventsViewCountExhausted) {
+    if (this.#lists.replyEvents.length > 0 && this.viewCounts.replyEventsViewCountExhausted) {
       this.triggerLoadMoreProfileEvents();
     }
   }
@@ -316,7 +328,7 @@ export class UIService {
     this.viewCounts.followingEventsViewExhausted = count >= this.#lists.followingEvents.length;
     this.#followingEventsView.next(this.#lists.followingEventsView);
 
-    if (this.viewCounts.rootEventsViewCountExhausted) {
+    if (this.#lists.followingEvents.length > 0 && this.viewCounts.followingEventsViewExhausted) {
       // this.triggerLoadMore();
     }
   }

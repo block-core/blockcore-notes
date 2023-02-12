@@ -106,6 +106,12 @@ export interface NostrSub extends Sub {
   // id: string;
 }
 
+export interface LoadMoreOptions {
+  until?: number;
+  circle?: number;
+  type: string;
+}
+
 export interface NostrEventDocument extends Event {
   contentCut: boolean;
   tagsCut: boolean;

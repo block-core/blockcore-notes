@@ -72,6 +72,8 @@ export class FeedPrivateComponent {
   // finished = false;
 
   async showMore() {
+    this.ui.updateFeedEventsView(0, this.ui.viewCounts.feedEventsViewCount + this.pageSize);
+
     // 'prev' direction on cursor shows latest on top.
     // let cursor: any = await this.db.storage.db.transaction('events').store.index('created').openCursor(undefined, 'prev');
     // // Proceed to offset.
@@ -162,6 +164,7 @@ export class FeedPrivateComponent {
 
   subscriptions: Subscription[] = [];
   hasFollowers = false;
+  circle: number = -1;
 
   async ngOnInit() {
     this.appState.updateTitle('Following Notes');
@@ -170,22 +173,24 @@ export class FeedPrivateComponent {
     this.options.values.privateFeed = true;
 
     this.subscriptions.push(
-      this.navigation.showMore$.subscribe(() => {
-        this.showMore();
-      })
-    );
-
-    this.subscriptions.push(
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const circle: any = params.get('circle');
 
         this.ui.clearFeed();
 
         if (circle != null) {
-          this.ui.setFeedCircle(Number(circle));
+          this.circle = Number(circle);
+          this.ui.setFeedCircle(this.circle);
         } else {
-          this.ui.setFeedCircle(-1);
+          this.circle = -1;
+          this.ui.setFeedCircle(this.circle);
         }
+
+        this.subscriptions.push(
+          this.navigation.showMore$.subscribe(() => {
+            this.showMore();
+          })
+        );
       })
     );
   }

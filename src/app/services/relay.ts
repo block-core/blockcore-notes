@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, ProfileStatus, QueryJob } from './interfaces';
+import { LoadMoreOptions, NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, ProfileStatus, QueryJob } from './interfaces';
 import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
 import { Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
@@ -94,20 +94,44 @@ export class RelayService {
       }
     });
 
-    this.ui.loadMore$.subscribe((until?: number) => {
-      if (!until) {
+    this.ui.loadMore$.subscribe((options?: LoadMoreOptions) => {
+      if (!options || !options.until) {
         return;
       }
 
-      if (!this.profileEventSubscription) {
-        return;
+      if (options.type == 'profile') {
+        if (!this.profileEventSubscription) {
+          return;
+        }
+
+        // First unsubscribe the current.
+        this.unsubscribe(this.profileEventSubscription);
+
+        // Then create a new subscription:
+        this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: [Kind.Text, Kind.Reaction, 6], until: options.until, limit: 100 }]);
+      } else if (options.type == 'feed') {
+        // If there are no subscription yet, just skip load more.
+        if (!this.circleEventSubscription) {
+          return;
+        }
+
+        if (this.circleEventSubscription) {
+          this.unsubscribe(this.circleEventSubscription);
+          this.circleEventSubscription = undefined;
+        }
+
+        let pubkeys = [];
+
+        // Get all authors in the circle.
+        if (options.circle! > -1) {
+          pubkeys = this.profileService.following.filter((f) => f.circle == options.circle).map((p) => p.pubkey);
+        } else {
+          pubkeys = this.profileService.following.map((p) => p.pubkey);
+        }
+
+        // Then create a new subscription:
+        this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: [Kind.Text, Kind.Reaction, 6], until: options.until, limit: 100 }], 'feed');
       }
-
-      // First unsubscribe the current.
-      this.unsubscribe(this.profileEventSubscription);
-
-      // Then create a new subscription:
-      this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: [Kind.Text, Kind.Reaction, 6], until: until, limit: 100 }]);
     });
 
     this.ui.circle$.subscribe((circle?: number) => {
@@ -115,21 +139,20 @@ export class RelayService {
         return;
       }
 
-      if (this.circleEventSubscription) {
-        this.unsubscribe(this.circleEventSubscription);
-        this.circleEventSubscription = undefined;
-      }
-
       let pubkeys = [];
 
       // Get all authors in the circle.
-      if (circle > -1) {
+      if (circle! > -1) {
         pubkeys = this.profileService.following.filter((f) => f.circle == circle).map((p) => p.pubkey);
       } else {
         pubkeys = this.profileService.following.map((p) => p.pubkey);
       }
 
-      // Then create a new feed subscription:
+      if (this.circleEventSubscription) {
+        this.unsubscribe(this.circleEventSubscription);
+        this.circleEventSubscription = undefined;
+      }
+
       this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }], 'feed');
     });
 
