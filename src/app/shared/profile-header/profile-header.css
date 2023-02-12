@@ -113,3 +113,9 @@
   border-radius: 10px;
   display: inline-block;
 }
+
+.follow-button {
+  border-radius: 16px;
+  margin-top: 0.24em;
+  margin-right: 0.5em;
+}
