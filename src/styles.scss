@@ -789,3 +789,27 @@ mat-card-footer {
   left: 0px !important;
   bottom: 0px !important;
 }
+
+// :root {
+//   --theme-color: #000000;
+//   --contrast-color: #212121;
+//   --hover-contrast-color: red;
+//   --padding: 12px;
+//   --toolbar-height: calc(40px + 2 * var(--padding));
+//   --edited-demo-height: 60%;
+// }
+
+.title-bar {
+  background-color: black;
+  position: fixed;
+  left: env(titlebar-area-x, 0);
+  top: env(titlebar-area-y, 0);
+  height: env(titlebar-area-height, 0px);
+  width: env(titlebar-area-width, 100%);
+  -webkit-app-region: drag;
+  z-index: 10000;
+}
+
+.sidenav-container, .sidenav-right, .sidenav {
+  top: env(titlebar-area-height, 0px) !important;
+}

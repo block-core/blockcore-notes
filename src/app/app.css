@@ -12,14 +12,7 @@
   margin-left: 1em;
 }
 
-// .sidenav-container {
-//   // overflow: auto overlay;
-//   // height: 100%;
-//   overflow: hidden !important;
-// }
-
 .sidenav {
-  
 }
 
 .sidenav-small .mat-icon {
@@ -29,10 +22,6 @@
 .sidenav-small .logo-icon {
   width: 56px !important;
 }
-
-// .sidenav-small .mat-mdc-menu-item {
-//   width: 24px !important;
-// }
 
 .sidenav-labels {
   width: 200px;
@@ -232,4 +221,3 @@ header {
 .search-result-option span {
   margin-right: 0.4em;
 }
-

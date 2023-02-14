@@ -29,7 +29,7 @@ import { OptionsService } from './services/options';
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  styleUrls: ['./app.scss'],
+  styleUrls: ['./app.css'],
 })
 export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;

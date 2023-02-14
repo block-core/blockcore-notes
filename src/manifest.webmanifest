@@ -2,7 +2,7 @@
   "name": "Blockcore Notes",
   "short_name": "Notes",
   "author": "Blockcore",
-  "theme_color": "#9f0771",
+  "theme_color": "#000000",
   "background_color": "#212121",
   "description": "New ways to connect with humanity using Nostr",
   "orientation": "any",
@@ -73,21 +73,21 @@
   "categories": ["productivity"],
   "shortcuts": [
     {
-      "name": "Open Feed",
+      "name": "Feed",
       "short_name": "Feed",
       "description": "Open the feed page",
       "url": "/feed",
       "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
     },
     {
-      "name": "Open Notifications",
+      "name": "Notifications",
       "short_name": "Notifications",
       "description": "Open the notification page",
       "url": "/notifications",
       "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
     },
     {
-      "name": "Open People",
+      "name": "People",
       "short_name": "People",
       "description": "Open the people page",
       "url": "/people",
