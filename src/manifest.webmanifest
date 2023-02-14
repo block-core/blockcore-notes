@@ -4,9 +4,12 @@
   "author": "Blockcore",
   "theme_color": "#9f0771",
   "background_color": "#212121",
+  "description": "New ways to connect with humanity using Nostr",
+  "orientation": "any",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "display_override": ["window-controls-overlay"],
   "launch_handler": {
     "client_mode": "focus-existing"
   },
@@ -54,5 +57,41 @@
       "purpose": "maskable any"
     }
   ],
-  "categories": ["productivity"]
+  "screenshots": [
+    {
+      "src": "assets/blockcore-notes-screenshot.png",
+      "sizes": "1079x776",
+      "type": "image/png"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "Nostr",
+    "Social Media",
+    "Media Player"
+  ],
+  "categories": ["productivity"],
+  "shortcuts": [
+    {
+      "name": "Open Feed",
+      "short_name": "Feed",
+      "description": "Open the feed page",
+      "url": "/feed",
+      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
+    },
+    {
+      "name": "Open Notifications",
+      "short_name": "Notifications",
+      "description": "Open the notification page",
+      "url": "/notifications",
+      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
+    },
+    {
+      "name": "Open People",
+      "short_name": "People",
+      "description": "Open the people page",
+      "url": "/people",
+      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
+    }
+  ]
 }
