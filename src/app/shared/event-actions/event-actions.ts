@@ -100,6 +100,7 @@ export class EventActionsComponent {
       banner: this.profile.banner,
       website: this.profile.website,
       lud06: this.profile.lud06,
+      lud16: this.profile.lud16,
       display_name: this.profile.display_name,
     };
 

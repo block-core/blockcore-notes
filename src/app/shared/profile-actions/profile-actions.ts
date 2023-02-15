@@ -130,6 +130,7 @@ export class ProfileActionsComponent {
       website: this.profile.website,
       banner: this.profile.banner,
       lud06: this.profile.lud06,
+      lud16: this.profile.lud16,
       display_name: this.profile.display_name,
     };
 

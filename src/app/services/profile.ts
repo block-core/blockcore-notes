@@ -524,6 +524,7 @@ export class ProfileService {
       picture: '/assets/profile.png',
       nip05: '',
       lud06: '',
+      lud16: '',
       display_name: '',
       status: ProfileStatus.Public,
       website: '',

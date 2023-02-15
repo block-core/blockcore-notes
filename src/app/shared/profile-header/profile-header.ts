@@ -74,50 +74,46 @@ export class ProfileHeaderComponent {
     });
   }
 
-  getLightningLabel(lud06: string) {
-    if (lud06.indexOf('@') > -1) {
-      return lud06;
-    } else {
-      return lud06;
-    }
+  // getLightningLabel(lud06: string) {
+  //   if (lud06.indexOf('@') > -1) {
+  //     return lud06;
+  //   } else {
+  //     return lud06;
+  //   }
+  // }
+
+  // paymentVersion = 'lud06';
+
+  subscriptions: Subscription[] = [];
+
+  ngOnDestroy() {
+    this.utilities.unsubscribe(this.subscriptions);
   }
 
-  paymentVersion = 'lud06';
-
   async ngOnInit() {
-    // if (!this.profile) {
-    //   this.profile = await this.profileService.getLocalProfile(this.pubkey);
-    //   this.npub = this.utilities.getNostrIdentifier(this.pubkey);
-    //   if (!this.profile) {
-    //     return;
-    //   }
-    // } else {
-    //   this.pubkey = this.profile.pubkey;
-    //   this.npub = this.utilities.getNostrIdentifier(this.profile.pubkey);
-    // }
-    // this.profileService.setItem(this.profile);
-    // this.tooltip = this.profile.about;
-    // If the user has name in their profile, show that and not pubkey.
-    // this.profileName = this.profile.name || this.profileName;
-    // this.circle = await this.circleService.get(this.profile.circle);
-    // Pre-generate the QR value as we had some issues doing it dynamically.
-    // if (this.profile.lud06) {
-    //   this.qr06 = await QRCode.toDataURL('lightning:' + this.profile.lud06, {
-    //     errorCorrectionLevel: 'L',
-    //     margin: 2,
-    //     scale: 5,
-    //   });
-    // }
-    // if (this.profile.lud16) {
-    //   this.qr16 = await QRCode.toDataURL('lightning:' + this.profile.lud16, {
-    //     errorCorrectionLevel: 'L',
-    //     margin: 2,
-    //     scale: 5,
-    //   });
-    // }
-    // if (this.profile.lud16) {
-    //   this.paymentVersion = 'lud16';
-    // }
+    this.subscriptions.push(
+      this.ui.profile$.subscribe(async (profile) => {
+        if (!profile) {
+          return;
+        }
+
+        // Pre-generate the QR value as we had some issues doing it dynamically.
+        if (profile.lud06) {
+          this.qr06 = await QRCode.toDataURL('lightning:' + profile.lud06, {
+            errorCorrectionLevel: 'L',
+            margin: 2,
+            scale: 5,
+          });
+        }
+        if (profile.lud16) {
+          this.qr16 = await QRCode.toDataURL('lightning:' + profile.lud16, {
+            errorCorrectionLevel: 'L',
+            margin: 2,
+            scale: 5,
+          });
+        }
+      })
+    );
   }
 
   displayNIP05(nip05: string) {
