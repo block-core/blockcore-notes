@@ -131,7 +131,10 @@ export interface ThreadEntryChild {
 }
 
 export interface ThreadEntry {
-  id: string;
+  eventId: string;
+
+  reactionIds: string[];
+
   // children: string[];
   // children: ThreadEntryChild[];
   reactions: { [key: string | symbol]: number };

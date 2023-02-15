@@ -53,15 +53,31 @@ export class EventService {
     return epTags;
   }
 
-  /** Returns the root event, first looks for "root" attribute on the e tag element or picks first in array. */
+  lastETag(event: NostrEventDocument | null) {
+    const tags = this.eTags(event);
+
+    if (tags.length == 0) {
+      return undefined;
+    }
+
+    return tags[tags.length - 1][1];
+  }
+
   eTags(event: NostrEventDocument | null) {
     if (!event) {
       return [];
     }
 
-    // TODO. All of this parsing of arrays is silly and could be greatly improved with some refactoring
-    // whenever I have time for it.
     const eTags = event.tags.filter((t) => t[0] === 'e');
+    return eTags;
+  }
+
+  pTags(event: NostrEventDocument | null) {
+    if (!event) {
+      return [];
+    }
+
+    const eTags = event.tags.filter((t) => t[0] === 'p');
     return eTags;
   }
 

@@ -131,6 +131,12 @@ export class UIService {
     return this.#viewEventsChanged.asObservable();
   }
 
+  #reactionsChanged: BehaviorSubject<string | undefined> = new BehaviorSubject<string | undefined>(undefined);
+
+  get reactions$(): Observable<string | undefined> {
+    return this.#reactionsChanged.asObservable();
+  }
+
   viewReplyEvents: NostrEventDocument[] = [];
 
   #viewReplyEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.viewReplyEvents);
@@ -430,35 +436,54 @@ export class UIService {
     // }
 
     if (event.kind == Kind.Reaction) {
-      const entry = this.getThreadEntry(event.id!);
+      const eventId = this.eventService.lastETag(event);
 
-      if (event.content == '' || event.content == '+') {
-        if (!entry.reactions[EmojiEnum['❤️']]) {
-          entry.reactions[EmojiEnum['❤️']] = 1;
-        } else {
-          entry.reactions[EmojiEnum['❤️']]++;
+      if (eventId) {
+        const entry = this.getThreadEntry(eventId);
+
+        // If we have already counted this reaction, skip.
+        if (entry.reactionIds.includes(event.id!)) {
+          return;
         }
-      } else if (event.content == '-') {
-        if (!entry.reactions[EmojiEnum['💔']]) {
-          entry.reactions[EmojiEnum['💔']] = 1;
+
+        if (event.content == '' || event.content == '+') {
+          if (!entry.reactions[EmojiEnum['❤️']]) {
+            entry.reactions[EmojiEnum['❤️']] = 1;
+          } else {
+            entry.reactions[EmojiEnum['❤️']]++;
+          }
+        } else if (event.content == '-') {
+          if (!entry.reactions[EmojiEnum['💔']]) {
+            entry.reactions[EmojiEnum['💔']] = 1;
+          } else {
+            entry.reactions[EmojiEnum['💔']]++;
+          }
         } else {
-          entry.reactions[EmojiEnum['💔']]++;
+          if (!entry.reactions[event.content]) {
+            entry.reactions[event.content] = 1;
+          } else {
+            entry.reactions[event.content]++;
+          }
         }
-      } else {
-        if (!entry.reactions[event.content]) {
-          entry.reactions[event.content] = 1;
-        } else {
-          entry.reactions[event.content]++;
-        }
+
+        entry.reactionIds.push(event.id!);
+        this.putThreadEntry(entry);
       }
-
-      this.putThreadEntry(entry);
-
-      console.log(this.#lists.reactions);
     } else if ((event.kind as any) == 6) {
-      const entry = this.getThreadEntry(event.id!);
-      entry.boosts++;
-      this.putThreadEntry(entry);
+      const eventId = this.eventService.lastETag(event);
+
+      if (eventId) {
+        const entry = this.getThreadEntry(eventId);
+
+        // If we have already counted this reaction, skip.
+        if (entry.reactionIds.includes(event.id!)) {
+          return;
+        }
+
+        entry.boosts++;
+        entry.reactionIds.push(event.id!);
+        this.putThreadEntry(entry);
+      }
     } else if (event.kind == Kind.Text) {
       event = this.calculateFields(event);
 
@@ -603,12 +628,13 @@ export class UIService {
     this.#viewEventsChanged.next(this.viewEvents);
   }
 
-  getThreadEntry(id: string) {
-    let entry = this.#lists.reactions.get(id);
+  getThreadEntry(eventId: string) {
+    let entry = this.#lists.reactions.get(eventId);
 
     if (!entry) {
       entry = {
-        id: id,
+        eventId: eventId,
+        reactionIds: [],
         boosts: 0,
         reactions: {},
       };
@@ -618,7 +644,8 @@ export class UIService {
   }
 
   putThreadEntry(entry: ThreadEntry) {
-    this.#lists.reactions.set(entry.id, entry);
+    this.#lists.reactions.set(entry.eventId, entry);
+    this.#reactionsChanged.next(entry.eventId);
   }
 
   // putReaction(id: string, entry: ThreadEntry) {
