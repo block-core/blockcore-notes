@@ -15,20 +15,6 @@
     </mat-accordion>
   </div>
 
-  <!-- <div class="events above-event clickable" (click)="navigation.openEvent($event, event)" *ngIf="thread.above$ | async as event">
-    <div class="events-header">
-      <app-event-header [pubkey]="event.pubkey"> <app-date [date]="event.created_at"> </app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
-      <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-    </div>
-    <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }" [event]="event"></app-content>
-    <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions>
-    <app-event-buttons [event]="event"></app-event-buttons>
-  </div> -->
-
-  <!-- <div *ngIf="ui.event$ | async as event">
-    <app-event-thread [event]="event"></app-event-thread>
-  </div> -->
-
   <mat-card *ngIf="event.rootEventId" class="button-card">
     <button mat-flat-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon>View Thread</button>
   </mat-card>
@@ -47,33 +33,9 @@
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
     <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }" [event]="event"></app-content>
-    <!-- <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions> -->
     <app-event-reactions [event]="event"></app-event-reactions>
     <app-event-buttons [event]="event"></app-event-buttons>
     <app-event-thread [event]="event"></app-event-thread>
   </div>
 </div>
 <mat-divider></mat-divider>
-
-<!-- <div *ngFor="let event2 of ui.events$ | async">
-  e: {{event2.id}}<br />
-  p: {{event2.pubkey}}<br />
-  t ({{event2.tags.length}}): {{event2.tags | json}}<br />
-  c: {{event2.content}}<br /><br /><br />
-</div> -->
-
-<!-- <mat-progress-bar *ngIf="!thread.hasLoaded" mode="indeterminate"></mat-progress-bar> -->
-
-<!-- <div class="feed-page" *ngIf="thread.after$ | async as events">
-  <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of events; trackBy: trackByFn">
-    <span>
-      <div class="events-header">
-        <app-event-header [pubkey]="event.pubkey"
-          ><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon
-        ></app-event-header>
-        <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-      </div>
-      <app-content [event]="event"></app-content>
-    </span>
-  </mat-card>
-</div> -->

@@ -20,7 +20,6 @@ export class EventReactionsComponent {
   tooltipName = '';
   profileName = '';
   circle?: Circle;
-
   sub?: Subscription;
 
   constructor(public thread: ThreadService, public ui: UIService, public optionsService: OptionsService) {}
@@ -37,6 +36,8 @@ export class EventReactionsComponent {
         this.threadEntry = this.thread.getTreeEntry(this.event.id!);
       }
     });
+
+    this.threadEntry = this.thread.getTreeEntry(this.event?.id!);
   }
 
   ngOnDestroy() {
