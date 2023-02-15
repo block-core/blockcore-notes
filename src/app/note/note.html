@@ -48,6 +48,7 @@
     </div>
     <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }" [event]="event"></app-content>
     <!-- <app-event-reactions class="thread-reactions" [threadEntry]="thread.getTreeEntry(thread.threadId)"></app-event-reactions> -->
+    <app-event-reactions [event]="event"></app-event-reactions>
     <app-event-buttons [event]="event"></app-event-buttons>
     <app-event-thread [event]="event"></app-event-thread>
   </div>

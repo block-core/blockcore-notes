@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Kind } from 'nostr-tools';
 import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single, takeWhile, from, of } from 'rxjs';
 import { EventService } from './event';
-import { LoadMoreOptions, NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel } from './interfaces';
+import { EmojiEnum, LoadMoreOptions, NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel, ThreadEntry } from './interfaces';
 import { ProfileService } from './profile';
 
 @Injectable({
@@ -23,6 +23,7 @@ export class UIService {
     replyEvents: [] as NostrEventDocument[],
     rootEventsView: [] as NostrEventDocument[],
     replyEventsView: [] as NostrEventDocument[],
+    reactions: new Map<string, ThreadEntry>(),
   };
 
   viewCounts = {
@@ -428,7 +429,37 @@ export class UIService {
     //   return;
     // }
 
-    if (event.kind == Kind.Text) {
+    if (event.kind == Kind.Reaction) {
+      const entry = this.getThreadEntry(event.id!);
+
+      if (event.content == '' || event.content == '+') {
+        if (!entry.reactions[EmojiEnum['❤️']]) {
+          entry.reactions[EmojiEnum['❤️']] = 1;
+        } else {
+          entry.reactions[EmojiEnum['❤️']]++;
+        }
+      } else if (event.content == '-') {
+        if (!entry.reactions[EmojiEnum['💔']]) {
+          entry.reactions[EmojiEnum['💔']] = 1;
+        } else {
+          entry.reactions[EmojiEnum['💔']]++;
+        }
+      } else {
+        if (!entry.reactions[event.content]) {
+          entry.reactions[event.content] = 1;
+        } else {
+          entry.reactions[event.content]++;
+        }
+      }
+
+      this.putThreadEntry(entry);
+
+      console.log(this.#lists.reactions);
+    } else if ((event.kind as any) == 6) {
+      const entry = this.getThreadEntry(event.id!);
+      entry.boosts++;
+      this.putThreadEntry(entry);
+    } else if (event.kind == Kind.Text) {
       event = this.calculateFields(event);
 
       if (this.pubkey) {
@@ -572,6 +603,38 @@ export class UIService {
     this.#viewEventsChanged.next(this.viewEvents);
   }
 
+  getThreadEntry(id: string) {
+    let entry = this.#lists.reactions.get(id);
+
+    if (!entry) {
+      entry = {
+        id: id,
+        boosts: 0,
+        reactions: {},
+      };
+    }
+
+    return entry;
+  }
+
+  putThreadEntry(entry: ThreadEntry) {
+    this.#lists.reactions.set(entry.id, entry);
+  }
+
+  // putReaction(id: string, entry: ThreadEntry) {
+  //   // let entry = this.#lists.reactions.get(id);
+
+  //   // if (!entry) {
+  //   //   entry = {
+  //   //     id: id,
+  //   //     boosts: 0,
+  //   //     reactions: {},
+  //   //   };
+  //   // }
+
+  //   this.#lists.reactions.set(id, entry);
+  // }
+
   clearViewPositions() {
     this.previousProfileSinceValue = 0;
     this.previousFeedSinceValue = 0;
@@ -591,6 +654,8 @@ export class UIService {
 
     this.#lists.followingEvents = [];
     this.#lists.followingEventsView = [];
+
+    this.#lists.reactions = new Map<string, ThreadEntry>();
 
     this.#threadEvents.next(this.#lists.threadEvents);
 

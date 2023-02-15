@@ -133,8 +133,9 @@ export interface ThreadEntryChild {
 export interface ThreadEntry {
   id: string;
   // children: string[];
-  children: ThreadEntryChild[];
-  reactions: { [key: string]: [] };
+  // children: ThreadEntryChild[];
+  reactions: { [key: string | symbol]: number };
+  // reactions: {};
   boosts: number;
 }
 

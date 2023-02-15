@@ -196,8 +196,10 @@ export class ThreadService {
     // return this.threadEvents.find((e) => e.id == id);
   }
 
-  getTreeEntry(id?: string) {
-    return undefined;
+  getTreeEntry(id: string) {
+    const entry = this.ui.getThreadEntry(id);
+    return entry;
+
     // if (!id) {
     //   return undefined;
     // }
