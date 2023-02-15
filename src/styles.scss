@@ -814,46 +814,14 @@ mat-card-footer {
   .title-bar {
     left: 0;
     top: 0;
-    height: 33px;
-    width: 100%;
-    z-index: 10000;
-  }
-
-  .title-bar-default {
-    width: 100%;
-    height: 33px;
-    -webkit-app-region: drag;
-  }
-
-  .sidenav-container,
-  .sidenav-right,
-  .sidenav {
-    top: env(titlebar-area-height, 0px) !important;
-  }
-}
-
-@media all and (display-mode: window-controls-overlay) {
-  .title-bar {
-    background-color: #212121;
-    position: fixed;
-    left: env(titlebar-area-x, 0);
-    top: env(titlebar-area-y, 0);
     height: env(titlebar-area-height, 0px);
-    width: env(titlebar-area-width, 100%);
-    z-index: 10000;
-  }
-
-  .title-bar {
-    left: 0;
-    top: 0;
-    height: 33px;
     width: 100%;
     z-index: 10000;
   }
 
   .title-bar-default {
     width: 100%;
-    height: 33px;
+    height: env(titlebar-area-height, 0px);
     -webkit-app-region: drag;
   }
 
@@ -863,3 +831,36 @@ mat-card-footer {
     top: env(titlebar-area-height, 0px) !important;
   }
 }
+
+// This was a test to see if possible to use 'window-controls-overlay'.
+// @media all and (display-mode: window-controls-overlay) {
+//   .title-bar {
+//     background-color: #212121;
+//     position: fixed;
+//     left: env(titlebar-area-x, 0);
+//     top: env(titlebar-area-y, 0);
+//     height: env(titlebar-area-height, 0px);
+//     width: env(titlebar-area-width, 100%);
+//     z-index: 10000;
+//   }
+
+//   .title-bar {
+//     left: 0;
+//     top: 0;
+//     height: env(titlebar-area-height, 0px);
+//     width: 100%;
+//     z-index: 10000;
+//   }
+
+//   .title-bar-default {
+//     width: 100%;
+//     height: env(titlebar-area-height, 0px);
+//     -webkit-app-region: drag;
+//   }
+
+//   .sidenav-container,
+//   .sidenav-right,
+//   .sidenav {
+//     top: env(titlebar-area-height, 0px) !important;
+//   }
+// }
