@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { ContentService } from 'src/app/services/content';
 import { MediaService } from 'src/app/services/media';
 import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
@@ -34,18 +35,9 @@ export class ContentComponent {
   spotify: SafeResourceUrl[] = [];
   tidal: SafeResourceUrl[] = [];
 
-  static regexpVideo = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:mp4|webm))/gi;
-  static regexpImage = /(?:(?:https?)+\:\/\/+[a-zA-Z0-9\/\._-]{1,})+(?:(?:jpe?g|png|gif|webp))/gi;
-  static regexpYouTube = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w-_]+)/gim;
-  static regexpThisIsTheWay = /(?:thisistheway.gif)/g;
-  static regexpAlwaysHasBeen = /(?:alwayshasbeen.jpg)/g;
-  static regexpSpotify = /((http|https?)?(.+?\.?)(open.spotify.com)(.+?\.?)?)/gi;
-  static regexpTidal = /((http|https?)?(.+?\.?)(tidal.com)(.+?\.?)?)/gi;
-  static regexpUrl = /([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#.]?[\w-]+)*\/?/gi;
-
   // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
 
-  constructor(private mediaService: MediaService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+  constructor(private contentService: ContentService, private mediaService: MediaService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
 
   enque(url: string, type: any) {
     this.mediaService.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: url, source: url, type: type });
@@ -88,23 +80,23 @@ export class ContentComponent {
     const isFollowing = this.profileService.isFollowing(this.event.pubkey);
 
     if (isFollowing) {
-      const images = [...content.matchAll(ContentComponent.regexpImage)];
+      const images = [...content.matchAll(this.contentService.regexpImage)];
       this.images = images.map((i) => this.utilities.sanitizeUrlAndBypass(i[0]));
 
-      const videos = [...content.matchAll(ContentComponent.regexpVideo)];
+      const videos = [...content.matchAll(this.contentService.regexpVideo)];
       this.videos = videos.map((i) => {
         return { url: this.utilities.sanitizeUrlAndBypass(i[0]), originalUrl: i[0] };
       });
 
-      const thisisthewayMatch = [...content.matchAll(ContentComponent.regexpThisIsTheWay)];
+      const thisisthewayMatch = [...content.matchAll(this.contentService.regexpThisIsTheWay)];
       const thisistheway = thisisthewayMatch.map((i) => this.utilities.bypassUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
       this.images.push(...thisistheway);
 
-      const alwaysHasBeenMatch = [...content.matchAll(ContentComponent.regexpAlwaysHasBeen)];
+      const alwaysHasBeenMatch = [...content.matchAll(this.contentService.regexpAlwaysHasBeen)];
       const alwayshasbeen = alwaysHasBeenMatch.map((i) => this.utilities.bypassUrl(`https://imgflip.com/s/meme/Always-Has-Been.png`));
       this.images.push(...alwayshasbeen);
 
-      const youtubes = [...content.matchAll(ContentComponent.regexpYouTube)];
+      const youtubes = [...content.matchAll(this.contentService.regexpYouTube)];
       this.youtube = youtubes.map((i) => {
         return { url: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`), originalUrl: `https://www.youtube.com/embed/${i[1]}` };
       });
@@ -113,14 +105,14 @@ export class ContentComponent {
       // this.spotify = spotify.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
 
       // Remove the image links from the text.
-      content = content.replaceAll(ContentComponent.regexpImage, '');
-      content = content.replaceAll(ContentComponent.regexpYouTube, '');
-      content = content.replaceAll(ContentComponent.regexpVideo, '');
+      content = content.replaceAll(this.contentService.regexpImage, '');
+      content = content.replaceAll(this.contentService.regexpYouTube, '');
+      content = content.replaceAll(this.contentService.regexpVideo, '');
       // content = content.replaceAll(ContentComponent.regexpThisIsTheWay, '');
 
       if (this.optionsService.values.enableTidal) {
         // After doing image, video and known memes, get all URLs and handle Tidal.
-        const urls = [...content.matchAll(ContentComponent.regexpUrl)];
+        const urls = [...content.matchAll(this.contentService.regexpUrl)];
         const tidalUrl = urls.filter((url) => url[0].indexOf('tidal.com') > -1);
         this.tidal = tidalUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('tidal.com/track', 'embed.tidal.com/tracks')));
 
@@ -131,7 +123,7 @@ export class ContentComponent {
 
       if (this.optionsService.values.enableSpotify) {
         // After doing image, video and known memes, get all URLs and handle Spotify.
-        const urls = [...content.matchAll(ContentComponent.regexpUrl)];
+        const urls = [...content.matchAll(this.contentService.regexpUrl)];
         const spotifyUrl = urls.filter((url) => url[0].indexOf('open.spotify.com') > -1);
         this.spotify = spotifyUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
 

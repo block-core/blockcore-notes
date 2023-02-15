@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ApplicationState } from '../services/applicationstate';
+import { ContentService } from '../services/content';
 import { MediaItem } from '../services/interfaces';
 import { MediaService } from '../services/media';
 import { OptionsService } from '../services/options';
@@ -13,7 +14,7 @@ import { AddMediaDialog, AddMediaDialogData } from './add-media-dialog/add-media
   styleUrls: ['./queue.css'],
 })
 export class QueueComponent {
-  constructor(public dialog: MatDialog, private appState: ApplicationState, public optionsService: OptionsService, public media: MediaService, public utilities: Utilities) {}
+  constructor(private contentService: ContentService, public dialog: MatDialog, private appState: ApplicationState, public optionsService: OptionsService, public media: MediaService, public utilities: Utilities) {}
 
   ngOnInit() {
     this.appState.showBackButton = true;
@@ -42,7 +43,15 @@ export class QueueComponent {
       }
 
       if (result.url.indexOf('youtu.be') > -1 || result.url.indexOf('youtube.com') > -1) {
-        this.media.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: result.url, source: result.url, type: 'YouTube' });
+        const youtubes = [...result.url.matchAll(this.contentService.regexpYouTube)];
+        let youtube = youtubes.map((i) => {
+          return { url: `https://www.youtube.com/embed/${i[1]}` };
+        });
+
+        for (let index = 0; index < youtube.length; index++) {
+          const youtubeUrl = youtube[index].url;
+          this.media.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: youtubeUrl, source: youtubeUrl, type: 'YouTube' });
+        }
       } else if (result.url.indexOf('.mp4') > -1 || result.url.indexOf('.webm') > -1) {
         this.media.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: result.url, source: result.url, type: 'Video' });
       } else {

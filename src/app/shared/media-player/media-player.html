@@ -110,9 +110,9 @@
       <button *ngIf="maximized" (click)="maximized = false" class="hide-small" mat-icon-button>
         <mat-icon>open_in_full</mat-icon>
       </button>
-      <button matTooltip="Zen mode" mat-icon-button (click)="minimize()">
+      <!-- <button matTooltip="Zen mode" mat-icon-button (click)="minimize()">
         <mat-icon>self_improvement</mat-icon>
-      </button>
+      </button> -->
       <button routerLink="/queue" class="hide-small" mat-icon-button>
         <mat-icon>queue_music</mat-icon>
       </button>
@@ -129,9 +129,9 @@
       <button matTooltip="Unmute" class="hide-small" *ngIf="!media.muted" mat-icon-button (click)="media.mute()">
         <mat-icon>volume_up</mat-icon>
       </button>
-      <button matTooltip="Zen mode" mat-icon-button (click)="minimize()">
+      <!-- <button matTooltip="Zen mode" mat-icon-button (click)="minimize()">
         <mat-icon>self_improvement</mat-icon>
-      </button>
+      </button> -->
       <button *ngIf="!miniplayer" routerLink="/queue" class="hide-small" mat-icon-button>
         <mat-icon>queue_music</mat-icon>
       </button>
