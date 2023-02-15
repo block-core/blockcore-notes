@@ -15,6 +15,10 @@ export class MediaService {
   current?: MediaItem;
   index = 0;
 
+  // minimized = false;
+  // previousWidth = 800;
+  // previousHeight = 600;
+
   get canPrevious() {
     return this.index > 0;
   }
@@ -153,25 +157,39 @@ export class MediaService {
   }
 
   async resume() {
-    if (!this.audio) {
-      this.start();
-      return;
+    if (this.videoMode) {
+      this.youtubeUrl = this.pausedYouTubeUrl;
+      this.pausedYouTubeUrl = undefined;
+    } else {
+      if (!this.audio) {
+        this.start();
+        return;
+      }
+
+      console.log('RESUME!');
+      try {
+        await this.audio.play();
+      } catch (err) {
+        console.error(err);
+      }
     }
 
-    console.log('RESUME!');
-    try {
-      await this.audio.play();
-    } catch (err) {
-      console.error(err);
-    }
+    navigator.mediaSession.playbackState = 'playing';
   }
 
-  pause() {
-    if (!this.audio) {
-      return;
-    }
+  pausedYouTubeUrl?: SafeResourceUrl;
 
-    this.audio.pause();
+  pause() {
+    if (this.videoMode) {
+      this.pausedYouTubeUrl = this.youtubeUrl;
+      this.youtubeUrl = undefined;
+    } else {
+      if (!this.audio) {
+        return;
+      }
+
+      this.audio.pause();
+    }
 
     navigator.mediaSession.playbackState = 'paused';
   }
@@ -191,11 +209,15 @@ export class MediaService {
   }
 
   get paused() {
-    if (!this.audio) {
-      return true;
-    }
+    if (this.videoMode) {
+      return this.youtubeUrl == null;
+    } else {
+      if (!this.audio) {
+        return true;
+      }
 
-    return this.audio.paused;
+      return this.audio.paused;
+    }
   }
 
   get muted() {

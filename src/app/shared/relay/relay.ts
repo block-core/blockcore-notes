@@ -24,16 +24,19 @@ export class RelayComponent {
       type: 1,
       title: 'Read and Write',
       description: 'Reads and writes events, profiles and other metadata. Always connected.',
+      icon: 'edit_note',
     },
     {
       type: 2,
-      title: 'Write metadata',
-      description: 'Writes your profile and other metadata updates. Connects on-demand.',
+      title: 'Read',
+      description: 'Reads only, does not write, unless explicit specified on publish action.',
+      icon: 'edit_off',
     },
     {
-      type: 0,
-      title: 'Disabled',
-      description: 'Disables this relay until activated again.',
+      type: 3,
+      title: 'Write',
+      description: 'Writes your events, profile and other metadata updates. Connects on-demand.',
+      icon: 'edit',
     },
   ];
 
@@ -42,11 +45,28 @@ export class RelayComponent {
       type: true,
       title: 'Public',
       description: 'This relay is included in your public relay list.',
+      icon: 'public',
     },
     {
       type: false,
       title: 'Private',
       description: 'This relay is not published as part of your public relay list.',
+      icon: 'public_off',
+    },
+  ];
+
+  typesOfStatus: any[] = [
+    {
+      type: true,
+      title: 'Enabled',
+      description: 'This relay is enabled and Notes will connect to it.',
+      icon: 'cloud_done',
+    },
+    {
+      type: false,
+      title: 'Disabled',
+      description: 'Disables this relay (locally) until activated again.',
+      icon: 'cloud_off',
     },
   ];
 
@@ -60,11 +80,10 @@ export class RelayComponent {
     console.log('SAVING:', this.relay);
     await this.relayService.setRelayType(this.relay.url, this.relay.type);
 
-    if (this.relay.type !== 1) {
+    if (!this.relay.enabled || this.relay.type > 2) {
       this.relayService.terminate(this.relay.url);
     } else {
       this.relayService.createRelayWorker(this.relay.url);
-      
     }
   }
 
@@ -73,6 +92,19 @@ export class RelayComponent {
     this.relay.public = change.options[0].value;
     console.log('SAVING:', this.relay);
     await this.relayService.setRelayPublic(this.relay.url, this.relay.public);
+  }
+
+  async onRelayStatusChange(change: MatSelectionListChange) {
+    console.log('onRelayStatusChange', change.options[0].value);
+    this.relay.enabled = change.options[0].value;
+    console.log('SAVING:', this.relay);
+    await this.relayService.setRelayEnabled(this.relay.url, this.relay.enabled);
+
+    if (this.relay.enabled || this.relay.type > 2) {
+      this.relayService.createRelayWorker(this.relay.url);
+    } else {
+      this.relayService.terminate(this.relay.url);
+    }
   }
 
   async onRelayChanged(relay: NostrRelayDocument) {

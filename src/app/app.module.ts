@@ -184,7 +184,7 @@ import { RelayListComponent } from './shared/relay-list/relay-list';
     EventComponent,
     NotificationsComponent,
     NotificationLabelComponent,
-    RelayListComponent
+    RelayListComponent,
   ],
   imports: [
     AboutModule,
@@ -234,9 +234,8 @@ import { RelayListComponent } from './shared/relay-list/relay-list';
     NgxMatTimepickerModule,
     NgxColorsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
-      // enabled: !isDevMode(),
-      enabled: true,
-
+      enabled: !isDevMode(),
+      // enabled: true,
       // Register the ServiceWorker as soon as the application is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000',

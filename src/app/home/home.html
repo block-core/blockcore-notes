@@ -47,7 +47,7 @@
           <mat-card-title>Photos</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <img class="home-card-thumbnail" height="56" width="56" [src]="img" *ngFor="let img of images" />
+          <img loading="lazy" class="home-card-thumbnail" height="56" width="56" [src]="img" *ngFor="let img of images" />
         </mat-card-content>
       </mat-card>
 

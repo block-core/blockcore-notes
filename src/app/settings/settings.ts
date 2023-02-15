@@ -82,7 +82,7 @@ export class SettingsComponent {
   async clearDatabase() {
     await this.db.delete();
     this.wiped = true;
-    location.reload();
+    // location.reload();
   }
 
   async clearNotesCache() {

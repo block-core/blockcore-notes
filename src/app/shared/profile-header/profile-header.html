@@ -15,7 +15,16 @@
           [style.borderColor]="circleService.getSync(profile.circle)?.color"
           [src]="imagePath"
         />
-        <img id="profile-image" onerror="this.src='/assets/profile.png'" *ngIf="profile?.status != 1" (click)="showProfileImage()" class="profile-image-large profile-image-follow" matTooltipPosition="above" [src]="imagePath" />
+        <img
+          loading="lazy"
+          id="profile-image"
+          onerror="this.src='/assets/profile.png'"
+          *ngIf="profile?.status != 1"
+          (click)="showProfileImage()"
+          class="profile-image-large profile-image-follow"
+          matTooltipPosition="above"
+          [src]="imagePath"
+        />
       </div>
     </div>
     <div class="profile-page-header-middle">

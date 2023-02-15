@@ -71,9 +71,12 @@ export class ProfileComponent {
   }
 
   cloneProfile() {
-    const profileClone = JSON.stringify(this.originalProfile);
+    // const profileClone = JSON.stringify(this.originalProfile);
+    const profileClone = structuredClone(this.originalProfile);
+
     // this.profile = JSON.parse(profileClone);
-    this.profile = Object.assign({}, JSON.parse(profileClone));
+    //this.profile = Object.assign({}, JSON.parse(profileClone));
+    this.profile = profileClone;
 
     this.#profileChanged.next(this.profile);
 

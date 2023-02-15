@@ -86,7 +86,7 @@ export interface NostrRelayDocument {
   // write: boolean;
   nip11?: any;
   error?: string;
-  // enabled?: boolean;
+  enabled: boolean;
   public: boolean;
   profile?: boolean;
   status?: number;

@@ -59,35 +59,59 @@ export class DataService {
     // });
   }
 
-  /** Get's all following and all public relays. */
-  async publishContactsAndRelays() {
-    const nonPublicCircles = this.circleService.circles.filter((c) => !c.public).map((c) => c.id);
-    const publicFollowing = this.profileService.following.filter((p) => nonPublicCircles.indexOf(p.circle) == -1).map((p) => p.pubkey);
-    const mappedContacts = publicFollowing.map((c) => {
-      return ['p', c];
-    });
+  async publishRelays() {
+    const mappedRelays = this.getArrayFomattedRelayList();
 
+    let originalEvent: Event = {
+      kind: 10002, // NIP-65: https://github.com/nostr-protocol/nips/blob/master/65.md
+      created_at: Math.floor(Date.now() / 1000),
+      content: '',
+      pubkey: this.appState.getPublicKey(),
+      tags: mappedRelays,
+    };
+
+    const event = await this.createAndSignEvent(originalEvent);
+
+    if (!event) {
+      return;
+    }
+
+    console.log('PUBLISH EVENT:', event);
+    this.relayService.publish(event);
+  }
+
+  private getArrayFomattedRelayList() {
+    return this.relayService.items2
+      .filter((r) => r.public === true)
+      .map((r) => {
+        let relayEntry = ['r', r.url];
+
+        if (r.type == 2) {
+          relayEntry.push('read');
+        } else if (r.type == 3) {
+          relayEntry.push('write');
+        }
+
+        return relayEntry;
+      });
+  }
+
+  private getJsonFormattedRelayList() {
     let mappedRelays: any = {};
 
     this.relayService.items2
       .filter((r) => r.public)
       .map((r) => {
         mappedRelays[r.url] = {
-          read: r.type === 1,
-          write: r.type === 1 || r.type === 2,
+          read: r.type === 1 || r.type === 2,
+          write: r.type === 1 || r.type === 3,
         };
       });
 
-    console.table(mappedRelays);
+    return mappedRelays;
+  }
 
-    let originalEvent: Event = {
-      kind: Kind.Contacts,
-      created_at: Math.floor(Date.now() / 1000),
-      content: JSON.stringify(mappedRelays),
-      pubkey: this.appState.getPublicKey(),
-      tags: mappedContacts,
-    };
-
+  private async createAndSignEvent(originalEvent: Event) {
     originalEvent.id = getEventHash(originalEvent);
 
     const gt = globalThis as any;
@@ -112,12 +136,35 @@ export class DataService {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
     }
 
+    return event;
+  }
+
+  /** Get's all following and all public relays. */
+  async publishContactsAndRelays() {
+    const nonPublicCircles = this.circleService.circles.filter((c) => !c.public).map((c) => c.id);
+    const publicFollowing = this.profileService.following.filter((p) => nonPublicCircles.indexOf(p.circle) == -1).map((p) => p.pubkey);
+    const mappedContacts = publicFollowing.map((c) => {
+      return ['p', c];
+    });
+
+    const mappedRelays = this.getJsonFormattedRelayList();
+
+    let originalEvent: Event = {
+      kind: Kind.Contacts,
+      created_at: Math.floor(Date.now() / 1000),
+      content: JSON.stringify(mappedRelays),
+      pubkey: this.appState.getPublicKey(),
+      tags: mappedContacts,
+    };
+
+    const event = await this.createAndSignEvent(originalEvent);
+
     if (!event) {
       return;
     }
 
-    console.log('PUBLISH EVENT:', originalEvent);
-    this.relayService.publish(originalEvent);
+    console.log('PUBLISH EVENT:', event);
+    this.relayService.publish(event);
   }
 
   async initialDataLoad() {

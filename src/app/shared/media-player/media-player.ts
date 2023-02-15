@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MediaService } from 'src/app/services/media';
 import { OptionsService } from 'src/app/services/options';
@@ -12,7 +12,13 @@ import { TimePipe } from '../time.pipe';
   styleUrls: ['./media-player.css'],
 })
 export class MediaPlayerComponent {
+  @Input() miniplayer = false;
+
   constructor(public options: OptionsService, public media: MediaService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+
+  ngOnInit() {
+    console.log('miniplayer:', this.miniplayer);
+  }
 
   formatLabel(value: number): string {
     return TimePipe.time(value);
@@ -20,6 +26,10 @@ export class MediaPlayerComponent {
 
   expanded = false;
   maximized = false;
+
+  minimize() {
+    window.resizeTo(200, 5);
+  }
 
   mediaConnect() {
     // new Audio('https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=lifelike-126735.mp3').play();

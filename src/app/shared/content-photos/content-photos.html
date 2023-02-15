@@ -1,5 +1,5 @@
 <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
-  <div class="image-grid-item" *ngFor="let image of images2" [photoGallery]="image"><img [src]="image" /></div>
+  <div class="image-grid-item" loading="lazy" *ngFor="let image of images2" [photoGallery]="image"><img [src]="image" /></div>
 </div>
 
 <!-- <app-content-photos [events]="items.value" class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }" [event]="event" *ngFor="let event of items.value; trackBy: trackByFn"> </app-content-photos> -->

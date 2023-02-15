@@ -84,7 +84,7 @@ export class RelayService {
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
       if (visible) {
-        // this.connect();
+        this.createRelayWorkers();
       }
     });
 
@@ -283,6 +283,18 @@ export class RelayService {
     }
   }
 
+  async setRelayEnabled(url: string, enabled: boolean) {
+    console.log('setRelayEnabled:', enabled);
+    const relay = await this.db.storage.getRelay(url);
+    const item = this.items2.find((r) => r.url == url);
+
+    if (relay) {
+      relay.enabled = enabled;
+      item!.enabled = enabled;
+      await this.db.storage.putRelay(relay);
+    }
+  }
+
   setRelayTimeout(url: string, status: number) {
     const item = this.items2.find((r) => r.url == url);
 
@@ -330,16 +342,17 @@ export class RelayService {
 
   async addRelay2(url: string, read: boolean, write: boolean) {
     let relay = this.items2.find((r) => r.url == url);
-    let type = 1;
+    let type = 1; // Read/Write by default.
 
     if (write && !read) {
+      type = 3;
+    } else if (!write && read) {
       type = 2;
-    } else if (!write && !read) {
-      type = 0;
     }
 
     if (!relay) {
       relay = {
+        enabled: true,
         public: true,
         url: url,
         type: type,
@@ -354,7 +367,7 @@ export class RelayService {
       }
     }
 
-    if (type === 1) {
+    if (type < 3) {
       this.createRelayWorker(relay.url);
     } else {
       this.terminate(relay.url);
@@ -953,9 +966,9 @@ export class RelayService {
     }
 
     // Spin up all the write-only relays temporarily when kind is contacts or metadata.
-    if (action === 'publish' && (data.kind == Kind.Contacts || data.kind == Kind.Metadata)) {
+    if (action === 'publish') {
       // Get all relays that are write-only
-      const filteredRelays = this.items2.filter((r) => r.type == 2);
+      const filteredRelays = this.items2.filter((r) => r.type == 3);
 
       for (let index = 0; index < filteredRelays.length; index++) {
         const relay = filteredRelays[index];
@@ -977,6 +990,16 @@ export class RelayService {
 
   items2: NostrRelayDocument[] = [];
 
+  createRelayWorkers() {
+    for (let index = 0; index < this.items2.length; index++) {
+      const relay = this.items2[index];
+
+      if (relay.enabled && relay.type < 3) {
+        this.createRelayWorker(relay.url);
+      }
+    }
+  }
+
   async initialize() {
     this.items2 = await this.db.storage.getRelays();
 
@@ -995,12 +1018,6 @@ export class RelayService {
       await this.appendRelays(relays);
     }
 
-    for (let index = 0; index < this.items2.length; index++) {
-      const relay = this.items2[index];
-
-      if (relay.type === 1) {
-        this.createRelayWorker(relay.url);
-      }
-    }
+    this.createRelayWorkers();
   }
 }

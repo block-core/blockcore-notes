@@ -14,6 +14,7 @@ export class QueueComponent {
   constructor(private appState: ApplicationState, public optionsService: OptionsService, public media: MediaService, public utilities: Utilities) {}
 
   ngOnInit() {
+    this.appState.showBackButton = true;
     this.appState.updateTitle('Media Queue');
   }
 

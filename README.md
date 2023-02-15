@@ -67,7 +67,7 @@ A goal of Blockcore Notes is to be feature rich and have functionality that goes
 - [ ] [NIP-50: Keywords filter](https://github.com/nostr-protocol/nips/blob/master/50.md)
 - [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
 - [ ] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
-- [ ] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
+- [x] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
 
 # Development
 

@@ -7,8 +7,12 @@
   margin-bottom: 0.4em;
 }
 
+.relay-status--1 {
+  color: rgb(49, 49, 210);
+}
+
 .relay-status-0 {
-  color: silver;
+  color: gray;
 }
 
 .relay-status-1 {
@@ -27,7 +31,11 @@
   color: rgb(49, 49, 210);
 }
 
-.relay-type-0 {
+.relay-status-icon {
+  margin-left: 0.2em;
+}
+
+/* .relay-type-0 {
   color: rgb(234, 136, 9) !important;
 }
 
@@ -36,7 +44,7 @@
 
 .relay-type-2 {
   color: rgb(49, 49, 210) !important;
-}
+} */
 
 .primary-relay {
   color: rgb(198, 3, 181);

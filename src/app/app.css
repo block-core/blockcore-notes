@@ -1,6 +1,7 @@
 .logo-icon {
   justify-content: center;
   cursor: pointer;
+  -webkit-app-region: drag;
 }
 
 .logo-icon img {

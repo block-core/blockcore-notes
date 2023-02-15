@@ -59,7 +59,7 @@
           <br /> -->
           <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
           <br />
-          <button mat-flat-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button><br /><br />
+          <button mat-flat-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button> <button mat-flat-button (click)="dataService.publishRelays()">Publish relay (NIP-65) list</button><br /><br />
           <button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
         </div>
       </div>

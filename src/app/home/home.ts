@@ -175,7 +175,7 @@ export class HomeComponent {
 
     setTimeout(() => {
       console.log('Reloading!');
-      location.reload();
+      // location.reload();
     }, 1000);
 
     try {
