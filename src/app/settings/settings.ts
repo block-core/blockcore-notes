@@ -34,7 +34,7 @@ export class SettingsComponent {
     public appState: ApplicationState,
     private profileService: ProfileService,
     public theme: ThemeService,
-    private db: StorageService,
+    public db: StorageService,
     private snackBar: MatSnackBar,
     public dataService: DataService
   ) {}
@@ -78,12 +78,6 @@ export class SettingsComponent {
 
   //   await this.relayService.putRelayMetadata(relay.metadata);
   // }
-
-  async clearDatabase() {
-    await this.db.delete();
-    this.wiped = true;
-    // location.reload();
-  }
 
   async clearNotesCache() {
     // await this.feedService.wipe();

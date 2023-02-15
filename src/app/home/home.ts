@@ -104,7 +104,7 @@ export class HomeComponent {
 
   constructor(
     public ui: UIService,
-    private db: StorageService,
+    public db: StorageService,
     public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     public options: OptionsService,
@@ -168,22 +168,6 @@ export class HomeComponent {
 
   toggleDetails() {
     this.details = !this.details;
-  }
-
-  async clearDatabase() {
-    console.log('Deleting storage...');
-
-    setTimeout(() => {
-      console.log('Reloading!');
-      // location.reload();
-    }, 1000);
-
-    try {
-      // this.db.close();
-      await this.db.storage.delete();
-    } catch (err) {
-      console.error(err);
-    }
   }
 
   import(pubkey: string) {

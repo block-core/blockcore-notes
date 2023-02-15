@@ -49,6 +49,22 @@ export class StorageService {
     // return this.db.open();
   }
 
+  async clearAndReload() {
+    console.log('Deleting storage...');
+
+    setTimeout(() => {
+      console.log('Reloading!');
+      location.reload();
+    }, 1000);
+
+    try {
+      // this.db.close();
+      await this.delete();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   close() {
     this.storage.close();
   }

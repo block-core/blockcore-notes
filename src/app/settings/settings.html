@@ -129,7 +129,7 @@
         <p *ngIf="wipedNotes">All cached notes data was cleared.</p> -->
 
         <p>
-          <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
+          <button mat-flat-button color="warn" (click)="db.clearAndReload()">Wipe Local Database</button>
         </p>
         <p *ngIf="wiped">All local data cache was cleared.</p>
       </div>
