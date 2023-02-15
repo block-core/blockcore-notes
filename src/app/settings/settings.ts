@@ -49,6 +49,10 @@ export class SettingsComponent {
     }
   }
 
+  openMediaPlayer() {
+    this.optionsService.values.showMediaPlayer = true;
+  }
+
   async primaryRelay(relay: NostrRelay) {
     this.optionsService.values.primaryRelay = relay.url;
     this.optionsService.save();

@@ -1,0 +1,15 @@
+<div class="dialog">
+  <h1 mat-dialog-title>Add media to queue</h1>
+  <div mat-dialog-content class="mat-dialog-content">
+    <mat-form-field appearance="fill" class="input-full-width">
+      <mat-icon class="circle" matPrefix>dns</mat-icon>
+      <mat-label>URL</mat-label>
+      <input matInput type="text" autocomplete="off" [(ngModel)]="data.url" />
+    </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+    <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Add</button>
+  </div>
+</div>

@@ -68,7 +68,6 @@ import { ContentComponent } from './shared/content/content';
 import { InfiniteScrollDirective } from './shared/scroll.directive';
 import { ImportFollowDialog } from './people/import-follow-dialog/import-follow-dialog';
 import { ProfileHeaderComponent } from './shared/profile-header/profile-header';
-import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { ProfileImageDialog } from './shared/profile-image-dialog/profile-image-dialog';
 import { HttpClientModule } from '@angular/common/http';
 import { EventActionsComponent } from './shared/event-actions/event-actions';
@@ -115,6 +114,8 @@ import { EventComponent } from './shared/event/event';
 import { NotificationsComponent } from './notifications/notifications';
 import { NotificationLabelComponent } from './shared/notification-label/notification-label';
 import { RelayListComponent } from './shared/relay-list/relay-list';
+import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
+import { AddMediaDialog } from './queue/add-media-dialog/add-media-dialog';
 
 @NgModule({
   declarations: [
@@ -185,6 +186,7 @@ import { RelayListComponent } from './shared/relay-list/relay-list';
     NotificationsComponent,
     NotificationLabelComponent,
     RelayListComponent,
+    AddMediaDialog,
   ],
   imports: [
     AboutModule,

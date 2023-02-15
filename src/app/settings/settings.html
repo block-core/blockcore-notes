@@ -105,6 +105,7 @@
             <p>Enable this to allow the app to render music widgets when URLs linked to the services is seen in notes.</p>
             <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableSpotify">Enable Spotify</mat-slide-toggle>
             <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableTidal">Enable Tidal</mat-slide-toggle>
+            <p><button mat-button (click)="openMediaPlayer()">Open Media Player</button></p>
           </mat-card-content>
         </mat-card>
       </div>
