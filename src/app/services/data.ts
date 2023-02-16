@@ -12,6 +12,7 @@ import { StorageService } from './storage';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { CircleService } from './circle';
+import { NostrService } from './nostr';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class DataService {
   connected$ = this.appState.connected$.pipe(map((status) => status === true));
 
   constructor(
+    private nostr: NostrService,
     private ui: UIService,
     private circleService: CircleService,
     private storage: StorageService,
@@ -114,10 +116,8 @@ export class DataService {
   private async createAndSignEvent(originalEvent: Event) {
     originalEvent.id = getEventHash(originalEvent);
 
-    const gt = globalThis as any;
-
     // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
-    const signedEvent = await gt.nostr.signEvent(originalEvent);
+    const signedEvent = await this.nostr.sign(originalEvent);
     originalEvent = signedEvent;
 
     // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
@@ -707,10 +707,8 @@ export class DataService {
       event.id = getEventHash(event);
     }
 
-    const gt = globalThis as any;
-
     // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
-    const signedEvent = await gt.nostr.signEvent(event);
+    const signedEvent = await this.nostr.sign(event);
 
     // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
     // We must do this before we run nostr-tools validate and signature validation.
@@ -750,10 +748,8 @@ export class DataService {
 
     originalEvent.id = getEventHash(originalEvent);
 
-    const gt = globalThis as any;
-
     // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
-    const signedEvent = await gt.nostr.signEvent(originalEvent);
+    const signedEvent = await this.nostr.sign(originalEvent);
     originalEvent = signedEvent;
 
     // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
