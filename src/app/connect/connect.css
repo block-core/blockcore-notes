@@ -58,6 +58,10 @@
   color: black !important;
 }
 
+.start-button-consent:hover {
+  background-color: rgb(230, 230, 230) !important;
+}
+
 .skip-button {
   border-radius: 40px;
   min-width: 140px;

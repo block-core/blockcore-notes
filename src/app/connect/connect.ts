@@ -15,6 +15,7 @@ export class ConnectComponent {
   extensionDiscovered = false;
   timeout: any;
   consent: boolean = false;
+  readOnlyLogin = false;
 
   constructor(
     private appState: ApplicationState,
