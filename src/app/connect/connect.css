@@ -70,6 +70,18 @@
   padding-bottom: 1.4em;
 }
 
+.dimmer {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.connect-input {
+  color: white !important;
+}
+
+/* .mat-form-field-appearance-legacy .mat-form-field-label {
+  color: white !important;
+} */
+
 .connect-content {
   margin-top: 80px;
   background: transparent url("/assets/bg.jpg") no-repeat right center;

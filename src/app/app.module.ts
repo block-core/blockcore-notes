@@ -116,6 +116,7 @@ import { NotificationLabelComponent } from './shared/notification-label/notifica
 import { RelayListComponent } from './shared/relay-list/relay-list';
 import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { AddMediaDialog } from './queue/add-media-dialog/add-media-dialog';
+import { ConnectKeyComponent } from './connect/key/key';
 
 @NgModule({
   declarations: [
@@ -187,6 +188,7 @@ import { AddMediaDialog } from './queue/add-media-dialog/add-media-dialog';
     NotificationLabelComponent,
     RelayListComponent,
     AddMediaDialog,
+    ConnectKeyComponent,
   ],
   imports: [
     AboutModule,

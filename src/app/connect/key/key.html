@@ -1,0 +1,66 @@
+<div class="connect-container">
+  <div class="connect-menu">
+    <img class="connect-logo" width="128" height="128" src="assets/icons/icon-256x256.webp" />
+    <div class="logo-text"><span class="hide-tiny">Blockcore</span> Notes</div>
+    <div class="connect-spacer"></div>
+  </div>
+  <div class="connect-content">
+    <mat-card class="card first-card">
+      <mat-card-content>
+        <h1>Private Key Import</h1>
+        <p>If you already have an existing private for your Nostr account, you can import it here and protect it with a password.</p>
+        <p>Having a strong password (we allow empty) is adviced, as this will be used to protect your private key using encryption when you are not using Blockcore Notes.</p>
+        <br />
+        <mat-form-field appearance="fill" class="input-full-width connect-input">
+          <mat-icon class="circle" matPrefix>person_add</mat-icon>
+          <mat-label>Private Key</mat-label>
+          <input (keyup)="updatePublicKey()" placeholder="nsec..." matInput type="text" autocomplete="off" [(ngModel)]="privateKey" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="input-full-width connect-input">
+          <mat-icon class="circle" matPrefix>password</mat-icon>
+          <mat-label>Password (optional)</mat-label>
+          <input matInput type="password" autocomplete="off" [(ngModel)]="password" />
+        </mat-form-field>
+
+        <br />
+        <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-raised-button>Connect</button><br /><br />
+
+        <p *ngIf="!error" class="public-key dimmer"><strong>Public Key</strong>: {{ publicKey }}</p>
+        <p *ngIf="!error" class="public-key dimmer"><strong>Public Key (hex)</strong>: {{ publicKeyHex }}</p>
+        <p *ngIf="error" class="error">Error: {{ error }}</p>
+        <p class="dimmer">Remember that Blockcore cannot change or reset your password. Make sure you have a separate backup of your <strong>private key</strong> in case you loose your password.</p>
+        <p class="dimmer">You will be asked to enter password (if supplied) when Notes need to sign events on your behalf.</p>
+
+        <!-- <div><button class="skip-button" (click)="persistKey(privateKey)" color="primary" mat-raised-button>Connect (read-only)</button></div> -->
+      </mat-card-content>
+    </mat-card>
+
+    <!-- <mat-card class="card warn">
+      <mat-card-content>
+       
+          <button class="start-button start-button-consent" *ngIf="consent" (click)="connect()" mat-flat-button>Connect using extension</button><br /><br />
+
+          <button class="start-button start-button-consent" *ngIf="consent" (click)="readOnlyLogin = !readOnlyLogin" mat-flat-button>Connect using public key (read only)</button><br /><br />
+
+          <div *ngIf="readOnlyLogin">
+            <div>
+              <div>
+                <p>Just paste your (or someone else's) Nostr public key (npub) here:</p>
+                <mat-form-field appearance="fill" class="input-full-width">
+                  <mat-icon class="circle" matPrefix>person_add</mat-icon>
+                  <mat-label>Public Key</mat-label>
+                  <input matInput type="text" autocomplete="off" [(ngModel)]="readOnlyKey" />
+                </mat-form-field>
+                <div><button class="skip-button" (click)="anonymous(readOnlyKey)" color="primary" mat-raised-button>Connect (read-only)</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!consent" class="consent-required warn">You must agree with the notice below to enable login.</div>
+          <br />
+        </div>
+      </mat-card-content>
+    </mat-card> -->
+  </div>
+</div>

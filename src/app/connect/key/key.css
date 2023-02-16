@@ -1,0 +1,9 @@
+.public-key {
+  margin-bottom: 1em;
+  word-wrap: break-word;
+}
+
+.error {
+  margin-bottom: 1em;
+  color: red;
+}

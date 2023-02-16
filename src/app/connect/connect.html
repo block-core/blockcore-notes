@@ -59,7 +59,7 @@
         <div *ngIf="consent">
           <button class="start-button start-button-consent" *ngIf="consent" (click)="connect()" mat-flat-button>Connect using extension</button><br /><br />
 
-          <!-- <button class="start-button start-button-consent" *ngIf="consent" routerLink="/connect/key" mat-flat-button>Connect using private key</button><br /><br /> -->
+          <button class="start-button start-button-consent" *ngIf="consent" routerLink="/connect/key" mat-flat-button>Connect using private key</button><br /><br />
 
           <button class="start-button start-button-consent" *ngIf="consent" (click)="readOnlyLogin = !readOnlyLogin" mat-flat-button>Connect using public key (read only)</button><br /><br />
 

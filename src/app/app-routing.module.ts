@@ -24,6 +24,7 @@ import { DevelopmentComponent } from './development/development';
 import { LoadingResolverService } from './services/loading-resolver';
 import { NotificationsComponent } from './notifications/notifications';
 import { FeedPrivateComponent } from './feed-private/feed-private';
+import { ConnectKeyComponent } from './connect/key/key';
 
 const routes: Routes = [
   {
@@ -37,6 +38,10 @@ const routes: Routes = [
   {
     path: 'connect',
     component: ConnectComponent,
+  },
+  {
+    path: 'connect/key',
+    component: ConnectKeyComponent,
   },
   {
     path: 'feed',

@@ -52,6 +52,7 @@ export class AuthenticationService {
 
   logout() {
     localStorage.removeItem('blockcore:notes:nostr:pubkey');
+    localStorage.removeItem('blockcore:notes:nostr:prvkey');
     this.authInfo$.next(AuthenticationService.UNKNOWN_USER);
     this.router.navigateByUrl('/connect');
   }
