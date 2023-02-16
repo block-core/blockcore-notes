@@ -349,6 +349,10 @@ export class RelayService {
       this.db.storage.putRelay(relay);
       this.items2.push(relay);
     } else {
+      if (relay.enabled == null) {
+        relay.enabled = true;
+      }
+
       if (relay.type !== type) {
         relay.type = type;
         this.db.storage.putRelay(relay);
