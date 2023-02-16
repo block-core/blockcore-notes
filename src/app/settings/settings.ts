@@ -92,7 +92,7 @@ export class SettingsComponent {
 
   async getDefaultRelays() {
     // Append the default relays.
-    await this.relayService.appendRelays(this.relayService.defaultRelays);
+    await this.relayService.appendRelays(this.nostr.defaultRelays);
   }
 
   // private getPublicPublicKeys() {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ApplicationState } from '../services/applicationstate';
 import { DataService } from '../services/data';
+import { NostrService } from '../services/nostr';
 import { RelayService } from '../services/relay';
 import { RelayType } from '../types/relay';
 import { Storage } from '../types/storage';
@@ -14,7 +15,7 @@ export class DevelopmentComponent {
   worker?: Worker;
   storage?: Storage;
 
-  constructor(private dataService: DataService, private appState: ApplicationState, public relayService: RelayService) {}
+  constructor(private nostr: NostrService, private dataService: DataService, private appState: ApplicationState, public relayService: RelayService) {}
 
   ngOnInit() {
     this.appState.updateTitle('Development & Debug');
@@ -62,7 +63,7 @@ export class DevelopmentComponent {
   }
 
   async addRelays() {
-    this.relayService.appendRelays(this.relayService.defaultRelays);
+    this.relayService.appendRelays(this.nostr.defaultRelays);
   }
 
   downloadProfile() {
