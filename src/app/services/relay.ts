@@ -16,25 +16,12 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ImportSheet } from '../shared/import-sheet/import-sheet';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
+import { NostrService } from './nostr';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RelayService {
-  /** Default relays that the app has for users without extension. This follows the document structure as extension data. */
-  defaultRelays: any = {
-    // 'wss://nostr-pub.wellorder.net': { read: true, write: true },
-    // 'wss://relay.nostr.ch': { read: true, write: true },
-    // 'wss://relay.damus.io': { read: true, write: true },
-    'wss://relay.plebstr.com': { read: true, write: true },
-    'wss://relay.nostr.info': { read: true, write: true },
-    'wss://e.nos.lol': { read: true, write: true },
-    'wss://nostr.mom': { read: true, write: true },
-    'wss://relay.snort.social': { read: true, write: true },
-    'wss://relay.nostr.bg': { read: true, write: true },
-    'wss://nostr.fmt.wiz.biz': { read: true, write: true },
-  };
-
   cache = new CacheService();
 
   events: NostrEventDocument[] = [];
@@ -71,6 +58,7 @@ export class RelayService {
   }
 
   constructor(
+    private nostr: NostrService,
     private ui: UIService,
     private queue: QueueService,
     private bottomSheet: MatBottomSheet,
@@ -1005,14 +993,7 @@ export class RelayService {
 
     // If there are no relay metatadata in database, get it from extension or default
     if (this.items2.length == 0) {
-      let relays;
-
-      try {
-        const gt = globalThis as any;
-        relays = await gt.nostr.getRelays();
-      } catch (err) {
-        relays = this.defaultRelays;
-      }
+      let relays = await this.nostr.relays();
 
       // First append whatever the extension give us of relays.
       await this.appendRelays(relays);

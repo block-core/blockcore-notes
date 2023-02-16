@@ -4,6 +4,7 @@ import { ChatModel, NostrEventDocument, UserModel } from './interfaces';
 import { QueueService } from './queue.service';
 import { DataService } from './data';
 import { ApplicationState } from './applicationstate';
+import { NostrService } from './nostr';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +42,7 @@ export class ChatService {
     );
   }
 
-  constructor(private queueService: QueueService, private dataService: DataService, private appState: ApplicationState) {
+  constructor(private nostr: NostrService, private queueService: QueueService, private dataService: DataService, private appState: ApplicationState) {
     this.chats = this.data.chats as any[];
     this.#chatsChanged.next(this.chats);
     console.log(this.data.chats);
@@ -61,8 +62,7 @@ export class ChatService {
           debugger;
           for (let index = 0; index < this.#chats.length; index++) {
             const event = this.#chats[index];
-            const gt = globalThis as any;
-            const content = await gt.nostr.nip04.decrypt(event.pubkey, event.content);
+            const content = await this.nostr.decrypt(event.pubkey, event.content);
             event.content = content;
             console.log('DECRYPTED EVENT:', event);
           }

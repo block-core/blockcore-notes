@@ -13,6 +13,7 @@ import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/a
 import { OptionsService } from '../services/options';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from '../services/data';
+import { NostrService } from '../services/nostr';
 
 @Component({
   selector: 'app-settings',
@@ -28,6 +29,7 @@ export class SettingsComponent {
   open = false;
 
   constructor(
+    private nostr: NostrService,
     public optionsService: OptionsService,
     public relayService: RelayService,
     public dialog: MatDialog,
@@ -111,8 +113,7 @@ export class SettingsComponent {
   // }
 
   async getRelays() {
-    const gt = globalThis as any;
-    const relays = await gt.nostr.getRelays();
+    const relays = await this.nostr.relays();
 
     // Append the default relays.
     await this.relayService.appendRelays(relays);
