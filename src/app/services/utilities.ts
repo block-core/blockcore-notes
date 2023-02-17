@@ -151,7 +151,7 @@ export class Utilities {
 
   getShortenedIdentifier(pubkey: string) {
     const fullId = this.getNostrIdentifier(pubkey);
-    return `${fullId.substring(4, 12)}:${fullId.substring(fullId.length - 8)}`;
+    return `${fullId.substring(5, 13)}:${fullId.substring(fullId.length - 8)}`;
   }
 
   private convertToBech32(key: Uint8Array, prefix: string) {

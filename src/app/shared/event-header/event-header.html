@@ -42,6 +42,8 @@
       <div *ngIf="profile.display_name">Display Name: {{profile.display_name}}</div>
       <div *ngIf="profile.name">Name: {{profile.name}}</div>
       <div *ngIf="profile.nip05">NIP05: {{profile.nip05}}</div>
+      <div *ngIf="profile.pubkey">Public Key (npub): {{profile.pubkey | bech32}}</div>
+      <div *ngIf="profile.pubkey">Public Key (hex): {{profile.pubkey}}</div>
       <div *ngIf="profile.website">Website: {{profile.website}}</div>
       <div *ngIf="profile.lud06">lud06: {{profile.lud06}}</div>
       <div *ngIf="profile.lud16">lud16: {{profile.lud16}}</div>
