@@ -14,13 +14,13 @@
         <mat-form-field appearance="fill" class="input-full-width connect-input">
           <mat-icon class="circle" matPrefix>person_add</mat-icon>
           <mat-label>Private Key</mat-label>
-          <input (keyup)="updatePublicKey()" placeholder="nsec..." matInput type="text" autocomplete="off" [(ngModel)]="privateKey" />
+          <input (keyup)="updatePublicKey()" name="privatekey" placeholder="nsec..." matInput type="text" autocomplete="off" [(ngModel)]="privateKey" />
         </mat-form-field>
 
         <mat-form-field appearance="fill" class="input-full-width connect-input">
           <mat-icon class="circle" matPrefix>password</mat-icon>
           <mat-label>Password (optional)</mat-label>
-          <input matInput type="password" autocomplete="off" [(ngModel)]="password" />
+          <input matInput type="password" name="password" autocomplete="off" [(ngModel)]="password" />
         </mat-form-field>
 
         <br />
