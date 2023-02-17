@@ -14,17 +14,25 @@
         <mat-form-field appearance="fill" class="input-full-width connect-input">
           <mat-icon class="circle" matPrefix>person_add</mat-icon>
           <mat-label>Private Key</mat-label>
-          <input (keyup)="updatePublicKey()" name="privatekey" placeholder="nsec..." matInput type="text" autocomplete="off" [(ngModel)]="privateKey" />
+          <input (keyup)="updatePublicKey()" autocomplete="off" name="privatekey" placeholder="nsec..." matInput type="password" autocomplete="off" [(ngModel)]="privateKey" />
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="input-full-width connect-input">
-          <mat-icon class="circle" matPrefix>password</mat-icon>
-          <mat-label>Password (optional)</mat-label>
-          <input matInput type="password" name="password" autocomplete="off" [(ngModel)]="password" />
-        </mat-form-field>
+        <form>
+          <mat-form-field appearance="fill" class="input-full-width connect-input">
+            <mat-icon class="circle" matPrefix>person_add</mat-icon>
+            <mat-label>Public Key</mat-label>
+            <input [readonly]="true" name="email" placeholder="npub..." matInput type="email" autocomplete="off" [(ngModel)]="publicKey" />
+          </mat-form-field>
 
-        <br />
-        <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-raised-button>Connect</button><br /><br />
+          <mat-form-field appearance="fill" class="input-full-width connect-input">
+            <mat-icon class="circle" matPrefix>password</mat-icon>
+            <mat-label>Password (optional)</mat-label>
+            <input matInput type="password" name="password" autocomplete="off" [(ngModel)]="password" />
+          </mat-form-field>
+
+          <br />
+          <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-raised-button>Connect</button><br /><br />
+        </form>
 
         <p *ngIf="!error" class="public-key dimmer"><strong>Public Key</strong>: {{ publicKey }}</p>
         <p *ngIf="!error" class="public-key dimmer"><strong>Public Key (hex)</strong>: {{ publicKeyHex }}</p>
