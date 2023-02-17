@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { getEventHash, getPublicKey, signEvent, validateEvent } from 'nostr-tools';
+import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from './interfaces';
+import { SecurityService } from './security';
 import { StorageService } from './storage';
 
 @Injectable({
@@ -20,16 +25,64 @@ export class NostrService {
     'wss://nostr.fmt.wiz.biz': { read: true, write: true },
   };
 
-  async sign(event: any) {
-    let prvkey = localStorage.getItem('blockcore:notes:nostr:prvkey');
+  constructor(public dialog: MatDialog, private snackBar: MatSnackBar, private security: SecurityService) {}
 
-    if (!prvkey) {
+  async sign(event: any) {
+    debugger;
+    let prvkeyEncrypted = localStorage.getItem('blockcore:notes:nostr:prvkey');
+
+    if (!prvkeyEncrypted) {
       const gt = globalThis as any;
 
       // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
       return gt.nostr.signEvent(event);
     } else {
-      throw Error('Private key based signing not implemented yet.');
+      return new Promise((resolve, reject) => {
+        const dialogRef = this.dialog.open(PasswordDialog, {
+          data: { action: 'Sign' },
+          maxWidth: '100vw',
+          panelClass: 'full-width-dialog',
+        });
+
+        dialogRef.afterClosed().subscribe(async (result: PasswordDialogData) => {
+          if (!result) {
+            reject();
+            return;
+          }
+
+          debugger;
+
+          const prvkey = await this.security.decryptData(prvkeyEncrypted!, result.password);
+
+          if (!prvkey) {
+            this.snackBar.open(`Unable to decrypt data. Probably wrong password. Try again.`, 'Hide', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom',
+            });
+            reject(`Unable to decrypt data. Probably wrong password.`);
+            return;
+          }
+
+          const pubkey = getPublicKey(prvkey);
+
+          debugger;
+
+          if (event.pubkey != pubkey) {
+            reject('The event public key is not correct for this private key');
+          }
+
+          if (!event.id) event.id = await getEventHash(event);
+          if (!validateEvent(event)) {
+            reject('Invalid Nostr event.');
+          }
+
+          const signature = signEvent(event, prvkey) as any;
+          event.sig = signature;
+
+          resolve(event);
+        });
+      });
     }
   }
 
@@ -57,7 +110,7 @@ export class NostrService {
       const decrypted = await gt.nostr.nip04.decrypt(pubkey, content);
       return decrypted;
     } else {
-      throw Error('Private key based decrypt not implemented yet.');
+      throw new Error('Private key based decrypt not implemented yet.');
     }
   }
 
@@ -69,7 +122,7 @@ export class NostrService {
       const decrypted = await gt.nostr.nip04.encrypt(pubkey, content);
       return decrypted;
     } else {
-      throw Error('Private key based encrypt not implemented yet.');
+      throw new Error('Private key based encrypt not implemented yet.');
     }
   }
 }

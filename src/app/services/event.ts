@@ -12,6 +12,10 @@ export class EventService {
   processEvent(originalEvent: NostrEvent): NostrEvent | null {
     let event;
 
+    if (!originalEvent) {
+      return null;
+    }
+
     // Enable to debug events coming in on the network.
     // if (originalEvent.kind == Kind.Reaction) {
     //   console.log(originalEvent);

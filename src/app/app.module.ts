@@ -117,6 +117,7 @@ import { RelayListComponent } from './shared/relay-list/relay-list';
 import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { AddMediaDialog } from './queue/add-media-dialog/add-media-dialog';
 import { ConnectKeyComponent } from './connect/key/key';
+import { PasswordDialog } from './shared/password-dialog/password-dialog';
 
 @NgModule({
   declarations: [
@@ -189,6 +190,7 @@ import { ConnectKeyComponent } from './connect/key/key';
     RelayListComponent,
     AddMediaDialog,
     ConnectKeyComponent,
+    PasswordDialog
   ],
   imports: [
     AboutModule,
