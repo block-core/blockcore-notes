@@ -28,7 +28,6 @@ export class NostrService {
   constructor(public dialog: MatDialog, private snackBar: MatSnackBar, private security: SecurityService) {}
 
   async sign(event: any) {
-    debugger;
     let prvkeyEncrypted = localStorage.getItem('blockcore:notes:nostr:prvkey');
 
     if (!prvkeyEncrypted) {
@@ -39,7 +38,7 @@ export class NostrService {
     } else {
       return new Promise((resolve, reject) => {
         const dialogRef = this.dialog.open(PasswordDialog, {
-          data: { action: 'Sign' },
+          data: { action: 'Sign', password: '' },
           maxWidth: '100vw',
           panelClass: 'full-width-dialog',
         });
@@ -49,8 +48,6 @@ export class NostrService {
             reject();
             return;
           }
-
-          debugger;
 
           const prvkey = await this.security.decryptData(prvkeyEncrypted!, result.password);
 
@@ -65,8 +62,6 @@ export class NostrService {
           }
 
           const pubkey = getPublicKey(prvkey);
-
-          debugger;
 
           if (event.pubkey != pubkey) {
             reject('The event public key is not correct for this private key');
