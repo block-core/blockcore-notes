@@ -684,6 +684,10 @@ export class UIService {
 
     this.#lists.reactions = new Map<string, ThreadEntry>();
 
+    this.#notifications = [];
+    this.#activityFeed = [];
+    this.#unreadNotificationsChanged.next(0);
+
     this.#threadEvents.next(this.#lists.threadEvents);
 
     this.#feedEvents.next(this.#lists.feedEvents);

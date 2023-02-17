@@ -66,7 +66,11 @@ export class StorageService {
   }
 
   close() {
-    this.storage.close();
+    try {
+      this.storage.close();
+    } catch (err) {
+      console.error('Failed to close storage.', err);
+    }
   }
 
   async delete() {

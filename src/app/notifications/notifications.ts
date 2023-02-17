@@ -16,9 +16,7 @@ export class NotificationsComponent {
   constructor(private navigation: NavigationService, private utilities: Utilities, private db: StorageService, private relayService: RelayService, public ui: UIService, private appState: ApplicationState) {}
 
   subscriptionId?: string;
-
   subscriptions: Subscription[] = [];
-
   offset = 0;
   pageSize = 12;
 
