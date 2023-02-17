@@ -38,18 +38,18 @@
 
   <div *ngIf="displayContent" class="date clickable">
     <ng-content></ng-content>
-    <div *ngIf="profile && listType == 'content'">
-      <div *ngIf="profile.display_name">Display Name: {{profile.display_name}}</div>
-      <div *ngIf="profile.name">Name: {{profile.name}}</div>
-      <div *ngIf="profile.nip05">NIP05: {{profile.nip05}}</div>
-      <div *ngIf="profile.pubkey">Public Key (npub): {{profile.pubkey | bech32}}</div>
-      <div *ngIf="profile.pubkey">Public Key (hex): {{profile.pubkey}}</div>
-      <div *ngIf="profile.website">Website: {{profile.website}}</div>
-      <div *ngIf="profile.lud06">lud06: {{profile.lud06}}</div>
-      <div *ngIf="profile.lud16">lud16: {{profile.lud16}}</div>
-      <div *ngIf="profile.following">following: {{profile.following.length}}</div>
-      <div *ngIf="profile.about">About: {{profile.about}}</div>
-      <div *ngIf="profile.relays">Relays: <app-relay-list [relays]="profile.relays"></app-relay-list></div>
+    <div class="content-items" *ngIf="profile && listType == 'content'">
+      <div *ngIf="profile.display_name"><span class="content-item-label">Display Name:</span> {{profile.display_name}}</div>
+      <div *ngIf="profile.name"><span class="content-item-label">Name:</span> {{profile.name}}</div>
+      <div *ngIf="profile.nip05"><span class="content-item-label">NIP05:</span> {{profile.nip05}}</div>
+      <div *ngIf="profile.pubkey"><span class="content-item-label">Public Key (npub):</span> {{profile.pubkey | bech32}}</div>
+      <div *ngIf="profile.pubkey"><span class="content-item-label">Public Key (hex):</span> {{profile.pubkey}}</div>
+      <div *ngIf="profile.website"><span class="content-item-label">Website:</span> {{profile.website}}</div>
+      <div *ngIf="profile.lud06"><span class="content-item-label">lud06:</span> {{profile.lud06}}</div>
+      <div *ngIf="profile.lud16"><span class="content-item-label">lud16:</span> {{profile.lud16}}</div>
+      <div *ngIf="profile.following"><span class="content-item-label">Following:</span> {{profile.following.length}}</div>
+      <div *ngIf="profile.about"><span class="content-item-label">About:</span> {{profile.about}}</div>
+      <div *ngIf="profile.relays"><span class="content-item-label">Relays:</span> <app-relay-list [relays]="profile.relays"></app-relay-list></div>
     </div>
 
     <!-- <span class="event-date" [matTooltip]="profile.id!" matTooltipPosition="below">{{ profile.created_at | ago }}</span>

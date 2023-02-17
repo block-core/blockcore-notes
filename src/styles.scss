@@ -700,6 +700,14 @@ small {
   color: rgba(255, 255, 255, 0.65);
 }
 
+.content-item-label {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.dark .content-item-label {
+  color: rgba(255, 255, 255, 0.65);
+}
+
 .space {
   margin-top: 0.4em;
   margin-bottom: 0.4em;
