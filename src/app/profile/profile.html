@@ -21,7 +21,7 @@
         <mat-form-field appearance="outline" class="input-full-width">
           <mat-icon matPrefix>help_outline</mat-icon>
           <mat-label>About</mat-label>
-          <textarea matInput type="text" [(ngModel)]="profile.about" autocomplete="off" rows="3"></textarea>
+          <textarea matInput type="text" [(ngModel)]="profile.about" rows="3"></textarea>
         </mat-form-field>
       </p>
       <p>
@@ -56,14 +56,14 @@
         <mat-form-field appearance="outline" class="input-full-width">
           <mat-icon matPrefix>currency_bitcoin</mat-icon>
           <mat-label>Bitcoin Payment Link (LUD06)</mat-label>
-          <input matInput type="text" autocomplete="off" [(ngModel)]="profile.lud06" placeholder="LNURL..." />
+          <input matInput type="text" [(ngModel)]="profile.lud06" placeholder="LNURL..." />
         </mat-form-field>
       </p>
       <p>
         <mat-form-field appearance="outline" class="input-full-width">
           <mat-icon matPrefix>currency_bitcoin</mat-icon>
           <mat-label>Bitcoin Payment Alias (LUD16)</mat-label>
-          <input matInput type="text" autocomplete="off" [(ngModel)]="profile.lud16" placeholder="user@domain" />
+          <input matInput type="text" [(ngModel)]="profile.lud16" placeholder="user@domain" />
         </mat-form-field>
       </p>
       <!-- <p>

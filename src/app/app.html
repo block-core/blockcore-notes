@@ -172,7 +172,7 @@
       <!-- <mat-form-field *ngIf="appState.showSearch" appearance="outline" class="search-box">
         <mat-icon class="circle" matPrefix>search</mat-icon>
         <mat-label>Search</mat-label>
-        <input matInput #searchInput type="text" (change)="searchInputChanged()" autocomplete="off" [(ngModel)]="appState.searchText" />
+        <input matInput #searchInput type="text" (change)="searchInputChanged()" [(ngModel)]="appState.searchText" />
       </mat-form-field> -->
 
       <button *ngIf="appState.showSearch" mat-icon-button (click)="searchVisibility(false)">

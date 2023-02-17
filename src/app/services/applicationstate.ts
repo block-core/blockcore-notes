@@ -33,6 +33,10 @@ export class ApplicationState {
     return this.authService.authInfo$.getValue().publicKeyHex!;
   }
 
+  getPublicKeyDisplay(): string {
+    return this.authService.authInfo$.getValue().publicKey!;
+  }
+
   navigateBack() {
     this.location.back();
   }

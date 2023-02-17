@@ -19,30 +19,38 @@ export class ConnectKeyComponent {
   password: string = '';
   error: string = '';
 
+  // hidePrivateKey = false;
+
   constructor(private router: Router, private security: SecurityService) {}
 
   async persistKey() {
-    if (!this.privateKeyHex) {
-      return;
-    }
+    // this.hidePrivateKey = true;
 
-    if (!this.publicKeyHex) {
-      return;
-    }
+    setTimeout(async () => {
+      if (!this.privateKeyHex) {
+        return;
+      }
 
-    // First attempt to get public key from the private key to see if it's possible:
-    const encrypted = await this.security.encryptData(this.privateKeyHex, this.password);
-    const decrypted = await this.security.decryptData(encrypted, this.password);
+      if (!this.publicKeyHex) {
+        return;
+      }
 
-    if (this.privateKeyHex == decrypted) {
-      localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
-      localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);
+      // First attempt to get public key from the private key to see if it's possible:
+      const encrypted = await this.security.encryptData(this.privateKeyHex, this.password);
+      const decrypted = await this.security.decryptData(encrypted, this.password);
 
-      this.router.navigateByUrl('/');
-    } else {
-      this.error = 'Unable to encrypt and decrypt. Cannot continue.';
-      console.error(this.error);
-    }
+      if (this.privateKeyHex == decrypted) {
+        localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
+        localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);
+
+        this.router.navigateByUrl('/');
+      } else {
+        this.error = 'Unable to encrypt and decrypt. Cannot continue.';
+        console.error(this.error);
+      }
+
+      // this.hidePrivateKey = false;
+    }, 10);
   }
 
   updatePublicKey() {

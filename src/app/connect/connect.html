@@ -70,7 +70,7 @@
                 <mat-form-field appearance="fill" class="input-full-width">
                   <mat-icon class="circle" matPrefix>person_add</mat-icon>
                   <mat-label>Public Key</mat-label>
-                  <input matInput type="text" autocomplete="off" [(ngModel)]="readOnlyKey" />
+                  <input matInput type="text" [(ngModel)]="readOnlyKey" />
                 </mat-form-field>
                 <div><button class="skip-button" (click)="anonymous(readOnlyKey)" color="primary" mat-raised-button>Connect (read-only)</button></div>
               </div>

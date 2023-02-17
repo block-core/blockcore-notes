@@ -4,13 +4,13 @@
     <mat-form-field appearance="fill" class="input-full-width">
       <mat-icon class="circle" matPrefix>supervised_user_circle</mat-icon>
       <mat-label>Circle Name</mat-label>
-      <input matInput type="text" autocomplete="off" [(ngModel)]="data.name" />
+      <input matInput type="text" [(ngModel)]="data.name" />
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="circle-input">
       <div matPrefix ngx-colors-trigger class="color" [style.background]="data.color" [(ngModel)]="data.color"></div>
       <mat-label>Color</mat-label>
-      <input matInput [(ngModel)]="data.color" autocomplete="off" />
+      <input matInput [(ngModel)]="data.color" />
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="circle-input">
