@@ -140,6 +140,37 @@ export class DataService {
   }
 
   /** Get's all following and all public relays. */
+  async getContactsAndRelays() {
+    const contacts = await this.storage.storage.getContacts(this.appState.getPublicKey());
+    return contacts;
+
+    // const nonPublicCircles = this.circleService.circles.filter((c) => !c.public).map((c) => c.id);
+    // const publicFollowing = this.profileService.following.filter((p) => nonPublicCircles.indexOf(p.circle) == -1).map((p) => p.pubkey);
+    // const mappedContacts = publicFollowing.map((c) => {
+    //   return ['p', c];
+    // });
+
+    // const mappedRelays = this.getJsonFormattedRelayList();
+
+    // let originalEvent: Event = {
+    //   kind: Kind.Contacts,
+    //   created_at: Math.floor(Date.now() / 1000),
+    //   content: JSON.stringify(mappedRelays),
+    //   pubkey: this.appState.getPublicKey(),
+    //   tags: mappedContacts,
+    // };
+
+    // const event = await this.createAndSignEvent(originalEvent);
+
+    // if (!event) {
+    //   return;
+    // }
+
+    // console.log('PUBLISH EVENT:', event);
+    // this.relayService.publish(event);
+  }
+
+  /** Get's all following and all public relays. */
   async publishContactsAndRelays() {
     const nonPublicCircles = this.circleService.circles.filter((c) => !c.public).map((c) => c.id);
     const publicFollowing = this.profileService.following.filter((p) => nonPublicCircles.indexOf(p.circle) == -1).map((p) => p.pubkey);

@@ -282,93 +282,113 @@ export class PeopleComponent {
     });
   }
 
+  async downloadFollowing() {
+    const event = await this.dataService.getContactsAndRelays();
+
+    const json = JSON.stringify(event);
+    const blob = new Blob([json], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `metadata-${this.appState.getPublicKey()}.json`;
+    link.click();
+  }
+
   async importFollowList() {
-    const profile = (await this.profileService.getProfile(this.appState.getPublicKey())) as NostrProfileDocument;
+    const dialogRef = this.dialog.open(ImportFollowDialog, {
+      data: { pubkey: this.appState.getPublicKey() },
+      maxWidth: '100vw',
+      panelClass: 'full-width-dialog',
+    });
 
-    if (!profile || !profile.following) {
-      return;
-    }
+    dialogRef.afterClosed().subscribe(async (result: ImportFollowDialogData) => {
+      if (!result) {
+        return;
+      }
 
-    for (let index = 0; index < profile.following.length; index++) {
-      const followKey = profile.following[index];
-      await this.profileService.follow(followKey);
-    }
+      this.snackBar.open('Importing followers process has started', 'Hide', {
+        duration: 2000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
 
-    // const dialogRef = this.dialog.open(ImportFollowDialog, {
-    //   data: { pubkey: this.appState.getPublicKey() },
-    //   maxWidth: '100vw',
-    //   panelClass: 'full-width-dialog',
-    // });
+      debugger;
 
-    // dialogRef.afterClosed().subscribe(async (result: ImportFollowDialogData) => {
-    //   if (!result) {
-    //     return;
-    //   }
+      if (result.import) {
+        const profile = (await this.profileService.getProfile(this.appState.getPublicKey())) as NostrProfileDocument;
 
-    //   this.snackBar.open('Importing followers process has started', 'Hide', {
-    //     duration: 2000,
-    //     horizontalPosition: 'center',
-    //     verticalPosition: 'bottom',
-    //   });
+        if (!profile || !profile.following) {
+          return;
+        }
 
-    //   let pubkey = this.utilities.ensureHexIdentifier(result.pubkey);
+        for (let index = 0; index < profile.following.length; index++) {
+          const followKey = profile.following[index];
+          await this.profileService.follow(followKey);
+        }
+      } else {
+        for (let index = 0; index < result.pubkeys.length; index++) {
+          const followKey = result.pubkeys[index];
+          await this.profileService.follow(followKey);
+        }
+      }
 
-    //   // Queue download for import.
-    //   // this.dataService.enque({ type: 'Contacts', identifier: pubkey });
+      // let pubkey = this.utilities.ensureHexIdentifier(result.pubkey);
 
-    //   // this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
-    //   //   debugger;
-    //   //   const nostrEvent = event as NostrEventDocument;
-    //   //   const publicKeys = nostrEvent.tags.map((t) => t[1]);
+      // Queue download for import.
+      // this.dataService.enque({ type: 'Contacts', identifier: pubkey });
 
-    //   //   for (let i = 0; i < publicKeys.length; i++) {
-    //   //     const publicKey = publicKeys[i];
+      // this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
+      //   debugger;
+      //   const nostrEvent = event as NostrEventDocument;
+      //   const publicKeys = nostrEvent.tags.map((t) => t[1]);
 
-    //   //     this.profileService.follow(publicKey);
+      //   for (let i = 0; i < publicKeys.length; i++) {
+      //     const publicKey = publicKeys[i];
 
-    //   //     // const profile = await this.profile.getProfile(publicKey);
+      //     this.profileService.follow(publicKey);
 
-    //   //     // // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-    //   //     // if (profile) {
-    //   //     //   await this.profile.follow(publicKeys[i], profile.circle);
-    //   //     // } else {
-    //   //     //   await this.profile.follow(publicKeys[i]);
-    //   //     // }
-    //   //   }
+      //     // const profile = await this.profile.getProfile(publicKey);
 
-    //   //   // await this.load();
+      //     // // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+      //     // if (profile) {
+      //     //   await this.profile.follow(publicKeys[i], profile.circle);
+      //     // } else {
+      //     //   await this.profile.follow(publicKeys[i]);
+      //     // }
+      //   }
 
-    //   //   // this.ngZone.run(() => {
-    //   //   //   this.cd.detectChanges();
-    //   //   // });
-    //   // });
+      //   // await this.load();
 
-    //   // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
-    //   // follow lists and having to process everything multiple times. Just query one by one until
-    //   // we find the list. Until then, we simply grab the first relay only.
-    //   // this.subscriptions.push(
-    //   //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-    //   //     const publicKeys = contacts.tags.map((t) => t[1]);
+      //   // this.ngZone.run(() => {
+      //   //   this.cd.detectChanges();
+      //   // });
+      // });
 
-    //   //     for (let i = 0; i < publicKeys.length; i++) {
-    //   //       const publicKey = publicKeys[i];
-    //   //       const profile = await this.profile.getProfile(publicKey);
+      // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
+      // follow lists and having to process everything multiple times. Just query one by one until
+      // we find the list. Until then, we simply grab the first relay only.
+      // this.subscriptions.push(
+      //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
+      //     const publicKeys = contacts.tags.map((t) => t[1]);
 
-    //   //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-    //   //       if (profile) {
-    //   //         await this.profile.follow(publicKeys[i], profile.circle);
-    //   //       } else {
-    //   //         await this.profile.follow(publicKeys[i]);
-    //   //       }
-    //   //     }
+      //     for (let i = 0; i < publicKeys.length; i++) {
+      //       const publicKey = publicKeys[i];
+      //       const profile = await this.profile.getProfile(publicKey);
 
-    //   //     await this.load();
+      //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
+      //       if (profile) {
+      //         await this.profile.follow(publicKeys[i], profile.circle);
+      //       } else {
+      //         await this.profile.follow(publicKeys[i]);
+      //       }
+      //     }
 
-    //   //     this.ngZone.run(() => {
-    //   //       this.cd.detectChanges();
-    //   //     });
-    //   //   })
-    //   // );
-    // });
+      //     await this.load();
+
+      //     this.ngZone.run(() => {
+      //       this.cd.detectChanges();
+      //     });
+      //   })
+      // );
+    });
   }
 }
