@@ -12,6 +12,7 @@ export interface Options {
   showMediaPlayer?: boolean;
   enableSpotify?: boolean;
   enableTidal?: boolean;
+  enableReactions?: boolean;
   hideSideLabels?: boolean;
   primaryRelay?: string;
   peopleDisplayView: number;
@@ -27,12 +28,16 @@ export class OptionsService {
     this.load();
   }
 
-  values: Options = { showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
+  values: Options = { enableReactions: true, showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
 
   load() {
     let options = localStorage.getItem('blockcore:notes:nostr:options');
     if (options) {
       this.values = JSON.parse(options);
+    }
+
+    if (this.values.enableReactions == null) {
+      this.values.enableReactions = true;
     }
 
     if (this.values.peopleDisplayType == null) {

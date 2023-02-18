@@ -93,7 +93,8 @@ export class RelayService {
         this.unsubscribe(this.profileEventSubscription);
 
         // Then create a new subscription:
-        this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: [Kind.Text, Kind.Reaction, 6], until: options.until, limit: 100 }]);
+        const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+        this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: kinds, until: options.until, limit: 100 }]);
       } else if (options.type == 'feed') {
         // If there are no subscription yet, just skip load more.
         if (!this.circleEventSubscription) {
@@ -115,7 +116,8 @@ export class RelayService {
         }
 
         // Then create a new subscription:
-        this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: [Kind.Text, Kind.Reaction, 6], until: options.until, limit: 100 }], 'feed');
+        const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+        this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, until: options.until, limit: 100 }], 'feed');
       }
     });
 
@@ -138,7 +140,8 @@ export class RelayService {
         this.circleEventSubscription = undefined;
       }
 
-      this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }], 'feed');
+      const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+      this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, limit: 100 }], 'feed');
     });
 
     // Whenever the pubkey changes, we'll load the profile and start loading the user's events.

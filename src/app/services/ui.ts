@@ -4,6 +4,7 @@ import { Kind } from 'nostr-tools';
 import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single, takeWhile, from, of } from 'rxjs';
 import { EventService } from './event';
 import { EmojiEnum, LoadMoreOptions, NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel, ThreadEntry } from './interfaces';
+import { OptionsService } from './options';
 import { ProfileService } from './profile';
 
 @Injectable({
@@ -11,7 +12,7 @@ import { ProfileService } from './profile';
 })
 /** The orchestrator for UI that holds data to be rendered in different views at any given time. */
 export class UIService {
-  constructor(private eventService: EventService) {}
+  constructor(private eventService: EventService, private options: OptionsService) {}
 
   #lists = {
     feedEvents: [] as NostrEventDocument[],
@@ -436,6 +437,10 @@ export class UIService {
     // }
 
     if (event.kind == Kind.Reaction) {
+      if (!this.options.values.enableReactions) {
+        return;
+      }
+
       const eventId = this.eventService.lastETag(event);
 
       if (eventId) {

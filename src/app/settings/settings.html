@@ -98,6 +98,19 @@
 
         <mat-card>
           <mat-card-header>
+            <mat-card-title>Reactions</mat-card-title>
+            <mat-card-subtitle>Control if likes should be loaded and displayed</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Reactions is not for everyone and it might consider clutter by some. It also takes up additional bandwidth to download.</p>
+            <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableReactions">Enable Reactions</mat-slide-toggle>
+          </mat-card-content>
+        </mat-card>
+
+        <br />
+
+        <mat-card>
+          <mat-card-header>
             <mat-card-title>Media widgets</mat-card-title>
             <mat-card-subtitle>Control how content are rendered</mat-card-subtitle>
           </mat-card-header>

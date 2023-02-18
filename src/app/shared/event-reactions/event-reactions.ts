@@ -27,6 +27,12 @@ export class EventReactionsComponent {
   ngAfterViewInit() {}
 
   async ngOnInit() {
+    if (!this.optionsService.values.enableReactions) {
+      this.event = undefined;
+      this.threadEntry = undefined;
+      return;
+    }
+
     this.sub = this.ui.reactions$.subscribe((id) => {
       if (!this.event) {
         return;
