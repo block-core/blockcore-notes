@@ -66,11 +66,6 @@ export class ContentService {
       tooltip: 'This is the way (thisistheway.gif)',
       word: 'https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg',
     },
-    'alwayshasbeen.jpg': {
-      token: 'meme',
-      tooltip: 'Always has been (alwayshasbeen.jpg)',
-      word: 'https://imgflip.com/s/meme/Always-Has-Been.png',
-    },
     'thisistheway.jpg': {
       token: 'meme',
       tooltip: 'This is the way (thisistheway.gif)',
@@ -78,8 +73,23 @@ export class ContentService {
     },
     'alwayshasbeen.gif': {
       token: 'meme',
+      tooltip: 'Always has been (alwayshasbeen.gif)',
+      word: 'https://imgflip.com/s/meme/Always-Has-Been.png',
+    },
+    'alwayshasbeen.jpg': {
+      token: 'meme',
       tooltip: 'Always has been (alwayshasbeen.jpg)',
       word: 'https://imgflip.com/s/meme/Always-Has-Been.png',
+    },
+    'onehourlater.gif': {
+      token: 'meme',
+      tooltip: 'One hour later (onehourlater.gif)',
+      word: 'https://i.giphy.com/media/3ogwG36LKIkM937ZG8/giphy.webp',
+    },
+    'onehourlater.jpg': {
+      token: 'meme',
+      tooltip: 'One hour later (onehourlater.gif)',
+      word: 'https://i.giphy.com/media/3ogwG36LKIkM937ZG8/giphy.webp',
     },
   };
 }
