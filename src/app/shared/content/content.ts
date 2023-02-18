@@ -260,7 +260,7 @@ export class ContentComponent {
       if (keyword) {
         if (keyword.token == 'username') {
           let index = Number(token.replace('#[', '').replace(']', ''));
-          let tags = this.eventService.getPublicKeyAndEventTags(event.tags);
+          let tags = event.tags;
 
           if (tags.length > index) {
             keyword.word = tags[index][1];

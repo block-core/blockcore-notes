@@ -15,7 +15,8 @@ import { UIService } from './ui';
 export class ProfileService {
   initialized = false;
 
-  #cache = new CacheService(200);
+  // TODO: Tune the size of the profile cache, need testing to verify what level of cache makes sense and memory usage of it.
+  #cache = new CacheService(500);
 
   // items$ = dexieToRx(liveQuery(() => this.list(ProfileStatus.Follow)));
 
