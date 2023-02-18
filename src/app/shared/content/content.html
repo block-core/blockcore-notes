@@ -69,12 +69,35 @@
   <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">
     <ng-container *ngFor="let token of dynamicText">
       <ng-template [ngIf]="isString(token)">{{ token }}</ng-template>
-      <ng-template [ngIf]="!isString(token)" [ngSwitch]="token.token">
+
+      <ng-template [ngIf]="!isString(token) && isFollowing" [ngSwitch]="token.token">
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
+        <ng-container *ngSwitchCase="'youtube'"
+          ><iframe id="ytplayer" class="event-video" type="text/html" [src]="token.safeWord" frameborder="0" allowfullscreen></iframe>
+          <button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">
+            <mat-icon>add_to_queue</mat-icon>
+          </button></ng-container
+        >
         <ng-container *ngSwitchCase="'meme'"><img loading="lazy" class="meme" [matTooltip]="token.tooltip" (click)="expandImageUrl(token.word)" [src]="token.word" /></ng-container>
       </ng-template>
+
+      <ng-template [ngIf]="!isString(token) && !isFollowing" [ngSwitch]="token.token">
+        <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
+        <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
+        <ng-container *ngSwitchCase="'youtube'"
+          ><a [href]="[token.word]" target="_blank">{{ token.word }}</a>&nbsp;<button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">
+            <mat-icon>add_to_queue</mat-icon>
+          </button></ng-container
+        >
+        <ng-container *ngSwitchCase="'meme'"><img loading="lazy" class="meme" [matTooltip]="token.tooltip" (click)="expandImageUrl(token.word)" [src]="token.word" /></ng-container>
+      </ng-template>
+
+      <!-- <ng-template [ngIf]="!isString(token)" [ngSwitch]="token.token">
+        
+      </ng-template> -->
 
       <!-- <ng-container *ngIf="isNewline(token)"><br /></ng-container>
       <ng-container *ngIf="isString(token)">{{ token }}</ng-container>

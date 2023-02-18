@@ -220,6 +220,7 @@ export interface NostrProfileDocument extends NostrProfile {
 export type TokenKeyword = {
   token: string;
   word?: string;
+  safeWord?: any;
   tooltip?: string;
 };
 

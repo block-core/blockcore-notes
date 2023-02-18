@@ -70,6 +70,8 @@ export class ContentComponent {
     }
   }
 
+  isFollowing = false;
+
   getWord(token: string | TokenKeyword) {
     return (token as TokenKeyword).word;
   }
@@ -110,9 +112,9 @@ export class ContentComponent {
     //   content = content.substring(0, content.indexOf('#[')) + '@' + profile?.name + content.substring(endIndex + 1);
     // }
 
-    const isFollowing = this.profileService.isFollowing(this.event.pubkey);
+    this.isFollowing = this.profileService.isFollowing(this.event.pubkey);
 
-    if (isFollowing) {
+    if (this.isFollowing) {
       const images = [...content.matchAll(this.contentService.regexpImage)];
       this.images = images.map((i) => this.utilities.sanitizeUrlAndBypass(i[0]));
 
@@ -129,10 +131,10 @@ export class ContentComponent {
       const alwayshasbeen = alwaysHasBeenMatch.map((i) => this.utilities.bypassUrl(`https://imgflip.com/s/meme/Always-Has-Been.png`));
       this.images.push(...alwayshasbeen);
 
-      const youtubes = [...content.matchAll(this.contentService.regexpYouTube)];
-      this.youtube = youtubes.map((i) => {
-        return { url: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`), originalUrl: `https://www.youtube.com/embed/${i[1]}` };
-      });
+      // const youtubes = [...content.matchAll(this.contentService.regexpYouTube)];
+      // this.youtube = youtubes.map((i) => {
+      //   return { url: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`), originalUrl: `https://www.youtube.com/embed/${i[1]}` };
+      // });
 
       // const spotify = [...content.matchAll(ContentComponent.regexpSpotify)];
       // this.spotify = spotify.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
@@ -271,7 +273,12 @@ export class ContentComponent {
 
         i = res.push(keyword);
       } else if (token.startsWith('http://') || token.startsWith('https://')) {
-        i = res.push({ word: token, token: 'link' });
+        const youtube = [...token.matchAll(this.contentService.regexpYouTube)];
+        if (youtube.length > 0) {
+          i = res.push({ safeWord: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${youtube[0][1]}`), word: `https://www.youtube.com/embed/${youtube[0][1]}`, token: 'youtube' });
+        } else {
+          i = res.push({ word: token, token: 'link' });
+        }
       } else {
         if (!res[i]) res[i] = token;
         else res[i] += ' ' + token;
