@@ -4,7 +4,7 @@ import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { relayInit, Relay, Event } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
-import { NostrEvent, NostrEventDocument, NostrNoteDocument } from '../services/interfaces';
+import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -253,5 +253,14 @@ export class HomeComponent {
     ];
 
     this.latestItems = await this.db.storage.getEventsByCreatedAndKind(7, 1);
+
+    this.subscriptions.push(
+      this.profileService.following$.subscribe((profiles) => {
+        this.profiles = profiles.slice(0, 20);
+      })
+    );
   }
+
+  /** Profiles that are shown on the home screen, limited set of profiles. */
+  profiles: NostrProfileDocument[] = [];
 }

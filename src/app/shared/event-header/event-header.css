@@ -13,6 +13,10 @@
 .icon-small .profile-image {
   width: 48px;
   height: 48px;
+  border-width: 2px;
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 2px;
 }
 
 .content-items div {
