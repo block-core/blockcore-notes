@@ -15,7 +15,7 @@ import { UIService } from './ui';
 export class ProfileService {
   initialized = false;
 
-  cache = new CacheService();
+  #cache = new CacheService(200);
 
   // items$ = dexieToRx(liveQuery(() => this.list(ProfileStatus.Follow)));
 
@@ -177,15 +177,18 @@ export class ProfileService {
   }
 
   constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private appState: ApplicationState, private utilities: Utilities) {
-    this.ui.pubkey$.subscribe((pubkey) => {
-      if (!pubkey) {
-        this.ui.setProfile(undefined);
-      } else {
-        this.getProfile(pubkey).subscribe((profile) => {
-          this.ui.setProfile(profile);
-        });
-      }
-    });
+    // this.ui.profile$.subscribe((profile) => {
+    // });
+    // this.ui.pubkey$.subscribe(async (pubkey) => {
+    //   if (!pubkey) {
+    //     this.ui.setProfile(undefined);
+    //   } else {
+    //     const profile = await this.getProfile(pubkey);
+    //     if (profile) {
+    //       this.ui.setProfile(profile);
+    //     }
+    //   }
+    // });
   }
 
   getProfileOrDownload(pubkey: string) {
@@ -228,8 +231,43 @@ export class ProfileService {
     return this.db.storage.getProfile(pubkey);
   }
 
-  getProfile(pubkey: string) {
-    return this.cache.get(pubkey, this.getProfileOrDownload(pubkey));
+  getCachedProfile(pubkey: string) {
+    let index = this.following.findIndex((f) => f.pubkey == pubkey);
+
+    if (index > -1) {
+      return this.following[index];
+    }
+
+    let profileCache = this.#cache.get(pubkey);
+
+    if (profileCache) {
+      return profileCache.value;
+    }
+  }
+
+  async getProfile(pubkey: string) {
+    let index = this.following.findIndex((f) => f.pubkey == pubkey);
+
+    if (index > -1) {
+      return this.following[index];
+    }
+
+    let profileCache = this.#cache.get(pubkey);
+
+    if (profileCache) {
+      return profileCache.value;
+    }
+
+    let profile = await this.db.storage.getProfile(pubkey);
+
+    if (profile) {
+      this.#cache.set(pubkey, profile);
+      return profile;
+    }
+
+    // TODO: Maybe we should enque if it's been more than a day since we attempted to download
+    // this profile?
+    this.queueService.enqueProfile(pubkey);
   }
 
   async putProfile(profile: NostrProfileDocument) {
@@ -241,7 +279,7 @@ export class ProfileService {
     // on every save. This is more optimal than on every rendering.
     profile.npub = this.utilities.getNostrIdentifier(profile.pubkey);
 
-    this.cache.set(profile.pubkey, profile);
+    this.#cache.set(profile.pubkey, profile);
 
     await this.db.storage.putProfile(profile);
 
@@ -477,6 +515,9 @@ export class ProfileService {
     // Put into cache and database.
     await this.putProfile(profile);
     console.log('END PUT PROFILE', profile.pubkey);
+
+    // Insert this profile into the cache.
+    this.#cache.set(profile.pubkey, profile);
 
     // If the profile that was written was our own, trigger the observable for it.
     if (this.appState.getPublicKey() === pubkey) {

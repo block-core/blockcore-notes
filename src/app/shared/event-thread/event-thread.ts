@@ -13,7 +13,6 @@ import { Circle, NostrEventDocument, ThreadEntry } from '../../services/interfac
   styleUrls: ['./event-thread.css'],
 })
 export class EventThreadComponent {
-  // @Input() threadEntry?: ThreadEntry | undefined;
   @Input() event?: NostrEventDocument | undefined;
 
   imagePath = '/assets/profile.png';

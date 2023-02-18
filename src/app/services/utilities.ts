@@ -120,9 +120,13 @@ export class Utilities {
   }
 
   getNostrIdentifier(pubkey: string) {
-    const key = this.hexToArray(pubkey);
-    const converted = this.convertToBech32(key, 'npub');
-    return converted;
+    try {
+      const key = this.hexToArray(pubkey);
+      const converted = this.convertToBech32(key, 'npub');
+      return converted;
+    } catch (err) {
+      return pubkey;
+    }
   }
 
   ensureHexIdentifier(pubkey: string) {

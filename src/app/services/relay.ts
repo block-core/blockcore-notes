@@ -5,7 +5,6 @@ import { Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
-import { CacheService } from './cache';
 import { StorageService } from './storage';
 import { RelayType } from '../types/relay';
 import { RelayResponse } from './messages';
@@ -22,8 +21,6 @@ import { NostrService } from './nostr';
   providedIn: 'root',
 })
 export class RelayService {
-  cache = new CacheService();
-
   events: NostrEventDocument[] = [];
 
   threadSubscription?: string;
@@ -156,13 +153,15 @@ export class RelayService {
         return;
       }
 
-      const profile = await this.db.storage.getProfile(id);
+      const profile = await this.profileService.getProfile(id);
 
       if (profile) {
         this.ui.setProfile(profile);
-      } else {
-        this.enque({ type: 'Profile', identifier: id });
       }
+
+      // else {
+      //   this.enque({ type: 'Profile', identifier: id });
+      // }
 
       // Subscribe to events for the current user profile.
       this.profileEventSubscription = this.subscribe([{ authors: [id], kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }]);

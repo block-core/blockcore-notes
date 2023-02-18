@@ -4,7 +4,7 @@
       <app-event-header [pubkey]="event.pubkey"><app-date [date]="event.created_at"></app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
       <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
     </div>
-    <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, lines: optionsService.values.showLines }" [displayRepliesTo]="false" [event]="event"></app-content>
+    <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, lines: optionsService.values.showLines }" [displayRepliesTo]="true" [event]="event"></app-content>
     <app-event-reactions [event]="event"></app-event-reactions>
     <app-event-buttons [event]="event"></app-event-buttons>
     <app-event-thread [event]="event"></app-event-thread>

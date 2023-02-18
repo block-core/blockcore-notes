@@ -1,84 +1,36 @@
-import { Observable, Subject, of, tap, throwError } from 'rxjs';
-
 interface CacheContent {
-  expiry: number;
+  accessed: number;
   value: any;
 }
 
 export class CacheService {
-  private cache: Map<string, CacheContent> = new Map<string, CacheContent>();
-  private inFlightObservables: Map<string, Subject<any>> = new Map<string, Subject<any>>();
-  readonly DEFAULT_MAX_AGE: number = 300000;
+  constructor(private maxEntries: number) {}
 
-  get(key: string, fallback?: Observable<any>, maxAge?: number): Observable<any> | Subject<any> {
-    if (this.hasValidCachedValue(key)) {
-      // console.log(`%cGetting from cache ${key}`, 'color: green');
-      return of(this.cache.get(key)!.value);
+  #cache: Map<string, CacheContent> = new Map<string, CacheContent>();
+
+  get(key: string) {
+    const val = this.#cache.get(key);
+
+    if (!val) {
+      return undefined;
     }
 
-    if (!maxAge) {
-      maxAge = this.DEFAULT_MAX_AGE;
+    // Only when there are many we'll start deleting old entries.
+    if (this.#cache.size > this.maxEntries) {
+      let sortedList = Array.from(this.#cache.entries()).sort((e) => e[1].accessed);
+      let deleteList = sortedList.slice(0, 20);
+
+      deleteList.forEach((val) => {
+        this.#cache.delete(val[0]);
+      });
     }
 
-    if (this.inFlightObservables.has(key)) {
-      return this.inFlightObservables.get(key)!;
-    } else if (fallback && fallback instanceof Observable) {
-      this.inFlightObservables.set(key, new Subject());
-      // console.log(`%c Calling api for ${key}`, 'color: purple');
+    val.accessed = Date.now();
 
-      return fallback.pipe(
-        tap({
-          next: (val) => {
-            // on next 11, etc.
-            // console.log('on next', val);
-            this.set(key, val, maxAge);
-          },
-          error: (error) => {
-            console.log('on error', error.message);
-            this.inFlightObservables.delete(key);
-            throwError(() => error);
-          },
-          complete: () => {},
-        })
-      );
-    } else {
-      return throwError(() => 'Requested key is not available in Cache');
-    }
+    return val;
   }
 
-  set(key: string, value: any, maxAge: number = this.DEFAULT_MAX_AGE): void {
-    this.cache.set(key, { value: value, expiry: Date.now() + maxAge });
-    this.notifyInFlightObservers(key, value);
-  }
-
-  has(key: string): boolean {
-    return this.cache.has(key);
-  }
-
-  private notifyInFlightObservers(key: string, value: any): void {
-    if (this.inFlightObservables.has(key)) {
-      const inFlight = this.inFlightObservables.get(key)!;
-      const observersCount = inFlight.observers.length;
-
-      if (observersCount) {
-        console.log(`%cNotifying ${inFlight.observers.length} flight subscribers for ${key}`, 'color: blue');
-        inFlight.next(value);
-      }
-
-      inFlight.complete();
-      this.inFlightObservables.delete(key);
-    }
-  }
-
-  private hasValidCachedValue(key: string): boolean {
-    if (this.cache.has(key)) {
-      if (this.cache.get(key)!.expiry < Date.now()) {
-        this.cache.delete(key);
-        return false;
-      }
-      return true;
-    } else {
-      return false;
-    }
+  set(key: string, val: any) {
+    this.#cache.set(key, { accessed: Date.now(), value: val });
   }
 }

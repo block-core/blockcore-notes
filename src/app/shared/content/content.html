@@ -64,7 +64,24 @@
     <video...></video>
   </div> -->
 
-  <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">{{ content }}</span><span *ngIf="event.contentCut">... (message was truncated)</span>
+  <!-- <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">{{ content }}</span><span *ngIf="event.contentCut">... (message was truncated)</span> -->
+
+  <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">
+    <ng-container *ngFor="let token of dynamicText">
+      <ng-template [ngIf]="isString(token)"> {{ token }} </ng-template>
+      <ng-template [ngIf]="!isString(token)" [ngSwitch]="token.token">
+        <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a> </ng-container>
+        <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
+      </ng-template>
+
+      <!-- <ng-container *ngIf="isNewline(token)"><br /></ng-container>
+      <ng-container *ngIf="isString(token)">{{ token }}</ng-container>
+      <ng-container *ngIf="!isString(token)"><b [matTooltip]="getTooltip(token)" style="cursor: pointer"> {{ getWord(token) }} </b></ng-container> -->
+    </ng-container>
+
+    <span *ngIf="event.contentCut">... (message was truncated)</span>
+  </span>
+
   <!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->
   <ng-template [ngIf]="displayRepliesTo">
     <div *ngIf="repliesTo(event) as replies" class="reply-to dimmed clickable">

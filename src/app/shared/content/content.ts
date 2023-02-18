@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService } from 'src/app/services/content';
+import { EventService } from 'src/app/services/event';
 import { MediaService } from 'src/app/services/media';
 import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
@@ -37,10 +38,40 @@ export class ContentComponent {
 
   // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
 
-  constructor(private contentService: ContentService, private mediaService: MediaService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+  constructor(
+    private eventService: EventService,
+    private contentService: ContentService,
+    private mediaService: MediaService,
+    public optionsService: OptionsService,
+    private profileService: ProfileService,
+    private utilities: Utilities,
+    public dialog: MatDialog
+  ) {}
 
   enque(url: string, type: any) {
     this.mediaService.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: url, source: url, type: type });
+  }
+
+  isString(token: any) {
+    return typeof token === 'string';
+  }
+
+  isNewline(token: string | keyword) {
+    return (token as keyword).token == 'newline';
+  }
+
+  getTooltip(token: string | keyword) {
+    const tooltip = (token as keyword).tooltip;
+
+    if (!tooltip) {
+      return '';
+    } else {
+      return tooltip;
+    }
+  }
+
+  getWord(token: string | keyword) {
+    return (token as keyword).word;
   }
 
   async ngOnInit() {
@@ -53,29 +84,31 @@ export class ContentComponent {
     let content = this.event.content;
     this.content = content;
 
+    this.dynamicText = this.toDynamicText(this.event);
+
     // TODO: This is a very hacky way of doing this, it's just a quick prototype to demonstrate.
     // TODO: Replace using regular expressions.
-    if (content.indexOf('#[') > -1) {
-      let startIndex = content.indexOf('#[');
-      let endIndex = content.indexOf(']', startIndex);
+    // if (content.indexOf('#[') > -1) {
+    //   let startIndex = content.indexOf('#[');
+    //   let endIndex = content.indexOf(']', startIndex);
 
-      const profileIndex = content.substring(startIndex + 2, endIndex);
-      const profileIndexNumber = parseInt(profileIndex);
+    //   const profileIndex = content.substring(startIndex + 2, endIndex);
+    //   const profileIndexNumber = parseInt(profileIndex);
 
-      let publicKey = this.replyTo(this.event, profileIndexNumber);
+    //   let publicKey = this.replyTo(this.event, profileIndexNumber);
 
-      if (!publicKey) {
-        return;
-      }
+    //   if (!publicKey) {
+    //     return;
+    //   }
 
-      const profile = await this.profileService.getLocalProfile(publicKey);
+    //   const profile = this.profileService.getCachedProfile(publicKey);
 
-      if (!profile) {
-        return;
-      }
+    //   if (!profile) {
+    //     return;
+    //   }
 
-      content = content.substring(0, content.indexOf('#[')) + '@' + profile?.name + content.substring(endIndex + 1);
-    }
+    //   content = content.substring(0, content.indexOf('#[')) + '@' + profile?.name + content.substring(endIndex + 1);
+    // }
 
     const isFollowing = this.profileService.isFollowing(this.event.pubkey);
 
@@ -172,6 +205,16 @@ export class ContentComponent {
     return tags;
   }
 
+  getDisplayName(pubkey: string) {
+    const profile = this.profileService.getCachedProfile(pubkey);
+
+    if (!profile) {
+      return this.utilities.getShortenedIdentifier(pubkey);
+    } else {
+      return this.utilities.getProfileDisplayName(profile);
+    }
+  }
+
   replyTo(event: NostrEventDocument, index: number) {
     if (!event) {
       return;
@@ -182,4 +225,103 @@ export class ContentComponent {
 
     return tags[1];
   }
+
+  keywords: { [key: string]: keyword } = {
+    // disadvantage: {
+    //   token: 'word',
+    //   word: 'disadvantage',
+    //   tooltip: 'disadvantage description',
+    // },
+    // incapacitated: {
+    //   token: 'word',
+    //   word: 'incapacitated',
+    //   tooltip: 'incapacitated description',
+    // },
+    '#[0]': {
+      token: 'username',
+    },
+    '#[1]': {
+      token: 'username',
+    },
+    '#[2]': {
+      token: 'username',
+    },
+    '#[3]': {
+      token: 'username',
+    },
+    '#[4]': {
+      token: 'username',
+    },
+    '#[5]': {
+      token: 'username',
+    },
+    '#[6]': {
+      token: 'username',
+    },
+    '#[7]': {
+      token: 'username',
+    },
+    '#[8]': {
+      token: 'username',
+    },
+    '#[9]': {
+      token: 'username',
+    },
+    '#[10]': {
+      token: 'username',
+    },
+    '<br>': {
+      token: 'linebreak',
+    },
+  };
+
+  dynamicText: (string | keyword | any)[] = [];
+
+  //Replace keywords with keyword objects
+  toDynamicText(event: NostrEventDocument): (string | keyword)[] {
+    let text = event.content;
+
+    const res: (string | keyword)[] = [];
+    const lines = text.split(/\r?\n/);
+    const tokens = [];
+
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index];
+      let lineTokens = line.split(/\s+/);
+      lineTokens = lineTokens.filter((entry) => entry != '');
+      lineTokens.push('<br>');
+      tokens.push(...lineTokens);
+    }
+
+    let i = 0;
+    for (const token of tokens) {
+      let keyword = this.keywords[token.toLowerCase()];
+      if (keyword) {
+        if (keyword.token == 'username') {
+          let index = Number(token.replace('#[', '').replace(']', ''));
+          let tags = this.eventService.getPublicKeyAndEventTags(event.tags);
+
+          if (tags.length > index) {
+            keyword.word = tags[index][1];
+          } else {
+            // If we cannot find the pubkey..
+            keyword.word = token;
+            debugger;
+          }
+        }
+
+        i = res.push(keyword);
+      } else {
+        if (!res[i]) res[i] = token;
+        else res[i] += ' ' + token;
+      }
+    }
+    return res;
+  }
 }
+
+export type keyword = {
+  token: string;
+  word?: string;
+  tooltip?: string;
+};

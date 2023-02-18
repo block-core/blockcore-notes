@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Circle } from './interfaces';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { StorageService } from './storage';
-import { CacheService } from './cache';
 import { Utilities } from './utilities';
 import { dexieToRx } from '../shared/utilities';
 
@@ -21,8 +20,6 @@ export class CircleService {
   ];
 
   circles: Circle[] = [];
-
-  cache = new CacheService();
 
   // items$ = dexieToRx(liveQuery(() => this.items()));
 

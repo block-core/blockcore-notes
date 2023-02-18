@@ -30,11 +30,8 @@ export class EventHeaderComponent {
   async ngOnInit() {
     if (!this.profile) {
       this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
-
-      this.profiles.getProfile(this.pubkey).subscribe(async (profile) => {
-        this.profile = profile;
-        await this.updateProfileDetails();
-      });
+      this.profile = await this.profiles.getProfile(this.pubkey);
+      await this.updateProfileDetails();
       // this.profile = await this.profiles.getLocalProfile(this.pubkey);
     } else {
       this.pubkey = this.profile.pubkey;

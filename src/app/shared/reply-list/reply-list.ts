@@ -1,7 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
-import { NostrProfileDocument } from '../../services/interfaces';
+
+export interface ReplyEntry {
+  pubkey: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-reply-list',
@@ -10,7 +14,7 @@ import { NostrProfileDocument } from '../../services/interfaces';
 })
 export class ReplyListComponent {
   @Input() keys: string[] = [];
-  profiles: NostrProfileDocument[] = [];
+  profiles: ReplyEntry[] = [];
 
   constructor(private profileService: ProfileService, private utilities: Utilities) {}
 
@@ -25,18 +29,13 @@ export class ReplyListComponent {
         continue;
       }
 
-      this.profileService.getProfile(key).subscribe((p) => {
-        this.profiles.push(p);
-      });
+      const profile = await this.profileService.getProfile(key);
 
-      // if (!profile) {
-      //   profile = {
-      //     pubkey: key,
-      //     name: this.utilities.getShortenedIdentifier(key),
-      //   } as NostrProfileDocument;
-      // }
-
-      // this.profiles.push(profile);
+      if (profile) {
+        this.profiles.push({ pubkey: profile.pubKey, name: profile.name });
+      } else {
+        this.profiles.push({ pubkey: key, name: key });
+      }
     }
   }
 }
