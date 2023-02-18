@@ -66,3 +66,7 @@
     max-width: max-content;
   }
 }
+
+.meme {
+  max-width: 128px;
+}

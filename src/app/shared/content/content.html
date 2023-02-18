@@ -73,6 +73,7 @@
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
+        <ng-container *ngSwitchCase="'meme'"><img loading="lazy" class="meme" [matTooltip]="token.tooltip" (click)="expandImageUrl(token.word)" [src]="token.word" /></ng-container>
       </ng-template>
 
       <!-- <ng-container *ngIf="isNewline(token)"><br /></ng-container>

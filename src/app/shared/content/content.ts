@@ -7,7 +7,7 @@ import { MediaService } from 'src/app/services/media';
 import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
-import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { NostrEventDocument, NostrProfile, NostrProfileDocument, TokenKeyword } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 
 interface MediaItem {
@@ -56,12 +56,12 @@ export class ContentComponent {
     return typeof token === 'string';
   }
 
-  isNewline(token: string | keyword) {
-    return (token as keyword).token == 'newline';
+  isNewline(token: string | TokenKeyword) {
+    return (token as TokenKeyword).token == 'newline';
   }
 
-  getTooltip(token: string | keyword) {
-    const tooltip = (token as keyword).tooltip;
+  getTooltip(token: string | TokenKeyword) {
+    const tooltip = (token as TokenKeyword).tooltip;
 
     if (!tooltip) {
       return '';
@@ -70,8 +70,8 @@ export class ContentComponent {
     }
   }
 
-  getWord(token: string | keyword) {
-    return (token as keyword).word;
+  getWord(token: string | TokenKeyword) {
+    return (token as TokenKeyword).word;
   }
 
   async ngOnInit() {
@@ -177,6 +177,12 @@ export class ContentComponent {
     });
   }
 
+  expandImageUrl(imagePath: string) {
+    this.dialog.open(ProfileImageDialog, {
+      data: { picture: imagePath },
+    });
+  }
+
   // TODO: FIX THIS IMMEDIATELY FOR PERFORMANCE!
   hashtags(tags: any[]) {
     const hashtags = tags.filter((row) => row[0] === 't').map((t) => t[1]);
@@ -226,69 +232,20 @@ export class ContentComponent {
     return tags[1];
   }
 
-  keywords: { [key: string]: keyword } = {
-    // disadvantage: {
-    //   token: 'word',
-    //   word: 'disadvantage',
-    //   tooltip: 'disadvantage description',
-    // },
-    // incapacitated: {
-    //   token: 'word',
-    //   word: 'incapacitated',
-    //   tooltip: 'incapacitated description',
-    // },
-    '#[0]': {
-      token: 'username',
-    },
-    '#[1]': {
-      token: 'username',
-    },
-    '#[2]': {
-      token: 'username',
-    },
-    '#[3]': {
-      token: 'username',
-    },
-    '#[4]': {
-      token: 'username',
-    },
-    '#[5]': {
-      token: 'username',
-    },
-    '#[6]': {
-      token: 'username',
-    },
-    '#[7]': {
-      token: 'username',
-    },
-    '#[8]': {
-      token: 'username',
-    },
-    '#[9]': {
-      token: 'username',
-    },
-    '#[10]': {
-      token: 'username',
-    },
-    '<br>': {
-      token: 'linebreak',
-    },
-  };
-
-  dynamicText: (string | keyword | any)[] = [];
+  dynamicText: (string | TokenKeyword | any)[] = [];
 
   //Replace keywords with keyword objects
-  toDynamicText(event: NostrEventDocument): (string | keyword)[] {
+  toDynamicText(event: NostrEventDocument): (string | TokenKeyword)[] {
     let text = event.content;
 
-    const res: (string | keyword)[] = [];
+    const res: (string | TokenKeyword)[] = [];
     const lines = text.split(/\r?\n/);
     const tokens = [];
 
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
       //let lineTokens = line.split(/\s+/);
-      let lineTokens = line.split(/(\s|'s)/g);
+      let lineTokens = line.split(/(\s|'s|,)/g);
 
       lineTokens = lineTokens.filter((entry) => entry != '');
       lineTokens.push('<br>');
@@ -297,7 +254,7 @@ export class ContentComponent {
 
     let i = 0;
     for (const token of tokens) {
-      let keyword = this.keywords[token.toLowerCase()];
+      let keyword = this.contentService.keywords[token.toLowerCase()];
       if (keyword) {
         if (keyword.token == 'username') {
           let index = Number(token.replace('#[', '').replace(']', ''));
@@ -323,9 +280,3 @@ export class ContentComponent {
     return res;
   }
 }
-
-export type keyword = {
-  token: string;
-  word?: string;
-  tooltip?: string;
-};

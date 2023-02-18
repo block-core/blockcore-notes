@@ -217,6 +217,12 @@ export interface NostrProfileDocument extends NostrProfile {
   relays?: any;
 }
 
+export type TokenKeyword = {
+  token: string;
+  word?: string;
+  tooltip?: string;
+};
+
 export interface CircleStyle {
   id: number;
   name: string;
