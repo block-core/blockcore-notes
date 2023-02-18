@@ -413,9 +413,9 @@ export class DataService {
     return this.downloadNewestProfileEventByQuery([{ kinds: [0], authors: pubkeys }], requestTimeout, expectedCount);
   }
 
-  downloadNewestContactsEvents(pubkeys: string[], requestTimeout = 10000, expectedEventCount = -1) {
-    return this.downloadNewestEvents(pubkeys, [3], requestTimeout, expectedEventCount);
-  }
+  // downloadNewestContactsEvents(pubkeys: string[], requestTimeout = 10000, expectedEventCount = -1) {
+  //   return this.downloadNewestEvents(pubkeys, [3], requestTimeout, expectedEventCount);
+  // }
 
   downloadNewestEvents(pubkeys: string[], kinds: number[], requestTimeout = 10000, expectedEventCount = -1) {
     return this.downloadNewestEventsByQuery([{ kinds: kinds, authors: pubkeys }], requestTimeout, expectedEventCount);
