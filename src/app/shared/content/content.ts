@@ -289,7 +289,7 @@ export class ContentComponent {
       const line = lines[index];
       //let lineTokens = line.split(/\s+/);
       let lineTokens = line.split(/(\s|'s)/g);
-      
+
       lineTokens = lineTokens.filter((entry) => entry != '');
       lineTokens.push('<br>');
       tokens.push(...lineTokens);
@@ -313,6 +313,8 @@ export class ContentComponent {
         }
 
         i = res.push(keyword);
+      } else if (token.startsWith('http://') || token.startsWith('https://')) {
+        i = res.push({ word: token, token: 'link' });
       } else {
         if (!res[i]) res[i] = token;
         else res[i] += ' ' + token;

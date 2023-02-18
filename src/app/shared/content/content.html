@@ -71,6 +71,7 @@
       <ng-template [ngIf]="isString(token)">{{ token }}</ng-template>
       <ng-template [ngIf]="!isString(token)" [ngSwitch]="token.token">
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
+        <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
       </ng-template>
 
