@@ -287,7 +287,9 @@ export class ContentComponent {
 
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
-      let lineTokens = line.split(/\s+/);
+      //let lineTokens = line.split(/\s+/);
+      let lineTokens = line.split(/(\s|'s)/g);
+      
       lineTokens = lineTokens.filter((entry) => entry != '');
       lineTokens.push('<br>');
       tokens.push(...lineTokens);
