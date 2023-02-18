@@ -311,8 +311,6 @@ export class PeopleComponent {
         verticalPosition: 'bottom',
       });
 
-      debugger;
-
       if (result.import) {
         const profile = (await this.profileService.getProfile(this.appState.getPublicKey())) as NostrProfileDocument;
 

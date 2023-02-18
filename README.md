@@ -35,9 +35,20 @@ We suggest using [Blockcore Wallet](https://github.com/block-core/blockcore-wall
 
 A goal of Blockcore Notes is to be feature rich and have functionality that goes beyond the NIP-specifications.
 
-- Relay Management
-- People Management
-- Circle Management
+- Mobile and Desktop
+- Organize people and circles
+- Activity Feed (Notifications)
+- Following Feed
+- Reactions (turn off in Settings)
+- Rich Media Support, videos, music, podcast and YouTube.
+- Thread View
+- Profile View and Edit
+- Infinity Scroll (go far back on user posts)
+- Import and Export of backup (JSON file)
+- Import and Export of contacts (publish)
+- Identify Verification
+- Browser Extension and Private Key Import supported
+- Advanced Relay Management
 - Profile Edit
 - Notes Management (save notes)
 - Media Player (listen to podcasts, music or watch videos while reading feeds)
