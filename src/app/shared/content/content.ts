@@ -297,7 +297,7 @@ export class ContentComponent {
         }
       } else {
         if (!res[i]) res[i] = token;
-        else res[i] += ' ' + token;
+        else res[i] += token;
       }
     }
     return res;

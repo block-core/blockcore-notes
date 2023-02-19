@@ -68,7 +68,6 @@
   <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">
     <ng-container *ngFor="let token of dynamicText">
       <ng-template [ngIf]="isString(token)">{{ token }}</ng-template>
-
       <ng-template [ngIf]="!isString(token) && isFollowing" [ngSwitch]="token.token">
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
