@@ -28,15 +28,7 @@ export class ContentComponent {
   tooltip = '';
 
   profiles: NostrProfileDocument[] = [];
-  content?: string;
-
-  images: SafeResourceUrl[] = [];
-  videos: MediaItem[] = [];
-  youtube: MediaItem[] = [];
-  spotify: SafeResourceUrl[] = [];
-  tidal: SafeResourceUrl[] = [];
-
-  // static regexpVideo = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
+  // content?: string;
 
   constructor(
     private eventService: EventService,
@@ -77,100 +69,12 @@ export class ContentComponent {
   }
 
   async ngOnInit() {
-    this.images = [];
-
     if (!this.event) {
       return;
     }
 
-    let content = this.event.content;
-    this.content = content;
-
     this.dynamicText = this.toDynamicText(this.event);
-
-    // TODO: This is a very hacky way of doing this, it's just a quick prototype to demonstrate.
-    // TODO: Replace using regular expressions.
-    // if (content.indexOf('#[') > -1) {
-    //   let startIndex = content.indexOf('#[');
-    //   let endIndex = content.indexOf(']', startIndex);
-
-    //   const profileIndex = content.substring(startIndex + 2, endIndex);
-    //   const profileIndexNumber = parseInt(profileIndex);
-
-    //   let publicKey = this.replyTo(this.event, profileIndexNumber);
-
-    //   if (!publicKey) {
-    //     return;
-    //   }
-
-    //   const profile = this.profileService.getCachedProfile(publicKey);
-
-    //   if (!profile) {
-    //     return;
-    //   }
-
-    //   content = content.substring(0, content.indexOf('#[')) + '@' + profile?.name + content.substring(endIndex + 1);
-    // }
-
     this.isFollowing = this.profileService.isFollowing(this.event.pubkey);
-
-    if (this.isFollowing) {
-      const images = [...content.matchAll(this.contentService.regexpImage)];
-      this.images = images.map((i) => this.utilities.sanitizeUrlAndBypass(i[0]));
-
-      const videos = [...content.matchAll(this.contentService.regexpVideo)];
-      this.videos = videos.map((i) => {
-        return { url: this.utilities.sanitizeUrlAndBypass(i[0]), originalUrl: i[0] };
-      });
-
-      const thisisthewayMatch = [...content.matchAll(this.contentService.regexpThisIsTheWay)];
-      const thisistheway = thisisthewayMatch.map((i) => this.utilities.bypassUrl(`https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg`));
-      this.images.push(...thisistheway);
-
-      const alwaysHasBeenMatch = [...content.matchAll(this.contentService.regexpAlwaysHasBeen)];
-      const alwayshasbeen = alwaysHasBeenMatch.map((i) => this.utilities.bypassUrl(`https://imgflip.com/s/meme/Always-Has-Been.png`));
-      this.images.push(...alwayshasbeen);
-
-      // const youtubes = [...content.matchAll(this.contentService.regexpYouTube)];
-      // this.youtube = youtubes.map((i) => {
-      //   return { url: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${i[1]}`), originalUrl: `https://www.youtube.com/embed/${i[1]}` };
-      // });
-
-      // const spotify = [...content.matchAll(ContentComponent.regexpSpotify)];
-      // this.spotify = spotify.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
-
-      // Remove the image links from the text.
-      content = content.replaceAll(this.contentService.regexpImage, '');
-      content = content.replaceAll(this.contentService.regexpYouTube, '');
-      content = content.replaceAll(this.contentService.regexpVideo, '');
-      // content = content.replaceAll(ContentComponent.regexpThisIsTheWay, '');
-
-      if (this.optionsService.values.enableTidal) {
-        // After doing image, video and known memes, get all URLs and handle Tidal.
-        const urls = [...content.matchAll(this.contentService.regexpUrl)];
-        const tidalUrl = urls.filter((url) => url[0].indexOf('tidal.com') > -1);
-        this.tidal = tidalUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('tidal.com/track', 'embed.tidal.com/tracks')));
-
-        for (let index = 0; index < tidalUrl.length; index++) {
-          content = content.replace(tidalUrl[index][0], '');
-        }
-      }
-
-      if (this.optionsService.values.enableSpotify) {
-        // After doing image, video and known memes, get all URLs and handle Spotify.
-        const urls = [...content.matchAll(this.contentService.regexpUrl)];
-        const spotifyUrl = urls.filter((url) => url[0].indexOf('open.spotify.com') > -1);
-        this.spotify = spotifyUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
-
-        for (let index = 0; index < spotifyUrl.length; index++) {
-          content = content.replace(spotifyUrl[index][0], '');
-        }
-      }
-
-      //content = content.replaceAll(ContentComponent.regexpUrl, '');
-    }
-
-    this.content = content;
   }
 
   expandImage(imagePath: SafeResourceUrl) {
@@ -185,15 +89,12 @@ export class ContentComponent {
     });
   }
 
-  // TODO: FIX THIS IMMEDIATELY FOR PERFORMANCE!
   hashtags(tags: any[]) {
     const hashtags = tags.filter((row) => row[0] === 't').map((t) => t[1]);
 
     if (hashtags.length == 0) {
       return null;
     }
-
-    // console.log(hashtags.toString());
 
     return hashtags;
   }
@@ -304,9 +205,15 @@ export class ContentComponent {
     return false;
   }
 
+  bigSize = false;
+
   //Replace keywords with keyword objects
   toDynamicText(event: NostrEventDocument): (string | TokenKeyword)[] {
     let text = event.content;
+
+    if (text.length < 9) {
+      this.bigSize = true;
+    }
 
     const res: (string | TokenKeyword)[] = [];
     const lines = text.split(/\r?\n/);
@@ -355,13 +262,7 @@ export class ContentComponent {
             i = res.push({ word: token, token: 'link' });
           }
         } else if (this.isSpotify(token)) {
-          const links = [...token.matchAll(this.contentService.regexpSpotify)];
-          if (links.length > 0) {
-            // this.spotify = spotifyUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
-            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypassFrame(links[0][0].replace('open.spotify.com/', 'open.spotify.com/embed/')), word: token, token: 'spotify' });
-          } else {
-            i = res.push({ word: token, token: 'link' });
-          }
+          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypassFrame(token.replace('open.spotify.com/', 'open.spotify.com/embed/')), word: token, token: 'spotify' });
         } else if (this.isTidal(token)) {
           // TODO: Need to improve this, but for now we do a very basic replacement for single tracks only.
           if (token.startsWith('https://tidal.com/browse/track/')) {

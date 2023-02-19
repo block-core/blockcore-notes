@@ -11,7 +11,7 @@
 
   <!-- <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">{{ content }}</span><span *ngIf="event.contentCut">... (message was truncated)</span> -->
 
-  <span class="event-content clickable" [ngClass]="{ 'event-content-big': content && content.length < 7 }">
+  <span class="event-content clickable" [ngClass]="{ 'event-content-big': bigSize }">
     <ng-container *ngFor="let token of dynamicText">
       <ng-template [ngIf]="isString(token)">{{ token }}</ng-template>
       <ng-template [ngIf]="!isString(token) && isFollowing" [ngSwitch]="token.token">
