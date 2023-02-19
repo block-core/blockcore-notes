@@ -2,5 +2,5 @@
 <span *ngIf="notification.kind > 7"> {{ notification.message }}</span>
 <span *ngIf="notification.kind == 1"> replied to your <a [routerLink]="['/e', notification.id]">note</a>.</span>
 <span *ngIf="notification.kind == 3"> started following you.</span>
-<span *ngIf="notification.kind == 6"> boosted your <a [routerLink]="['/e', notification.id]">note</a></span>
-<span *ngIf="notification.kind == 7"> reacted with {{notification.message}} to your <a [routerLink]="['/e', notification.id]">note</a>.</span>
+<span *ngIf="notification.kind == 6"> boosted your <a [routerLink]="['/e', notification.relatedId]">note</a></span>
+<span *ngIf="notification.kind == 7"> reacted with {{notification.message}} to your <a [routerLink]="['/e', notification.relatedId]">note</a>.</span>

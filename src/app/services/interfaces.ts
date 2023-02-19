@@ -276,6 +276,9 @@ export interface NotificationModel {
   /** The event ID of the notification */
   id: string;
 
+  /** The ID of event a reaction responds to. */
+  relatedId?: string;
+
   pubkey: string;
 
   message: string;

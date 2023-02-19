@@ -32,7 +32,7 @@ export class ReplyListComponent {
       const profile = await this.profileService.getProfile(key);
 
       if (profile) {
-        this.profiles.push({ pubkey: profile.pubKey, name: profile.name });
+        this.profiles.push({ pubkey: profile.pubkey, name: profile.name });
       } else {
         this.profiles.push({ pubkey: key, name: key });
       }

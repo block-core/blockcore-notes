@@ -456,8 +456,11 @@ export class RelayService {
           msg = `Event kind ${event.kind} notification.`;
         }
 
+        const lastETag = this.eventService.lastETag(event);
+
         notification = {
           id: event.id!,
+          relatedId: lastETag,
           kind: event.kind,
           pubkey: event.pubkey,
           message: msg,
