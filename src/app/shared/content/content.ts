@@ -272,6 +272,38 @@ export class ContentComponent {
     return false;
   }
 
+  isYouTube(url: string) {
+    if (url.indexOf('https://youtu.be') > -1 || url.indexOf('https://www.youtube.com') > -1 || url.indexOf('https://youtube.com') > -1) {
+      return true;
+    }
+
+    return false;
+  }
+
+  isTidal(url: string) {
+    if (!this.optionsService.values.enableTidal) {
+      return false;
+    }
+
+    if (url.indexOf('https://tidal.com') > -1) {
+      return true;
+    }
+
+    return false;
+  }
+
+  isSpotify(url: string) {
+    if (!this.optionsService.values.enableSpotify) {
+      return false;
+    }
+
+    if (url.indexOf('https://open.spotify.com') > -1) {
+      return true;
+    }
+
+    return false;
+  }
+
   //Replace keywords with keyword objects
   toDynamicText(event: NostrEventDocument): (string | TokenKeyword)[] {
     let text = event.content;
@@ -315,13 +347,34 @@ export class ContentComponent {
           i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token, token: 'video' });
         } else if (this.isAudio(token)) {
           i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token, token: 'audio' });
-        } else {
-          const youtube = [...token.matchAll(this.contentService.regexpYouTube)];
-          if (youtube.length > 0) {
-            i = res.push({ safeWord: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${youtube[0][1]}`), word: `https://www.youtube.com/embed/${youtube[0][1]}`, token: 'youtube' });
+        } else if (this.isYouTube(token)) {
+          const links = [...token.matchAll(this.contentService.regexpYouTube)];
+          if (links.length > 0) {
+            i = res.push({ safeWord: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${links[0][1]}`), word: `https://www.youtube.com/embed/${links[0][1]}`, token: 'youtube' });
           } else {
             i = res.push({ word: token, token: 'link' });
           }
+        } else if (this.isSpotify(token)) {
+          const links = [...token.matchAll(this.contentService.regexpSpotify)];
+          if (links.length > 0) {
+            // this.spotify = spotifyUrl.map((i) => this.utilities.sanitizeUrlAndBypassFrame(i[0].replace('open.spotify.com/', 'open.spotify.com/embed/')));
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypassFrame(links[0][0].replace('open.spotify.com/', 'open.spotify.com/embed/')), word: token, token: 'spotify' });
+          } else {
+            i = res.push({ word: token, token: 'link' });
+          }
+        } else if (this.isTidal(token)) {
+          // TODO: Need to improve this, but for now we do a very basic replacement for single tracks only.
+          if (token.startsWith('https://tidal.com/browse/track/')) {
+            const embedUrl = token.replace('tidal.com/browse/track/', 'embed.tidal.com/tracks/');
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypassFrame(embedUrl), word: token, token: 'tidal' });
+          } else if (token.startsWith('https://tidal.com/track/')) {
+            const embedUrl = token.replace('tidal.com/track/', 'embed.tidal.com/tracks/');
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypassFrame(embedUrl), word: token, token: 'tidal' });
+          } else {
+            i = res.push({ word: token, token: 'link' });
+          }
+        } else {
+          i = res.push({ word: token, token: 'link' });
         }
       } else {
         if (!res[i]) res[i] = token;

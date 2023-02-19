@@ -1,58 +1,4 @@
 <div class="content clickable" *ngIf="event">
-  <!-- <div class="event-images" *ngIf="images && images.length > 0">
-    <img mat-card-image class="event-image" loading="lazy" decoding="async" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
-  </div> -->
-  <!-- <div class="event-videos" *ngIf="youtube && youtube.length > 0">
-    <ng-template ngFor let-video [ngForOf]="youtube">
-      <iframe id="ytplayer" class="event-video" type="text/html" [src]="video.url" frameborder="0" allowfullscreen></iframe>
-      <button mat-button (click)="enque(video.originalUrl, 'YouTube')">Add to Media Player queue</button>
-    </ng-template>
-  </div> -->
-
-  <!-- <div class="event-videos" *ngIf="videos && videos.length > 0">
-    <ng-template ngFor let-video [ngForOf]="videos">
-      <video class="event-video" controls preload="none">
-        <source [src]="video.url" type="video/mp4" />
-      </video>
-      <button mat-button (click)="enque(video.originalUrl, 'Video')">Add to Media Player queue</button>
-    </ng-template>
-  </div> -->
-
-  <!-- <div class="container-16-9">
-  </div> -->
-
-  <ng-template [ngIf]="spotify">
-    <!-- {{spotify | json}} -->
-    <iframe
-      *ngFor="let song of spotify"
-      style="border-radius: 12px"
-      [src]="song"
-      width="100%"
-      height="152"
-      frameborder="0"
-      allowfullscreen=""
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy"
-    ></iframe>
-  </ng-template>
-
-  <ng-template [ngIf]="tidal">
-    <!-- {{spotify | json}} -->
-    <iframe
-      *ngFor="let song of tidal"
-      style="border-radius: 12px"
-      [src]="song"
-      width="100%"
-      height="152"
-      frameborder="0"
-      allowfullscreen=""
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy"
-    ></iframe>
-  </ng-template>
-
-  <!-- <div id="embed-iframe"></div> -->
-
   <!-- <div class="container-16-9">
     <video controls preload="none">
       <source src="video.mp4" type='video/mp4' />
@@ -73,6 +19,12 @@
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'image'"><img mat-card-image class="event-image" loading="lazy" decoding="async" [matTooltip]="token.word" [alt]="token.word" [src]="token.safeWord" (click)="expandImage(token.word)" /></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
+        <ng-container *ngSwitchCase="'spotify'">
+          <iframe style="border-radius: 12px" [src]="token.safeWord" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </ng-container>
+        <ng-container *ngSwitchCase="'tidal'">
+          <iframe style="border-radius: 12px" [src]="token.safeWord" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </ng-container>
         <ng-container *ngSwitchCase="'video'"
           ><video class="event-video" controls preload="none"><source [src]="token.safeWord" /></video>
           <button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'Video')">
@@ -100,6 +52,8 @@
         <ng-container *ngSwitchCase="'image'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'video'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'audio'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'spotify'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'tidal'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
         <ng-container *ngSwitchCase="'youtube'"
           ><a [href]="[token.word]" target="_blank">{{ token.word }}</a>&nbsp;<button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">
@@ -108,19 +62,10 @@
         >
         <ng-container *ngSwitchCase="'meme'"><img loading="lazy" class="meme" [matTooltip]="token.tooltip" (click)="expandImageUrl(token.word)" [src]="token.word" /></ng-container>
       </ng-template>
-
-      <!-- <ng-template [ngIf]="!isString(token)" [ngSwitch]="token.token">
-      </ng-template> -->
-
-      <!-- <ng-container *ngIf="isNewline(token)"><br /></ng-container>
-      <ng-container *ngIf="isString(token)">{{ token }}</ng-container>
-      <ng-container *ngIf="!isString(token)"><b [matTooltip]="getTooltip(token)" style="cursor: pointer"> {{ getWord(token) }} </b></ng-container> -->
     </ng-container>
-
     <span *ngIf="event.contentCut">... (message was truncated)</span>
   </span>
 
-  <!-- <span class="dimmed">{{ likes(event) }} likes&nbsp;&nbsp;{{ dislikes(event) }} dislikes&nbsp;&nbsp;{{ replies(event) }} replies</span><br /> -->
   <ng-template [ngIf]="displayRepliesTo">
     <div *ngIf="repliesTo(event) as replies" class="reply-to dimmed clickable">
       <span class="clickable" *ngIf="replies.length > 0">Replying to </span>
