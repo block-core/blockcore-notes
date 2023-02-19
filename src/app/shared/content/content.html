@@ -2,21 +2,21 @@
   <!-- <div class="event-images" *ngIf="images && images.length > 0">
     <img mat-card-image class="event-image" loading="lazy" decoding="async" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
   </div> -->
-  <div class="event-videos" *ngIf="youtube && youtube.length > 0">
+  <!-- <div class="event-videos" *ngIf="youtube && youtube.length > 0">
     <ng-template ngFor let-video [ngForOf]="youtube">
       <iframe id="ytplayer" class="event-video" type="text/html" [src]="video.url" frameborder="0" allowfullscreen></iframe>
       <button mat-button (click)="enque(video.originalUrl, 'YouTube')">Add to Media Player queue</button>
     </ng-template>
-  </div>
+  </div> -->
 
-  <div class="event-videos" *ngIf="videos && videos.length > 0">
+  <!-- <div class="event-videos" *ngIf="videos && videos.length > 0">
     <ng-template ngFor let-video [ngForOf]="videos">
       <video class="event-video" controls preload="none">
         <source [src]="video.url" type="video/mp4" />
       </video>
       <button mat-button (click)="enque(video.originalUrl, 'Video')">Add to Media Player queue</button>
     </ng-template>
-  </div>
+  </div> -->
 
   <!-- <div class="container-16-9">
   </div> -->
@@ -73,6 +73,18 @@
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'image'"><img mat-card-image class="event-image" loading="lazy" decoding="async" [matTooltip]="token.word" [alt]="token.word" [src]="token.safeWord" (click)="expandImage(token.word)" /></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
+        <ng-container *ngSwitchCase="'video'"
+          ><video class="event-video" controls preload="none"><source [src]="token.safeWord" /></video>
+          <button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'Video')">
+            <mat-icon>add_to_queue</mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *ngSwitchCase="'audio'"
+          ><video class="event-video" controls preload="none"><source [src]="token.safeWord" /></video>
+          <button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'Audio')">
+            <mat-icon>queue</mat-icon>
+          </button>
+        </ng-container>
         <ng-container *ngSwitchCase="'youtube'"
           ><iframe id="ytplayer" class="event-video" type="text/html" [src]="token.safeWord" frameborder="0" allowfullscreen></iframe>
           <button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">
@@ -86,6 +98,8 @@
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'image'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'video'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'audio'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
         <ng-container *ngSwitchCase="'youtube'"
           ><a [href]="[token.word]" target="_blank">{{ token.word }}</a>&nbsp;<button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">
@@ -96,7 +110,6 @@
       </ng-template>
 
       <!-- <ng-template [ngIf]="!isString(token)" [ngSwitch]="token.token">
-        
       </ng-template> -->
 
       <!-- <ng-container *ngIf="isNewline(token)"><br /></ng-container>

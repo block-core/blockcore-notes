@@ -235,11 +235,35 @@ export class ContentComponent {
   }
 
   dynamicText: (string | TokenKeyword | any)[] = [];
-  imageExtensions = ['.jpg', '.jpeg', '.gif', '.png', '.webp'];
+  imageExtensions = ['.jpg', '.jpeg', '.gif', '.png', '.webp', '.apng', '.jfif', '.svg'];
+  videoExtensions = ['.mp4', '.m4v', '.m4p', '.mpg', '.mpeg', '.webm', '.avif', '.mov', '.ogv'];
+  audioExtensions = ['.mp3', '.m4a', '.flac', '.ogg', '.wav'];
 
   isImage(url: string) {
     for (let index = 0; index < this.imageExtensions.length; index++) {
       const extension = this.imageExtensions[index];
+      if (url.includes(extension)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  isVideo(url: string) {
+    for (let index = 0; index < this.videoExtensions.length; index++) {
+      const extension = this.videoExtensions[index];
+      if (url.includes(extension)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  isAudio(url: string) {
+    for (let index = 0; index < this.audioExtensions.length; index++) {
+      const extension = this.audioExtensions[index];
       if (url.includes(extension)) {
         return true;
       }
@@ -287,6 +311,10 @@ export class ContentComponent {
       } else if (token.startsWith('http://') || token.startsWith('https://')) {
         if (this.isImage(token)) {
           i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token, token: 'image' });
+        } else if (this.isVideo(token)) {
+          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token, token: 'video' });
+        } else if (this.isAudio(token)) {
+          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token, token: 'audio' });
         } else {
           const youtube = [...token.matchAll(this.contentService.regexpYouTube)];
           if (youtube.length > 0) {
