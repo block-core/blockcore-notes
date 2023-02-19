@@ -168,7 +168,7 @@ export class FeedPrivateComponent {
 
   async ngOnInit() {
     this.appState.updateTitle('Following Notes');
-    this.appState.showBackButton = true;
+    this.appState.showBackButton = false;
     this.appState.actions = [];
     this.options.values.privateFeed = true;
 

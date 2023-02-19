@@ -121,7 +121,7 @@ export class SettingsComponent {
 
   ngOnInit() {
     this.appState.updateTitle('Settings');
-    this.appState.showBackButton = true;
+    this.appState.showBackButton = false;
     this.appState.actions = [
       {
         icon: 'add_circle',

@@ -240,7 +240,7 @@ export class HomeComponent {
     // useReactiveContext // New construct in Angular 14 for subscription.
     // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
 
-    this.appState.updateTitle('');
+    this.appState.updateTitle('Blockcore Notes');
     this.appState.showBackButton = false;
     this.appState.actions = [
       {
