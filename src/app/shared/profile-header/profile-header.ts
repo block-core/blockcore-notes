@@ -9,6 +9,7 @@ import * as QRCode from 'qrcode';
 import { Subscription } from 'rxjs';
 import { UIService } from 'src/app/services/ui';
 import { ApplicationState } from 'src/app/services/applicationstate';
+import { nip05 } from 'nostr-tools';
 
 @Component({
   selector: 'app-profile-header',
@@ -27,6 +28,7 @@ export class ProfileHeaderComponent {
   qr06?: string;
   qr16?: string;
   userPubKey: string;
+  isValidNip05: boolean = false
 
   constructor(private appState: ApplicationState, public ui: UIService, public profileService: ProfileService, public dialog: MatDialog, public circleService: CircleService, public utilities: Utilities) {
     this.userPubKey = this.appState.getPublicKey();
@@ -111,6 +113,15 @@ export class ProfileHeaderComponent {
             margin: 2,
             scale: 5,
           });
+        }
+        if(profile.nip05) {
+          let nip05Data = null
+          try {
+            nip05Data = await nip05.queryProfile(profile?.nip05)
+            this.isValidNip05 = nip05Data?.pubkey == profile?.pubkey
+          } catch (_) {
+            console.log('failed to fetch NIP05 identifier')
+          }
         }
       })
     );

@@ -54,7 +54,7 @@
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
-      <div class="profile-labels" *ngIf="profile.nip05">
+      <div class="profile-labels" *ngIf="isValidNip05">
         <div class="profile-labels-left"><mat-icon class="profile-icon">verified</mat-icon></div>
         <div class="profile-labels-middle dimmed">
           <span class="hoverable" (click)="copy(getWellKnownLink(profile.nip05))">{{ displayNIP05(profile.nip05) }}</span>
