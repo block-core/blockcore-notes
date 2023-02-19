@@ -1,14 +1,15 @@
-<mat-tab-group>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">dns</mat-icon>
-      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Relays</span>
-    </ng-template>
-    <ng-template matTabContent>
-      <div class="page">
-        <app-relays [relays]="relayService.items2"></app-relays>
+<div class="full-page">
+  <mat-tab-group>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">dns</mat-icon>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Relays</span>
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="page">
+          <app-relays [relays]="relayService.items2"></app-relays>
 
-        <!-- <mat-accordion class="example-headers-align" multi>
+          <!-- <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel *ngFor="let relay of relayService.relays">
             <mat-expansion-panel-header>
               <mat-panel-title [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">{{ relay.metadata.nip11?.name }}</mat-panel-title>
@@ -54,85 +55,85 @@
           </mat-expansion-panel>
         </mat-accordion> -->
 
-        <div class="settings-action-buttons">
-          <!-- <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
+          <div class="settings-action-buttons">
+            <!-- <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
           <br /> -->
-          <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
-          <br />
-          <button mat-flat-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button> <button mat-flat-button (click)="dataService.publishRelays()">Publish relay (NIP-65) list</button><br /><br />
-          <button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
+            <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
+            <br />
+            <button mat-flat-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button> <button mat-flat-button (click)="dataService.publishRelays()">Publish relay (NIP-65) list</button><br /><br />
+            <button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
+          </div>
         </div>
-      </div>
-    </ng-template>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">settings_applications</mat-icon>
-      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Options</span>
-    </ng-template>
-    <ng-template matTabContent>
-      <div class="page">
-        <mat-card>
-          <mat-card-content>
-            <mat-form-field class="input-full-width" appearance="outline">
-              <mat-label>Choose mode</mat-label>
-              <mat-select (selectionChange)="theme.darkMode = !theme.darkMode" [value]="theme.darkMode">
-                <mat-option [value]="true">Dark</mat-option>
-                <mat-option [value]="false">Light</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </mat-card-content>
-        </mat-card>
+      </ng-template>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">settings_applications</mat-icon>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Options</span>
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="page">
+          <mat-card>
+            <mat-card-content>
+              <mat-form-field class="input-full-width" appearance="outline">
+                <mat-label>Choose mode</mat-label>
+                <mat-select (selectionChange)="theme.darkMode = !theme.darkMode" [value]="theme.darkMode">
+                  <mat-option [value]="true">Dark</mat-option>
+                  <mat-option [value]="false">Light</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </mat-card-content>
+          </mat-card>
 
-        <br />
+          <br />
 
-        <mat-card>
-          <mat-card-content>
-            <button mat-stroked-button (click)="registerHandler('web+nostr', 'nostr')">Register Protocol Handler</button>
-            <br /><br />
-            <div class="dimmed">Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.</div>
-          </mat-card-content>
-        </mat-card>
+          <mat-card>
+            <mat-card-content>
+              <button mat-stroked-button (click)="registerHandler('web+nostr', 'nostr')">Register Protocol Handler</button>
+              <br /><br />
+              <div class="dimmed">Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.</div>
+            </mat-card-content>
+          </mat-card>
 
-        <br />
+          <br />
 
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>Reactions</mat-card-title>
-            <mat-card-subtitle>Control if likes should be loaded and displayed</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Reactions is not for everyone and it might consider clutter by some. It also takes up additional bandwidth to download.</p>
-            <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableReactions">Enable Reactions</mat-slide-toggle>
-          </mat-card-content>
-        </mat-card>
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Reactions</mat-card-title>
+              <mat-card-subtitle>Control if likes should be loaded and displayed</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Reactions is not for everyone and it might consider clutter by some. It also takes up additional bandwidth to download.</p>
+              <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableReactions">Enable Reactions</mat-slide-toggle>
+            </mat-card-content>
+          </mat-card>
 
-        <br />
+          <br />
 
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>Media widgets</mat-card-title>
-            <mat-card-subtitle>Control how content are rendered</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Enable this to allow the app to render music widgets when URLs linked to the services is seen in notes.</p>
-            <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableSpotify">Enable Spotify</mat-slide-toggle>
-            <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableTidal">Enable Tidal</mat-slide-toggle>
-            <p><button mat-button (click)="openMediaPlayer()">Open Media Player</button></p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </ng-template>
-  </mat-tab>
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Media widgets</mat-card-title>
+              <mat-card-subtitle>Control how content are rendered</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p>Enable this to allow the app to render music widgets when URLs linked to the services is seen in notes.</p>
+              <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableSpotify">Enable Spotify</mat-slide-toggle>
+              <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableTidal">Enable Tidal</mat-slide-toggle>
+              <p><button mat-button (click)="openMediaPlayer()">Open Media Player</button></p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </ng-template>
+    </mat-tab>
 
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">inventory_2</mat-icon>
-      <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Data</span>
-    </ng-template>
-    <ng-template matTabContent>
-      <div class="page">
-        <!-- <p>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">inventory_2</mat-icon>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Data</span>
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="page">
+          <!-- <p>
           <button mat-flat-button color="warn" (click)="clearProfileCache()">Clear Public Profile Cache</button>
         </p>
         <p *ngIf="wipedNonFollow">All public profile cache data was cleared.</p>
@@ -142,11 +143,12 @@
         </p>
         <p *ngIf="wipedNotes">All cached notes data was cleared.</p> -->
 
-        <p>
-          <button mat-flat-button color="warn" (click)="db.clearAndReload()">Wipe Local Database</button>
-        </p>
-        <p *ngIf="wiped">All local data cache was cleared.</p>
-      </div>
-    </ng-template>
-  </mat-tab>
-</mat-tab-group>
+          <p>
+            <button mat-flat-button color="warn" (click)="db.clearAndReload()">Wipe Local Database</button>
+          </p>
+          <p *ngIf="wiped">All local data cache was cleared.</p>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

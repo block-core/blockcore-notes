@@ -1,219 +1,189 @@
+<!-- <div *ngIf="!authenticated">
+</div> -->
+
 <div *ngIf="!authenticated">
   <router-outlet></router-outlet>
 </div>
 
-<mat-sidenav-container #sidenavContainer autosize="true" fullscreen class="sidenav-container" *ngIf="authenticated">
-  <mat-sidenav
-    #drawer
-    [ngClass]="{ 'sidenav-labels': displayLabels, 'sidenav-small': !displayLabels  }"
-    class="sidenav print-hidden"
-    fixedInViewport
-    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'"
-    [opened]="(isHandset$ | async) === false"
-  >
-    <mat-toolbar class="logo-icon">
-      <img height="38" width="38" src="assets/icons/icon-128x128.webp" />
-      <div *ngIf="displayLabels">Blockcore Notes</div>
-    </mat-toolbar>
-    <mat-nav-list>
-      <a [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>home</mat-icon>
-        <span *ngIf="displayLabels">Home</span>
-      </a>
-      <a [routerLink]="['/feed']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>notes</mat-icon>
-        <span *ngIf="displayLabels">Feed</span>
-      </a>
-      <a [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon [matBadgeHidden] = "(ui.unreadNotifications$ | async) == 0" [matBadge]="ui.unreadNotifications$ | async">notifications</mat-icon>
-        <span *ngIf="displayLabels">Notifications</span>
-      </a>
-      <!-- <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>chat</mat-icon>
-        <span *ngIf="displayLabels">Channels</span>
-      </a> -->
-      <!-- <a [routerLink]="['/m']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon matBadge="2">mail</mat-icon>
-        <span *ngIf="displayLabels">Messages</span>
-      </a> -->
-      <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>people</mat-icon>
-        <span *ngIf="displayLabels">People</span>
-      </a>
-      <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>animation</mat-icon>
-        <span *ngIf="displayLabels">Circles</span>
-      </a>
-      <a [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>bookmark_border</mat-icon>
-        <span *ngIf="displayLabels">Notes</span>
-      </a>
-      <!-- <a [routerLink]="['/development']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>construction</mat-icon>
-        <span *ngIf="displayLabels">Development</span>
-      </a> -->
-      <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>settings</mat-icon>
-        <span *ngIf="displayLabels">Settings</span>
-      </a>
-      <a mat-menu-item (click)="toggleMenuSize()">
-        <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
-        <mat-icon *ngIf="!displayLabels">chevron_right</mat-icon>
-      </a>
-    </mat-nav-list>
+<div class="app-container" *ngIf="authenticated">
+  <!-- <div id="title-bar" class="title-bar">
+    <div class="title-bar-default" *ngIf="!options.values.showMediaPlayer"></div>
+    <app-media-player *ngIf="options.values.showMediaPlayer" [miniplayer]="true"></app-media-player>
+  </div> -->
 
-    <div class="new-post" [ngClass]="{ 'new-post-small': !displayLabels  }">
-      <img tabindex="10" width="92" height="92" (click)="navigationService.createNote()" src="/assets/post.svg" class="new-post-button" />
-    </div>
-  </mat-sidenav>
+  <mat-toolbar class="app-toolbar">
+    <button *ngIf="!appState.showSearch && (isHandset$ | async) === true" type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span></span>
 
-  <mat-sidenav #draweraccount class="sidenav-right print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'" position="end">
-    <div class="container">
-      <button class="close-sidenav-icon" mat-icon-button (click)="draweraccount.toggle()">
-        <mat-icon>close</mat-icon>
+    <button *ngIf="!appState.showSearch && appState.showBackButton" mat-icon-button (click)="goBack()">
+      <mat-icon class="arrow-back">arrow_back</mat-icon>
+    </button>
+
+    <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title$ | async }}</div>
+
+    <!-- <app-language-selector></app-language-selector> -->
+    <span *ngIf="!appState.showSearch">
+      <button *ngFor="let action of appState.actions" (click)="action.click()" mat-icon-button [matTooltip]="action.tooltip">
+        <mat-icon>{{ action.icon }}</mat-icon>
       </button>
-      <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="mat-icon-button theme-sidenav-icon">
-        <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode" : "light_mode" }}</mat-icon>
-      </button>
-      <header>
-        <div class="bio" (click)="openProfile()">
-          <img loading="lazy" *ngIf="profile?.banner" [src]="profile?.banner" alt="background" class="bg" />
-          <img loading="lazy" *ngIf="!profile?.banner" [src]="bgimagePath" alt="background" class="bg" />
+    </span>
 
-          <div class="desc">
-            <h3><span *ngIf="profile?.name">@</span>{{ profile?.name }}</h3>
-            <p>{{ profile?.about }}</p>
-          </div>
-        </div>
-        <a [routerLink]="['/profile']" (click)="toggleProfileMenu()">
-          <div class="avatarcontainer">
-            <img [src]="profile?.picture" width="96" height="96" onerror="this.src='/assets/profile.png'" alt="avatar" class="avatar" />
-          </div>
+    <form class="search-box" *ngIf="appState.showSearch">
+      <mat-form-field appearance="outline" class="search-box-input">
+        <mat-label>Search</mat-label>
+        <input matInput #searchInput aria-label="Search" [formControl]="searchControl" [matAutocomplete]="auto" />
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option class="search-result-option" (onSelectionChange)="searchService.open(state)" *ngFor="let state of searchService.results$ | async" [value]="state.id">
+            <span><img class="search-result-image" [src]="state.picture" height="32" /></span>
+            <span *ngIf="state.display_name">{{ state.display_name }}</span>
+            <span *ngIf="!state.display_name">{{ state.name }}</span>
+            <span *ngIf="state.nip05">({{ state.nip05 }})</span>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+
+    <button *ngIf="appState.showSearch" mat-icon-button (click)="searchVisibility(false)">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <button *ngIf="!appState.showSearch" mat-icon-button (click)="searchVisibility(true)">
+      <mat-icon>search</mat-icon>
+    </button>
+
+    <button *ngIf="!appState.connected" [mtBasicSpinner]="true" mat-icon-button></button>
+
+    <img *ngIf="!appState.showSearch" width="38" height="38" mat-icon-button (click)="draweraccount.toggle()" [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="topavatar" />
+  </mat-toolbar>
+
+  <mat-sidenav-container autosize="true">
+    <mat-sidenav
+      #drawer
+      [ngClass]="{ 'sidenav-labels': displayLabels, 'sidenav-small': !displayLabels  }"
+      class="sidenav print-hidden"
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false"
+    >
+      <!-- <mat-toolbar class="logo-icon2">
+        <img height="38" width="38" src="assets/icons/icon-128x128.webp" />
+        <div *ngIf="displayLabels">Blockcore Notes</div>
+      </mat-toolbar> -->
+
+      <mat-nav-list>
+        <a [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>home</mat-icon>
+          <span *ngIf="displayLabels">Home</span>
         </a>
-      </header>
-      <div class="content">
-        <div class="data">
-          <ul>
-            <li>0 <span>Followers</span></li>
-            <li>
-              <a class="opposite-link" [routerLink]="['/following', appState.getPublicKey()]" (click)="toggleProfileMenu()"> {{ profileService.following.length }} <span>Following</span></a>
-            </li>
-          </ul>
+        <a [routerLink]="['/feed']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>notes</mat-icon>
+          <span *ngIf="displayLabels">Feed</span>
+        </a>
+        <a [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon [matBadgeHidden]="(ui.unreadNotifications$ | async) == 0" [matBadge]="ui.unreadNotifications$ | async">notifications</mat-icon>
+          <span *ngIf="displayLabels">Notifications</span>
+        </a>
+        <!-- <a [routerLink]="['/chat']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>chat</mat-icon>
+          <span *ngIf="displayLabels">Channels</span>
+        </a> -->
+        <!-- <a [routerLink]="['/m']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+            <mat-icon matBadge="2">mail</mat-icon>
+          <span *ngIf="displayLabels">Messages</span>
+        </a> -->
+        <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>people</mat-icon>
+          <span *ngIf="displayLabels">People</span>
+        </a>
+        <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>animation</mat-icon>
+          <span *ngIf="displayLabels">Circles</span>
+        </a>
+        <a [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>bookmark_border</mat-icon>
+          <span *ngIf="displayLabels">Notes</span>
+        </a>
+        <!-- <a [routerLink]="['/development']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>construction</mat-icon>
+          <span *ngIf="displayLabels">Development</span>
+        </a> -->
+        <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>settings</mat-icon>
+          <span *ngIf="displayLabels">Settings</span>
+        </a>
+        <a mat-menu-item (click)="toggleMenuSize()">
+          <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
+          <mat-icon *ngIf="!displayLabels">chevron_right</mat-icon>
+        </a>
+      </mat-nav-list>
+
+      <div class="new-post" [ngClass]="{ 'new-post-small': !displayLabels  }">
+        <img tabindex="10" width="92" height="92" (click)="navigationService.createNote()" src="/assets/post.svg" class="new-post-button" />
+      </div>
+    </mat-sidenav>
+
+    <mat-sidenav #draweraccount class="sidenav-right print-hidden" fixedInViewport [attr.role]="'navigation'" [mode]="'over'" position="end">
+      <div class="container">
+        <button class="close-sidenav-icon" mat-icon-button (click)="draweraccount.toggle()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="mat-icon-button theme-sidenav-icon">
+          <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode" : "light_mode" }}</mat-icon>
+        </button>
+        <header>
+          <div class="bio" (click)="openProfile()">
+            <img loading="lazy" *ngIf="profile?.banner" [src]="profile?.banner" alt="background" class="bg" />
+            <img loading="lazy" *ngIf="!profile?.banner" [src]="bgimagePath" alt="background" class="bg" />
+
+            <div class="desc">
+              <h3><span *ngIf="profile?.name">@</span>{{ profile?.name }}</h3>
+              <p>{{ profile?.about }}</p>
+            </div>
+          </div>
+          <a [routerLink]="['/profile']" (click)="toggleProfileMenu()">
+            <div class="avatarcontainer">
+              <img [src]="profile?.picture" width="96" height="96" onerror="this.src='/assets/profile.png'" alt="avatar" class="avatar" />
+            </div>
+          </a>
+        </header>
+        <div class="content">
+          <div class="data">
+            <ul>
+              <li>0 <span>Followers</span></li>
+              <li>
+                <a class="opposite-link" [routerLink]="['/following', appState.getPublicKey()]" (click)="toggleProfileMenu()"> {{ profileService.following.length }} <span>Following</span></a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-    <mat-divider></mat-divider>
-    <mat-nav-list>
-      <a [routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>person</mat-icon>
-        <span>View profile</span>
-      </a>
-      <a [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>edit</mat-icon>
-        <span>Edit profile</span>
-      </a>
-      <!-- <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>settings</mat-icon>
-        <span>Settings</span>
-      </a> -->
-      <a [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>help_outline</mat-icon>
-        <span>About</span>
-      </a>
-      <a [routerLink]="['/logout']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </a>
-    </mat-nav-list>
-    <mat-menu #accounts="matMenu" hasBackdrop="true" backdropClass="menu-mode-backdrop" overlapTrigger="false"> </mat-menu>
-  </mat-sidenav>
+      <mat-divider></mat-divider>
+      <mat-nav-list>
+        <a [routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>person</mat-icon>
+          <span>View profile</span>
+        </a>
+        <a [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>edit</mat-icon>
+          <span>Edit profile</span>
+        </a>
+        <a [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>help_outline</mat-icon>
+          <span>About</span>
+        </a>
+        <a [routerLink]="['/logout']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </a>
+      </mat-nav-list>
+      <mat-menu #accounts="matMenu" hasBackdrop="true" backdropClass="menu-mode-backdrop" overlapTrigger="false"> </mat-menu>
+    </mat-sidenav>
 
-  <mat-sidenav-content>
-    <div id="title-bar" class="title-bar">
-      <div class="title-bar-default" *ngIf="!options.values.showMediaPlayer"></div>
-      <app-media-player *ngIf="options.values.showMediaPlayer" [miniplayer]="true"></app-media-player>
-    </div>
-
-    <mat-toolbar class="app-header">
-      <button *ngIf="!appState.showSearch && (isHandset$ | async) === true" type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span></span>
-
-      <button *ngIf="!appState.showSearch && appState.showBackButton" mat-icon-button (click)="goBack()">
-        <mat-icon class="arrow-back">arrow_back</mat-icon>
-      </button>
-
-      <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title$ | async }}</div>
-
-      <!-- <app-language-selector></app-language-selector> -->
-      <span *ngIf="!appState.showSearch">
-        <button *ngFor="let action of appState.actions" (click)="action.click()" mat-icon-button [matTooltip]="action.tooltip">
-          <mat-icon>{{ action.icon }}</mat-icon>
-        </button>
-      </span>
-
-      <form class="search-box" *ngIf="appState.showSearch">
-        <mat-form-field appearance="outline" class="search-box-input">
-          <mat-label>Search</mat-label>
-          <input matInput #searchInput aria-label="Search" [formControl]="searchControl" [matAutocomplete]="auto" />
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option class="search-result-option" (onSelectionChange)="searchService.open(state)" *ngFor="let state of searchService.results$ | async" [value]="state.id">
-              <span><img class="search-result-image" [src]="state.picture" height="32" /></span>
-              <span *ngIf="state.display_name">{{ state.display_name }}</span>
-              <span *ngIf="!state.display_name">{{ state.name }}</span>
-              <span *ngIf="state.nip05">({{ state.nip05 }})</span>
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </form>
-
-      <!-- <mat-form-field *ngIf="appState.showSearch" appearance="outline" class="search-box">
-        <mat-icon class="circle" matPrefix>search</mat-icon>
-        <mat-label>Search</mat-label>
-        <input matInput #searchInput type="text" (change)="searchInputChanged()" [(ngModel)]="appState.searchText" />
-      </mat-form-field> -->
-
-      <button *ngIf="appState.showSearch" mat-icon-button (click)="searchVisibility(false)">
-        <mat-icon>close</mat-icon>
-      </button>
-
-      <button *ngIf="!appState.showSearch" mat-icon-button (click)="searchVisibility(true)">
-        <mat-icon>search</mat-icon>
-      </button>
-
-      <button *ngIf="!appState.connected" [mtBasicSpinner]="true" mat-icon-button></button>
-
-      <img *ngIf="!appState.showSearch" width="38" height="38" mat-icon-button (click)="draweraccount.toggle()" [src]="profile?.picture" onerror="this.src='/assets/profile.png'" alt="avatar" class="topavatar" />
-    </mat-toolbar>
-
-    <div class="scrolling-content" infiniteScroll (scrollAction)="onInfiniteScroll()">
+    <mat-sidenav-content>
       <router-outlet></router-outlet>
-    </div>
-    <app-media-player *ngIf="options.values.showMediaPlayer"></app-media-player>
-
-    <!-- <div class="scrolling-content" appDetectScroll (onScroll)="onScroll($event)" [bottomOffset]="300" [topOffset]="300">
-      <router-outlet></router-outlet>
-    </div> -->
-  </mat-sidenav-content>
-
-  <!-- <mat-sidenav-content>
-    <mat-toolbar color="primary" class="print-hidden">
-      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span></span>
-
-      <button *ngIf="appState.goBack" [routerLink]="[appState.goBack]" mat-icon-button>
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-
-      <span class="example-spacer">{{ appState.title }}</span>
-
-      <span *ngIf="appState.authenticated">{{ appState.short }}</span>
-
-    </mat-toolbar>
-    <router-outlet></router-outlet>
-  </mat-sidenav-content> -->
-</mat-sidenav-container>
+      <app-media-player *ngIf="options.values.showMediaPlayer"></app-media-player>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
