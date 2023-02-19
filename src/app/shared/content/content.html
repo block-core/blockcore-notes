@@ -1,8 +1,7 @@
 <div class="content clickable" *ngIf="event">
-  <div class="event-images" *ngIf="images && images.length > 0">
+  <!-- <div class="event-images" *ngIf="images && images.length > 0">
     <img mat-card-image class="event-image" loading="lazy" decoding="async" [src]="image" (click)="expandImage(image)" *ngFor="let image of images" />
-    <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" /> -->
-  </div>
+  </div> -->
   <div class="event-videos" *ngIf="youtube && youtube.length > 0">
     <ng-template ngFor let-video [ngForOf]="youtube">
       <iframe id="ytplayer" class="event-video" type="text/html" [src]="video.url" frameborder="0" allowfullscreen></iframe>
@@ -73,6 +72,7 @@
       <ng-template [ngIf]="!isString(token) && isFollowing" [ngSwitch]="token.token">
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'image'"><img mat-card-image class="event-image" loading="lazy" decoding="async" [matTooltip]="token.word" [alt]="token.word" [src]="token.safeWord" (click)="expandImage(token.word)" /></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
         <ng-container *ngSwitchCase="'youtube'"
           ><iframe id="ytplayer" class="event-video" type="text/html" [src]="token.safeWord" frameborder="0" allowfullscreen></iframe>
@@ -86,6 +86,7 @@
       <ng-template [ngIf]="!isString(token) && !isFollowing" [ngSwitch]="token.token">
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'image'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
         <ng-container *ngSwitchCase="'youtube'"
           ><a [href]="[token.word]" target="_blank">{{ token.word }}</a>&nbsp;<button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">

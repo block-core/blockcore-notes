@@ -235,6 +235,18 @@ export class ContentComponent {
   }
 
   dynamicText: (string | TokenKeyword | any)[] = [];
+  imageExtensions = ['.jpg', '.jpeg', '.gif', '.png', '.webp'];
+
+  isImage(url: string) {
+    for (let index = 0; index < this.imageExtensions.length; index++) {
+      const extension = this.imageExtensions[index];
+      if (url.includes(extension)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   //Replace keywords with keyword objects
   toDynamicText(event: NostrEventDocument): (string | TokenKeyword)[] {
@@ -273,11 +285,15 @@ export class ContentComponent {
 
         i = res.push(keyword);
       } else if (token.startsWith('http://') || token.startsWith('https://')) {
-        const youtube = [...token.matchAll(this.contentService.regexpYouTube)];
-        if (youtube.length > 0) {
-          i = res.push({ safeWord: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${youtube[0][1]}`), word: `https://www.youtube.com/embed/${youtube[0][1]}`, token: 'youtube' });
+        if (this.isImage(token)) {
+          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token, token: 'image' });
         } else {
-          i = res.push({ word: token, token: 'link' });
+          const youtube = [...token.matchAll(this.contentService.regexpYouTube)];
+          if (youtube.length > 0) {
+            i = res.push({ safeWord: this.utilities.bypassFrameUrl(`https://www.youtube.com/embed/${youtube[0][1]}`), word: `https://www.youtube.com/embed/${youtube[0][1]}`, token: 'youtube' });
+          } else {
+            i = res.push({ word: token, token: 'link' });
+          }
         }
       } else {
         if (!res[i]) res[i] = token;
