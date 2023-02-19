@@ -120,6 +120,43 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app-toolbar {
+  flex: 0 0 64px;
+}
+
+@media only screen and (max-width: 599px) {
+  .app-toolbar {
+    flex: 0 0 56px;
+  }
+}
+
+.mat-sidenav-container {
+  flex-grow: 2;
+  height: 100%;
+  overflow: hidden;
+}
+
+.full-page {
+  height: 100%;
+}
+
+.full-page-flex {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.full-page-flex-expand {
+  flex: 2 1 100%;
+}
+
 h3 {
   margin-block-start: 2em;
 }
@@ -233,23 +270,22 @@ app-profile-actions {
   overflow-x: hidden;
   // overflow: overlay !important;
   // height: 300px;
-  height: 100%;
-  width: 100%;
+  // height: 100%;
+  // width: 100%;
   // max-height: 300px;
   //padding-bottom: 1em;
-
   scroll-behavior: smooth;
 }
 
-app-root {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
+// app-root {
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+// }
 
-app-root mat-toolbar {
-  flex-grow: 1;
-}
+// app-root mat-toolbar {
+//   flex-grow: 1;
+// }
 
 .mat-drawer-inner-container {
   overflow: overlay !important;
@@ -257,24 +293,24 @@ app-root mat-toolbar {
 
 /* The container for main content. */
 mat-sidenav-content {
-  height: 100%;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between;
+  // height: 100%;
+  // display: flex !important;
+  // flex-direction: column !important;
+  // justify-content: space-between;
 }
 
 /* Top element in main content, make it always appear on-top. */
-mat-sidenav-content mat-toolbar {
-  flex: 0 1 auto !important; /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
-  height: 69px !important;
-}
+// mat-sidenav-content mat-toolbar {
+//   flex: 0 1 auto !important; /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+//   height: 69px !important;
+// }
 
 /* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
 @media only screen and (max-width: 599px) {
-  mat-sidenav-content mat-toolbar {
-    flex: 0 1 auto !important;
-    height: 60px !important;
-  }
+  // mat-sidenav-content mat-toolbar {
+  //   flex: 0 1 auto !important;
+  //   height: 60px !important;
+  // }
 }
 
 .sidenav-left {
@@ -520,8 +556,6 @@ mat-sidenav-content mat-toolbar {
 .event-header-icon {
   display: inline-block;
 }
-
-
 
 .event-header-content {
   margin-bottom: 1em;
@@ -835,11 +869,11 @@ mat-card-footer {
     -webkit-app-region: drag;
   }
 
-  .sidenav-container,
-  .sidenav-right,
-  .sidenav {
-    top: env(titlebar-area-height, 0px) !important;
-  }
+  // .sidenav-container,
+  // .sidenav-right,
+  // .sidenav {
+  //   top: env(titlebar-area-height, 0px) !important;
+  // }
 }
 
 // This was a test to see if possible to use 'window-controls-overlay'.
@@ -873,4 +907,21 @@ mat-card-footer {
 //   .sidenav {
 //     top: env(titlebar-area-height, 0px) !important;
 //   }
+// }
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-panel-viewport {
+  flex: 1 1 100%;
+  height: 100%;
+  width: 100%;
+}
+
+// .example-viewport {
+//   flex: 1;
+//   min-height: 200px;
+//   height: 100%;
 // }

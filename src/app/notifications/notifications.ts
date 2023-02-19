@@ -13,7 +13,7 @@ import { map, Observable, shareReplay, Subscription } from 'rxjs';
   styleUrls: ['./notifications.css'],
 })
 export class NotificationsComponent {
-  constructor(private navigation: NavigationService, private utilities: Utilities, private db: StorageService, private relayService: RelayService, public ui: UIService, private appState: ApplicationState) {}
+  constructor(public navigation: NavigationService, private utilities: Utilities, private db: StorageService, private relayService: RelayService, public ui: UIService, private appState: ApplicationState) {}
 
   subscriptionId?: string;
   subscriptions: Subscription[] = [];

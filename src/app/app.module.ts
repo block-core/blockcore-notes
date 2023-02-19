@@ -119,6 +119,7 @@ import { AddMediaDialog } from './queue/add-media-dialog/add-media-dialog';
 import { ConnectKeyComponent } from './connect/key/key';
 import { PasswordDialog } from './shared/password-dialog/password-dialog';
 import { UsernamePipe } from './shared/username';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -192,7 +193,7 @@ import { UsernamePipe } from './shared/username';
     AddMediaDialog,
     ConnectKeyComponent,
     PasswordDialog,
-    UsernamePipe
+    UsernamePipe,
   ],
   imports: [
     AboutModule,
@@ -236,6 +237,7 @@ import { UsernamePipe } from './shared/username';
     MatProgressBarModule,
     MatDialogModule,
     MatDatepickerModule,
+    ScrollingModule,
     PhotoGalleryModule,
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,

@@ -13,10 +13,8 @@ import { UIService } from '../services/ui';
   selector: 'app-following',
   templateUrl: './following.html',
   styleUrls: ['./following.css'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FollowingComponent {
-  // pubkey?: string;
   subscriptions: Subscription[] = [];
 
   constructor(public ui: UIService, private appState: ApplicationState, private dataService: DataService, public profileService: ProfileService, private activatedRoute: ActivatedRoute, private router: Router) {}
@@ -32,12 +30,7 @@ export class FollowingComponent {
         }
 
         this.appState.updateTitle(profile.name);
-
-        // If there are no following calculated on the profile, attempt to get it.
-        // if (profile.following) {
         this.dataService.enque({ type: 'Contacts', identifier: profile.pubkey });
-        // this.downloadFollowingAndRelays(profile);
-        // }
       })
     );
 

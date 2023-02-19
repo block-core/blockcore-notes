@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ApplicationState } from './services/applicationstate';
-import { MatSidenav, MatSidenavContainer } from '@angular/material/sidenav';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router, TitleStrategy } from '@angular/router';
 import { AuthenticationService } from './services/authentication';
 import { AppUpdateService } from './services/app-update';
@@ -40,7 +40,6 @@ export class AppComponent {
   profile: NostrProfileDocument | undefined;
   visibilityHandler: any;
   searchControl: FormControl = new FormControl();
-  @ViewChild('sidenavContainer') private sidenavContainer!: MatSidenavContainer;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -148,10 +147,6 @@ export class AppComponent {
         this.searchInput.nativeElement.focus();
       });
     }
-  }
-
-  async onInfiniteScroll() {
-    this.navigationService.showMore();
   }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe('(max-width: 599px)').pipe(

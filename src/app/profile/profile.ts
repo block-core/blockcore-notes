@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DataService } from '../services/data';
 import { UIService } from '../services/ui';
+import { NavigationService } from '../services/navigation';
 
 @Component({
   selector: 'app-profile',
@@ -34,6 +35,7 @@ export class ProfileComponent {
   }
 
   constructor(
+    public navigation: NavigationService,
     public ui: UIService,
     public appState: ApplicationState,
     private validator: DataValidation,

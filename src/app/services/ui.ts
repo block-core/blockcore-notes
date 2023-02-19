@@ -201,7 +201,7 @@ export class UIService {
       // this.checkExhausted();
     }
   }
-
+  
   children(parentId: string): NostrEventDocument[] {
     // if (this.events.length > 4) {
     //   console.log('PARENT ID:', parentId);

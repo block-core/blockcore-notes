@@ -70,24 +70,24 @@ export class ProfileActionsComponent {
   }
 
   async follow(circle?: number) {
-    if (!this.profile) {
-      return;
-    }
-
     if (circle == null) {
       circle = 0;
     }
 
-    // If not already following, add a full follow and download recent:
-    if (this.profile.status !== ProfileStatus.Follow) {
-      // Update the profile so UI updates immediately.
-      this.profile.circle = circle;
-      this.profile.status = 1;
-      this.profile = await this.profileService.follow(this.profile.pubkey, circle);
+    if (!this.profile) {
+      this.profile = await this.profileService.follow(this.pubkey, circle);
     } else {
-      this.profile.circle = circle;
-      // If we already follow but just change the circle, do a smaller operation.
-      this.profile = await this.profileService.setCircle(this.profile.pubkey, circle);
+      // If not already following, add a full follow and download recent:
+      if (this.profile.status !== ProfileStatus.Follow) {
+        // Update the profile so UI updates immediately.
+        this.profile.circle = circle;
+        this.profile.status = 1;
+        this.profile = await this.profileService.follow(this.profile.pubkey, circle);
+      } else {
+        this.profile.circle = circle;
+        // If we already follow but just change the circle, do a smaller operation.
+        this.profile = await this.profileService.setCircle(this.profile.pubkey, circle);
+      }
     }
   }
 

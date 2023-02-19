@@ -512,6 +512,7 @@ export class ProfileService {
     profile.modified = now;
     profile.retrieved = now;
 
+    
     console.log('START PUT PROFILE', profile.name);
     // Put into cache and database.
     await this.putProfile(profile);

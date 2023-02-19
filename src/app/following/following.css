@@ -1,0 +1,9 @@
+.following-item {
+  height: 64px;
+}
+
+.example-header,
+.example-footer {
+  height: 100px;
+  background: lightgray;
+}
