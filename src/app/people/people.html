@@ -110,6 +110,9 @@
 
     <ng-template [ngIf]="loading"><mat-spinner class="loading"></mat-spinner></ng-template>
   </div>
+
+  <p class="centered">Count: {{sortedItems.length}}</p>
+
   <!-- 
   <div *ngIf="items$ | withLoading | async as items">
     <ng-template [ngIf]="items.value">Value: {{ items.value }}</ng-template>
