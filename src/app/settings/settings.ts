@@ -14,6 +14,7 @@ import { OptionsService } from '../services/options';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from '../services/data';
 import { NostrService } from '../services/nostr';
+import { UploadService } from '../services/upload';
 
 @Component({
   selector: 'app-settings',
@@ -29,6 +30,7 @@ export class SettingsComponent {
   open = false;
 
   constructor(
+    public uploadService: UploadService,
     private nostr: NostrService,
     public optionsService: OptionsService,
     public relayService: RelayService,

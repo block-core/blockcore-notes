@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UploadService } from './upload';
 
 export interface Options {
   hideSpam?: boolean;
@@ -18,6 +19,7 @@ export interface Options {
   peopleDisplayView: number;
   peopleDisplayType: number;
   peopleDisplaySort?: string;
+  mediaService?: string;
 }
 
 @Injectable({
@@ -50,6 +52,10 @@ export class OptionsService {
 
     if (this.values.peopleDisplaySort == null) {
       this.values.peopleDisplaySort = 'name-asc';
+    }
+
+    if (this.values.mediaService == null) {
+      this.values.mediaService = UploadService.defaultService;
     }
   }
 

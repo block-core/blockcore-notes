@@ -25,6 +25,7 @@ import { LoadingResolverService } from './services/loading-resolver';
 import { NotificationsComponent } from './notifications/notifications';
 import { FeedPrivateComponent } from './feed-private/feed-private';
 import { ConnectKeyComponent } from './connect/key/key';
+import { EditorComponent } from './editor/editor';
 
 const routes: Routes = [
   {
@@ -126,6 +127,14 @@ const routes: Routes = [
   {
     path: 'user/:id',
     component: UserComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'editor',
+    component: EditorComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

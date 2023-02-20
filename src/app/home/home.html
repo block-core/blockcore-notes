@@ -45,8 +45,6 @@
         </mat-card-content>
       </mat-card>
 
-
-
       <!-- <mat-card class="home-card">
         <mat-card-header>
           <mat-card-title>Photos</mat-card-title>
@@ -103,10 +101,19 @@
           </p>
         </mat-card-content>
       </mat-card>
-
     </div>
     <div class="home-right">
-      <mat-card class="home-card">
+      <br /><br />
+      <div class="centered">
+        <button routerLink="/editor" mat-fab extended color="primary">
+          <mat-icon>note_add</mat-icon>
+          Write a Note
+        </button>
+      </div>
+
+      <br /><br />
+
+      <!-- <mat-card class="home-card">
         <mat-card-header>
           <mat-card-title>Create Note</mat-card-title>
         </mat-card-header>
@@ -114,24 +121,13 @@
           <br />
           <form [formGroup]="formGroup">
             <div mat-dialog-content class="mat-dialog-content">
-              <!-- <div class="toolbar">
-                <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
-              </div> -->
+ 
               <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
               <mat-form-field appearance="outline" class="input-full-width">
                 <mat-label>Note</mat-label>
                 <textarea class="note-input" matInput type="text" [(ngModel)]="note" formControlName="note" rows="6"></textarea>
               </mat-form-field>
 
-              <!-- <mat-form-field>
-                <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a timeout" [formControl]="dateControl" [min]="minDate" />
-                <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
-                  <ng-template>
-                    <span>Set timeout</span>
-                  </ng-template>
-                </ngx-mat-datetime-picker>
-              </mat-form-field> -->
             </div>
             <div mat-dialog-actions class="mat-dialog-actions" align="end">
               <button mat-stroked-button (click)="onCancel()">Cancel</button>&nbsp;
@@ -139,7 +135,7 @@
             </div>
           </form>
         </mat-card-content>
-      </mat-card>
+      </mat-card> -->
 
       <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of latestItems; trackBy: trackByFn">
         <div class="events-header">

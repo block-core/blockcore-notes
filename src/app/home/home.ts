@@ -112,7 +112,6 @@ export class HomeComponent {
     public navigation: NavigationService,
     public profileService: ProfileService,
     private validator: DataValidation,
-    public navigationService: NavigationService,
     private authService: AuthenticationService,
     private utilities: Utilities,
     private snackBar: MatSnackBar,
@@ -248,7 +247,7 @@ export class HomeComponent {
         icon: 'note_add',
         tooltip: 'Create Note',
         click: () => {
-          this.navigationService.createNote();
+          this.navigation.createNote();
         },
       },
     ];

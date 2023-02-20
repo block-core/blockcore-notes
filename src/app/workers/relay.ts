@@ -22,9 +22,9 @@ export class RelayWorker {
     pub.on('ok', () => {
       console.log(`${this.relay.url} has accepted our event`);
     });
-    pub.on('seen', () => {
-      console.log(`we saw the event on ${this.relay.url}`);
-    });
+    // pub.on('seen', () => {
+    //   console.log(`we saw the event on ${this.relay.url}`);
+    // });
     pub.on('failed', (reason: any) => {
       console.log(`failed to publish to ${this.relay.url}: ${reason}`);
     });
@@ -161,7 +161,7 @@ export class RelayWorker {
       // If there was an event provided, publish it and then disconnect.
       if (event) {
         await this.publish(event);
-        await this.disconnect();
+        this.disconnect();
         postMessage({ type: 'terminated', url: this.url } as RelayResponse);
       } else {
         // Make sure we set the relay as well before processing.
@@ -193,10 +193,10 @@ export class RelayWorker {
     }
   }
 
-  async disconnect() {
+  disconnect() {
     if (this.relay.status == 1) {
       console.log(`${this.url}: relay.status: ${this.relay.status}, calling close!`);
-      return this.relay.close();
+      this.relay.close();
     }
   }
 

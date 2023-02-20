@@ -4,12 +4,13 @@ import { BehaviorSubject, Subject, map, shareReplay, Observable } from 'rxjs';
 import { AuthenticationService } from './authentication';
 import { Action } from './interfaces';
 import { Location } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationState {
-  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticationService, private location: Location) {
+  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticationService, private location: Location, private titleService: Title) {
     this.isSmallScreen$ = this.breakpointObserver.observe('(max-width: 599px)').pipe(
       map((result) => result.matches),
       shareReplay()
@@ -49,6 +50,7 @@ export class ApplicationState {
 
   updateTitle(title: string) {
     this.title = title;
+    this.titleService.setTitle(title + ' - Blockcore Notes');
     this.titleChanged.next(this.title);
   }
 

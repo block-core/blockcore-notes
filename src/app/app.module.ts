@@ -120,6 +120,7 @@ import { ConnectKeyComponent } from './connect/key/key';
 import { PasswordDialog } from './shared/password-dialog/password-dialog';
 import { UsernamePipe } from './shared/username';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { EditorComponent } from './editor/editor';
 
 @NgModule({
   declarations: [
@@ -194,6 +195,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     ConnectKeyComponent,
     PasswordDialog,
     UsernamePipe,
+    EditorComponent
   ],
   imports: [
     AboutModule,

@@ -23,7 +23,7 @@ addEventListener('message', async (ev: MessageEvent) => {
         break;
       }
     case 'disconnect':
-      await relayWorker.disconnect();
+      relayWorker.disconnect();
       break;
     case 'publish':
       await relayWorker.publish(request.data);
@@ -39,7 +39,7 @@ addEventListener('message', async (ev: MessageEvent) => {
       break;
     case 'terminate':
       try {
-        await relayWorker.disconnect();
+        relayWorker.disconnect();
       } catch (err) {
         console.error('Error during disconnect.', err);
       }

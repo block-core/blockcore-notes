@@ -65,6 +65,8 @@ export class DataService {
     const mappedRelays = this.getArrayFomattedRelayList();
 
     let originalEvent: Event = {
+      id: '',
+      sig: '',
       kind: 10002, // NIP-65: https://github.com/nostr-protocol/nips/blob/master/65.md
       created_at: Math.floor(Date.now() / 1000),
       content: '',
@@ -181,6 +183,8 @@ export class DataService {
     const mappedRelays = this.getJsonFormattedRelayList();
 
     let originalEvent: Event = {
+      id: '',
+      sig: '',
       kind: Kind.Contacts,
       created_at: Math.floor(Date.now() / 1000),
       content: JSON.stringify(mappedRelays),
@@ -722,6 +726,8 @@ export class DataService {
   /** Creates an event ready for modification, signing and publish. */
   createEvent(kind: Kind | number, content: any): Event {
     let event: Event = {
+      id: '',
+      sig: '',
       kind: kind,
       created_at: Math.floor(Date.now() / 1000),
       content: content,
@@ -770,6 +776,8 @@ export class DataService {
     });
 
     let originalEvent: Event = {
+      id: '',
+      sig: '',
       kind: 3,
       created_at: Math.floor(Date.now() / 1000),
       content: '',
@@ -815,9 +823,9 @@ export class DataService {
       pub.on('ok', () => {
         console.log(`${relay.url} has accepted our event`);
       });
-      pub.on('seen', () => {
-        console.log(`we saw the event on ${relay.url}`);
-      });
+      // pub.on('seen', () => {
+      //   console.log(`we saw the event on ${relay.url}`);
+      // });
       pub.on('failed', (reason: any) => {
         console.log(`failed to publish to ${relay.url}: ${reason}`);
       });

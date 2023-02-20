@@ -103,18 +103,20 @@ export class NavigationService {
   }
 
   createNote(): void {
-    const dialogRef = this.dialog.open(NoteDialog, {
-      data: {},
-      maxWidth: '100vw',
-      panelClass: 'full-width-dialog',
-    });
+    this.router.navigateByUrl('/editor');
 
-    dialogRef.afterClosed().subscribe(async (data) => {
-      if (!data) {
-        return;
-      }
+    // const dialogRef = this.dialog.open(NoteDialog, {
+    //   data: {},
+    //   maxWidth: '100vw',
+    //   panelClass: 'full-width-dialog',
+    // });
 
-      await this.saveNote(data.note);
-    });
+    // dialogRef.afterClosed().subscribe(async (data) => {
+    //   if (!data) {
+    //     return;
+    //   }
+
+    //   await this.saveNote(data.note);
+    // });
   }
 }

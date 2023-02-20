@@ -88,10 +88,17 @@
           <br />
 
           <mat-card>
+            <mat-card-header>
+              <mat-card-title>Media Upload Service</mat-card-title>
+              <mat-card-subtitle>Choose which service to use for uploading photos and films</mat-card-subtitle>
+            </mat-card-header>
             <mat-card-content>
-              <button mat-stroked-button (click)="registerHandler('web+nostr', 'nostr')">Register Protocol Handler</button>
-              <br /><br />
-              <div class="dimmed">Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.</div>
+              <mat-form-field class="input-full-width" appearance="outline">
+                <mat-select [(value)]="optionsService.values.mediaService">
+                  <mat-option [value]="'void.cat'">void.cat</mat-option>
+                  <mat-option [value]="'nostr.build'">nostr.build</mat-option>
+                </mat-select>
+              </mat-form-field>
             </mat-card-content>
           </mat-card>
 
@@ -120,6 +127,16 @@
               <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableSpotify">Enable Spotify</mat-slide-toggle>
               <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableTidal">Enable Tidal</mat-slide-toggle>
               <p><button mat-button (click)="openMediaPlayer()">Open Media Player</button></p>
+            </mat-card-content>
+          </mat-card>
+
+          <br />
+
+          <mat-card>
+            <mat-card-content>
+              <button mat-stroked-button (click)="registerHandler('web+nostr', 'nostr')">Register Protocol Handler</button>
+              <br /><br />
+              <div class="dimmed">Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.</div>
             </mat-card-content>
           </mat-card>
         </div>
