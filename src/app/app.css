@@ -2,6 +2,7 @@
   /* justify-content: center; */
   cursor: pointer;
   -webkit-app-region: drag;
+  margin-right: 0.4em;
   /* height: 80%; */
 }
 
