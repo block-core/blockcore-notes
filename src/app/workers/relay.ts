@@ -1,4 +1,4 @@
-import { Event, Filter, relayInit } from 'nostr-tools';
+import { Event, Filter, Kind, relayInit } from 'nostr-tools';
 import { NostrRelay, NostrRelaySubscription, NostrSub, QueryJob } from '../services/interfaces';
 import { RelayResponse } from '../services/messages';
 import { Queue } from '../services/queue';
@@ -18,6 +18,19 @@ export class RelayWorker {
   }
 
   async publish(event: Event) {
+    if (event.kind == Kind.Article) {
+      // If we don't have metadata from the relay, don't publish articles.
+      if (!this.relay.nip11) {
+        console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article will not be published here.`);
+        return;
+      } else if (!this.relay.nip11.supported_nips.includes(33)) {
+        console.log(`${this.relay.url}: This relay does not NIP-23. Article will not be published here.`);
+        return;
+      } else {
+        console.log(`${this.relay.url}: This relay supports NIP-23. Publishing article on this relay.`);
+      }
+    }
+
     let pub = this.relay.publish(event);
     pub.on('ok', () => {
       console.log(`${this.relay.url} has accepted our event`);
@@ -493,6 +506,8 @@ export class RelayWorker {
       });
       if (rawResponse.status === 200) {
         const content = await rawResponse.json();
+        // Keep a local reference to the NIP11 info on the relay instance.
+        this.relay.nip11 = content;
         postMessage({ type: 'nip11', data: content, url: this.url } as RelayResponse);
       } else {
         postMessage({ type: 'nip11', data: { error: `Unable to get NIP-11 data. Status: ${rawResponse.statusText}` }, url: this.url } as RelayResponse);

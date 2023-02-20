@@ -61,9 +61,9 @@ export interface NostrDocument<T> {
 }
 
 export interface NostrRelay extends Relay {
-  // nip11: any;
+  nip11: any;
   // error: string;
-  metadata: NostrRelayDocument;
+  // metadata: NostrRelayDocument;
   // subscriptions: Sub[];
 }
 
@@ -288,4 +288,20 @@ export interface NotificationModel {
   seen: boolean;
 
   kind: number;
+}
+
+export interface BlogEvent {
+  title: string;
+
+  content: string;
+
+  summary?: string;
+
+  image?: string;
+
+  slug?: string;
+
+  tags: string;
+
+  published_at?: number;
 }

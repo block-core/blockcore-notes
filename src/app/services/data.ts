@@ -3,7 +3,7 @@ import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrRelay, Nostr
 import { ProfileService } from './profile';
 import { EventService } from './event';
 import { RelayService } from './relay';
-import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature, Kind } from 'nostr-tools';
+import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature, Kind, UnsignedEvent } from 'nostr-tools';
 import { DataValidation } from './data-validation';
 import { ApplicationState } from './applicationstate';
 import { timeout, map, merge, Observable, delay, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter, from } from 'rxjs';
@@ -64,9 +64,7 @@ export class DataService {
   async publishRelays() {
     const mappedRelays = this.getArrayFomattedRelayList();
 
-    let originalEvent: Event = {
-      id: '',
-      sig: '',
+    let originalEvent: UnsignedEvent = {
       kind: 10002, // NIP-65: https://github.com/nostr-protocol/nips/blob/master/65.md
       created_at: Math.floor(Date.now() / 1000),
       content: '',
@@ -115,24 +113,29 @@ export class DataService {
     return mappedRelays;
   }
 
-  private async createAndSignEvent(originalEvent: Event) {
-    originalEvent.id = getEventHash(originalEvent);
+  private async createAndSignEvent(originalEvent: UnsignedEvent) {
+    let signedEvent = originalEvent as Event;
+
+    signedEvent.id = getEventHash(originalEvent);
 
     // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
-    const signedEvent = await this.nostr.sign(originalEvent);
-    originalEvent = signedEvent;
+    signedEvent = await this.nostr.sign(originalEvent);
 
     // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
     // We must do this before we run nostr-tools validate and signature validation.
-    const event = this.eventService.processEvent(originalEvent as NostrEventDocument);
+    const event = this.eventService.processEvent(signedEvent as NostrEventDocument);
 
-    let ok = validateEvent(originalEvent);
+    if (!event) {
+      throw new Error('The event is not valid. Cannot publish.');
+    }
+
+    let ok = validateEvent(signedEvent);
 
     if (!ok) {
       throw new Error('The event is not valid. Cannot publish.');
     }
 
-    let veryOk = await verifySignature(originalEvent as any); // Required .id and .sig, which we know has been added at this stage.
+    let veryOk = await verifySignature(event as any); // Required .id and .sig, which we know has been added at this stage.
 
     if (!veryOk) {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
@@ -182,9 +185,7 @@ export class DataService {
 
     const mappedRelays = this.getJsonFormattedRelayList();
 
-    let originalEvent: Event = {
-      id: '',
-      sig: '',
+    let originalEvent: UnsignedEvent = {
       kind: Kind.Contacts,
       created_at: Math.floor(Date.now() / 1000),
       content: JSON.stringify(mappedRelays),
@@ -724,10 +725,8 @@ export class DataService {
   }
 
   /** Creates an event ready for modification, signing and publish. */
-  createEvent(kind: Kind | number, content: any): Event {
-    let event: Event = {
-      id: '',
-      sig: '',
+  createEvent(kind: Kind | number, content: any): UnsignedEvent {
+    let event: UnsignedEvent = {
       kind: kind,
       created_at: Math.floor(Date.now() / 1000),
       content: content,
@@ -738,18 +737,20 @@ export class DataService {
     return event;
   }
 
-  /** Request an event to be signed. This method will calculate the content id automatically. */
-  async signEvent(event: Event) {
-    if (!event.id) {
-      event.id = getEventHash(event);
-    }
+  /** Request an article to be signed. This method does not add id. */
+  async signArticle(event: UnsignedEvent) {
+    let signedEvent = event as Event;
 
     // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
-    const signedEvent = await this.nostr.sign(event);
+    signedEvent = await this.nostr.sign(event);
 
     // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
     // We must do this before we run nostr-tools validate and signature validation.
     const verifiedEvent = this.eventService.processEvent(signedEvent as NostrEventDocument);
+
+    if (!verifiedEvent) {
+      throw new Error('The event is not valid. Cannot publish.');
+    }
 
     let ok = validateEvent(signedEvent);
 
@@ -766,6 +767,38 @@ export class DataService {
     return signedEvent;
   }
 
+  /** Request an event to be signed. This method will calculate the content id automatically. */
+  async signEvent(event: UnsignedEvent) {
+    let signedEvent = event as Event;
+
+    if (!signedEvent.id) {
+      signedEvent.id = getEventHash(event);
+    }
+
+    return this.signArticle(signedEvent);
+
+    // // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
+    // signedEvent = await this.nostr.sign(event);
+
+    // // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
+    // // We must do this before we run nostr-tools validate and signature validation.
+    // const verifiedEvent = this.eventService.processEvent(signedEvent as NostrEventDocument);
+
+    // let ok = validateEvent(signedEvent);
+
+    // if (!ok) {
+    //   throw new Error('The event is not valid. Cannot publish.');
+    // }
+
+    // let veryOk = await verifySignature(signedEvent as any); // Required .id and .sig, which we know has been added at this stage.
+
+    // if (!veryOk) {
+    //   throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
+    // }
+
+    // return signedEvent;
+  }
+
   async publishEvent(event: Event) {
     this.relayService.publish(event);
   }
@@ -775,9 +808,7 @@ export class DataService {
       return ['p', c];
     });
 
-    let originalEvent: Event = {
-      id: '',
-      sig: '',
+    let originalEvent: UnsignedEvent = {
       kind: 3,
       created_at: Math.floor(Date.now() / 1000),
       content: '',
@@ -785,23 +816,23 @@ export class DataService {
       tags: mappedContacts,
     };
 
-    originalEvent.id = getEventHash(originalEvent);
+    let signedEvent = originalEvent as Event;
+    signedEvent.id = getEventHash(originalEvent);
 
     // Use nostr directly on global, similar to how most Nostr app will interact with the provider.
-    const signedEvent = await this.nostr.sign(originalEvent);
-    originalEvent = signedEvent;
+    signedEvent = await this.nostr.sign(originalEvent);
 
     // We force validation upon user so we make sure they don't create content that we won't be able to parse back later.
     // We must do this before we run nostr-tools validate and signature validation.
-    const event = this.eventService.processEvent(originalEvent as NostrEventDocument);
+    const event = this.eventService.processEvent(signedEvent as NostrEventDocument);
 
-    let ok = validateEvent(originalEvent);
+    let ok = validateEvent(signedEvent);
 
     if (!ok) {
       throw new Error('The event is not valid. Cannot publish.');
     }
 
-    let veryOk = await verifySignature(originalEvent as any); // Required .id and .sig, which we know has been added at this stage.
+    let veryOk = await verifySignature(signedEvent as any); // Required .id and .sig, which we know has been added at this stage.
 
     if (!veryOk) {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
@@ -811,7 +842,7 @@ export class DataService {
       return;
     }
 
-    console.log('PUBLISH EVENT:', originalEvent);
+    console.log('PUBLISH EVENT:', signedEvent);
 
     // First we persist our own event like would normally happen if we receive this event.
     // await this.#persist(event);

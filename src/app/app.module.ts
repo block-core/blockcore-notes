@@ -121,6 +121,7 @@ import { PasswordDialog } from './shared/password-dialog/password-dialog';
 import { UsernamePipe } from './shared/username';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { EditorComponent } from './editor/editor';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [
@@ -195,7 +196,7 @@ import { EditorComponent } from './editor/editor';
     ConnectKeyComponent,
     PasswordDialog,
     UsernamePipe,
-    EditorComponent
+    EditorComponent,
   ],
   imports: [
     AboutModule,
@@ -239,6 +240,7 @@ import { EditorComponent } from './editor/editor';
     MatProgressBarModule,
     MatDialogModule,
     MatDatepickerModule,
+    MatButtonToggleModule,
     ScrollingModule,
     PhotoGalleryModule,
     NgxMatDatetimePickerModule,

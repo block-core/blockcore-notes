@@ -165,6 +165,14 @@ const routes: Routes = [
     },
   },
   {
+    path: 'a/:id',
+    component: NoteComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
     path: 'followers/:id',
     component: FollowersComponent,
     canActivate: [AuthGuard],
