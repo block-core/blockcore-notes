@@ -111,7 +111,9 @@ export class ContentComponent {
       return null;
     }
 
-    return tags;
+    const unique = tags.filter((item, index) => tags.indexOf(item) === index);
+
+    return unique;
   }
 
   getDisplayName(pubkey: string) {
