@@ -25,39 +25,6 @@ export class ContentService {
     //   word: 'incapacitated',
     //   tooltip: 'incapacitated description',
     // },
-    '#[0]': {
-      token: 'username',
-    },
-    '#[1]': {
-      token: 'username',
-    },
-    '#[2]': {
-      token: 'username',
-    },
-    '#[3]': {
-      token: 'username',
-    },
-    '#[4]': {
-      token: 'username',
-    },
-    '#[5]': {
-      token: 'username',
-    },
-    '#[6]': {
-      token: 'username',
-    },
-    '#[7]': {
-      token: 'username',
-    },
-    '#[8]': {
-      token: 'username',
-    },
-    '#[9]': {
-      token: 'username',
-    },
-    '#[10]': {
-      token: 'username',
-    },
     '<br>': {
       token: 'linebreak',
     },
@@ -92,4 +59,13 @@ export class ContentService {
       word: 'https://i.giphy.com/media/3ogwG36LKIkM937ZG8/giphy.webp',
     },
   };
+
+  constructor() {
+    // We do this to avoid "attacks" that includes more than 100 tagged users in a post.
+    for (let index = 0; index < 100; index++) {
+      this.keywords['#[' + index + ']'] = {
+        token: 'username',
+      };
+    }
+  }
 }
