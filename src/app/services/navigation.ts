@@ -102,9 +102,9 @@ export class NavigationService {
     this.router.navigate(['/e', signedEvent.id]);
   }
 
-  /** Saves a new note and navigates to it. */
-  async saveBlog(blog: BlogEvent) {
-    console.log('save blog data:', blog);
+  /** Saves a new article and navigates to it. */
+  async saveArticle(blog: BlogEvent) {
+    console.log('save article data:', blog);
     let note = blog.content;
 
     if (typeof note !== 'string') {

@@ -1,0 +1,41 @@
+<!-- <mat-progress-bar *ngIf="!events || events.length == 0" mode="indeterminate"></mat-progress-bar> -->
+
+<div class="feed-page" *ngIf="ui.event$ | async as event">
+  <div class="options-container">
+    <mat-accordion class="options">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Options</mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>
+          <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.showLines">Show lines</mat-slide-toggle>
+        </p>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+  <mat-card *ngIf="event.rootEventId" class="button-card">
+    <button mat-flat-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon>View Thread</button>
+  </mat-card>
+
+  <div class="parent-event" *ngIf="ui.parentEvent$ | async as parentEvent">
+    <app-event [event]="parentEvent"></app-event>
+  </div>
+
+  <div class="current-event events2 noclick" [ngClass]="{'is-root': !event.parentEventId, 'has-root': event.parentEventId, 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
+    <mat-card *ngIf="event.parentEventId" class="button-card">
+      <button mat-flat-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon>View Parent</button>
+    </mat-card>
+
+    <div class="events-header">
+      <app-event-header [pubkey]="event.pubkey"><app-date [date]="event.created_at"></app-date> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+      <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+    </div>
+    <app-content class="thread-content" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }" [event]="event"></app-content>
+    <app-event-reactions [event]="event"></app-event-reactions>
+    <app-event-buttons [event]="event"></app-event-buttons>
+    <app-event-thread [event]="event"></app-event-thread>
+  </div>
+</div>
+<mat-divider></mat-divider>

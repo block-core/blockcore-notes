@@ -3,12 +3,12 @@
 
   <div class="note-type">
     <mat-button-toggle-group name="fontStyle" [(ngModel)]="eventType" aria-label="Font Style" #group="matButtonToggleGroup">
-      <mat-button-toggle value="text">Text</mat-button-toggle>
-      <mat-button-toggle value="blog">Blog</mat-button-toggle>
+      <mat-button-toggle value="text">Note</mat-button-toggle>
+      <!-- <mat-button-toggle value="article">Article</mat-button-toggle> -->
     </mat-button-toggle-group>
   </div>
 
-  <form [formGroup]="blogForm" *ngIf="group.value == 'blog'" (ngSubmit)="onSubmitBlog()">
+  <form [formGroup]="articleForm" *ngIf="group.value == 'article'" (ngSubmit)="onSubmitArticle()">
     <div mat-dialog-content class="mat-dialog-content">
       <mat-form-field appearance="outline" class="input-full-width">
         <mat-label>Title</mat-label>
@@ -32,7 +32,7 @@
 
       <mat-form-field appearance="outline" class="input-full-width">
         <mat-label>Banner image (optional)</mat-label>
-        <input matInput #message placeholder="Blog post banner image" formControlName="image" />
+        <input matInput #message placeholder="Article banner image" formControlName="image" />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="input-full-width">
@@ -56,7 +56,7 @@
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
       <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp; <button type="button" mat-stroked-button disabled="disabled">Save Draft</button>&nbsp;
-      <button mat-flat-button [disabled]="!blogForm.valid" type="submit" color="primary">Publish</button>
+      <button mat-flat-button [disabled]="!articleForm.valid" type="submit" color="primary">Publish Article</button>
     </div>
   </form>
 
@@ -64,7 +64,7 @@
     <div mat-dialog-content class="mat-dialog-content">
       <mat-form-field appearance="outline" class="input-full-width">
         <mat-label>What's on your mind?</mat-label>
-        <textarea class="note-input" matInput type="text" [(ngModel)]="note" formControlName="note" rows="7"></textarea>
+        <textarea class="note-input" matInput type="text" formControlName="content" rows="7"></textarea>
       </mat-form-field>
 
       <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
@@ -83,7 +83,7 @@
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
       <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp; <button mat-stroked-button type="button" disabled="disabled">Save Draft</button>&nbsp;
-      <button mat-flat-button [disabled]="!noteForm.valid" type="submit" color="primary">Publish</button>
+      <button mat-flat-button [disabled]="!noteForm.valid" type="submit" color="primary">Publish Note</button>
     </div>
   </form>
   <!-- </mat-card-content>

@@ -26,6 +26,7 @@ import { NotificationsComponent } from './notifications/notifications';
 import { FeedPrivateComponent } from './feed-private/feed-private';
 import { ConnectKeyComponent } from './connect/key/key';
 import { EditorComponent } from './editor/editor';
+import { ArticleComponent } from './article/article';
 
 const routes: Routes = [
   {
@@ -166,7 +167,15 @@ const routes: Routes = [
   },
   {
     path: 'a/:id',
-    component: NoteComponent,
+    component: ArticleComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'a/:id/:slug',
+    component: ArticleComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

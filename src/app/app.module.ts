@@ -122,6 +122,7 @@ import { UsernamePipe } from './shared/username';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { EditorComponent } from './editor/editor';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ArticleComponent } from './article/article';
 
 @NgModule({
   declarations: [
@@ -197,6 +198,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     PasswordDialog,
     UsernamePipe,
     EditorComponent,
+    ArticleComponent,
   ],
   imports: [
     AboutModule,

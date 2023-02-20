@@ -23,12 +23,12 @@ export class EditorComponent {
   isEmojiPickerVisible: boolean | undefined;
 
   noteForm = this.fb.group({
-    note: ['', Validators.required],
+    content: ['', Validators.required],
     expiration: [''],
     dateControl: [],
   });
 
-  blogForm = this.fb.group({
+  articleForm = this.fb.group({
     content: ['', Validators.required],
     title: ['', Validators.required],
     summary: [''],
@@ -64,9 +64,9 @@ export class EditorComponent {
     this.minDate = Date.now();
 
     this.subscriptions.push(
-      this.blogForm.controls.title.valueChanges.subscribe((text) => {
+      this.articleForm.controls.title.valueChanges.subscribe((text) => {
         if (text) {
-          this.blogForm.controls.slug.setValue(this.createSlug(text));
+          this.articleForm.controls.slug.setValue(this.createSlug(text));
         }
       })
     );
@@ -103,11 +103,11 @@ export class EditorComponent {
   }
 
   formatSlug() {
-    this.blogForm.controls.slug.setValue(this.createSlug(this.blogForm.controls.slug.value!));
+    this.articleForm.controls.slug.setValue(this.createSlug(this.articleForm.controls.slug.value!));
   }
 
-  onSubmitBlog() {
-    const controls = this.blogForm.controls;
+  onSubmitArticle() {
+    const controls = this.articleForm.controls;
 
     const blog: BlogEvent = {
       content: controls.content.value!,
@@ -118,22 +118,11 @@ export class EditorComponent {
       tags: controls.tags.value!,
     };
 
-    this.navigation.saveBlog(blog);
-
-    // const entry: Event = {
-    //   kind: 30023,
-    //   id: '',
-    //   sig: '',
-    //   content: '',
-    //   tags: [],
-    //   created_at:
-    // };
-
-    console.log('SUBMIT BLOG!!');
+    this.navigation.saveArticle(blog);
   }
 
   onSubmitNote() {
-    console.log('SUBMIT NOTE!');
+    this.navigation.saveNote(this.noteForm.controls.content.value!);
   }
 
   postNote() {

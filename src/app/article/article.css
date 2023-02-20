@@ -1,0 +1,43 @@
+.thread-event {
+  margin-left: 27px;
+  padding-top: 0em;
+  padding-left: 1em;
+}
+
+.thread-content {
+  margin-left: 27px;
+  padding-left: 1em;
+  display: block;
+}
+
+.events {
+  padding: 0 !important;
+}
+
+.thread-actions {
+  margin-left: 27px;
+  padding-left: 1em;
+  padding-bottom: 0.3em;
+}
+
+.button-card {
+  margin-bottom: 0.4em;
+}
+
+.parent-event {
+}
+
+.has-root {
+  margin-left: 27px;
+  padding-left: 1em;
+}
+
+.is-root {
+  margin-left: 0em;
+  padding-left: 0em;
+  border-left: 2px solid transparent !important;
+}
+
+.options-container {
+  margin-bottom: 1em;
+}
