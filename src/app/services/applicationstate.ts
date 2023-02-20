@@ -62,6 +62,8 @@ export class ApplicationState {
 
   showSearch = false;
 
+  showLogo = true;
+
   actions: Action[] = [];
 
   /** Parameters that comes from query string during activation of the extension. */

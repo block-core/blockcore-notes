@@ -21,6 +21,8 @@
       <mat-icon class="arrow-back">arrow_back</mat-icon>
     </button>
 
+    <img class="logo-icon" *ngIf="appState.showLogo && !appState.showSearch && (isHandset$ | async) === false" height="38" width="38" src="assets/icons/icon-128x128.webp" />
+
     <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title$ | async }}</div>
 
     <!-- <app-language-selector></app-language-selector> -->

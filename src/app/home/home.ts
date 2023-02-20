@@ -242,6 +242,7 @@ export class HomeComponent {
 
     this.appState.updateTitle('Blockcore Notes');
     this.appState.showBackButton = false;
+    this.appState.showLogo = true;
     this.appState.actions = [
       {
         icon: 'note_add',

@@ -1,17 +1,18 @@
 .logo-icon {
-  justify-content: center;
+  /* justify-content: center; */
   cursor: pointer;
   -webkit-app-region: drag;
+  /* height: 80%; */
 }
 
-.logo-icon img {
+/* .logo-icon img {
   height: 60%;
 }
 
 .logo-icon div {
   font-size: 0.8em;
   margin-left: 1em;
-}
+} */
 
 .sidenav {
 }
