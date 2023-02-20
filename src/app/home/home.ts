@@ -6,7 +6,7 @@ import { relayInit, Relay, Event } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
-import { map, Observable, shareReplay, Subscription } from 'rxjs';
+import { map, Observable, shareReplay, Subscription, debounceTime, fromEvent } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { OptionsService } from '../services/options';
@@ -256,10 +256,23 @@ export class HomeComponent {
 
     this.subscriptions.push(
       this.profileService.following$.subscribe((profiles) => {
-        this.profiles = profiles.slice(0, 20);
+        this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
+        this.profiles = profiles.slice(0, this.profileCount);
       })
     );
+
+    this.resizeObservable$ = fromEvent(window, 'resize');
+
+    this.resizeSubscription$ = this.resizeObservable$.pipe(debounceTime(100)).subscribe((evt) => {
+      this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
+      this.profiles = this.profileService.following.slice(0, this.profileCount);
+    });
   }
+
+  profileThumbnailWidth = 72;
+  profileCount = 1;
+  resizeObservable$!: Observable<globalThis.Event>;
+  resizeSubscription$!: Subscription;
 
   /** Profiles that are shown on the home screen, limited set of profiles. */
   profiles: NostrProfileDocument[] = [];

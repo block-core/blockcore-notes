@@ -1,5 +1,9 @@
 <div class="page">
-  <button mat-flat-button class="wipe-button" (click)="db.clearAndReload()">Issues? Wipe Local Database</button>
+  <!-- <button mat-flat-button class="wipe-button" (click)="db.clearAndReload()">Issues? Wipe Local Database</button> -->
+
+  <div class="profile-line">
+    <app-event-header [listType]="'icon'" [iconSize]="'thumbnail'" [displayName]="false" [displayContent]="false" *ngFor="let profile of profiles" [profile]="profile"></app-event-header>
+  </div>
 
   <div class="home">
     <div class="home-left">
@@ -18,23 +22,17 @@
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="home-card">
+      <!-- <mat-card class="home-card">
         <mat-card-header>
           <mat-card-title>Following</mat-card-title>
         </mat-card-header>
         <mat-card-content class="activity-feed" *ngIf="ui.activityFeed$ | async as activityFeed">
-
           <app-event-header [listType]="'icon'" [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of profiles" [profile]="profile"></app-event-header>
-
-          <!-- <p *ngFor="let notification of activityFeed">
-            <app-notification-label [notification]="notification"></app-notification-label>
-          </p>
-          <p class="dimmed" *ngIf="activityFeed.length == 0">No activities</p> -->
           <div class="centered">
             <button mat-button routerLink="/people">See all following</button>
           </div>
         </mat-card-content>
-      </mat-card>
+      </mat-card> -->
 
       <mat-card class="home-card">
         <mat-card-header>

@@ -147,3 +147,20 @@
 .wipe-button {
   margin-bottom: 1em;
 }
+
+.profile-line {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0.2em;
+}
+
+.profile-line .event-header {
+  flex-flow: nowrap;
+}
+
+.profile-line .icon-medium {
+  width: 64px !important;
+  height: 64px !important;
+}

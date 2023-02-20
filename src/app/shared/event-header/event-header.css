@@ -10,9 +10,22 @@
   border-radius: 50%;
 }
 
+.icon-thumbnail .profile-image {
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border-width: 2px;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+
 .icon-small .profile-image {
+  object-fit: cover;
   width: 48px;
   height: 48px;
+  border-radius: 50%;
   border-width: 2px;
   margin-left: 4px;
   margin-right: 4px;
