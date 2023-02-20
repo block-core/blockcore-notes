@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit } from 'nostr-tools';
+import { nip05, relayInit } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
@@ -259,6 +259,27 @@ export class PeopleComponent {
       for (let i = 0; i < pubkeys.length; i++) {
         if (pubkeys[i].startsWith('nostr:')) {
           pubkeys[i] = pubkeys[0].replace('nostr:', '');
+        }
+
+        if (pubkeys[i].indexOf('.') > -1) {
+          // If the user enters a root account with only @, we'll have to replace it for the NIP query to work.
+          if (pubkeys[i].startsWith('@')) {
+            pubkeys[i] = pubkeys[i].substring(1);
+          }
+
+          const profile = await nip05.queryProfile(pubkeys[i]);
+
+          if (profile) {
+            pubkeys[i] = profile.pubkey;
+          } else {
+            this.snackBar.open(`Unable to find the user.`, 'Hide', {
+              duration: 2000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom',
+            });
+
+            return;
+          }
         }
 
         await this.addFollow(pubkeys[i]);
