@@ -9,8 +9,8 @@ export interface ReplyEntry {
 
 @Component({
   selector: 'app-reply-list',
-  templateUrl: './reply-list.html',
-  styleUrls: ['./reply-list.css'],
+  templateUrl: 'reply-list.html',
+  styleUrls: ['reply-list.css'],
 })
 export class ReplyListComponent {
   @Input() keys: string[] = [];

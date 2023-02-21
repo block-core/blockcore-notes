@@ -22,6 +22,16 @@ export class LabelService {
 
   constructor(private storage: StorageService) {}
 
+  getName(id: string) {
+    const label = this.labels.find((l) => l.id == id);
+
+    if (!label) {
+      return '';
+    }
+
+    return label.name;
+  }
+
   async initialize() {
     this.labels = await this.storage.storage.getLabels();
 

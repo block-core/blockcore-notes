@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-labels',
   templateUrl: 'labels.html',
+  styleUrls: ['labels.css'],
 })
 export class LabelsComponent {
   showNewLabel?: boolean;

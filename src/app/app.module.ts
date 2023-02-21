@@ -123,6 +123,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { EditorComponent } from './editor/editor';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ArticleComponent } from './article/article';
+import { LabelPipe } from './shared/label.pipe';
+import { LabelComponent } from './shared/label/label';
 
 @NgModule({
   declarations: [
@@ -199,6 +201,8 @@ import { ArticleComponent } from './article/article';
     UsernamePipe,
     EditorComponent,
     ArticleComponent,
+    LabelComponent,
+    LabelPipe,
   ],
   imports: [
     AboutModule,
