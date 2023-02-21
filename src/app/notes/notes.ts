@@ -7,7 +7,8 @@ import { NotesService } from '../services/notes';
 
 @Component({
   selector: 'app-notes',
-  templateUrl: './notes.html',
+  templateUrl: 'notes.html',
+  styleUrls: ['notes.css'],
 })
 export class NotesComponent {
   details = false;

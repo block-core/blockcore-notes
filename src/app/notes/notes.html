@@ -1,26 +1,16 @@
 <div class="feed-page">
   <app-labels (selectionChanged)="filterNotes($event)"></app-labels>
   <div *ngIf="notesService.items.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others. You can add tags to organize your saved notes.<br /></div>
-  <mat-card class="events" *ngFor="let note of notesService.filtered">
-    <div class="events-header">
-      <app-event-header [pubkey]="note.pubkey">Posted: <span class="event-date">{{ note.created_at | ago }}</span>, Saved: <span class="event-date">{{ note.saved | ago }}</span> </app-event-header>
-      <app-event-actions [event]="note"></app-event-actions>
-    </div>
 
-    <app-content [event]="note"></app-content>
-    <app-label [labels]="note.labels"></app-label>
-    <!-- <div class="content">
-        {{ note.content }}<span *ngIf="note.contentCut">... (message was truncated)</span>
-        <div *ngIf="details">
-          <br />
-          <span *ngFor="let tag of note.tags" class="dimmed">TAG: {{ tag }}</span>
-        </div>
-      </div> -->
-    <!-- <button *ngIf="!details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-        <mat-icon class="expand-button-icon">expand_more</mat-icon>
-      </button>
-      <button *ngIf="details" class="expand-button" mat-icon-button (click)="toggleDetails()">
-        <mat-icon class="expand-button-icon">expand_less</mat-icon>
-      </button> -->
-  </mat-card>
+  <div class="notes">
+    <mat-card class="events" *ngFor="let note of notesService.filtered">
+      <div class="events-header">
+        <app-event-header [pubkey]="note.pubkey">Posted: <span class="event-date">{{ note.created_at | ago }}</span>, Saved: <span class="event-date">{{ note.saved | ago }}</span> </app-event-header>
+        <app-event-actions [event]="note"></app-event-actions>
+      </div>
+
+      <app-content [event]="note"></app-content>
+      <app-label [labels]="note.labels"></app-label>
+    </mat-card>
+  </div>
 </div>
