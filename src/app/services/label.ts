@@ -3,7 +3,7 @@ import { Circle, LabelModel } from './interfaces';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { StorageService } from './storage';
 import { Utilities } from './utilities';
-import { dexieToRx } from '../shared/utilities';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +32,28 @@ export class LabelService {
     return label.name;
   }
 
+  async saveLabel(label: string) {
+    if (!label) {
+      return;
+    }
+
+    let entry = {
+      name: label,
+      id: uuidv4(),
+    };
+
+    await this.storage.storage.putLabel(entry);
+
+    this.labels.push(entry);
+    this.sort();
+  }
+
+  sort() {
+    this.labels = this.labels.sort((a, b) => {
+      return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
+    });
+  }
+
   async initialize() {
     this.labels = await this.storage.storage.getLabels();
 
@@ -41,5 +63,7 @@ export class LabelService {
         await this.storage.storage.putLabel(label);
       }
     }
+
+    this.sort();
   }
 }
