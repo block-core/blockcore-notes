@@ -22,11 +22,16 @@ export class NotesService {
 
   async load() {
     this.items = await this.db.storage.getNotes();
-    this.filtered = this.items;
+    this.filterByLabels([]);
   }
 
   filterByLabels(labels: string[]) {
-    this.filtered = this.items.filter((n) => n.labels != null && n.labels.some((l) => labels.includes(l)));
+    if (labels.length == 0) {
+      // this.filtered = this.items.slice(0, 5);
+      this.filtered = this.items;
+    } else {
+      this.filtered = this.items.filter((n) => n.labels != null && n.labels.some((l) => labels.includes(l)));
+    }
   }
 
   /** Wipes all notes. */

@@ -12,10 +12,12 @@ export class LabelService {
   static DEFAULT: LabelModel[] = [
     { id: 'photo', name: 'Photo' },
     { id: 'film', name: 'Film' },
+    { id: 'film-music', name: 'Music Videos' },
     { id: 'music', name: 'Music' },
     { id: 'podcast', name: 'Podcast' },
     { id: 'inspirational', name: 'Inspirational' },
     { id: 'meme', name: 'Meme' },
+    { id: 'article', name: 'Article' },
   ];
 
   labels: LabelModel[] = [];
