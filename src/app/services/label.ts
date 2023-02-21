@@ -23,7 +23,6 @@ export class LabelService {
   constructor(private storage: StorageService) {}
 
   async initialize() {
-    debugger;
     this.labels = await this.storage.storage.getLabels();
 
     if (this.labels.length == 0) {

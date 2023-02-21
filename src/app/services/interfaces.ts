@@ -155,6 +155,8 @@ export enum EmojiEnum {
 export interface NostrNoteDocument extends NostrEventDocument {
   /** The timestamp when the note was saved. */
   saved: number;
+
+  labels: string[];
 }
 
 export interface NostrProfile {

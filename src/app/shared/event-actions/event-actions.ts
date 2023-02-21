@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
 import { EventPointer } from 'nostr-tools/nip19';
+import { LabelService } from 'src/app/services/label';
 
 @Component({
   selector: 'app-event-actions',
@@ -18,7 +19,7 @@ export class EventActionsComponent {
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
 
-  constructor(private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
+  constructor(public labelService: LabelService, private snackBar: MatSnackBar, private profileService: ProfileService, private notesService: NotesService, private utilities: Utilities) {}
 
   async saveNote() {
     if (!this.event) {
@@ -72,6 +73,26 @@ export class EventActionsComponent {
 
   copyNoteId(id: string) {
     this.copy(nip19.noteEncode(id));
+  }
+
+  async setLabel(id: string) {
+    if (!this.event) {
+      return;
+    }
+
+    let e = this.event as NostrNoteDocument;
+
+    if (e.labels == null) {
+      e.labels = [];
+    } else {
+      // TODO: Right now we only support a single label, so we'll reset
+      // with whatever the user chooses.
+      e.labels = [];
+    }
+
+    e.labels.push(id);
+
+    await this.notesService.putNote(this.event);
   }
 
   copyNoteEventId(id: string) {

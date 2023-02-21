@@ -17,6 +17,11 @@
     <span>Remove from Notes</span>
   </button>
 
+  <button mat-menu-item [matMenuTriggerFor]="labelMenu" *ngIf="event && event.saved">
+    <mat-icon>new_label</mat-icon>
+    <span>Set Label</span>
+  </button>
+
   <button mat-menu-item [matMenuTriggerFor]="copyMenu" (click)="copyNoteId(event!.id)">
     <mat-icon>copy_all</mat-icon>
     <span>Copy</span>
@@ -55,5 +60,12 @@
   <button mat-menu-item (click)="copy('https://notes.blockcore.net/e/' + event!.id)">
     <mat-icon>content_copy</mat-icon>
     <span>Note URL</span>
+  </button>
+</mat-menu>
+
+<mat-menu #labelMenu="matMenu">
+  <button *ngFor="let label of labelService.labels" mat-menu-item (click)="setLabel(label.id)">
+    <mat-icon>label</mat-icon>
+    <span>{{ label.name }}</span>
   </button>
 </mat-menu>
