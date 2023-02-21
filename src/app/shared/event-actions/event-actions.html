@@ -7,7 +7,7 @@
 </button>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="saveNote()" *ngIf="event && !event.saved">
+  <button mat-menu-item (click)="saveNote()" *ngIf="event && !event.saved" [matMenuTriggerFor]="labelMenu">
     <mat-icon>bookmark_add</mat-icon>
     <span>Save Note</span>
   </button>

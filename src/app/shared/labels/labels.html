@@ -1,22 +1,18 @@
+<mat-chip-listbox aria-label="Fish selection" [selectable]="true" [multiple]="true" (change)="onChange($event)">
+  <mat-chip-option [value]="label.id" *ngFor="let label of labels">{{label.name}}</mat-chip-option>
 
-
-<mat-chip-listbox aria-label="Fish selection">
-    <mat-chip-option *ngFor="let label of labels">{{label.name}}</mat-chip-option>
-    
-    <div *ngIf="showNewLabel">
-        <mat-form-field class="example-form-field">
-            <input matInput type="text" [(ngModel)]="label">
-          </mat-form-field>
-        <button mat-icon-button (click)="saveLabel()" [disabled]="!label">
-            <mat-icon>done</mat-icon>
-        </button>
-        <button mat-icon-button (click)="hideNewLabel()">
-            <mat-icon>close</mat-icon>
-        </button>
-    </div>
-    <button mat-icon-button (click)="addNewLabel()" *ngIf="!showNewLabel">
-        <mat-icon>add</mat-icon>
+  <div *ngIf="showNewLabel">
+    <mat-form-field class="example-form-field">
+      <input matInput type="text" [(ngModel)]="label" />
+    </mat-form-field>
+    <button mat-icon-button (click)="saveLabel()" [disabled]="!label">
+      <mat-icon>done</mat-icon>
     </button>
-   
-  </mat-chip-listbox>
-        
+    <button mat-icon-button (click)="hideNewLabel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <button mat-icon-button (click)="addNewLabel()" *ngIf="!showNewLabel">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-chip-listbox>

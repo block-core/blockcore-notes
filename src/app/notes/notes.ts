@@ -24,6 +24,10 @@ export class NotesComponent {
     this.details = !this.details;
   }
 
+  filterNotes(labels: string[]) {
+    this.notesService.filterByLabels(labels);
+  }
+
   async ngOnInit() {
     this.appState.updateTitle('Saved Notes');
     this.appState.goBack = true;

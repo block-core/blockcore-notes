@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { MatChipListboxChange } from '@angular/material/chips';
 import { LabelModel } from 'src/app/services/interfaces';
 import { StorageService } from 'src/app/services/storage';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +13,7 @@ export class LabelsComponent {
   showNewLabel?: boolean;
   label?: string;
   labels: LabelModel[] = [];
+  @Output() selectionChanged = new EventEmitter<string[]>();
 
   constructor(private storageService: StorageService) {}
 
@@ -22,6 +24,11 @@ export class LabelsComponent {
   hideNewLabel() {
     this.showNewLabel = false;
     this.label = '';
+  }
+
+  onChange(event: MatChipListboxChange) {
+    console.log(event);
+    this.selectionChanged.emit(event.value);
   }
 
   async saveLabel() {

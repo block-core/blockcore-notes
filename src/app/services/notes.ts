@@ -7,6 +7,7 @@ import { StorageService } from './storage';
 })
 export class NotesService {
   items: NostrNoteDocument[] = [];
+  filtered: NostrNoteDocument[] = [];
 
   constructor(private db: StorageService) {}
 
@@ -21,6 +22,11 @@ export class NotesService {
 
   async load() {
     this.items = await this.db.storage.getNotes();
+    this.filtered = this.items;
+  }
+
+  filterByLabels(labels: string[]) {
+    this.filtered = this.items.filter((n) => n.labels != null && n.labels.some((l) => labels.includes(l)));
   }
 
   /** Wipes all notes. */
