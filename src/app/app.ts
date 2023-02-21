@@ -25,6 +25,7 @@ import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UIService } from './services/ui';
 import { OptionsService } from './services/options';
+import { LabelService } from './services/label';
 
 @Component({
   selector: 'app-root',
@@ -52,6 +53,7 @@ export class AppComponent {
     public appUpdateCheckService: CheckForUpdateService,
     public dialog: MatDialog,
     private location: Location,
+    private labelService: LabelService,
     private breakpointObserver: BreakpointObserver,
     private relayService: RelayService,
     private dataService: DataService,
@@ -198,6 +200,8 @@ export class AppComponent {
 
     // This service will perform data cleanup, etc.
     await this.dataService.initialize();
+
+    await this.labelService.initialize();
 
     this.appState.connected$.subscribe(() => {});
 

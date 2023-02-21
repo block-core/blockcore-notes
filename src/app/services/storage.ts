@@ -15,7 +15,7 @@ export class StorageService {
 
   async initialize(databaseName: string) {
     // Open the new storage database.
-    this.storage = new Storage('blockcore-notes-' + this.appState.getPublicKey(), 1);
+    this.storage = new Storage('blockcore-notes-' + this.appState.getPublicKey());
     await this.storage.open();
 
     let state = await this.storage.getState();

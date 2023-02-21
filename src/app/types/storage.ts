@@ -60,27 +60,42 @@ interface NotesDB extends DBSchema {
 export class Storage {
   public db!: IDBPDatabase<NotesDB>;
 
-  constructor(private name: string, private version: number) {}
+  constructor(private name: string) {}
 
   async open() {
-    this.db = await openDB<NotesDB>(this.name, this.version, {
+    this.db = await openDB<NotesDB>(this.name, 1, {
       upgrade(db, oldVersion, newVersion, transaction, event) {
-        db.createObjectStore('relays', { keyPath: 'url' });
-        db.createObjectStore('notes', { keyPath: 'id' });
-        db.createObjectStore('circles', { keyPath: 'id', autoIncrement: true });
-        db.createObjectStore('state', { keyPath: 'id' });
-        db.createObjectStore('contacts', { keyPath: 'pubkey' });
-        db.createObjectStore('labels', { keyPath: 'id' });
-        const notificationsStore = db.createObjectStore('notifications', { keyPath: 'id' });
-        notificationsStore.createIndex('created', 'created');
+        switch (oldVersion) {
+          case 0:
+            upgradeV0toV1();
+          /* FALLTHROUGH */
+          case 1:
+            upgradeV1toV2();
+            break;
+          default:
+            console.error('Unknown database version.');
+        }
 
-        const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
-        eventsStore.createIndex('pubkey', 'pubkey');
-        eventsStore.createIndex('created', 'created_at');
-        eventsStore.createIndex('kind', 'kind');
+        function upgradeV0toV1() {
+          db.createObjectStore('relays', { keyPath: 'url' });
+          db.createObjectStore('notes', { keyPath: 'id' });
+          db.createObjectStore('circles', { keyPath: 'id', autoIncrement: true });
+          db.createObjectStore('state', { keyPath: 'id' });
+          db.createObjectStore('contacts', { keyPath: 'pubkey' });
+          db.createObjectStore('labels', { keyPath: 'id' });
+          const notificationsStore = db.createObjectStore('notifications', { keyPath: 'id' });
+          notificationsStore.createIndex('created', 'created');
 
-        const profilesStore = db.createObjectStore('profiles', { keyPath: 'pubkey' });
-        profilesStore.createIndex('status', 'status');
+          const eventsStore = db.createObjectStore('events', { keyPath: 'id' });
+          eventsStore.createIndex('pubkey', 'pubkey');
+          eventsStore.createIndex('created', 'created_at');
+          eventsStore.createIndex('kind', 'kind');
+
+          const profilesStore = db.createObjectStore('profiles', { keyPath: 'pubkey' });
+          profilesStore.createIndex('status', 'status');
+        }
+
+        function upgradeV1toV2() {}
       },
       blocked(currentVersion, blockedVersion, event) {
         // …
