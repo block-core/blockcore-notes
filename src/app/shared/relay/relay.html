@@ -1,7 +1,7 @@
 <mat-expansion-panel>
   <mat-expansion-panel-header>
     <mat-panel-title [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">
-      <img class="relay-favicon" onerror="this.src='/assets/profile.png'" [src]="relayFavIcon(relay.url)" width="32" height="32" />
+      <img class="relay-favicon" onerror="this.src='/assets/blank.png'" [src]="relayFavIcon(relay.url)" width="32" height="32" />
       <span *ngIf="relay.nip11">{{ relay.nip11.name }}</span>
       <span *ngIf="!relay.nip11">{{ relay.url.substring(6) }}</span>
     </mat-panel-title>
