@@ -81,7 +81,10 @@ export class CircleService {
       this.circles.push(document);
     }
 
-    await this.db.storage.putCircle(document);
+    const id = await this.db.storage.putCircle(document);
+
+    // Important that we update the document with sequence ID from database.
+    document.id = id;
   }
 
   async delete(id: number) {
