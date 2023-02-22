@@ -68,7 +68,7 @@ A goal of Blockcore Notes is to be feature rich and have functionality that goes
 - [ ] [NIP-14: Subject tag in text events.](https://github.com/nostr-protocol/nips/blob/master/14.md)
 - [x] [NIP-19: bech32-encoded entities](https://github.com/nostr-protocol/nips/blob/master/19.md)
 - [x] [NIP-21: `nostr:` URL scheme](https://github.com/nostr-protocol/nips/blob/master/21.md)
-- [ ] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
+- [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
 - [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
 - [ ] [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)
 - [ ] [NIP-28: Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
