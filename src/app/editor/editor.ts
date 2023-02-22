@@ -19,6 +19,8 @@ export interface NoteDialogData {
 })
 export class EditorComponent {
   @ViewChild('picker') picker: unknown;
+  @ViewChild('noteContent') noteContent?: FormControl;
+  @ViewChild('articleContent') articleContent?: FormControl;
 
   isEmojiPickerVisible: boolean | undefined;
 
@@ -87,10 +89,26 @@ export class EditorComponent {
     return input;
   }
 
-  public addEmoji(event: { emoji: { native: any } }) {
-    // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
-    this.note = `${this.note}${event.emoji.native}`;
+  public addEmojiNote(event: { emoji: { native: any } }) {
+    let startPos = (<any>this.noteContent).nativeElement.selectionStart;
+    let value = this.noteForm.controls.content.value;
+
+    let parsedValue = value?.substring(0, startPos) + event.emoji.native + value?.substring(startPos, value.length);
+    this.noteForm.controls.content.setValue(parsedValue);
     this.isEmojiPickerVisible = false;
+
+    (<any>this.noteContent).nativeElement.focus();
+  }
+
+  public addEmojiArticle(event: { emoji: { native: any } }) {
+    let startPos = (<any>this.articleContent).nativeElement.selectionStart;
+    let value = this.articleForm.controls.content.value;
+
+    let parsedValue = value?.substring(0, startPos) + event.emoji.native + value?.substring(startPos, value.length);
+    this.articleForm.controls.content.setValue(parsedValue);
+    this.isEmojiPickerVisible = false;
+
+    (<any>this.articleContent).nativeElement.focus();
   }
 
   postBlog() {

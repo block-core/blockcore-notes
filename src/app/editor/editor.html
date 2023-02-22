@@ -22,7 +22,7 @@
 
       <mat-form-field appearance="outline" class="input-full-width">
         <mat-label>Long form text that supports markdown formatting</mat-label>
-        <textarea class="note-input" matInput type="text" [(ngModel)]="note" formControlName="content" rows="7"></textarea>
+        <textarea #articleContent class="note-input" matInput type="text" [(ngModel)]="note" formControlName="content" rows="7"></textarea>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="input-full-width">
@@ -40,7 +40,7 @@
         <input matInput #message placeholder="Tech, News, Social" formControlName="tags" />
       </mat-form-field>
 
-      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiArticle($event)" title="Choose your emoji"></emoji-mart>
       <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
       <!-- <mat-icon class="toolbar-icon margin-right" matTooltip="Upload file">attach_file</mat-icon> -->
 
@@ -48,7 +48,7 @@
             <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a timeout" [formControl]="dateControl" [min]="minDate" />
             <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
             <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
-              <ng-template>
+              <ng-template> 
                 <span>Set timeout</span>
               </ng-template>
             </ngx-mat-datetime-picker>
@@ -64,10 +64,10 @@
     <div mat-dialog-content class="mat-dialog-content">
       <mat-form-field appearance="outline" class="input-full-width">
         <mat-label>What's on your mind?</mat-label>
-        <textarea class="note-input" matInput type="text" formControlName="content" rows="7"></textarea>
+        <textarea #noteContent class="note-input" matInput type="text" formControlName="content" rows="7"></textarea>
       </mat-form-field>
 
-      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiNote($event)" title="Choose your emoji"></emoji-mart>
       <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
       <!-- <mat-icon class="toolbar-icon margin-right" matTooltip="Upload file">attach_file</mat-icon> -->
 
