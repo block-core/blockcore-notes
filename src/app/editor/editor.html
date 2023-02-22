@@ -2,11 +2,19 @@
   <h1>Write your thoughts</h1>
 
   <div class="note-type">
-    <mat-button-toggle-group name="fontStyle" [(ngModel)]="eventType" aria-label="Font Style" #group="matButtonToggleGroup">
+    <mat-button-toggle-group name="fontStyle" (change)="noteTypeChanged()" [(ngModel)]="eventType" aria-label="Font Style" #group="matButtonToggleGroup">
       <mat-button-toggle value="text">Note</mat-button-toggle>
-      <!-- <mat-button-toggle value="article">Article</mat-button-toggle> -->
+      <mat-button-toggle value="article">Article</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
+
+  <mat-form-field appearance="fill" *ngIf="group.value == 'article'">
+    <mat-label>Existing articles</mat-label>
+    <mat-select [(value)]="selectedArticle" (selectionChange)="changedArticle()">
+      <mat-option></mat-option>
+      <mat-option [value]="article.slug" *ngFor="let article of articleService.articles">{{ article.title }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <form [formGroup]="articleForm" *ngIf="group.value == 'article'" (ngSubmit)="onSubmitArticle()">
     <div mat-dialog-content class="mat-dialog-content">
@@ -40,6 +48,8 @@
         <input matInput #message placeholder="Tech, News, Social" formControlName="tags" />
       </mat-form-field>
 
+      <input type="hidden" formControlName="published_at" />
+
       <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiArticle($event)" title="Choose your emoji"></emoji-mart>
       <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
       <!-- <mat-icon class="toolbar-icon margin-right" matTooltip="Upload file">attach_file</mat-icon> -->
@@ -55,7 +65,8 @@
           </mat-form-field> -->
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
-      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp; <button type="button" mat-stroked-button disabled="disabled">Save Draft</button>&nbsp;
+      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp; 
+      <!-- <button type="button" mat-stroked-button disabled="disabled">Save Draft</button>&nbsp; -->
       <button mat-flat-button [disabled]="!articleForm.valid" type="submit" color="primary">Publish Article</button>
     </div>
   </form>
@@ -82,7 +93,8 @@
           </mat-form-field> -->
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
-      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp; <button mat-stroked-button type="button" disabled="disabled">Save Draft</button>&nbsp;
+      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp; 
+      <!-- <button mat-stroked-button type="button" disabled="disabled">Save Draft</button>&nbsp; -->
       <button mat-flat-button [disabled]="!noteForm.valid" type="submit" color="primary">Publish Note</button>
     </div>
   </form>

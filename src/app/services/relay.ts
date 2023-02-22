@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LoadMoreOptions, NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, ProfileStatus, QueryJob } from './interfaces';
+import { LoadMoreOptions, NostrArticle, NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, ProfileStatus, QueryJob } from './interfaces';
 import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
 import { Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
@@ -16,6 +16,7 @@ import { ImportSheet } from '../shared/import-sheet/import-sheet';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { NostrService } from './nostr';
+import { ArticleService } from './article';
 
 @Injectable({
   providedIn: 'root',
@@ -55,6 +56,7 @@ export class RelayService {
   }
 
   constructor(
+    private articleService: ArticleService,
     private nostr: NostrService,
     private ui: UIService,
     private queue: QueueService,
@@ -473,7 +475,9 @@ export class RelayService {
       }
     }
 
-    if (event.kind == Kind.Metadata) {
+    if (event.kind == Kind.Article) {
+      this.articleService.put(event);
+    } else if (event.kind == Kind.Metadata) {
       // This is a profile event, store it.
       const nostrProfileDocument = this.utilities.mapProfileEvent(event);
 

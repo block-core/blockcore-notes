@@ -129,7 +129,11 @@ export class NavigationService {
       event.tags.push(['image', blog.image]);
     }
 
-    event.tags.push(['published_at', event.created_at.toString()]);
+    if (!blog.published_at) {
+      event.tags.push(['published_at', event.created_at.toString()]);
+    } else {
+      event.tags.push(['published_at', blog.published_at.toString()]);
+    }
 
     const tags = blog.tags.split(',').filter((t) => t);
 
@@ -144,7 +148,7 @@ export class NavigationService {
 
     await this.dataService.publishEvent(signedEvent);
 
-    this.router.navigate(['/a', signedEvent.id]);
+    // this.router.navigate(['/a', signedEvent.id]);
   }
 
   createNote(): void {

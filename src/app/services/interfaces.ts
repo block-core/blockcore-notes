@@ -25,7 +25,7 @@ export interface Contact {
 }
 
 export interface QueryJob {
-  type: 'Profile' | 'Event' | 'Contacts';
+  type: 'Profile' | 'Event' | 'Contacts' | 'Article';
   identifier: string;
   // callback?: any;
   // limit?: number;
@@ -100,6 +100,15 @@ export interface NostrRelayDocument {
 export interface NostrEvent extends Event {
   contentCut: boolean;
   tagsCut: boolean;
+}
+
+export interface NostrArticle extends NostrEvent {
+  slug?: string;
+  title?: string;
+  summary?: string;
+  image?: string;
+  published_at: number;
+  metatags: string[];
 }
 
 export interface NostrSub extends Sub {

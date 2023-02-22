@@ -21,17 +21,23 @@ export class QueueService {
     this.#queuesChanged.next({ identifier: identifier, type: 'Event' });
   }
 
+  enqueArticle(identifier: string) {
+    this.#queuesChanged.next({ identifier: identifier, type: 'Article' });
+  }
+
   enqueContacts(identifier: string) {
     this.#queuesChanged.next({ identifier: identifier, type: 'Contacts' });
   }
 
-  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts') {
+  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts' | 'Article') {
     if (type === 'Profile') {
       this.enqueProfile(identifier);
     } else if (type === 'Event') {
       this.enqueEvent(identifier);
     } else if (type === 'Contacts') {
       this.enqueContacts(identifier);
+    } else if (type === 'Article') {
+      this.enqueArticle(identifier);
     }
   }
 }

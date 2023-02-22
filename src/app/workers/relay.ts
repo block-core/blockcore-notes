@@ -52,6 +52,8 @@ export class RelayWorker {
       this.queue.queues.contacts.jobs.push(job);
     } else if (job.type == 'Event') {
       this.queue.queues.event.jobs.push(job);
+    } else if (job.type == 'Article') {
+      this.queue.queues.article.jobs.push(job);
     } else {
       throw Error(`This type of job (${job.type}) is currently not supported.`);
     }
@@ -61,10 +63,11 @@ export class RelayWorker {
     // We always delay the processing in case we receive more.
     setTimeout(() => {
       this.process();
-    }, 150);
+    }, 500);
   }
 
   process() {
+    this.processArticle();
     this.processProfiles();
     this.processContacts();
     this.processEvents();
@@ -135,7 +138,7 @@ export class RelayWorker {
 
   processEvents() {
     if (!this.relay || this.relay.status != 1 || this.queue.queues.event.active) {
-      console.log(`${this.url}: processProfiles: Relay not ready or currently active: ${this.queue.queues.event.active}.`, this.relay);
+      console.log(`${this.url}: processEvents: Relay not ready or currently active: ${this.queue.queues.event.active}.`, this.relay);
       return;
     }
 
@@ -157,6 +160,32 @@ export class RelayWorker {
 
     console.log('eventsToDownload:', eventsToDownload);
     this.downloadEvent(eventsToDownload, eventsToDownload.length * 3);
+  }
+
+  processArticle() {
+    if (!this.relay || this.relay.status != 1 || this.queue.queues.article.active) {
+      console.log(`${this.url}: processArticle: Relay not ready or currently active: ${this.queue.queues.article.active}.`, this.relay);
+      return;
+    }
+
+    console.log(`${this.url}: processArticle: Processing with downloading... Count: ` + this.queue.queues.article.jobs.length);
+
+    if (this.queue.queues.article.jobs.length == 0) {
+      this.queue.queues.article.active = false;
+      return;
+    }
+
+    this.queue.queues.article.active = true;
+
+    console.log(this.relay);
+
+    const eventsToDownload = this.queue.queues.article.jobs
+      .splice(0, 500)
+      .map((j) => j.identifier)
+      .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
+
+    console.log('articleToDownload:', eventsToDownload);
+    this.downloadArticle(eventsToDownload, eventsToDownload.length * 3);
   }
 
   /** Provide event to publish and terminate immediately. */
@@ -250,6 +279,9 @@ export class RelayWorker {
   eventSub?: NostrSub;
   eventTimer?: any;
 
+  articleSub?: NostrSub;
+  articleTimer?: any;
+
   clearProfileSub() {
     this.profileSub?.unsub();
     this.profileSub = undefined;
@@ -263,6 +295,11 @@ export class RelayWorker {
   clearEventSub() {
     this.eventSub?.unsub();
     this.eventSub = undefined;
+  }
+
+  clearArticleSub() {
+    this.articleSub?.unsub();
+    this.articleTimer = undefined;
   }
 
   downloadProfile(pubkeys: string[], timeoutSeconds: number = 12) {
@@ -384,6 +421,64 @@ export class RelayWorker {
         finalizedCalled = true;
         finalized();
       }
+    }, timeoutSeconds * 1000);
+  }
+
+  downloadArticle(ids: string[], timeoutSeconds: number = 12) {
+    console.log('DOWNLOAD ARTICLE....');
+    let finalizedCalled = false;
+
+    if (!this.relay) {
+      debugger;
+      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      return;
+    }
+
+    // If the profilesub already exists, unsub and remove.
+    if (this.articleSub) {
+      console.log('Article sub already existed, unsub before continue.');
+      this.clearArticleSub();
+    }
+
+    // Skip if the subscription is already added.
+    // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
+    //   debugger;
+    //   console.log('This subscription is already added!');
+    //   return;
+    // }
+
+    const filter = { kinds: [Kind.Article], authors: ids };
+    const sub = this.relay.sub([filter]) as NostrSub;
+    this.articleSub = sub;
+
+    sub.on('event', (originalEvent: any) => {
+      console.log('POST MESSAGE BACK TO MAIN');
+      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+      console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    });
+
+    sub.on('eose', () => {
+      console.log('eose on event.');
+      clearTimeout(this.articleTimer);
+      this.clearArticleSub();
+      this.queue.queues.article.active = false;
+      this.processArticle();
+    });
+
+    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
+
+    this.articleTimer = setTimeout(() => {
+      console.warn(`${this.url}: Event download timeout reached.`);
+      this.clearArticleSub();
+      this.queue.queues.article.active = false;
+      this.processArticle();
+
+      postMessage({ url: this.url, type: 'timeout', data: { type: 'Event', identifier: ids } } as RelayResponse);
+
+      // if (!finalizedCalled) {
+      //   finalizedCalled = true;
+      //   finalized();
+      // }
     }, timeoutSeconds * 1000);
   }
 

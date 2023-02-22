@@ -67,6 +67,54 @@ export class EventService {
     return tags[tags.length - 1][1];
   }
 
+  titleTag(event: NostrEventDocument | null) {
+    const tags = this.tagsOfType(event, 'title');
+
+    if (tags.length == 0) {
+      return undefined;
+    }
+
+    return tags[tags.length - 1][1];
+  }
+
+  lastDTag(event: NostrEventDocument | null) {
+    const tags = this.tagsOfType(event, 'd');
+
+    if (tags.length == 0) {
+      return undefined;
+    }
+
+    return tags[tags.length - 1][1];
+  }
+
+  lastTagOfType(event: NostrEventDocument | null, type: string) {
+    const tags = this.tagsOfType(event, type);
+
+    if (tags.length == 0) {
+      return undefined;
+    }
+
+    return tags[tags.length - 1][1];
+  }
+
+  tagsOfType(event: NostrEventDocument | null, type: string) {
+    if (!event) {
+      return [];
+    }
+
+    const tags = event.tags.filter((t) => t[0] === type);
+    return tags;
+  }
+
+  tagsOfTypeValues(event: NostrEventDocument | null, type: string) {
+    if (!event) {
+      return [];
+    }
+
+    const tags = event.tags.filter((t) => t[0] === type);
+    return tags.map((t) => t[1]);
+  }
+
   eTags(event: NostrEventDocument | null) {
     if (!event) {
       return [];

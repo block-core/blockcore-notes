@@ -7,6 +7,9 @@ import { BlogEvent } from '../services/interfaces';
 import { Event } from 'nostr-tools';
 import { Subscription } from 'rxjs';
 import { Utilities } from '../services/utilities';
+import { QueueService } from '../services/queue.service';
+import { ArticleService } from '../services/article';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface NoteDialogData {
   note: string;
@@ -37,6 +40,7 @@ export class EditorComponent {
     image: [''],
     slug: [''],
     tags: [''],
+    published_at: [''],
   });
 
   note: string = '';
@@ -55,7 +59,16 @@ export class EditorComponent {
 
   subscriptions: Subscription[] = [];
 
-  constructor(private utilities: Utilities, private appState: ApplicationState, private location: Location, private fb: FormBuilder, public navigation: NavigationService) {}
+  constructor(
+    private snackBar: MatSnackBar,
+    public articleService: ArticleService,
+    private queueService: QueueService,
+    private utilities: Utilities,
+    private appState: ApplicationState,
+    private location: Location,
+    private fb: FormBuilder,
+    public navigation: NavigationService
+  ) {}
 
   ngOnInit() {
     this.appState.updateTitle(`Write a note`);
@@ -74,8 +87,49 @@ export class EditorComponent {
     );
   }
 
+  selectedArticle: string = '';
+
+  changedArticle() {
+    const article = this.articleService.get(this.selectedArticle!);
+
+    if (!article) {
+      this.articleForm.reset();
+
+      return;
+    }
+
+    if (article.summary == null) {
+      article.summary = '';
+    }
+
+    if (article.image == null) {
+      article.image = '';
+    }
+
+    if (article.title == null) {
+      article.title = '';
+    }
+
+    this.articleForm.setValue({
+      content: article.content,
+      title: article.title,
+      summary: article.summary,
+      image: article.image,
+      slug: article.slug ? article.slug : '',
+      tags: article.metatags ? article.metatags.toString() : '',
+      published_at: article.published_at ? article.published_at.toString() : '',
+    });
+  }
+
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);
+  }
+
+  noteTypeChanged() {
+    // Load all articles for the user when toggling.
+    if (this.eventType == 'article') {
+      this.queueService.enque(this.appState.getPublicKey(), 'Article');
+    }
   }
 
   createSlug(input: string) {
@@ -111,20 +165,11 @@ export class EditorComponent {
     (<any>this.articleContent).nativeElement.focus();
   }
 
-  postBlog() {
-    // this.formGroupBlog.controls.
-
-    // this.profileForm.value
-
-    console.log('BLOG:', this.blog);
-    // this.navigation.saveNote(this.note);
-  }
-
   formatSlug() {
     this.articleForm.controls.slug.setValue(this.createSlug(this.articleForm.controls.slug.value!));
   }
 
-  onSubmitArticle() {
+  async onSubmitArticle() {
     const controls = this.articleForm.controls;
 
     const blog: BlogEvent = {
@@ -136,7 +181,17 @@ export class EditorComponent {
       tags: controls.tags.value!,
     };
 
-    this.navigation.saveArticle(blog);
+    if (controls.published_at.value) {
+      blog.published_at = Number(controls.published_at.value);
+    }
+
+    await this.navigation.saveArticle(blog);
+
+    this.snackBar.open(`Article was published. Notes does not support viewing articles yet.`, 'Hide', {
+      duration: 2000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
 
   onSubmitNote() {

@@ -32,6 +32,10 @@ export class Queue {
       active: false,
       jobs: [] as QueryJob[],
     },
+    article: {
+      active: false,
+      jobs: [] as QueryJob[],
+    },
     contacts: {
       active: false,
       jobs: [] as QueryJob[],
