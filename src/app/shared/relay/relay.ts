@@ -126,4 +126,9 @@ export class RelayComponent {
   async deleteRelay(relay: NostrRelayDocument) {
     await this.relayService.deleteRelay2(relay.url);
   }
+
+  relayFavIcon(url: string) {
+    const favUrl = url.replace('wss://', 'https://');
+    return favUrl + '/favicon.ico';
+  }
 }
