@@ -9,15 +9,16 @@
   height: env(titlebar-area-height, 33px) !important;
 }
 
-.draggable {
+/* .draggable {
   -webkit-app-region: drag;
   flex-grow: 2;
   flex-shrink: 1;
-}
+} */
 
 .media-controls-container {
   align-self: center;
   flex: 2 2 auto;
+  -webkit-app-region: no-drag;
 }
 
 .media-audio-container {

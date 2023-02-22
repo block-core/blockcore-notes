@@ -34,3 +34,9 @@ h1 {
   text-align: right;
   margin-bottom: 1em;
 }
+
+@media only screen and (max-width: 599px) {
+  h1 {
+    font-size: 1.8em;
+  }
+}

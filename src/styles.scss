@@ -292,12 +292,20 @@ app-profile-actions {
 }
 
 /* The container for main content. */
-mat-sidenav-content {
-  // height: 100%;
-  // display: flex !important;
-  // flex-direction: column !important;
-  // justify-content: space-between;
-}
+// mat-sidenav-content {
+//   display: flex !important;
+//   flex-direction: column;
+//   overflow:hidden;
+//   height: 100%;
+// }
+
+// mat-sidenav-content > * {
+//   flex: 2 2 auto;
+// }
+
+// app-media-player {
+//   flex: 0 0 200px;
+// }
 
 /* Top element in main content, make it always appear on-top. */
 // mat-sidenav-content mat-toolbar {
@@ -844,38 +852,6 @@ mat-card-footer {
 //   --edited-demo-height: 60%;
 // }
 
-@media all and (display-mode: standalone) {
-  .title-bar {
-    background-color: #212121;
-    position: fixed;
-    left: env(titlebar-area-x, 0);
-    top: env(titlebar-area-y, 0);
-    height: env(titlebar-area-height, 0px);
-    width: env(titlebar-area-width, 100%);
-    z-index: 10000;
-  }
-
-  // .title-bar {
-  //   left: 0;
-  //   top: 0;
-  //   height: env(titlebar-area-height, 0px);
-  //   width: 100%;
-  //   z-index: 10000;
-  // }
-
-  .title-bar-default {
-    width: 100%;
-    height: env(titlebar-area-height, 0px);
-    -webkit-app-region: drag;
-  }
-
-  // .sidenav-container,
-  // .sidenav-right,
-  // .sidenav {
-  //   top: env(titlebar-area-height, 0px) !important;
-  // }
-}
-
 // This was a test to see if possible to use 'window-controls-overlay'.
 // @media all and (display-mode: window-controls-overlay) {
 //   .title-bar {
@@ -920,8 +896,21 @@ mat-card-footer {
   width: 100%;
 }
 
-// .example-viewport {
-//   flex: 1;
-//   min-height: 200px;
-//   height: 100%;
-// }
+.title-bar {
+  display: none;
+}
+
+@media (display-mode: window-controls-overlay) {
+  .title-bar {
+    -webkit-app-region: drag;
+    flex: 0 0 33px;
+    display: flex;
+    flex-direction: row;
+    background-color: #212121;
+    left: env(titlebar-area-x, 0);
+    top: env(titlebar-area-y, 0);
+    height: env(titlebar-area-height, 33px);
+    width: env(titlebar-area-width, 100%);
+    z-index: 10000;
+  }
+}

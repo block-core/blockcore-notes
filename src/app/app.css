@@ -6,16 +6,28 @@
   /* height: 80%; */
 }
 
-/* .logo-icon img {
-  height: 60%;
+.logo-icon-title-bar {
+  cursor: pointer;
+  -webkit-app-region: drag;
+  margin: 4px;
+  display: none;
+  flex: 0 0 24px;
 }
 
-.logo-icon div {
-  font-size: 0.8em;
-  margin-left: 1em;
-} */
+@media screen and (max-height: 200px) {
+  .logo-icon-title-bar {
+    display: inline;
+  }
 
-.sidenav {
+  .logo-icon {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .logo-icon-title-bar {
+    display: inline;
+  }
 }
 
 .sidenav-small .mat-icon {
