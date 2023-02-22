@@ -88,6 +88,12 @@ export class CircleService {
   }
 
   async delete(id: number) {
+    const index = this.circles.findIndex((c) => c.id == id);
+
+    if (index > -1) {
+      this.circles.splice(index, 1);
+    }
+
     await this.db.storage.deleteCircle(id);
   }
 }
