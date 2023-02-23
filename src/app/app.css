@@ -235,3 +235,28 @@ header {
 .search-result-option span {
   margin-right: 0.4em;
 }
+
+.mat-drawer-content {
+  overflow: hidden;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.app-outlet {
+  flex: 2 2 auto;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.app-mediaplayer {
+  flex-basis: 96px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  box-sizing: border-box;
+}

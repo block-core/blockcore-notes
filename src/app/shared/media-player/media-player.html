@@ -90,11 +90,11 @@
     </div>
   </div>
 
-  <div class="floating-maximize" *ngIf="!miniplayer">
+  <!-- <div class="floating-maximize" *ngIf="!miniplayer">
     <button *ngIf="maximized" (click)="maximized = false" class="hide-small" mat-icon-button>
       <mat-icon>open_in_full</mat-icon>
     </button>
-  </div>
+  </div> -->
 
   <div class="media-audio" *ngIf="!maximized && media.videoMode">
     <div class="media-audio-container">
@@ -104,12 +104,12 @@
       <button *ngIf="expanded" (click)="expanded = false" class="hide-small" mat-icon-button>
         <mat-icon>expand_more</mat-icon>
       </button>
-      <button *ngIf="!maximized" (click)="maximized = true" class="hide-small" mat-icon-button>
+      <!-- <button *ngIf="!maximized" (click)="maximized = true" class="hide-small" mat-icon-button>
         <mat-icon>open_in_full</mat-icon>
       </button>
       <button *ngIf="maximized" (click)="maximized = false" class="hide-small" mat-icon-button>
         <mat-icon>open_in_full</mat-icon>
-      </button>
+      </button> -->
       <!-- <button matTooltip="Zen mode" mat-icon-button (click)="minimize()">
         <mat-icon>self_improvement</mat-icon>
       </button> -->

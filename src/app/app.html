@@ -184,8 +184,12 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <router-outlet></router-outlet>
-      <app-media-player *ngIf="options.values.showMediaPlayer"></app-media-player>
+      <div class="app-content">
+        <div class="app-outlet">
+          <router-outlet></router-outlet>
+        </div>
+        <app-media-player class="app-mediaplayer" *ngIf="options.values.showMediaPlayer"></app-media-player>
+      </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
