@@ -1,6 +1,6 @@
 <div class="full-page">
   <mat-tab-group>
-    <mat-tab>
+    <!-- <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">dns</mat-icon>
         <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Relays</span>
@@ -9,55 +9,7 @@
         <div class="page">
           <app-relays [relays]="relayService.items2"></app-relays>
 
-          <!-- <mat-accordion class="example-headers-align" multi>
-          <mat-expansion-panel *ngFor="let relay of relayService.relays">
-            <mat-expansion-panel-header>
-              <mat-panel-title [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">{{ relay.metadata.nip11?.name }}</mat-panel-title>
-              <mat-panel-description>
-                <span class="hide-small" [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">{{ relay.url }}</span>
-                <span>
-                  <span class="hide-small" *ngIf="!relay.metadata.enabled">Disabled</span>
-                  <span class="hide-small" *ngIf="relay.metadata.profile">Profile</span>
-                  <span class="hide-small" *ngIf="relay.metadata.write">Write</span>
-                  <span class="hide-small" *ngIf="relay.metadata.read">Read</span>
-                  <span class="hide-small" *ngIf="relay.metadata.public">Public</span>
-                  <mat-icon class="online" [ngClass]="['relay-status-' + relay.status, relay.metadata.enabled ? 'relay-enabled' : 'relay-disabled', relay.metadata.read ? 'relay-read' : 'relay-read-disabled']">radio_button_checked</mat-icon>
-                </span>
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <div *ngIf="relay.metadata.error" class="error">{{ relay.metadata.error }}</div>
-            <div *ngIf="relay.metadata.nip11">
-              <h2 *ngIf="relay.metadata.nip11?.name">{{ relay.metadata.nip11?.name }}</h2>
-              {{ relay.metadata.nip11.description }}<br /><br />
-              <span class="dimmed">
-                NIPs: {{ relay.metadata.nip11.supported_nips }}<br />
-                Software: {{ relay.metadata.nip11.software }} ({{ relay.metadata.nip11.version }})<br />
-                <span class="wrap"> ID: {{ relay.metadata.nip11.pubkey }}</span></span
-              >
-              <div>Subscriptions Count : {{ relay.subscriptions.length }}</div>
-            </div>
-            <mat-card class="relay-options mat-elevation-z8">
-              <mat-card-header>
-                <mat-card-title>Relay Options</mat-card-title>
-                <mat-card-subtitle>Control if this relay is used for reading, writing and if it should be part of your public relay list. Additionally you can keep the relay in your list but disable it to not use.</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content
-                ><br />
-                <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.metadata.enabled">Enabled</mat-slide-toggle>
-                <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.metadata.profile">Write Profile/Following</mat-slide-toggle>
-                <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.metadata.write">Write</mat-slide-toggle>
-                <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.metadata.read">Read</mat-slide-toggle>
-                <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.metadata.public">Public</mat-slide-toggle>
-              </mat-card-content>
-            </mat-card>
-            <button class="relay-button" [disabled]="optionsService.values.primaryRelay == relay.url" mat-raised-button color="primary" (click)="primaryRelay(relay)">Primary Relay</button>&nbsp;
-            <button class="relay-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">Delete</button>
-          </mat-expansion-panel>
-        </mat-accordion> -->
-
           <div class="settings-action-buttons">
-            <!-- <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
-          <br /> -->
             <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
             <br />
             <button mat-flat-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button> <button mat-flat-button (click)="dataService.publishRelays()">Publish relay (NIP-65) list</button><br /><br />
@@ -65,7 +17,7 @@
           </div>
         </div>
       </ng-template>
-    </mat-tab>
+    </mat-tab> -->
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">settings_applications</mat-icon>

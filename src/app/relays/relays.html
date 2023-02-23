@@ -1,25 +1,24 @@
-<div class="full-page">
-  <div class="page">
-    <div class="options">
-      <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Options</mat-panel-title>
-            <mat-panel-description></mat-panel-description>
-          </mat-expansion-panel-header>
+<div class="feed-page">
+  <div class="options">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Options</mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
 
-          <div class="settings-action-buttons">
-            <!-- <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
+        <div class="settings-action-buttons">
+          <!-- <button mat-stroked-button (click)="toggle()"><span *ngIf="!open">Expand All</span><span *ngIf="open">Collapse All</span></button>
           <br /> -->
-            <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
-            <br />
-            <button mat-stroked-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button> <button mat-stroked-button (click)="dataService.publishRelays()">Publish relay (NIP-65) list</button><br /><br />
-            <button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
-
-    <app-relays [relays]="relayService.items2"></app-relays>
+          <button mat-flat-button color="primary" (click)="getRelays()">Append from extension</button><button mat-flat-button color="primary" (click)="getDefaultRelays()">Append from app</button>
+          <br />
+          <button mat-stroked-button (click)="dataService.publishContactsAndRelays()">Publish relay (and following) list</button> <button mat-stroked-button (click)="dataService.publishRelays()">Publish relay (NIP-65) list</button
+          ><br /><br />
+          <button mat-flat-button color="warn" (click)="deleteRelays()">Delete all relays</button>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
+
+  <app-relays [relays]="relayService.items2"></app-relays>
 </div>
