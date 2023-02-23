@@ -1,0 +1,20 @@
+.badge-card {
+  max-width: 512px;
+}
+
+.badge-header {
+  margin-bottom: 1em;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1em;
+}
+
+.badge-card button {
+  margin-right: 1em;
+  margin-bottom: 1em;
+}
