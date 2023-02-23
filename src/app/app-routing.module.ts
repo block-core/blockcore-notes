@@ -28,6 +28,7 @@ import { ConnectKeyComponent } from './connect/key/key';
 import { EditorComponent } from './editor/editor';
 import { ArticleComponent } from './article/article';
 import { RelaysManagementComponent } from './relays/relays';
+import { BadgesComponent } from './badges/badges';
 
 const routes: Routes = [
   {
@@ -121,6 +122,14 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'badges/:id',
+    component: BadgesComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

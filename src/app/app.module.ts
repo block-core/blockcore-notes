@@ -125,6 +125,7 @@ import { ArticleComponent } from './article/article';
 import { LabelPipe } from './shared/label.pipe';
 import { LabelComponent } from './shared/label/label';
 import { RelaysManagementComponent } from './relays/relays';
+import { BadgesComponent } from './badges/badges';
 
 @NgModule({
   declarations: [
@@ -202,7 +203,8 @@ import { RelaysManagementComponent } from './relays/relays';
     ArticleComponent,
     LabelComponent,
     LabelPipe,
-    RelaysManagementComponent
+    RelaysManagementComponent,
+    BadgesComponent,
   ],
   imports: [
     AboutModule,

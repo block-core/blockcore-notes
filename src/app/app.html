@@ -171,9 +171,13 @@
           <mat-icon>edit</mat-icon>
           <span>Edit profile</span>
         </a>
+        <a [routerLink]="['/badges', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>badge</mat-icon>
+          <span>Badges</span>
+        </a>
         <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>settings</mat-icon>
-          <span *ngIf="displayLabels">Settings</span>
+          <span>Settings</span>
         </a>
         <a [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>help_outline</mat-icon>
