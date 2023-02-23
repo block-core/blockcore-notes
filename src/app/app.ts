@@ -21,7 +21,6 @@ import { SearchService } from './services/search';
 import { FormControl } from '@angular/forms';
 import { CircleService } from './services/circle';
 import { StorageService } from './services/storage';
-import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UIService } from './services/ui';
 import { OptionsService } from './services/options';
@@ -252,11 +251,5 @@ export class AppComponent {
     // await this.storage.putProfile('123', { about: 'Hi', name: 'Name', picture: '' });
     // const testdata = await this.storage.get('123', 'profile');
     // console.log(testdata);
-  }
-
-  openImportSheet(data: any): void {
-    this.bottomSheet.open(ImportSheet, {
-      data: data,
-    });
   }
 }

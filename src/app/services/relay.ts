@@ -12,7 +12,6 @@ import { ProfileService } from './profile';
 import { Utilities } from './utilities';
 import { v4 as uuidv4 } from 'uuid';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { ImportSheet } from '../shared/import-sheet/import-sheet';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { NostrService } from './nostr';
@@ -401,13 +400,7 @@ export class RelayService {
     // this.items2 = [];
   }
 
-  openImportSheet(data: any): void {
-    this.bottomSheet.open(ImportSheet, {
-      data: data,
-    });
-  }
-
-  currentDisplayedContacts: any;
+  // currentDisplayedContacts: any;
 
   async processEvent(response: RelayResponse) {
     const originalEvent = response.data;
@@ -506,15 +499,14 @@ export class RelayService {
           this.profileService.followingAndRelays(event.pubkey, following, event.content);
 
           existingContacts = event;
-        }
 
-        const following = await this.db.storage.getProfilesByStatusCount(ProfileStatus.Follow);
+          // const following = await this.db.storage.getProfilesByStatusCount(ProfileStatus.Follow);
 
-        if (following == 0) {
+          // if (following == 0) {
           // If we have already imported a newer, ignore the rest of the code.
-          if (this.currentDisplayedContacts && this.currentDisplayedContacts.created_at >= existingContacts.created_at) {
-            return;
-          }
+          // if (this.currentDisplayedContacts && this.currentDisplayedContacts.created_at >= existingContacts.created_at) {
+          //   return;
+          // }
 
           const pubkeys = existingContacts.tags.map((t: any[]) => t[1]);
           const dialogData: any = { pubkeys: pubkeys, pubkey: pubkey, relays: [], relaysCount: 0 };
@@ -526,10 +518,32 @@ export class RelayService {
 
           // If there are no following in the file, skip.
           if (dialogData.pubkeys.length > 0 || dialogData.relaysCount > 0) {
-            this.currentDisplayedContacts = existingContacts;
-            this.openImportSheet(dialogData);
+            // this.currentDisplayedContacts = existingContacts;
+
+            if (dialogData.relaysCount > 0) {
+              const relayUrls = this.utilities.getRelayUrls(dialogData.relays);
+
+              await this.deleteRelays(relayUrls);
+              await this.appendRelays(dialogData.relays);
+            }
+
+            const following = dialogData.pubkeys;
+
+            for (let i = 0; i < following.length; i++) {
+              const publicKey = following[i];
+
+              // Only follow if we're not already following.
+              if (!this.profileService.isFollowing(publicKey)) {
+                console.log('Add follow to ' + publicKey);
+                this.profileService.follow(publicKey);
+              }
+            }
+
+            // this.openImportSheet(dialogData);
           }
         }
+
+        // }
 
         // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
         // if (this.discoveredProfileDate < data.created_at) {

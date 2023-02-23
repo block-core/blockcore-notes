@@ -204,51 +204,20 @@ export class DataService {
   }
 
   async initialDataLoad() {
+    // Listen to profile and contacts of the logged on user.
+    this.relayService.subscribe([{ authors: [this.appState.getPublicKey()], kinds: [Kind.Metadata, Kind.Contacts] }], 'self');
+
     // Download the profile of the user.
-    this.enque({
-      identifier: this.appState.getPublicKey(),
-      type: 'Profile',
-      // callback: (data: any) => {
-      //   // This call back is only called if we found a newer profile than already exists.
-      //   // So when this happens, we'll show the import sheet.
-      //   console.log(data);
-      //   debugger;
+    // this.enque({
+    //   identifier: this.appState.getPublicKey(),
+    //   type: 'Profile',
+    // });
 
-      //   this.openImportSheet();
-
-      //   // if (!this.profileService.profile?.following || this.profileService.profile?.following.length === 0) {
-
-      //   // }
-      // },
-    });
-
-    // Download the following of the user.
-    this.enque({
-      identifier: this.appState.getPublicKey(),
-      type: 'Contacts',
-      // callback: (data: any) => {
-      //   // TODO: MIGRATE THIS LOGIC!!
-      //   // The callback is called for all contacts lists, not just the one we call for.
-      //   // if (data.pubkey !== this.appState.getPublicKey()) {
-      //   //   return;
-      //   // }
-      //   // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
-      //   // if (this.discoveredProfileDate < data.created_at) {
-      //   //   this.discoveredProfileDate = data.created_at;
-      //   //   const following = this.profileService.profile?.following;
-      //   //   const pubkeys = data.tags.map((t: any[]) => t[1]);
-      //   //   console.log('FOLLOWING:' + JSON.stringify(following));
-      //   //   if (!following) {
-      //   //     const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
-      //   //     if (data.content) {
-      //   //       dialogData.relays = JSON.parse(data.content);
-      //   //       dialogData.relaysCount = Object.keys(dialogData.relays).length;
-      //   //     }
-      //   //     this.openImportSheet(dialogData);
-      //   //   }
-      //   // }
-      // },
-    });
+    // // Download the following of the user.
+    // this.enque({
+    //   identifier: this.appState.getPublicKey(),
+    //   type: 'Contacts',
+    // });
 
     // Create the listeners (filters) for relays:
     // TODO: There is limit on maximum following, we need a strategy to handle that.
@@ -551,47 +520,47 @@ export class DataService {
       .pipe(mergeMap((relay) => this.downloadFromRelay(query, relay)));
   }
 
-  subscribeLatestEvents(kinds: number[], pubkeys: string[], limit: number) {
-    // Make individual filters on the subscription so we will get limit for each individual pubkey.
-    let filters: Filter[] = pubkeys.map((a) => {
-      return { kinds: kinds, limit: limit, authors: [a] };
-    });
+  // subscribeLatestEvents(kinds: number[], pubkeys: string[], limit: number) {
+  //   // Make individual filters on the subscription so we will get limit for each individual pubkey.
+  //   let filters: Filter[] = pubkeys.map((a) => {
+  //     return { kinds: kinds, limit: limit, authors: [a] };
+  //   });
 
-    if (filters.length === 0) {
-      filters = [{ kinds: kinds, limit: limit }];
-    }
+  //   if (filters.length === 0) {
+  //     filters = [{ kinds: kinds, limit: limit }];
+  //   }
 
-    return this.connected$.pipe(mergeMap(() => this.relayService.connectedRelays())).pipe(mergeMap((relay) => this.subscribeToRelay(filters, relay)));
-  }
+  //   return this.connected$.pipe(mergeMap(() => this.relayService.connectedRelays())).pipe(mergeMap((relay) => this.subscribeToRelay(filters, relay)));
+  // }
 
-  subscribeToRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
-    return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
-      const sub = relay.sub(filters, {}) as NostrSubscription;
-      // relay.subscriptions.push(sub);
+  // subscribeToRelay(filters: Filter[], relay: NostrRelay): Observable<NostrEventDocument> {
+  //   return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
+  //     const sub = relay.sub(filters, {}) as NostrSubscription;
+  //     // relay.subscriptions.push(sub);
 
-      sub.on('event', (originalEvent: any) => {
-        const event = this.eventService.processEvent(originalEvent);
+  //     sub.on('event', (originalEvent: any) => {
+  //       const event = this.eventService.processEvent(originalEvent);
 
-        if (!event) {
-          return;
-        }
+  //       if (!event) {
+  //         return;
+  //       }
 
-        observer.next(event);
-      });
+  //       observer.next(event);
+  //     });
 
-      sub.on('eose', () => {});
+  //     sub.on('eose', () => {});
 
-      return () => {
-        console.log('subscribeToRelay:finished:unsub');
-        // When the observable is finished, this return function is called.
-        sub.unsub();
-        // const subIndex = relay.subscriptions.findIndex((s) => s == sub);
-        // if (subIndex > -1) {
-        //   relay.subscriptions.splice(subIndex, 1);
-        // }
-      };
-    });
-  }
+  //     return () => {
+  //       console.log('subscribeToRelay:finished:unsub');
+  //       // When the observable is finished, this return function is called.
+  //       sub.unsub();
+  //       // const subIndex = relay.subscriptions.findIndex((s) => s == sub);
+  //       // if (subIndex > -1) {
+  //       //   relay.subscriptions.splice(subIndex, 1);
+  //       // }
+  //     };
+  //   });
+  // }
 
   downloadFromRelay(filters: Filter[], relay: NostrRelay, requestTimeout = 10000): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {

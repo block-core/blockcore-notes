@@ -84,7 +84,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FollowingComponent } from './following/following';
 import { FollowersComponent } from './followers/followers';
 import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
-import { ImportSheet } from './shared/import-sheet/import-sheet';
 import { EventButtonsComponent } from './shared/event-buttons/event-buttons';
 import { UserItemComponent } from './shared/user-item/user-item.component';
 import { UserProfileComponent } from './shared/user-profile/user-profile.component';
@@ -169,7 +168,6 @@ import { LabelComponent } from './shared/label/label';
     FollowingComponent,
     FollowersComponent,
     ProfileWidgetComponent,
-    ImportSheet,
     EventButtonsComponent,
     UserItemComponent,
     UserProfileComponent,
