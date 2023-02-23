@@ -27,6 +27,7 @@ import { FeedPrivateComponent } from './feed-private/feed-private';
 import { ConnectKeyComponent } from './connect/key/key';
 import { EditorComponent } from './editor/editor';
 import { ArticleComponent } from './article/article';
+import { RelaysManagementComponent } from './relays/relays';
 
 const routes: Routes = [
   {
@@ -216,6 +217,14 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'relays',
+    component: RelaysManagementComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

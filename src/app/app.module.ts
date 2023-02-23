@@ -124,6 +124,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ArticleComponent } from './article/article';
 import { LabelPipe } from './shared/label.pipe';
 import { LabelComponent } from './shared/label/label';
+import { RelaysManagementComponent } from './relays/relays';
 
 @NgModule({
   declarations: [
@@ -201,6 +202,7 @@ import { LabelComponent } from './shared/label/label';
     ArticleComponent,
     LabelComponent,
     LabelPipe,
+    RelaysManagementComponent
   ],
   imports: [
     AboutModule,

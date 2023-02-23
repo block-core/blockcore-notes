@@ -111,9 +111,9 @@
           <mat-icon>construction</mat-icon>
           <span *ngIf="displayLabels">Development</span>
         </a> -->
-        <a [routerLink]="['/settings']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
-          <mat-icon>settings</mat-icon>
-          <span *ngIf="displayLabels">Settings</span>
+        <a [routerLink]="['/relays']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>dns</mat-icon>
+          <span *ngIf="displayLabels">Relays</span>
         </a>
         <a mat-menu-item (click)="toggleMenuSize()">
           <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
@@ -170,6 +170,10 @@
         <a [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>edit</mat-icon>
           <span>Edit profile</span>
+        </a>
+        <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>settings</mat-icon>
+          <span *ngIf="displayLabels">Settings</span>
         </a>
         <a [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>help_outline</mat-icon>
