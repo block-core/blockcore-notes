@@ -1,0 +1,68 @@
+<div class="connect-container">
+  <div class="connect-menu">
+    <a routerLink="/connect"><img class="connect-logo" width="128" height="128" src="assets/icons/icon-256x256.webp" /></a>
+    <div class="logo-text"><span class="hide-tiny">Blockcore</span> Notes</div>
+    <div class="connect-spacer"></div>
+    <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="theme-toggle">
+      <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode" : "light_mode" }}</mat-icon>
+    </button>
+  </div>
+  <div class="connect-content">
+    <mat-card class="card first-card">
+      <mat-card-content>
+        <h1>Log in</h1>
+        <p>If you already have an existing Nostr profile, you can restore it on Notes with these options.</p>
+        <button class="start-button full-button" (click)="connect()" mat-flat-button color="accent">Connect using extension</button>
+        <div class="description">
+          Good security. Requires the Nostr extension to be installed, like <a href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank">Blockcore Wallet</a>
+        </div>
+        <button disabled="disabled" class="start-button full-button" mat-flat-button color="accent">Nostr connect (Coming soon)</button>
+        <div class="description">Great security. Use an app like <a href="https://github.com/nostr-connect/nostrum" target="_blank">Nostrum</a></div>
+        <button class="start-button full-button" routerLink="/connect/key" mat-flat-button color="accent">Private Key</button>
+        <div class="description">Enter a private key or recovery phrase. Stored encrypted with password. Less secure option.</div>
+        <button class="start-button full-button" (click)="readOnlyLogin = !readOnlyLogin" mat-flat-button color="accent">Public Key</button>
+        <div class="description">Very secure. Enter a public key for read-only login.</div>
+        <div *ngIf="readOnlyLogin">
+          <div>
+            <div>
+              <p>Just paste your (or someone else's) Nostr public key (npub) here:</p>
+              <mat-form-field appearance="fill" class="input-full-width">
+                <mat-icon class="circle" matPrefix>person_add</mat-icon>
+                <mat-label>Public Key</mat-label>
+                <input matInput type="text" [(ngModel)]="readOnlyKey" />
+              </mat-form-field>
+              <div><button class="skip-button" (click)="anonymous(readOnlyKey)" color="primary" mat-raised-button>Connect (read-only)</button></div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- <mat-card class="card warn">
+      <mat-card-content>
+       
+          <button class="start-button start-button-consent" *ngIf="consent" (click)="connect()" mat-flat-button>Connect using extension</button><br /><br />
+
+          <button class="start-button start-button-consent" *ngIf="consent" (click)="readOnlyLogin = !readOnlyLogin" mat-flat-button>Connect using public key (read only)</button><br /><br />
+
+          <div *ngIf="readOnlyLogin">
+            <div>
+              <div>
+                <p>Just paste your (or someone else's) Nostr public key (npub) here:</p>
+                <mat-form-field appearance="fill" class="input-full-width">
+                  <mat-icon class="circle" matPrefix>person_add</mat-icon>
+                  <mat-label>Public Key</mat-label>
+                  <input matInput type="text" [(ngModel)]="readOnlyKey" />
+                </mat-form-field>
+                <div><button class="skip-button" (click)="anonymous(readOnlyKey)" color="primary" mat-raised-button>Connect (read-only)</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!consent" class="consent-required warn">You must agree with the notice below to enable login.</div>
+          <br />
+        </div>
+      </mat-card-content>
+    </mat-card> -->
+  </div>
+</div>

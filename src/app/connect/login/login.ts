@@ -2,15 +2,16 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
 import { relayInit, Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
+import { AuthenticationService } from 'src/app/services/authentication';
 import { SecurityService } from 'src/app/services/security';
 import { ThemeService } from 'src/app/services/theme';
 
 @Component({
-  selector: 'app-key',
-  templateUrl: './key.html',
-  styleUrls: ['../connect.css', './key.css'],
+  selector: 'app-login',
+  templateUrl: './login.html',
+  styleUrls: ['../connect.css', './login.css'],
 })
-export class ConnectKeyComponent {
+export class LoginComponent {
   privateKey: string = '';
   privateKeyHex: string = '';
 
@@ -19,10 +20,28 @@ export class ConnectKeyComponent {
 
   password: string = '';
   error: string = '';
+  readOnlyLogin = false;
+  readOnlyKey = 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m';
 
   // hidePrivateKey = false;
 
-  constructor(public theme: ThemeService, private router: Router, private security: SecurityService) {}
+  constructor(private authService: AuthenticationService, public theme: ThemeService, private router: Router, private security: SecurityService) {}
+
+  async connect() {
+    const userInfo = await this.authService.login();
+
+    if (userInfo.authenticated()) {
+      this.router.navigateByUrl('/');
+    }
+  }
+
+  async anonymous(readOnlyKey?: string) {
+    const userInfo = await this.authService.anonymous(readOnlyKey);
+
+    if (userInfo.authenticated()) {
+      this.router.navigateByUrl('/');
+    }
+  }
 
   async persistKey() {
     // this.hidePrivateKey = true;

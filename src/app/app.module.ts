@@ -126,6 +126,8 @@ import { LabelPipe } from './shared/label.pipe';
 import { LabelComponent } from './shared/label/label';
 import { RelaysManagementComponent } from './relays/relays';
 import { BadgesComponent } from './badges/badges';
+import { LoginComponent } from './connect/login/login';
+import { ConsentDialog } from './connect/consent-dialog/consent-dialog';
 
 @NgModule({
   declarations: [
@@ -205,6 +207,8 @@ import { BadgesComponent } from './badges/badges';
     LabelPipe,
     RelaysManagementComponent,
     BadgesComponent,
+    LoginComponent,
+    ConsentDialog
   ],
   imports: [
     AboutModule,

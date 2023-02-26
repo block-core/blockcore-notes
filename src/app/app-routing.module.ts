@@ -29,6 +29,7 @@ import { EditorComponent } from './editor/editor';
 import { ArticleComponent } from './article/article';
 import { RelaysManagementComponent } from './relays/relays';
 import { BadgesComponent } from './badges/badges';
+import { LoginComponent } from './connect/login/login';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
   {
     path: 'connect/key',
     component: ConnectKeyComponent,
+  },
+  {
+    path: 'connect/login',
+    component: LoginComponent,
   },
   {
     path: 'feed',

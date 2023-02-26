@@ -1,10 +1,13 @@
 import { ChangeDetectorRef, NgZone } from '@angular/core';
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { AuthenticationService } from '../services/authentication';
 import { RelayService } from '../services/relay';
+import { ThemeService } from '../services/theme';
 import { Utilities } from '../services/utilities';
+import { ConsentDialog } from './consent-dialog/consent-dialog';
 
 @Component({
   selector: 'app-connect',
@@ -18,26 +21,47 @@ export class ConnectComponent {
   readOnlyLogin = false;
 
   constructor(
+    public theme: ThemeService,
     private appState: ApplicationState,
     private cd: ChangeDetectorRef,
     private relayService: RelayService,
     private authService: AuthenticationService,
     private utilities: Utilities,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    public dialog: MatDialog
   ) {}
 
   persist() {
     localStorage.setItem('blockcore:notes:nostr:consent', this.consent.toString());
   }
 
-  async connect() { 
-    if (!this.consent) {
-      const element = document.getElementById('consent-card');
-      // document.body.scroll(0, 5000);
-      element!.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
-      return;
-    }
+  giveConsent() {
+    const dialogRef = this.dialog.open(ConsentDialog, {
+      data: false,
+      maxWidth: '100vw',
+      panelClass: 'full-width-dialog',
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (!result) {
+        return;
+      }
+
+      if (result === true) {
+        this.consent = true;
+        this.persist();
+      }
+    });
+  }
+
+  async connect() {
+    // if (!this.consent) {
+    //   const element = document.getElementById('consent-card');
+    //   // document.body.scroll(0, 5000);
+    //   element!.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+    //   return;
+    // }
 
     const userInfo = await this.authService.login();
 
