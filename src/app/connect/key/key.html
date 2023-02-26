@@ -43,7 +43,7 @@
         <p>Having a strong password (we allow empty) is adviced, as this will be used to protect your private key using encryption when you are not using Blockcore Notes.</p>
         <br />
 
-        <p *ngIf="mnemonic">Your personal private key:<br>{{ privateKey }}</p>
+        <p class="wrap" *ngIf="mnemonic">Your personal private key:<br>{{ privateKey }}</p>
         <div *ngIf="!mnemonic">
           <mat-form-field appearance="fill" class="input-full-width connect-input">
             <mat-icon class="circle" matPrefix>person_add</mat-icon>
