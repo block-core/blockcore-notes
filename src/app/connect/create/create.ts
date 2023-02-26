@@ -1,31 +1,48 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { base64 } from '@scure/base';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
+import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06, Kind, getEventHash, validateEvent, signEvent } from 'nostr-tools';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
+import { ProfileService } from '../../services/profile';
+import { Utilities } from 'src/app/services/utilities';
+import { DataService } from 'src/app/services/data';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.html',
-  styleUrls: ['../connect.css', './login.css'],
+  selector: 'app-create',
+  templateUrl: './create.html',
+  styleUrls: ['../connect.css', './create.css'],
 })
-export class LoginComponent {
+export class CreateProfileComponent {
   privateKey: string = '';
   privateKeyHex: string = '';
-
   publicKey: string = '';
   publicKeyHex: string = '';
-
   password: string = '';
   error: string = '';
-  readOnlyLogin = false;
-  readOnlyKey = 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m';
+  profile: any = {};
+  step = 1;
+  mnemonic = '';
 
-  // hidePrivateKey = false;
+  constructor(
+    private utilities: Utilities,
+    private dataService: DataService,
+    private profileService: ProfileService,
+    private authService: AuthenticationService,
+    public theme: ThemeService,
+    private router: Router,
+    private security: SecurityService
+  ) {}
 
-  constructor(private authService: AuthenticationService, public theme: ThemeService, private router: Router, private security: SecurityService) {}
+  ngOnInit() {
+    // this.mnemonic = bip39.generateMnemonic(wordlist);
+    this.mnemonic = nip06.generateSeedWords();
+    this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
+    this.privateKey = nip19.nsecEncode(this.privateKeyHex);
+
+    this.updatePublicKey();
+    // const masterSeed = bip39.mnemonicToSeedSync(this.mnemonic);
+  }
 
   async connect() {
     const userInfo = await this.authService.login();
@@ -44,8 +61,6 @@ export class LoginComponent {
   }
 
   async persistKey() {
-    // this.hidePrivateKey = true;
-
     setTimeout(async () => {
       if (!this.privateKeyHex) {
         return;
@@ -62,6 +77,33 @@ export class LoginComponent {
       if (this.privateKeyHex == decrypted) {
         localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
         localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);
+
+        this.profile.npub = this.publicKey;
+        this.profile.pubkey = this.publicKeyHex;
+
+        // Create and sign the profile event.
+        const profileContent = this.utilities.reduceProfile(this.profile!);
+        let unsignedEvent = this.dataService.createEventWithPubkey(Kind.Metadata, JSON.stringify(profileContent), this.publicKeyHex);
+        let signedEvent = unsignedEvent as Event;
+        signedEvent.id = await getEventHash(unsignedEvent);
+
+        if (!validateEvent(signedEvent)) {
+          this.error = 'Unable to validate the event. Cannot continue.';
+        }
+
+        const signature = signEvent(signedEvent, this.privateKeyHex) as any;
+        signedEvent.sig = signature;
+
+        // Make sure we reset the secrets.
+        this.mnemonic = '';
+        this.privateKey = '';
+        this.privateKeyHex = '';
+        this.publicKey = '';
+        this.publicKeyHex = '';
+        this.password = '';
+        this.profile = null;
+
+        this.profileService.newProfileEvent = signedEvent;
 
         this.router.navigateByUrl('/');
       } else {

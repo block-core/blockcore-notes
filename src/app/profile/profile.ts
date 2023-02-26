@@ -102,20 +102,22 @@ export class ProfileComponent {
   }
 
   async updateMetadata() {
-    const profileContent = this.utilities.reduceProfile(this.profile!);
+    await this.dataService.updateMetadata(this.profile!);
 
-    let event = this.dataService.createEvent(Kind.Metadata, JSON.stringify(profileContent));
+    // const profileContent = this.utilities.reduceProfile(this.profile!);
 
-    const signedEvent = await this.dataService.signEvent(event);
+    // let event = this.dataService.createEvent(Kind.Metadata, JSON.stringify(profileContent));
 
-    // await this.feedService.publish(event, false); // Don't persist this locally.
-    this.profile!.created_at = event.created_at;
+    // const signedEvent = await this.dataService.signEvent(event);
 
-    // Use the whole document for this update as we don't want to loose additional metadata we have, such
-    // as follow (on self).
-    await this.profileService.updateProfile(this.profile!.pubkey, this.profile!);
+    // // await this.feedService.publish(event, false); // Don't persist this locally.
+    // this.profile!.created_at = event.created_at;
 
-    await this.dataService.publishEvent(signedEvent);
+    // // Use the whole document for this update as we don't want to loose additional metadata we have, such
+    // // as follow (on self).
+    // await this.profileService.updateProfile(this.profile!.pubkey, this.profile!);
+
+    // await this.dataService.publishEvent(signedEvent);
 
     this.appState.navigateBack();
   }

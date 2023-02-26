@@ -8,6 +8,8 @@ import { CacheService } from './cache';
 import { dexieToRx } from '../shared/utilities';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
+import { DataService } from './data';
+import { Event, Kind } from 'nostr-tools';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +53,8 @@ export class ProfileService {
 
   /** Public key of muted profiles. */
   muted: string[] = [];
+
+  newProfileEvent?: Event;
 
   #followingChanged: BehaviorSubject<NostrProfileDocument[]> = new BehaviorSubject<NostrProfileDocument[]>(this.following);
 
@@ -512,7 +516,6 @@ export class ProfileService {
     profile.modified = now;
     profile.retrieved = now;
 
-    
     console.log('START PUT PROFILE', profile.name);
     // Put into cache and database.
     await this.putProfile(profile);

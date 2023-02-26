@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
 import { relayInit, Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
-import { SecurityService } from 'src/app/services/security';
-import { ThemeService } from 'src/app/services/theme';
+import { SecurityService } from '../../services/security';
+import { ThemeService } from '../../services/theme';
 
 @Component({
   selector: 'app-key',

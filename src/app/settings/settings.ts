@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
-import { Relay } from 'nostr-tools';
+import { nip19, Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate';
 import { StorageService } from '../services/storage';
 import { EventService } from '../services/event';
@@ -15,6 +15,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from '../services/data';
 import { NostrService } from '../services/nostr';
 import { UploadService } from '../services/upload';
+import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
+import { SecurityService } from '../services/security';
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-settings',
@@ -40,7 +43,8 @@ export class SettingsComponent {
     public theme: ThemeService,
     public db: StorageService,
     private snackBar: MatSnackBar,
-    public dataService: DataService
+    public dataService: DataService,
+    private security: SecurityService
   ) {}
 
   toggle() {
@@ -133,6 +137,8 @@ export class SettingsComponent {
         },
       },
     ];
+
+    this.hasPrivateKey = localStorage.getItem('blockcore:notes:nostr:prvkey') != null;
   }
 
   registerHandler(protocol: string, parameter: string) {
@@ -159,5 +165,88 @@ export class SettingsComponent {
 
       await this.relayService.appendRelay(result.url, result.read, result.write);
     });
+  }
+
+  hasPrivateKey = false;
+  verifiedWalletPassword?: boolean;
+  privateKey?: string;
+  qrCodePrivateKey?: string;
+
+  resetPrivateKey() {
+    this.privateKey = undefined;
+    this.qrCodePrivateKey = undefined;
+    this.verifiedWalletPassword = undefined;
+  }
+
+  ngOnDestroy() {
+    this.resetPrivateKey();
+  }
+
+  async exportPrivateKey() {
+    const dialogRef = this.dialog.open(PasswordDialog, {
+      data: { action: 'Unlock Private Key', password: '' },
+      maxWidth: '100vw',
+      panelClass: 'full-width-dialog',
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: PasswordDialogData) => {
+      if (!result) {
+        return;
+      }
+
+      let prvkeyEncrypted = localStorage.getItem('blockcore:notes:nostr:prvkey');
+
+      const prvkey = await this.security.decryptData(prvkeyEncrypted!, result.password);
+
+      if (!prvkey) {
+        this.verifiedWalletPassword = false;
+
+        this.snackBar.open(`Unable to decrypt data. Probably wrong password. Try again.`, 'Hide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+        });
+        return;
+      }
+
+      this.verifiedWalletPassword = true;
+
+      const privateKey = nip19.nsecEncode(prvkey);
+      this.privateKey = privateKey;
+
+      this.qrCodePrivateKey = await QRCode.toDataURL('nostr:' + this.privateKey, {
+        errorCorrectionLevel: 'L',
+        margin: 2,
+        scale: 5,
+      });
+    });
+
+    // this.verifiedWalletPassword = null;
+    // this.privateKey = null;
+    // const dialogRef = this.dialog.open(PasswordDialog, {
+    //   data: { password: null },
+    // });
+
+    // dialogRef.afterClosed().subscribe(async (result) => {
+    //   if (result === null || result === undefined || result === '') {
+    //     return;
+    //   }
+
+    //   this.verifiedWalletPassword = await this.walletManager.verifyWalletPassword(this.walletManager.activeWalletId, result);
+
+    //   if (this.verifiedWalletPassword === true) {
+    //     const network = this.identityService.getNetwork(this.walletManager.activeAccount.networkType);
+    //     const identityNode = this.identityService.getIdentityNode(this.walletManager.activeWallet, this.walletManager.activeAccount);
+
+    //     this.privateKey = this.cryptoUtility.convertToBech32(identityNode.privateKey, 'nsec');
+    //     console.log(secp.utils.bytesToHex(identityNode.privateKey));
+    //     //this.privateKey = secp.utils.bytesToHex(identityNode.privateKey);
+
+    //     this.qrCodePrivateKey = await QRCode.toDataURL('nostr:' + this.privateKey, {
+    //       errorCorrectionLevel: 'L',
+    //       margin: 2,
+    //       scale: 5,
+    //     });
+    //   }
   }
 }

@@ -1,0 +1,118 @@
+<div class="connect-container">
+  <div class="connect-menu mat-app-background">
+    <a routerLink="/connect"><img class="connect-logo" width="128" height="128" src="assets/icons/icon-256x256.webp" /></a>
+    <div class="logo-text"><span class="hide-tiny">Blockcore</span> Notes</div>
+    <div class="connect-spacer"></div>
+    <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="theme-toggle">
+      <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode" : "light_mode" }}</mat-icon>
+    </button>
+  </div>
+  <div class="connect-content">
+    <mat-card class="card" *ngIf="step == 1">
+      <mat-card-content>
+        <h1>Who are you?</h1>
+        <p>Add some (optional) basics about yourself. This information will be public.</p>
+        <p>
+          <mat-form-field appearance="outline" class="input-full-width">
+            <mat-icon matPrefix>badge</mat-icon>
+            <mat-label>Display Name</mat-label>
+            <input matInput type="text" [(ngModel)]="profile.display_name" />
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline" class="input-full-width">
+            <mat-icon matPrefix>alternate_email</mat-icon>
+            <mat-label>Nickname</mat-label>
+            <input matInput type="text" [(ngModel)]="profile.name" />
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline" class="input-full-width">
+            <mat-icon matPrefix>help_outline</mat-icon>
+            <mat-label>About</mat-label>
+            <textarea matInput type="text" [(ngModel)]="profile.about" rows="3"></textarea>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline" class="input-full-width">
+            <mat-icon matPrefix>image</mat-icon>
+            <mat-label>Profile Image</mat-label>
+            <input matInput type="text" [(ngModel)]="profile.picture" />
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field appearance="outline" class="input-full-width">
+            <mat-icon matPrefix>how_to_reg</mat-icon>
+            <mat-label>E-mail/Domain Identifier (NIP05)</mat-label>
+            <input matInput type="text" [(ngModel)]="profile.nip05" />
+          </mat-form-field>
+        </p>
+
+        <div class="connect-action">
+          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">Continue</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card" *ngIf="step == 2">
+      <mat-card-content>
+        <h1>Your secret recovery phrase</h1>
+
+        <p class="recovery-phrase">{{ mnemonic }}</p>
+        <br />
+
+        <button color="primary" mat-fab extended [cdkCopyToClipboard]="mnemonic">
+          <mat-icon>content_copy</mat-icon>
+          Copy
+        </button>
+        <br /><br />
+
+        <p class="dimmed">This is your private and secret sentence. You must store it safely, if you lose it, you will lose access to your account. Nobody can recover it for you.</p>
+        <p>Keep it safe, keep it hidden.</p>
+
+        <div class="connect-action">
+          <button class="start-button" (click)="step = 1" mat-raised-button color="primary">Back</button>
+          <button class="start-button" (click)="step = 3" mat-raised-button color="primary">Continue</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card" *ngIf="step == 3">
+      <mat-card-content>
+        <h1>Private and Public Keys</h1>
+
+        Your personal private key:<br />
+        <p>{{ privateKey }}</p>
+
+        <!-- <mat-form-field appearance="fill" class="input-full-width connect-input">
+          <mat-icon class="circle" matPrefix>person_add</mat-icon>
+          <mat-label>Private Key</mat-label>
+          <input (keyup)="updatePublicKey()" placeholder="nsec..." matInput type="password" [(ngModel)]="privateKey" />
+        </mat-form-field> -->
+
+        <form>
+          <mat-form-field appearance="fill" class="input-full-width connect-input">
+            <mat-icon class="circle" matPrefix>person_add</mat-icon>
+            <mat-label>Public Key</mat-label>
+            <input [readonly]="true" autocomplete="username" name="email" placeholder="npub..." matInput type="email" [(ngModel)]="publicKey" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="input-full-width connect-input">
+            <mat-icon class="circle" matPrefix>password</mat-icon>
+            <mat-label>Password (optional)</mat-label>
+            <input matInput type="password" autocomplete="current-password" name="password" [(ngModel)]="password" />
+          </mat-form-field>
+
+          <br />
+        </form>
+
+        <p class="dimmed">From your secret recovery phrase, your public key and private key are derived. Some Nostr clients require the private key to be imported.</p>
+
+        <div class="connect-action">
+          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">Back</button>
+          <button class="start-button" (click)="persistKey()" mat-raised-button color="primary">Save and Log In</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -30,6 +30,7 @@ import { ArticleComponent } from './article/article';
 import { RelaysManagementComponent } from './relays/relays';
 import { BadgesComponent } from './badges/badges';
 import { LoginComponent } from './connect/login/login';
+import { CreateProfileComponent } from './connect/create/create';
 
 const routes: Routes = [
   {
@@ -51,6 +52,10 @@ const routes: Routes = [
   {
     path: 'connect/login',
     component: LoginComponent,
+  },
+  {
+    path: 'connect/create',
+    component: CreateProfileComponent,
   },
   {
     path: 'feed',

@@ -102,6 +102,29 @@
       </ng-template>
       <ng-template matTabContent>
         <div class="page">
+          <mat-card *ngIf="hasPrivateKey">
+            <mat-card-header>
+              <mat-card-title>Export Private Key</mat-card-title>
+              <mat-card-subtitle>Keep this private key safe, if you loose it or share it with websites, it can be stolen and misused.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <button class="signup-button" mat-stroked-button (click)="exportPrivateKey()">Export Private Key</button>
+              <div class="selectable wrap" *ngIf="verifiedWalletPassword === true">
+                <br />Private key:
+                <p>
+                  {{ privateKey }}<button class="copy-button" mat-icon-button [cdkCopyToClipboard]="privateKey!">
+                    <mat-icon>content_copy</mat-icon>
+                  </button>
+                </p>
+                <p>
+                  <img [src]="qrCodePrivateKey" class="qr-code" />
+                </p>
+              </div>
+              <div *ngIf="verifiedWalletPassword === false">Invalid Password</div>
+              <button *ngIf="verifiedWalletPassword === true" class="signup-button" mat-flat-button color="warn" (click)="resetPrivateKey()">Hide</button>
+            </mat-card-content>
+          </mat-card>
+
           <!-- <p>
           <button mat-flat-button color="warn" (click)="clearProfileCache()">Clear Public Profile Cache</button>
         </p>
@@ -111,7 +134,7 @@
           <button mat-flat-button color="warn" (click)="clearNotesCache()">Clear Notes Cache</button>
         </p>
         <p *ngIf="wipedNotes">All cached notes data was cleared.</p> -->
-
+          <br />
           <p>
             <button mat-flat-button color="warn" (click)="db.clearAndReload()">Wipe Local Database</button>
           </p>

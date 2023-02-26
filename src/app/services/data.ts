@@ -562,6 +562,23 @@ export class DataService {
   //   });
   // }
 
+  async updateMetadata(profile: NostrProfileDocument) {
+    const profileContent = this.utilities.reduceProfile(profile!);
+
+    let event = this.createEvent(Kind.Metadata, JSON.stringify(profileContent));
+
+    const signedEvent = await this.signEvent(event);
+
+    // await this.feedService.publish(event, false); // Don't persist this locally.
+    profile!.created_at = event.created_at;
+
+    // Use the whole document for this update as we don't want to loose additional metadata we have, such
+    // as follow (on self).
+    await this.profileService.updateProfile(profile!.pubkey, profile!);
+
+    await this.publishEvent(signedEvent);
+  }
+
   downloadFromRelay(filters: Filter[], relay: NostrRelay, requestTimeout = 10000): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([...filters], {}) as NostrSubscription;
@@ -695,11 +712,15 @@ export class DataService {
 
   /** Creates an event ready for modification, signing and publish. */
   createEvent(kind: Kind | number, content: any): UnsignedEvent {
+    return this.createEventWithPubkey(kind, content, this.appState.getPublicKey());
+  }
+
+  createEventWithPubkey(kind: Kind | number, content: any, pubkey: string): UnsignedEvent {
     let event: UnsignedEvent = {
       kind: kind,
       created_at: Math.floor(Date.now() / 1000),
       content: content,
-      pubkey: this.appState.getPublicKey(),
+      pubkey: pubkey,
       tags: [],
     };
 

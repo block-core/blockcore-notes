@@ -31,6 +31,7 @@
     "@ng-matero/extensions": "^15.1.0",
     "@noble/secp256k1": "1.7.1",
     "@scure/base": "^1.1.1",
+    "@scure/bip39": "^1.1.1",
     "@twogate/ngx-photo-gallery": "^1.4.0",
     "@types/sharedworker": "^0.0.91",
     "dexie": "^3.2.3",

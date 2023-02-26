@@ -128,6 +128,8 @@ import { RelaysManagementComponent } from './relays/relays';
 import { BadgesComponent } from './badges/badges';
 import { LoginComponent } from './connect/login/login';
 import { ConsentDialog } from './connect/consent-dialog/consent-dialog';
+import { CreateProfileComponent } from './connect/create/create';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [
@@ -208,7 +210,8 @@ import { ConsentDialog } from './connect/consent-dialog/consent-dialog';
     RelaysManagementComponent,
     BadgesComponent,
     LoginComponent,
-    ConsentDialog
+    ConsentDialog,
+    CreateProfileComponent,
   ],
   imports: [
     AboutModule,
@@ -255,6 +258,7 @@ import { ConsentDialog } from './connect/consent-dialog/consent-dialog';
     MatButtonToggleModule,
     ScrollingModule,
     PhotoGalleryModule,
+    ClipboardModule,
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
     NgxMatTimepickerModule,

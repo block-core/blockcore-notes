@@ -202,7 +202,26 @@ export class AppComponent {
 
     await this.labelService.initialize();
 
-    this.appState.connected$.subscribe(() => {});
+    this.appState.connected$.subscribe(() => {
+      console.log('Connected to relay.. this can sometimes be triggered multiple times.');
+
+      if (this.profileService.newProfileEvent) {
+        // Wait for more relays to be connected.
+        setTimeout(async () => {
+          const profile = JSON.parse(this.profileService.newProfileEvent!.content);
+          profile.id = this.profileService.newProfileEvent?.id;
+          profile.pubkey = this.profileService.newProfileEvent?.pubkey;
+
+          // Use the whole document for this update as we don't want to loose additional metadata we have, such
+          // as follow (on self).
+          await this.profileService.updateProfile(profile.pubkey, profile);
+
+          await this.dataService.publishEvent(this.profileService.newProfileEvent!);
+
+          this.profileService.newProfileEvent = undefined;
+        }, 1000);
+      }
+    });
 
     // this.relayService.
 
