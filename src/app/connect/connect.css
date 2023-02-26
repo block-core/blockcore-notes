@@ -86,10 +86,6 @@
   padding-bottom: 1.4em;
 }
 
-.dimmer {
-  color: rgba(0, 0, 0, 0.45);
-}
-
 .connect-input {
   /* color: white !important; */
 }
@@ -225,4 +221,17 @@
     margin-top: 0.6em;
     font-size: 1.2em;
   }
+}
+
+.full-button {
+  width: 100%;
+  border-radius: 10px;
+  padding: 2em;
+}
+
+.description {
+  margin-top: 0.4em;
+  text-align: center;
+  font-size: 0.85em;
+  margin-bottom: 1.4em;
 }

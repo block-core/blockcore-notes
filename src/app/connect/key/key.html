@@ -8,17 +8,49 @@
     </button>
   </div>
   <div class="connect-content">
-    <mat-card class="card first-card">
+    <mat-card class="card" *ngIf="step == 1">
       <mat-card-content>
         <h1>Private Key Import</h1>
         <p>If you already have an existing private for your Nostr account, you can import it here and protect it with a password.</p>
+        <p>First choose if your backup is a secret recovery phrase or a private key</p>
+        <br />
+        <button class="start-button full-button" (click)="step = 2" mat-flat-button color="accent">Secret Recovery Phrase</button>
+        <br /><br />
+        <button class="start-button full-button" (click)="step = 3" mat-flat-button color="accent">Private Key</button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card" *ngIf="step == 2">
+      <mat-card-content>
+        <h1>Secret Recovery Phrase Import</h1>
+        <br />
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-label>Secret Recovery Phrase</mat-label>
+          <textarea class="note-input" matInput type="text" [(ngModel)]="mnemonic" rows="2"></textarea>
+        </mat-form-field>
+        <br />
+        <button [disabled]="!mnemonic" class="start-button" (click)="setPrivateKey(); step = 3" mat-raised-button>Continue</button><br /><br />
+
+        <!-- <div><button class="skip-button" (click)="persistKey(privateKey)" color="primary" mat-raised-button>Connect (read-only)</button></div> -->
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card" *ngIf="step == 3">
+      <mat-card-content>
+        <h1 *ngIf="mnemonic">Protect Private Key with password</h1>
+        <h1 *ngIf="!mnemonic">Private Key Import</h1>
+        <p *ngIf="!mnemonic">If you already have an existing private for your Nostr account, you can import it here and protect it with a password.</p>
         <p>Having a strong password (we allow empty) is adviced, as this will be used to protect your private key using encryption when you are not using Blockcore Notes.</p>
         <br />
-        <mat-form-field appearance="fill" class="input-full-width connect-input">
-          <mat-icon class="circle" matPrefix>person_add</mat-icon>
-          <mat-label>Private Key</mat-label>
-          <input (keyup)="updatePublicKey()" placeholder="nsec..." matInput type="password" [(ngModel)]="privateKey" />
-        </mat-form-field>
+
+        <p *ngIf="mnemonic">Your personal private key:<br>{{ privateKey }}</p>
+        <div *ngIf="!mnemonic">
+          <mat-form-field appearance="fill" class="input-full-width connect-input">
+            <mat-icon class="circle" matPrefix>person_add</mat-icon>
+            <mat-label>Private Key</mat-label>
+            <input (keyup)="updatePublicKey()" placeholder="nsec..." matInput type="password" [(ngModel)]="privateKey" />
+          </mat-form-field>
+        </div>
 
         <form>
           <mat-form-field appearance="fill" class="input-full-width connect-input">
@@ -37,10 +69,10 @@
           <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-raised-button>Connect</button><br /><br />
         </form>
 
-        <p *ngIf="!error" class="public-key dimmer"><strong>Public Key (hex)</strong>: {{ publicKeyHex }}</p>
+        <p *ngIf="!error" class="public-key dimmed"><strong>Public Key (hex)</strong>: {{ publicKeyHex }}</p>
         <p *ngIf="error" class="error">Error: {{ error }}</p>
-        <p class="dimmer">Remember that Blockcore cannot change or reset your password. Make sure you have a separate backup of your <strong>private key</strong> in case you loose your password.</p>
-        <p class="dimmer">You will be asked to enter password (if supplied) when Notes need to sign events on your behalf.</p>
+        <p class="dimmed">Remember that Blockcore cannot change or reset your password. Make sure you have a separate backup of your <strong>private key</strong> in case you loose your password.</p>
+        <p class="dimmed">You will be asked to enter password (if supplied) when Notes need to sign events on your behalf.</p>
 
         <!-- <div><button class="skip-button" (click)="persistKey(privateKey)" color="primary" mat-raised-button>Connect (read-only)</button></div> -->
       </mat-card-content>

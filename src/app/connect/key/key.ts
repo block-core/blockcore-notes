@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
+import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 
@@ -13,16 +13,31 @@ import { ThemeService } from '../../services/theme';
 export class ConnectKeyComponent {
   privateKey: string = '';
   privateKeyHex: string = '';
-
   publicKey: string = '';
   publicKeyHex: string = '';
-
   password: string = '';
   error: string = '';
-
-  // hidePrivateKey = false;
+  step = 1;
+  mnemonic: string = '';
 
   constructor(public theme: ThemeService, private router: Router, private security: SecurityService) {}
+
+  setPrivateKey() {
+    this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
+    this.privateKey = nip19.nsecEncode(this.privateKeyHex);
+    this.updatePublicKey();
+  }
+
+  ngOnDestroy() {
+    this.reset();
+  }
+
+  reset() {
+    this.privateKey = '';
+    this.privateKeyHex = '';
+    this.mnemonic = '';
+    this.password = '';
+  }
 
   async persistKey() {
     // this.hidePrivateKey = true;
@@ -43,6 +58,8 @@ export class ConnectKeyComponent {
       if (this.privateKeyHex == decrypted) {
         localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
         localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);
+
+        this.reset();
 
         this.router.navigateByUrl('/');
       } else {
