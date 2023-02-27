@@ -128,7 +128,7 @@ export class ProfileHeaderComponent {
   }
 
   displayNIP05(nip05: string) {
-    if (nip05.startsWith('_@')) {
+    if (nip05 && nip05.startsWith('_@')) {
       return nip05.substring(2);
     }
 
