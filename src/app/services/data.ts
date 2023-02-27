@@ -83,7 +83,7 @@ export class DataService {
   }
 
   private getArrayFomattedRelayList() {
-    return this.relayService.items2
+    return this.relayService.items
       .filter((r) => r.public === true)
       .map((r) => {
         let relayEntry = ['r', r.url];
@@ -101,7 +101,7 @@ export class DataService {
   private getJsonFormattedRelayList() {
     let mappedRelays: any = {};
 
-    this.relayService.items2
+    this.relayService.items
       .filter((r) => r.public)
       .map((r) => {
         mappedRelays[r.url] = {

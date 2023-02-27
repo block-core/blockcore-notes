@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LoadMoreOptions, NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, QueryJob } from './interfaces';
+import { LoadMoreOptions, NostrRelay, NostrRelayDocument, NostrRelaySubscription, QueryJob } from './interfaces';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Event, Filter, Kind } from 'nostr-tools';
 import { EventService } from './event';
@@ -20,9 +20,7 @@ import { ArticleService } from './article';
   providedIn: 'root',
 })
 export class RelayService {
-  events: NostrEventDocument[] = [];
-
-  items2: NostrRelayDocument[] = [];
+  items: NostrRelayDocument[] = [];
 
   threadSubscription?: string;
 
@@ -30,23 +28,14 @@ export class RelayService {
 
   circleEventSubscription?: string;
 
-  #eventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>(this.events);
-
-  #filteredEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
-
-  #threadedEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
-
-  #rootEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
-
-  #replyEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
-
-  // subs2: NostrRelaySubscription[] = [];
   subs: Map<string, NostrRelaySubscription> = new Map();
 
   /** These are relay instances that have connection over WebSocket and holds a reference to database metadata for the relay. */
   relays: NostrRelay[] = [];
 
   #relaysChanged: BehaviorSubject<NostrRelay[]> = new BehaviorSubject<NostrRelay[]>(this.relays);
+
+  workers: RelayType[] = [];
 
   get relays$(): Observable<NostrRelay[]> {
     return this.#relaysChanged.asObservable();
@@ -220,8 +209,6 @@ export class RelayService {
     });
   }
 
-  workers: RelayType[] = [];
-
   terminate(url: string) {
     const worker = this.workers.find((r) => r.url == url);
 
@@ -239,7 +226,7 @@ export class RelayService {
 
   async setRelayType(url: string, type: number) {
     const relay = await this.db.storage.getRelay(url);
-    const item = this.items2.find((r) => r.url == url);
+    const item = this.items.find((r) => r.url == url);
 
     if (relay) {
       relay.type = type;
@@ -250,7 +237,7 @@ export class RelayService {
 
   async setRelayPublic(url: string, publicRelay: boolean) {
     const relay = await this.db.storage.getRelay(url);
-    const item = this.items2.find((r) => r.url == url);
+    const item = this.items.find((r) => r.url == url);
 
     if (relay) {
       relay.public = publicRelay;
@@ -262,7 +249,7 @@ export class RelayService {
   async setRelayStatus(url: string, status: number) {
     console.log('setRelayStatus:', status);
     const relay = await this.db.storage.getRelay(url);
-    const item = this.items2.find((r) => r.url == url);
+    const item = this.items.find((r) => r.url == url);
 
     if (relay) {
       relay.status = status;
@@ -274,7 +261,7 @@ export class RelayService {
   async setRelayEnabled(url: string, enabled: boolean) {
     console.log('setRelayEnabled:', enabled);
     const relay = await this.db.storage.getRelay(url);
-    const item = this.items2.find((r) => r.url == url);
+    const item = this.items.find((r) => r.url == url);
 
     if (relay) {
       relay.enabled = enabled;
@@ -284,7 +271,7 @@ export class RelayService {
   }
 
   setRelayTimeout(url: string, status: number) {
-    const item = this.items2.find((r) => r.url == url);
+    const item = this.items.find((r) => r.url == url);
 
     if (item) {
       if (item.timeouts == null) {
@@ -296,7 +283,7 @@ export class RelayService {
   }
 
   setRelayCounter(url: string) {
-    const item = this.items2.find((r) => r.url == url);
+    const item = this.items.find((r) => r.url == url);
 
     if (item) {
       if (item.eventcount == null) {
@@ -309,7 +296,7 @@ export class RelayService {
 
   async setRelayNIP11(url: string, data: any) {
     const relay = await this.db.storage.getRelay(url);
-    const item = this.items2.find((r) => r.url == url);
+    const item = this.items.find((r) => r.url == url);
 
     if (relay) {
       if (data.error) {
@@ -327,7 +314,7 @@ export class RelayService {
   }
 
   async addRelay(url: string, read: boolean, write: boolean) {
-    let relay = this.items2.find((r) => r.url == url);
+    let relay = this.items.find((r) => r.url == url);
     let type = 1; // Read/Write by default.
 
     if (write && !read) {
@@ -345,7 +332,7 @@ export class RelayService {
       };
 
       this.db.storage.putRelay(relay);
-      this.items2.push(relay);
+      this.items.push(relay);
     } else {
       if (relay.enabled == null) {
         relay.enabled = true;
@@ -366,7 +353,7 @@ export class RelayService {
 
   async deleteRelays(keepRelays: string[]) {
     // Relays to remove
-    const relaysToRemove = this.items2.filter((r) => keepRelays.indexOf(r.url) == -1);
+    const relaysToRemove = this.items.filter((r) => keepRelays.indexOf(r.url) == -1);
 
     console.log('relaysToRemove:', relaysToRemove);
 
@@ -383,7 +370,7 @@ export class RelayService {
     }
 
     // Relays to keep
-    this.items2 = this.items2.filter((r) => keepRelays.indexOf(r.url) > -1);
+    this.items = this.items.filter((r) => keepRelays.indexOf(r.url) > -1);
 
     // await this.db.storage.deleteRelays();
 
@@ -394,8 +381,6 @@ export class RelayService {
 
     // this.items2 = [];
   }
-
-  // currentDisplayedContacts: any;
 
   async processEvent(response: RelayResponse) {
     const originalEvent = response.data;
@@ -567,28 +552,8 @@ export class RelayService {
                 this.profileService.follow(publicKey);
               }
             }
-
-            // this.openImportSheet(dialogData);
           }
         }
-
-        // }
-
-        // // Sometimes we might discover newer or older profiles, make sure we only update UI dialog if newer.
-        // if (this.discoveredProfileDate < data.created_at) {
-        //   this.discoveredProfileDate = data.created_at;
-        //   const following = this.profileService.profile?.following;
-        //   const pubkeys = data.tags.map((t: any[]) => t[1]);
-        //   console.log('FOLLOWING:' + JSON.stringify(following));
-        //   if (!following) {
-        //     const dialogData: any = { pubkeys: pubkeys, pubkey: data.pubkey };
-        //     if (data.content) {
-        //       dialogData.relays = JSON.parse(data.content);
-        //       dialogData.relaysCount = Object.keys(dialogData.relays).length;
-        //     }
-        //     this.openImportSheet(dialogData);
-        //   }
-        // }
       } else {
         const existingContacts = await this.db.storage.getContacts(event.pubkey);
 
@@ -763,61 +728,6 @@ export class RelayService {
     }
   }
 
-  /** Add an in-memory instance of relay and get stored metadata for it. */
-  // async addRelay(relay: NostrRelay) {
-  //   const index = this.relays.findIndex((r) => r.url == relay.url);
-
-  //   if (index == -1) {
-  //     this.relays.push(relay);
-  //   } else {
-  //     // First initiate a close and then replace it.
-  //     // Attempting to not close existing connections, there is no point in doing so.
-  //     // this.relays[index].close();
-  //     this.relays[index] = relay;
-  //   }
-
-  //   try {
-  //     const url = new URL(relay.url);
-  //     const infoUrl = `https://${url.hostname}`;
-
-  //     const rawResponse = await fetch(infoUrl, {
-  //       method: 'GET',
-  //       mode: 'cors',
-  //       headers: {
-  //         Accept: 'application/nostr+json',
-  //       },
-  //     });
-
-  //     if (rawResponse.status === 200) {
-  //       const content = await rawResponse.json();
-
-  //       relay.metadata.nip11 = content;
-  //       relay.metadata.error = undefined;
-  //     } else {
-  //       relay.metadata.error = `Unable to get NIP-11 data. Status: ${rawResponse.statusText}`;
-  //     }
-  //   } catch (err) {
-  //     console.warn(err);
-  //     relay.metadata.error = `Unable to get NIP-11 data. Status: ${err}`;
-  //   }
-
-  //   await this.putRelayMetadata(relay.metadata);
-  // }
-
-  // async putRelayMetadata(metadata: NostrRelayDocument) {
-  //   // Persist the latest NIP11 metadata on the NostrRelayDocument.
-  //   await this.table.put(metadata);
-  //   this.relaysUpdated();
-  // }
-
-  #updated() {
-    this.#eventsChanged.next(this.events);
-    this.#filteredEventsChanged.next(this.events);
-    this.#threadedEventsChanged.next(this.events);
-    this.#rootEventsChanged.next(this.events);
-    this.#replyEventsChanged.next(this.events);
-  }
-
   /** Takes relay in the format used for extensions and adds to persistent storage. */
   async appendRelays(relays: any) {
     let preparedRelays = relays;
@@ -845,7 +755,7 @@ export class RelayService {
   }
 
   async deleteRelay(url: string) {
-    const index = this.items2.findIndex((r) => r.url == url);
+    const index = this.items.findIndex((r) => r.url == url);
 
     if (index == -1) {
       return;
@@ -855,7 +765,7 @@ export class RelayService {
     worker?.terminate();
 
     await this.db.storage.deleteRelay(url);
-    this.items2.splice(index, 1);
+    this.items.splice(index, 1);
   }
 
   connectedRelays() {
@@ -899,7 +809,7 @@ export class RelayService {
     // Spin up all the write-only relays temporarily when kind is contacts or metadata.
     if (action === 'publish') {
       // Get all relays that are write-only
-      const filteredRelays = this.items2.filter((r) => r.type == 3);
+      const filteredRelays = this.items.filter((r) => r.type == 3);
 
       for (let index = 0; index < filteredRelays.length; index++) {
         const relay = filteredRelays[index];
@@ -922,8 +832,8 @@ export class RelayService {
   }
 
   createRelayWorkers() {
-    for (let index = 0; index < this.items2.length; index++) {
-      const relay = this.items2[index];
+    for (let index = 0; index < this.items.length; index++) {
+      const relay = this.items[index];
 
       if (relay.enabled && relay.type < 3) {
         this.createRelayWorker(relay.url);
@@ -932,10 +842,10 @@ export class RelayService {
   }
 
   async initialize() {
-    this.items2 = await this.db.storage.getRelays();
+    this.items = await this.db.storage.getRelays();
 
     // If there are no relay metatadata in database, get it from extension or default
-    if (this.items2.length == 0) {
+    if (this.items.length == 0) {
       let relays = await this.nostr.relays();
 
       // First append whatever the extension give us of relays.
