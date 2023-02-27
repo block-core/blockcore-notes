@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { LoadMoreOptions, NostrArticle, NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, ProfileStatus, QueryJob } from './interfaces';
-import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
-import { Event, Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
+import { LoadMoreOptions, NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, QueryJob } from './interfaces';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { Event, Filter, Kind } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
@@ -11,7 +11,6 @@ import { RelayResponse } from './messages';
 import { ProfileService } from './profile';
 import { Utilities } from './utilities';
 import { v4 as uuidv4 } from 'uuid';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { NostrService } from './nostr';
@@ -39,11 +38,8 @@ export class RelayService {
 
   #replyEventsChanged: BehaviorSubject<NostrEventDocument[]> = new BehaviorSubject<NostrEventDocument[]>([]);
 
-  sortSubject = new BehaviorSubject<'asc' | 'desc'>('asc');
-  sort$ = this.sortSubject.asObservable();
-  sortOrder: 'asc' | 'desc' = 'asc';
-
-  subs: Sub[] = [];
+  // subs2: NostrRelaySubscription[] = [];
+  subs: Map<string, NostrRelaySubscription> = new Map();
 
   /** These are relay instances that have connection over WebSocket and holds a reference to database metadata for the relay. */
   relays: NostrRelay[] = [];
@@ -59,7 +55,6 @@ export class RelayService {
     private nostr: NostrService,
     private ui: UIService,
     private queue: QueueService,
-    private bottomSheet: MatBottomSheet,
     private utilities: Utilities,
     private profileService: ProfileService,
     private db: StorageService,
@@ -411,7 +406,7 @@ export class RelayService {
     console.log('SAVE EVENT?:', event);
 
     if (response.subscription) {
-      const sub = this.subs2.get(response.subscription);
+      const sub = this.subs.get(response.subscription);
 
       if (sub) {
         if (sub.type == 'Event') {
@@ -665,7 +660,7 @@ export class RelayService {
           const index = this.workers.findIndex((v) => v.url == url);
           const worker = this.workers[index];
 
-          this.subs2.forEach((sub) => {
+          this.subs.forEach((sub) => {
             worker.subscribe(sub.filters, sub.id);
           });
 
@@ -751,7 +746,7 @@ export class RelayService {
       await this.handleRelayError(ev, relayType.url);
     };
 
-    relayType.connect(Array.from(this.subs2.values()), event);
+    relayType.connect(Array.from(this.subs.values()), event);
 
     // console.table(this.workers);
   }
@@ -981,15 +976,10 @@ export class RelayService {
   //   });
   // }
 
-  subscriptions: any = {};
-
-  // subs2: NostrRelaySubscription[] = [];
-  subs2: Map<string, NostrRelaySubscription> = new Map();
-
   /** Queues up subscription that will be activated whenever the relay is connected. */
   queueSubscription(filters: Filter[]) {
     const id = uuidv4();
-    this.subs2.set(id, { id: id, filters: filters, events: [], type: 'Event' });
+    this.subs.set(id, { id: id, filters: filters, events: [], type: 'Event' });
     // this.subs2.push({ id: id, filters: filters, events: [] });
     return id;
   }
@@ -1002,7 +992,7 @@ export class RelayService {
     const sub = { id: id, filters: filters, events: [], type: type };
 
     // this.action('subscribe', { filters, id });
-    this.subs2.set(id, sub);
+    this.subs.set(id, sub);
     // this.subs2.push({ id: id, filters: filters, events: [] });
 
     for (let index = 0; index < this.workers.length; index++) {
@@ -1042,7 +1032,7 @@ export class RelayService {
       worker.unsubscribe(id);
     }
 
-    this.subs2.delete(id);
+    this.subs.delete(id);
   }
 
   items2: NostrRelayDocument[] = [];
