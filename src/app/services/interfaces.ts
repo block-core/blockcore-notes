@@ -67,11 +67,22 @@ export interface NostrRelay extends Relay {
   // subscriptions: Sub[];
 }
 
+// export class NostrRelaySubscription {
+//   constructor() {
+//     connectedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>([]);
+//     this.visibility$ = this.visibilityChanged.asObservable();
+//   }
+// }
+
 export interface NostrRelaySubscription {
   id: string;
   // subid: string;
   sub?: NostrSub;
   filters: Filter[];
+  events: Event[];
+  // events: Map<string, Event>;
+  // events$: any;
+  type: string | 'Profile' | 'Event' | 'Contacts' | 'Article';
 }
 
 export interface StateDocument {

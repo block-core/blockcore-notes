@@ -73,7 +73,7 @@ export class DevelopmentComponent {
   sub?: string;
 
   subscription() {
-    this.sub = this.relayService.subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
+    this.sub = this.relayService.subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]).id;
     // this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
   }
 

@@ -1,5 +1,7 @@
 <app-chat-list></app-chat-list>
 
+<div *ngFor="let event of sub.events">{{event | json}}</div>
+
 <!-- <mat-sidenav-container class="drawer-container" autosize>
   <mat-tab-group mat-align-tabs="center">
     <mat-tab label="Messages">

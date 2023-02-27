@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LoadMoreOptions, NostrArticle, NostrEventDocument, NostrRelay, NostrRelayDocument, NostrRelaySubscription, ProfileStatus, QueryJob } from './interfaces';
 import { Observable, BehaviorSubject, from, merge, timeout, catchError, of, finalize, tap } from 'rxjs';
-import { Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
+import { Event, Filter, Kind, Relay, relayInit, Sub } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
@@ -95,7 +95,7 @@ export class RelayService {
 
         // Then create a new subscription:
         const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
-        this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: kinds, until: options.until, limit: 100 }]);
+        this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: kinds, until: options.until, limit: 100 }]).id;
       } else if (options.type == 'feed') {
         // If there are no subscription yet, just skip load more.
         if (!this.circleEventSubscription) {
@@ -118,7 +118,7 @@ export class RelayService {
 
         // Then create a new subscription:
         const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
-        this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, until: options.until, limit: 100 }], 'feed');
+        this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, until: options.until, limit: 100 }], 'feed').id;
       }
     });
 
@@ -142,7 +142,7 @@ export class RelayService {
       }
 
       const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
-      this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, limit: 100 }], 'feed');
+      this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, limit: 100 }], 'feed').id;
     });
 
     // Whenever the pubkey changes, we'll load the profile and start loading the user's events.
@@ -168,7 +168,7 @@ export class RelayService {
       // }
 
       // Subscribe to events for the current user profile.
-      this.profileEventSubscription = this.subscribe([{ authors: [id], kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }]);
+      this.profileEventSubscription = this.subscribe([{ authors: [id], kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }]).id;
     });
 
     // Whenever the event ID changes, we'll attempt to load the event.
@@ -208,7 +208,7 @@ export class RelayService {
           this.unsubscribe(this.threadSubscription);
         }
 
-        this.threadSubscription = this.subscribe([{ ['#e']: [event.id!] }]);
+        this.threadSubscription = this.subscribe([{ ['#e']: [event.id!] }]).id;
 
         if (event.parentEventId) {
           const parentEvent = await this.db.storage.getEvent(event.parentEventId);
@@ -409,6 +409,40 @@ export class RelayService {
     }
 
     console.log('SAVE EVENT?:', event);
+
+    if (response.subscription) {
+      const sub = this.subs2.get(response.subscription);
+
+      if (sub) {
+        if (sub.type == 'Event') {
+          const index = sub.events.findIndex((e) => e.id == event.id);
+
+          if (index === -1) {
+            sub.events.push(event);
+          }
+        } else if (sub.type == 'Profile') {
+          const index = sub.events.findIndex((e) => e.pubkey == event.pubkey);
+
+          if (index > -1) {
+            if (event.created_at >= sub.events[index].created_at) {
+              sub.events[index] = event;
+            }
+          } else {
+            sub.events.push(event);
+          }
+        } else if (sub.type == 'Contacts') {
+          const index = sub.events.findIndex((e) => e.pubkey == event.pubkey);
+
+          if (index > -1) {
+            if (event.created_at >= sub.events[index].created_at) {
+              sub.events[index] = event;
+            }
+          } else {
+            sub.events.push(event);
+          }
+        }
+      }
+    }
 
     if (response.subscription == 'feed') {
       this.ui.putFeedEvent(event);
@@ -631,10 +665,14 @@ export class RelayService {
           const index = this.workers.findIndex((v) => v.url == url);
           const worker = this.workers[index];
 
-          for (let index = 0; index < this.subs2.length; index++) {
-            const sub = this.subs2[index];
+          this.subs2.forEach((sub) => {
             worker.subscribe(sub.filters, sub.id);
-          }
+          });
+
+          // for (let index = 0; index < this.subs2.length; index++) {
+          //   const sub = this.subs2[index];
+          //   worker.subscribe(sub.filters, sub.id);
+          // }
         }
 
         break;
@@ -713,7 +751,7 @@ export class RelayService {
       await this.handleRelayError(ev, relayType.url);
     };
 
-    relayType.connect(this.subs2, event);
+    relayType.connect(Array.from(this.subs2.values()), event);
 
     // console.table(this.workers);
   }
@@ -945,23 +983,27 @@ export class RelayService {
 
   subscriptions: any = {};
 
-  subs2: NostrRelaySubscription[] = [];
+  // subs2: NostrRelaySubscription[] = [];
+  subs2: Map<string, NostrRelaySubscription> = new Map();
 
   /** Queues up subscription that will be activated whenever the relay is connected. */
   queueSubscription(filters: Filter[]) {
     const id = uuidv4();
-    this.subs2.push({ id: id, filters: filters });
+    this.subs2.set(id, { id: id, filters: filters, events: [], type: 'Event' });
+    // this.subs2.push({ id: id, filters: filters, events: [] });
     return id;
   }
 
-  subscribe(filters: Filter[], id?: string) {
+  subscribe(filters: Filter[], id?: string, type: string = 'Event') {
     if (!id) {
       id = uuidv4();
     }
 
-    // this.action('subscribe', { filters, id });
+    const sub = { id: id, filters: filters, events: [], type: type };
 
-    this.subs2.push({ id: id, filters: filters });
+    // this.action('subscribe', { filters, id });
+    this.subs2.set(id, sub);
+    // this.subs2.push({ id: id, filters: filters, events: [] });
 
     for (let index = 0; index < this.workers.length; index++) {
       const worker = this.workers[index];
@@ -969,7 +1011,7 @@ export class RelayService {
     }
 
     // this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
-    return id;
+    return sub;
   }
 
   action(action: string, data: any) {
@@ -999,6 +1041,8 @@ export class RelayService {
       const worker = this.workers[index];
       worker.unsubscribe(id);
     }
+
+    this.subs2.delete(id);
   }
 
   items2: NostrRelayDocument[] = [];

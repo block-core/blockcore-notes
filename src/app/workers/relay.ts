@@ -544,7 +544,7 @@ export class RelayWorker {
 
     if (!this.relay || this.relay.status != 1) {
       // If we don't have a connection yet, schedule the subscription to be added later.
-      this.queue.queues.subscriptions.jobs.push({ id: id, filters: filters });
+      this.queue.queues.subscriptions.jobs.push({ id: id, filters: filters, type: 'Event', events: [] });
       console.warn('This relay does not have active connection and subscription cannot be created at this time. Subscription has been scheduled for adding later.');
       return;
     }
@@ -559,7 +559,7 @@ export class RelayWorker {
     // sub.id = id;
 
     console.log('SUBSCRIPTION:', sub);
-    this.subscriptions.push({ id: id, filters: filters, sub: sub });
+    this.subscriptions.push({ id: id, filters: filters, sub: sub, type: 'Event', events: [] });
 
     // const sub = relay.sub(filters, {}) as NostrSubscription;
     // relay.subscriptions.push(sub);
