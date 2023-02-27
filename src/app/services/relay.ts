@@ -311,8 +311,6 @@ export class RelayService {
   }
 
   async setRelayNIP11(url: string, data: any) {
-    console.log('setRelayNIP11:', data);
-
     const relay = await this.db.storage.getRelay(url);
     const item = this.items2.find((r) => r.url == url);
 
@@ -321,13 +319,13 @@ export class RelayService {
         relay.error = data.error;
         item!.error = data.error;
       } else {
+        relay.error = undefined;
+        item!.error = undefined;
         relay.nip11 = data;
         item!.nip11 = data;
       }
 
       await this.db.storage.putRelay(relay);
-
-      console.log('Relay updated witn NIP11');
     }
   }
 

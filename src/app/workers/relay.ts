@@ -591,7 +591,9 @@ export class RelayWorker {
   async info() {
     try {
       const url = new URL(this.url);
-      const infoUrl = `https://${url.hostname}`;
+      let protocol = url.protocol === 'ws:' ? 'http' : 'https';
+
+      const infoUrl = `${protocol}://${url.host}`;
       const rawResponse = await fetch(infoUrl, {
         method: 'GET',
         mode: 'cors',
