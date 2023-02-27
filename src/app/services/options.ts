@@ -20,6 +20,7 @@ export interface Options {
   peopleDisplayType: number;
   peopleDisplaySort?: string;
   mediaService?: string;
+  cameraId?: string;
 }
 
 @Injectable({

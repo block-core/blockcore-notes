@@ -12,11 +12,13 @@
       <mat-card-content>
         <h1>Private Key Import</h1>
         <p>If you already have an existing private for your Nostr account, you can import it here and protect it with a password.</p>
-        <p>First choose if your backup is a secret recovery phrase or a private key</p>
+        <p>First choose if your backup is a secret recovery phrase or a private key.</p>
         <br />
         <button class="start-button full-button" (click)="step = 2" mat-flat-button color="accent">Secret Recovery Phrase</button>
         <br /><br />
         <button class="start-button full-button" (click)="step = 3" mat-flat-button color="accent">Private Key</button>
+        <br /><br />
+        <button class="start-button full-button" (click)="scanQrCode()" mat-flat-button color="accent"><mat-icon>qr_code_scanner</mat-icon> Scan QR Code</button>
       </mat-card-content>
     </mat-card>
 

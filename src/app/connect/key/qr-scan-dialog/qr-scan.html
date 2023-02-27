@@ -1,0 +1,21 @@
+<div>
+  <div class="qr-scan" id="reader"></div>
+
+  <button class="camera-button" mat-icon-button (click)="changeCamera()" matTooltip='Change Camera'>
+    <mat-icon>cameraswitch</mat-icon>
+  </button>
+
+  <!-- <button class="camera-button" (click)="toggleFlash()" mat-icon-button matTooltip="Scan QR code">
+    <mat-icon>flash_on</mat-icon>
+  </button> -->
+
+  <!-- <button class="camera-button" (click)="openFile()" mat-icon-button matTooltip="Scan QR code">
+    <mat-icon>file_open</mat-icon>
+  </button> -->
+
+  <button class="camera-close-button" (click)="onNoClick()" mat-icon-button matTooltip='Close'>
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="camera-error" *ngIf="error">{{ error }}</div>
+</div>

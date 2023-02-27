@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
 import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
+import { QrScanDialog } from './qr-scan-dialog/qr-scan';
 
 @Component({
   selector: 'app-key',
@@ -20,7 +22,7 @@ export class ConnectKeyComponent {
   step = 1;
   mnemonic: string = '';
 
-  constructor(public theme: ThemeService, private router: Router, private security: SecurityService) {}
+  constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {}
 
   setPrivateKey() {
     this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
@@ -98,5 +100,39 @@ export class ConnectKeyComponent {
     } catch (err: any) {
       this.error = err.message;
     }
+  }
+
+  scanQrCode() {
+    const dialogRef = this.dialog.open(QrScanDialog, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.step = 3;
+
+      try {
+        if (result.startsWith('nostr:')) {
+          result = result.replace('nostr:', '');
+        }
+
+        if (result.startsWith('nsec')) {
+          const decoded = nip19.decode(result);
+          this.privateKeyHex = decoded.data as string;
+          this.privateKey = result;
+        } else {
+          this.privateKeyHex = result;
+          this.privateKey = nip19.nsecEncode(result);
+        }
+
+        this.updatePublicKey();
+      } catch (err: any) {
+        this.error = 'Failed to scan.' + err.toString();
+      }
+    });
   }
 }

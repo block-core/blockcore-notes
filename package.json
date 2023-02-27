@@ -35,6 +35,7 @@
     "@twogate/ngx-photo-gallery": "^1.4.0",
     "@types/sharedworker": "^0.0.91",
     "dexie": "^3.2.3",
+    "html5-qrcode": "^2.3.7",
     "idb": "^7.1.1",
     "joi": "^17.7.1",
     "moment": "^2.29.4",

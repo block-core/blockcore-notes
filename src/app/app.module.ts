@@ -130,6 +130,7 @@ import { LoginComponent } from './connect/login/login';
 import { ConsentDialog } from './connect/consent-dialog/consent-dialog';
 import { CreateProfileComponent } from './connect/create/create';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { QrScanDialog } from './connect/key/qr-scan-dialog/qr-scan';
 
 @NgModule({
   declarations: [
@@ -212,6 +213,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     LoginComponent,
     ConsentDialog,
     CreateProfileComponent,
+    QrScanDialog
   ],
   imports: [
     AboutModule,
