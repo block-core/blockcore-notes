@@ -124,7 +124,7 @@ export class RelayComponent {
   }
 
   async deleteRelay(relay: NostrRelayDocument) {
-    await this.relayService.deleteRelay2(relay.url);
+    await this.relayService.deleteRelay(relay.url);
   }
 
   relayFavIcon(url: string) {

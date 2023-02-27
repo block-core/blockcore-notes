@@ -22,6 +22,8 @@ import { ArticleService } from './article';
 export class RelayService {
   events: NostrEventDocument[] = [];
 
+  items2: NostrRelayDocument[] = [];
+
   threadSubscription?: string;
 
   profileEventSubscription?: string;
@@ -324,7 +326,7 @@ export class RelayService {
     }
   }
 
-  async addRelay2(url: string, read: boolean, write: boolean) {
+  async addRelay(url: string, read: boolean, write: boolean) {
     let relay = this.items2.find((r) => r.url == url);
     let type = 1; // Read/Write by default.
 
@@ -833,20 +835,16 @@ export class RelayService {
     for (var i = 0; i < entries.length; i++) {
       const key = entries[i];
       const val = preparedRelays[key];
-      await this.addRelay2(key, val.read, val.write);
+      await this.addRelay(key, val.read, val.write);
     }
   }
 
   /** read/write is currently ignored, should be changed to type. */
   async appendRelay(url: string, read: boolean, write: boolean) {
-    await this.addRelay2(url, read, write);
+    await this.addRelay(url, read, write);
   }
 
-  // relaysUpdated() {
-  //   this.#relaysChanged.next(this.relays);
-  // }
-
-  async deleteRelay2(url: string) {
+  async deleteRelay(url: string) {
     const index = this.items2.findIndex((r) => r.url == url);
 
     if (index == -1) {
@@ -860,121 +858,9 @@ export class RelayService {
     this.items2.splice(index, 1);
   }
 
-  // async deleteRelay(url: string) {
-  //   await this.table.delete(url);
-
-  //   const relayIndex = this.relays.findIndex((r) => r.url == url);
-  //   let existingRelayInstance = this.relays.splice(relayIndex, 1);
-
-  //   // Disconnect from the relay when we delete it.
-  //   if (existingRelayInstance.length > 0) {
-  //     existingRelayInstance[0].close();
-  //   }
-
-  //   this.relaysUpdated();
-  // }
-
   connectedRelays() {
     return this.relays.filter((r) => r.status === 1);
   }
-
-  // async connect() {
-  //   debugger;
-  //   const enabledRelays = this.items2.filter((r) => r.type == 1);
-
-  //   for (let index = 0; index < enabledRelays.length; index++) {
-  //     const relay = enabledRelays[index];
-  //     this.createRelayWorker(relay.url);
-  //   }
-  // }
-
-  // async reset() {
-  //   console.log('RESET RUNNING!');
-  //   for (var i = 0; i < this.relays.length; i++) {
-  //     const relay = this.relays[i];
-  //     relay.close();
-  //   }
-
-  //   this.subs = [];
-  //   this.relays = [];
-
-  //   await this.table.clear();
-
-  //   this.relaysUpdated();
-
-  //   console.log('THERE ARE NO RELAYS:', this.relays);
-  // }
-
-  // async #connectToRelay(server: NostrRelayDocument, onConnected: any) {
-  //   const existingActiveRelay = this.getActiveRelay(server.url);
-
-  //   // If the relay already exists, just return that and do nothing else.
-  //   if (existingActiveRelay) {
-  //     onConnected(existingActiveRelay);
-  //   }
-
-  //   // const relay = relayInit('wss://relay.nostr.info');
-  //   const relay = relayInit(server.url) as NostrRelay;
-  //   // relay.subscriptions = [];
-
-  //   relay.on('connect', () => {
-  //     // console.log(`connected to ${relay?.url}`);
-  //     onConnected(relay);
-  //     //this.onConnected(relay);
-  //   });
-
-  //   relay.on('disconnect', () => {
-  //     console.log(`DISCONNECTED! ${relay?.url}`);
-  //     // relay.subscriptions = [];
-  //   });
-
-  //   relay.on('notice', (msg: any) => {
-  //     console.log(`NOTICE FROM ${relay?.url}: ${msg}`);
-  //   });
-
-  //   // Keep a reference of the metadata on the relay instance.
-  //   relay.metadata = server;
-
-  //   // if (relay.metadata.enabled == undefined) {
-  //   //   relay.metadata.enabled = true;
-  //   // }
-
-  //   try {
-  //     if (relay.metadata.type == 1) {
-  //       await relay.connect();
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     relay.metadata.error = 'Unable to connect.';
-  //   }
-
-  //   await this.addRelay(relay);
-
-  //   return relay;
-  // }
-
-  // openConnection(server: NostrRelayDocument) {
-  //   return new Observable((observer) => {
-  //     this.#connectToRelay(server, (relay: Relay) => {
-  //       console.log('Connected to:', relay.url);
-
-  //       const existingIndex = this.relays.findIndex((r) => r.url == relay.url);
-
-  //       if (existingIndex > -1) {
-  //         // Put the connected relay into the array together with the metadata.
-  //         this.relays[existingIndex] = relay as NostrRelay;
-  //       } else {
-  //         // Put the connected relay into the array together with the metadata.
-  //         this.relays.push(relay as NostrRelay);
-  //       }
-
-  //       observer.next(true);
-  //       observer.complete();
-
-  //       // this.subscribeToFollowing(relay);
-  //     });
-  //   });
-  // }
 
   /** Queues up subscription that will be activated whenever the relay is connected. */
   queueSubscription(filters: Filter[]) {
@@ -1034,8 +920,6 @@ export class RelayService {
 
     this.subs.delete(id);
   }
-
-  items2: NostrRelayDocument[] = [];
 
   createRelayWorkers() {
     for (let index = 0; index < this.items2.length; index++) {
