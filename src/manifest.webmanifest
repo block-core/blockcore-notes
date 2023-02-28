@@ -33,8 +33,26 @@
       "purpose": "any"
     },
     {
+      "src": "assets/icons/icon-120x120.png",
+      "sizes": "120x120",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "assets/icons/icon-128x128.png",
       "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192x192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
@@ -77,21 +95,21 @@
       "short_name": "Feed",
       "description": "Open the feed page",
       "url": "/feed",
-      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
+      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }, { "src": "assets/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Notifications",
       "short_name": "Notifications",
       "description": "Open the notification page",
       "url": "/notifications",
-      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
+      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }, { "src": "assets/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "People",
       "short_name": "People",
       "description": "Open the people page",
       "url": "/people",
-      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }]
+      "icons": [{ "src": "assets/icons/icon-128x128.png", "sizes": "128x128" }, { "src": "assets/icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ]
 }
