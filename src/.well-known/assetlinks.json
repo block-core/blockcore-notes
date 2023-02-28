@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "net.blockcore.notes",
+                     "sha256_cert_fingerprints": ["AB:C3:44:0C:10:F9:D7:4E:DA:DB:FB:1A:EF:89:C1:E0:1F:7B:AE:6A:6F:90:91:8E:90:9E:77:A8:D6:C7:93:86"] }
+      }
+]
