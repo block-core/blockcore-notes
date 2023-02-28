@@ -131,6 +131,8 @@ import { ConsentDialog } from './connect/consent-dialog/consent-dialog';
 import { CreateProfileComponent } from './connect/create/create';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { QrScanDialog } from './connect/key/qr-scan-dialog/qr-scan';
+import { ContentEditorDirective } from './shared/content-input-directive/content-input.directive';
+import { ContentInputHeightDirective } from './shared/content-input-directive/content-input-height.directive';
 
 @NgModule({
   declarations: [
@@ -213,7 +215,9 @@ import { QrScanDialog } from './connect/key/qr-scan-dialog/qr-scan';
     LoginComponent,
     ConsentDialog,
     CreateProfileComponent,
-    QrScanDialog
+    QrScanDialog,
+    ContentEditorDirective,
+    ContentInputHeightDirective,
   ],
   imports: [
     AboutModule,

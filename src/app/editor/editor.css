@@ -40,3 +40,9 @@ h1 {
     font-size: 1.8em;
   }
 }
+
+.text-editor {
+  border: 1px lightgrey solid;
+  min-height: 88px;
+  padding: 1em;
+}

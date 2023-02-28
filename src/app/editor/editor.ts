@@ -10,6 +10,7 @@ import { Utilities } from '../services/utilities';
 import { QueueService } from '../services/queue.service';
 import { ArticleService } from '../services/article';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProfileService } from '../services/profile';
 
 export interface NoteDialogData {
   note: string;
@@ -67,7 +68,8 @@ export class EditorComponent {
     private appState: ApplicationState,
     private location: Location,
     private fb: FormBuilder,
-    public navigation: NavigationService
+    public navigation: NavigationService,
+    public profileService: ProfileService
   ) {}
 
   ngOnInit() {
@@ -153,6 +155,8 @@ export class EditorComponent {
 
     (<any>this.noteContent).nativeElement.focus();
   }
+
+  items: string[] = ['Noah', 'Liam', 'Mason', 'Jacob'];
 
   public addEmojiArticle(event: { emoji: { native: any } }) {
     let startPos = (<any>this.articleContent).nativeElement.selectionStart;
