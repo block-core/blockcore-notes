@@ -660,12 +660,12 @@ export class RelayService {
 
         break;
       case 'event':
-        console.log('EVENT FROM:', url);
+        // console.log('EVENT FROM:', url);
         this.setRelayCounter(url);
         await this.processEvent(response);
         break;
       case 'nip11':
-        console.log('EVENT FROM:', url);
+        // console.log('EVENT FROM:', url);
         await this.setRelayNIP11(url, response.data);
         break;
     }

@@ -14,58 +14,63 @@ export class ContentService {
   regexpTidal = /((http|https?)?(.+?\.?)(tidal.com)(.+?\.?)?)/gi;
   regexpUrl = /([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#.]?[\w-]+)*\/?/gi;
 
-  keywords: { [key: string]: TokenKeyword } = {
-    // disadvantage: {
-    //   token: 'word',
-    //   word: 'disadvantage',
-    //   tooltip: 'disadvantage description',
-    // },
-    // incapacitated: {
-    //   token: 'word',
-    //   word: 'incapacitated',
-    //   tooltip: 'incapacitated description',
-    // },
-    '<br>': {
+  getKeyword(key: string) {
+    return this.keywords.get(key);
+  }
+
+  keywords: Map<string, TokenKeyword> = new Map<string, TokenKeyword>();
+
+  constructor() {
+    this.keywords.set('<br>', {
       token: 'linebreak',
-    },
-    'thisistheway.gif': {
+    });
+
+    this.keywords.set('<br/>', {
+      token: 'linebreak',
+    });
+
+    this.keywords.set('thisistheway.gif', {
       token: 'meme',
       tooltip: 'This is the way (thisistheway.gif)',
       word: 'https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg',
-    },
-    'thisistheway.jpg': {
+    });
+
+    this.keywords.set('thisistheway.jpg', {
       token: 'meme',
-      tooltip: 'This is the way (thisistheway.gif)',
+      tooltip: 'This is the way (thisistheway.jpg)',
       word: 'https://i.ytimg.com/vi/LaiN63o_BxA/maxresdefault.jpg',
-    },
-    'alwayshasbeen.gif': {
+    });
+
+    this.keywords.set('alwayshasbeen.gif', {
       token: 'meme',
       tooltip: 'Always has been (alwayshasbeen.gif)',
       word: 'https://imgflip.com/s/meme/Always-Has-Been.png',
-    },
-    'alwayshasbeen.jpg': {
+    });
+
+    this.keywords.set('alwayshasbeen.jpg', {
       token: 'meme',
       tooltip: 'Always has been (alwayshasbeen.jpg)',
       word: 'https://imgflip.com/s/meme/Always-Has-Been.png',
-    },
-    'onehourlater.gif': {
-      token: 'meme',
-      tooltip: 'One hour later (onehourlater.gif)',
-      word: 'https://i.giphy.com/media/3ogwG36LKIkM937ZG8/giphy.webp',
-    },
-    'onehourlater.jpg': {
-      token: 'meme',
-      tooltip: 'One hour later (onehourlater.gif)',
-      word: 'https://i.giphy.com/media/3ogwG36LKIkM937ZG8/giphy.webp',
-    },
-  };
+    });
 
-  constructor() {
+    this.keywords.set('onehourlater.gif', {
+      token: 'meme',
+      tooltip: 'One hour later (onehourlater.gif)',
+      word: 'https://i.giphy.com/media/3ogwG36LKIkM937ZG8/giphy.webp',
+    });
+
+    this.keywords.set('onehourlater.jpg', {
+      token: 'meme',
+      tooltip: 'One hour later (onehourlater.jpg)',
+      word: 'https://i.giphy.com/media/3ogwG36LKIkM937ZG8/giphy.webp',
+    });
+
     // We do this to avoid "attacks" that includes more than 100 tagged users in a post.
     for (let index = 0; index < 100; index++) {
-      this.keywords['#[' + index + ']'] = {
+      let key = '#[' + index + ']';
+      this.keywords.set(key, {
         token: 'username',
-      };
+      });
     }
   }
 }

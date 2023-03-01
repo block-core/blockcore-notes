@@ -213,9 +213,23 @@ export class ContentComponent {
   toDynamicText(event: NostrEventDocument): (string | TokenKeyword)[] {
     let text = event.content;
 
+    // Replace all zero width characters.
+    text = text.replaceAll(/\p{Cf}/gu, '');
+
     if (text.length < 9) {
       this.bigSize = true;
     }
+
+    // var regex = /#\[(.*?)\]/g;
+    // var matches = text.match(regex);
+    // console.log(matches); // ["#[hello]", "#[bye]"]
+
+    // var str = '#[hello] world #[bye]';
+    // var regex = /#\[(.*?)\]/g;
+    // var match;
+    // while ((match = regex.exec(str))) {
+    //   console.log(match[1]); // "hello", "bye"
+    // }
 
     const res: (string | TokenKeyword)[] = [];
     const lines = text.split(/\r?\n/);
@@ -224,7 +238,7 @@ export class ContentComponent {
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
       //let lineTokens = line.split(/\s+/);
-      let lineTokens = line.split(/(\s|'s|,)/g);
+      let lineTokens = line.split(/(\s|,|#\[[^\]]*\])/);
 
       lineTokens = lineTokens.filter((entry) => entry != '');
       lineTokens.push('<br>');
@@ -233,7 +247,8 @@ export class ContentComponent {
 
     let i = 0;
     for (const token of tokens) {
-      let keyword = this.contentService.keywords[token.toLowerCase()];
+      let keyword = this.contentService.getKeyword(token.toLowerCase());
+
       if (keyword) {
         if (keyword.token == 'username') {
           let index = Number(token.replace('#[', '').replace(']', ''));
