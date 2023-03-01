@@ -5,12 +5,14 @@ import { AuthenticationService } from './authentication';
 import { Action } from './interfaces';
 import { Location } from '@angular/common';
 import { Title } from '@angular/platform-browser';
+import { Direction } from '@angular/cdk/bidi';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationState {
-  constructor(private breakpointObserver: BreakpointObserver, private authService: AuthenticationService, private location: Location, private titleService: Title) {
+  constructor(public translate: TranslateService, private breakpointObserver: BreakpointObserver, private authService: AuthenticationService, private location: Location, private titleService: Title) {
     this.isSmallScreen$ = this.breakpointObserver.observe('(max-width: 599px)').pipe(
       map((result) => result.matches),
       shareReplay()
@@ -68,6 +70,8 @@ export class ApplicationState {
 
   actions: Action[] = [];
 
+  documentDirection: Direction = 'ltr';
+
   /** Parameters that comes from query string during activation of the extension. */
   params: any;
 
@@ -106,5 +110,9 @@ export class ApplicationState {
   setInitialized() {
     this.initialized = true;
     this.initializedChanged.next(this.initialized);
+  }
+
+  setLanguage(language: string) {
+    this.translate.use(language);
   }
 }

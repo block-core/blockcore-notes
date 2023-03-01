@@ -25,6 +25,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UIService } from './services/ui';
 import { OptionsService } from './services/options';
 import { LabelService } from './services/label';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -59,6 +60,7 @@ export class AppComponent {
     private circleService: CircleService,
     public profileService: ProfileService,
     public navigationService: NavigationService,
+    public translate: TranslateService,
     public ui: UIService,
     private bottomSheet: MatBottomSheet,
     public searchService: SearchService,
@@ -182,6 +184,25 @@ export class AppComponent {
   /** Run initialize whenever user has been authenticated. */
   async initialize() {
     console.log('INITIALIZE IS RUNNING....');
+
+    // this.translate.addLangs(['ar', 'el', 'en', 'fa', 'fr', 'he', 'no', 'ru']);
+    this.translate.addLangs(['en', 'no']);
+    this.translate.setDefaultLang('en');
+
+    if (this.options.values.language) {
+      this.appState.setLanguage(this.options.values.language);
+
+      // This is a copy from settings.ts
+      const rtlLanguages: string[] = ['ar', 'fa', 'he'];
+
+      if (rtlLanguages.includes(this.options.values.language)) {
+        this.appState.documentDirection = 'rtl';
+        this.options.values.dir = 'rtl';
+      } else {
+        this.appState.documentDirection = 'ltr';
+        this.options.values.dir = 'ltr';
+      }
+    }
 
     // await this.storage.open();
     // await this.storage.initialize();

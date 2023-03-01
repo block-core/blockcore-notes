@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { ApplicationState } from './applicationstate';
 import { UploadService } from './upload';
 
 export interface Options {
@@ -21,6 +23,8 @@ export interface Options {
   peopleDisplaySort?: string;
   mediaService?: string;
   cameraId?: string;
+  language: string;
+  dir: string;
 }
 
 @Injectable({
@@ -31,7 +35,7 @@ export class OptionsService {
     this.load();
   }
 
-  values: Options = { enableReactions: true, showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
+  values: Options = { language: 'en', dir: 'ltr', enableReactions: true, showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
 
   load() {
     let options = localStorage.getItem('blockcore:notes:nostr:options');

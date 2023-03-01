@@ -1,0 +1,24 @@
+{
+  "en": "English",
+  "no": "Norsk",
+  "fr": "French",
+  "el": "Greek",
+  "fa": "Persian",
+  "ar": "Arabic",
+  "he": "Hebrew",
+  "ru": "Русский",
+  "App": {
+    "Hide": "Skjul",
+    "ConvertKey": "Endre nøkkel"
+  },
+  "Settings": {
+    "OptionsTitle": "Appinnstillinger",
+    "OptionsDescription": "Velg viktige innstillinger for din brukeropplevelse",
+    "Settings": "Innstillinger",
+    "Save": "Lagre",
+    "DisplayLanguage": "Velg språk",
+    "ChooseMode": "Velg fargetema",
+    "Dark": "Mørk",
+    "Light": "Lys"
+  }
+}

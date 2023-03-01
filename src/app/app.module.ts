@@ -133,6 +133,14 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { QrScanDialog } from './connect/key/qr-scan-dialog/qr-scan';
 import { ContentEditorDirective } from './shared/content-input-directive/content-input.directive';
 import { ContentInputHeightDirective } from './shared/content-input-directive/content-input-height.directive';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient } from '@angular/common/http';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+
+// required for AOT compilation
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+  return new TranslateHttpLoader(http);
+}
 
 @NgModule({
   declarations: [
@@ -223,6 +231,13 @@ import { ContentInputHeightDirective } from './shared/content-input-directive/co
     AboutModule,
     HttpClientModule,
     BrowserModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    }),
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCheckboxModule,

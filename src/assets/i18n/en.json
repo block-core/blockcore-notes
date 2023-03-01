@@ -1,0 +1,24 @@
+{
+  "en": "English",
+  "no": "Norsk",
+  "fr": "French",
+  "el": "Greek",
+  "fa": "Persian",
+  "ar": "Arabic",
+  "he": "Hebrew",
+  "ru": "Русский",
+  "App": {
+    "Hide": "Hide",
+    "ConvertKey": "Convert Key"
+  },
+  "Settings": {
+    "OptionsTitle": "App Options",
+    "OptionsDescription": "Choose important options for your user experience",
+    "Settings": "Settings",
+    "Save": "Save",
+    "DisplayLanguage": "Display Language",
+    "ChooseMode": "Choose your mode",
+    "Dark": "Dark",
+    "Light": "Light"
+  }
+}

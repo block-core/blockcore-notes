@@ -18,6 +18,7 @@ import { UploadService } from '../services/upload';
 import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
 import { SecurityService } from '../services/security';
 import * as QRCode from 'qrcode';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-settings',
@@ -44,7 +45,8 @@ export class SettingsComponent {
     public db: StorageService,
     private snackBar: MatSnackBar,
     public dataService: DataService,
-    private security: SecurityService
+    private security: SecurityService,
+    public translate: TranslateService
   ) {}
 
   toggle() {
@@ -180,6 +182,20 @@ export class SettingsComponent {
 
   ngOnDestroy() {
     this.resetPrivateKey();
+  }
+
+  onLanguageChanged(event: any) {
+    this.appState.setLanguage(this.optionsService.values.language);
+
+    const rtlLanguages: string[] = ['ar', 'fa', 'he'];
+
+    if (rtlLanguages.includes(this.optionsService.values.language)) {
+      this.appState.documentDirection = 'rtl';
+      this.optionsService.values.dir = 'rtl';
+    } else {
+      this.appState.documentDirection = 'ltr';
+      this.optionsService.values.dir = 'ltr';
+    }
   }
 
   async exportPrivateKey() {
