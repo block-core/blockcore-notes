@@ -144,6 +144,9 @@ import { LogWriterService } from './services/log-writer';
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
 }
+import { ZapDialogComponent } from './shared/zap-dialog/zap-dialog.component';
+import { QRCodeModule } from 'angularx-qrcode';
+import { ZapQrCodeComponent } from './shared/zap-qr-code/zap-qr-code.component';
 
 @NgModule({
   declarations: [
@@ -229,6 +232,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     QrScanDialog,
     ContentEditorDirective,
     ContentInputHeightDirective,
+    ZapQrCodeComponent,
+    ZapDialogComponent
   ],
   imports: [
     AboutModule,
@@ -296,6 +301,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     NgxMatNativeDateModule,
     NgxMatTimepickerModule,
     NgxColorsModule,
+    QRCodeModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // enabled: true,

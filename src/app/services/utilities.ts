@@ -186,6 +186,12 @@ export class Utilities {
     return this.arrayToHex(key);
   }
 
+  convertBech32ToText(str: string) {
+    const decoded = bech32.decode(str, 1000);
+    const buf = bech32.fromWords(decoded.words);
+    return new TextDecoder().decode(Uint8Array.from(buf));
+  }
+  
   keyToHex(publicKey: Uint8Array) {
     return secp.utils.bytesToHex(publicKey);
   }

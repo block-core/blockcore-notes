@@ -1,0 +1,90 @@
+.mat-mdc-form-field {
+    display: inline;
+}
+
+.mat-mdc-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+.zap-button {
+    background-color: #9c27b0;
+    color: white;
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  
+  .icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+  }
+  
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: unset;
+  }
+  
+  .name {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .emoji-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  
+  .emoji-button {
+    margin: 0 18px;
+    border-radius: 15%;
+    background-color: #eee;
+    width: 21%;
+    height: 100%;
+  }
+  
+  .favorite-btn,
+  .thumb-up-btn,
+  .applause-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  // .favorite-btn:hover,
+  // .thumb-up-btn:hover,
+  // .applause-btn:hover
+  .emoji-button:hover {
+    background-color: #9c27b0;
+  }
+  
+  .mat-mdc-icon-button.mat-primary:hover {
+    color: white;
+  }
+
+  .favorite-btn .emoji-number,
+  .thumb-up-btn .emoji-number,
+  .applause-btn .emoji-number {
+    position: absolute;
+    right: -15px;
+    font-size: 14px;
+  }
+  
+ 
+
+  .mat-mdc-icon-button.mat-primary {
+    --mat-mdc-button-persistent-ripple-color: rgba(255, 255, 255, 0);
+    --mat-mdc-button-ripple-color: rgba(255, 255, 255, 0);
+  }
