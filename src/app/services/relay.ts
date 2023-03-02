@@ -15,6 +15,7 @@ import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { NostrService } from './nostr';
 import { ArticleService } from './article';
+import { LoggerService } from './logger';
 
 @Injectable({
   providedIn: 'root',
@@ -42,6 +43,7 @@ export class RelayService {
   }
 
   constructor(
+    private logger: LoggerService,
     private articleService: ArticleService,
     private nostr: NostrService,
     private ui: UIService,
@@ -247,7 +249,7 @@ export class RelayService {
   }
 
   async setRelayStatus(url: string, status: number) {
-    console.log('setRelayStatus:', status);
+    this.logger.debug('setRelayStatus:', status);
     const relay = await this.db.storage.getRelay(url);
     const item = this.items.find((r) => r.url == url);
 
@@ -259,7 +261,7 @@ export class RelayService {
   }
 
   async setRelayEnabled(url: string, enabled: boolean) {
-    console.log('setRelayEnabled:', enabled);
+    this.logger.debug('setRelayEnabled:', enabled);
     const relay = await this.db.storage.getRelay(url);
     const item = this.items.find((r) => r.url == url);
 
@@ -355,16 +357,16 @@ export class RelayService {
     // Relays to remove
     const relaysToRemove = this.items.filter((r) => keepRelays.indexOf(r.url) == -1);
 
-    console.log('relaysToRemove:', relaysToRemove);
+    this.logger.debug('relaysToRemove:', relaysToRemove);
 
     for (let index = 0; index < relaysToRemove.length; index++) {
       const relay = relaysToRemove[index];
       await this.db.storage.deleteRelay(relay.url);
 
-      console.log(`${relay.url}: Deleted from database.`);
+      this.logger.info(`${relay.url}: Deleted from database.`);
 
       const worker = this.workers.find((w) => w.url == relay.url);
-      console.log(`${relay.url}: Terminating this Web Worker!`, worker?.url);
+      this.logger.info(`${relay.url}: Terminating this Web Worker!`, worker?.url);
 
       worker?.terminate();
     }
@@ -390,7 +392,7 @@ export class RelayService {
       return;
     }
 
-    console.log('SAVE EVENT?:', event);
+    this.logger.debug('SAVE EVENT?:', event);
 
     if (response.subscription) {
       const sub = this.subs.get(response.subscription);
@@ -548,7 +550,7 @@ export class RelayService {
 
               // Only follow if we're not already following.
               if (!this.profileService.isFollowing(publicKey)) {
-                console.log('Add follow to ' + publicKey);
+                this.logger.info('Add follow to ' + publicKey);
                 this.profileService.follow(publicKey);
               }
             }
@@ -612,11 +614,11 @@ export class RelayService {
 
     switch (response.type) {
       case 'timeout':
-        console.log(`Relay ${url} timeout: ${response.data}.`);
+        this.logger.debug(`Relay ${url} timeout: ${response.data}.`);
         this.setRelayTimeout(url, response.data);
         break;
       case 'status':
-        console.log(`Relay ${url} changed status to ${response.data}.`);
+        this.logger.debug(`Relay ${url} changed status to ${response.data}.`);
         await this.setRelayStatus(url, response.data);
 
         // Upon first successful connection, we'll set the status to online.
@@ -640,14 +642,14 @@ export class RelayService {
         break;
       case 'terminated':
         // When being terminated, we'll remove this worker from the array.
-        console.log(`${url}: WE HAVE TERMINATED`);
+        this.logger.info(`${url}: WE HAVE TERMINATED`);
         const index = this.workers.findIndex((v) => v.url == url);
 
         // Set the status and then terminate this instance.
         const worker = this.workers[index];
         worker.status = 'terminated';
 
-        console.log(`${url}: Calling actually TERMINATE on Web Worker!`);
+        this.logger.debug(`${url}: Calling actually TERMINATE on Web Worker!`);
         // Perform the actual termination of the Web Worker.
         worker.worker?.terminate();
 
@@ -690,13 +692,13 @@ export class RelayService {
 
     // Avoid adding duplicate workers, but make sure we initiate a connect action.
     if (index > -1) {
-      console.log(`${url}: This relay already exists, calling connect on it.`);
+      this.logger.debug(`${url}: This relay already exists, calling connect on it.`);
       this.workers[index].connect(undefined, event);
       return;
     }
 
     const relayType = new RelayType(url);
-    console.log(`${url}: Creating this web worker.`);
+    this.logger.info(`${url}: Creating this web worker.`);
 
     // Append the worker immediately to the array.
     this.workers.push(relayType);
@@ -704,12 +706,12 @@ export class RelayService {
     const worker = relayType.start();
 
     worker.onmessage = async (ev) => {
-      console.log(`${relayType.url}: onmessage`, ev.data);
+      this.logger.debug(`${relayType.url}: onmessage`, ev.data);
       await this.handleRelayMessage(ev, relayType.url);
     };
 
     worker.onerror = async (ev) => {
-      console.log(`${relayType.url}: onerror`, ev.error);
+      this.logger.error(`${relayType.url}: onerror`, ev.error);
       await this.handleRelayError(ev, relayType.url);
     };
 

@@ -540,8 +540,6 @@ export class RelayWorker {
   }
 
   subscribe(filters: Filter[], id: string) {
-    console.log('SUBSCRIBE....');
-
     if (!this.relay || this.relay.status != 1) {
       // If we don't have a connection yet, schedule the subscription to be added later.
       this.queue.queues.subscriptions.jobs.push({ id: id, filters: filters, type: 'Event', events: [] });

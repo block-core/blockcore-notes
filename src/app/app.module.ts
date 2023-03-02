@@ -136,6 +136,9 @@ import { ContentInputHeightDirective } from './shared/content-input-directive/co
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { LoggerModule } from '@blockcore/ngx-logger';
+import { NgxLoggerLevel, TOKEN_LOGGER_WRITER_SERVICE } from '@blockcore/ngx-logger';
+import { LogWriterService } from './services/log-writer';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -238,6 +241,15 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
         deps: [HttpClient],
       },
     }),
+    LoggerModule.forRoot(
+      { level: NgxLoggerLevel.INFO, enableSourceMaps: true, serverLogLevel: NgxLoggerLevel.OFF }, // Don't send logs anywhere!
+      {
+        writerProvider: {
+          provide: TOKEN_LOGGER_WRITER_SERVICE,
+          useClass: LogWriterService,
+        },
+      }
+    ),
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCheckboxModule,
