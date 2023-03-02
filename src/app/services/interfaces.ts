@@ -327,3 +327,27 @@ export interface BlogEvent {
 
   published_at?: number;
 }
+export interface LNURLPayRequest {
+  allowsNostr?: boolean
+  nostrPubkey?: string;
+  minSendable?: number;
+  maxSendable?: number;
+  metadata?: string;
+  callback: string;
+  commentAllowed?: number;
+  status?: string
+}
+
+export interface LNURLPayResponse {
+  pr: string
+}
+
+export interface LNURLInvoice {
+  pr: string;
+  successAction?: LNURLSuccessAction;
+}
+
+export interface LNURLSuccessAction {
+  description?: string;
+  url?: string;
+}

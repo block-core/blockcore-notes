@@ -1,0 +1,29 @@
+<div mat-dialog-content style="text-align: center;">
+    <div class="profile-container" style="display: inline-flex; align-items: center;">
+      <div class="icon icon-small" style="margin-right: 10px;">
+        <img
+          onerror="this.src='/assets/profile.png'"
+          *ngIf="profile?.status == 1 || profile?.status == 2"
+          class="profile-image profile-image-follow"
+          [matTooltip]="tooltip"
+          matTooltipPosition="above"
+          [src]="imagePath"
+        />
+        <img loading="lazy" onerror="this.src='/assets/profile.png'" *ngIf="profile?.status != 1 && profile?.status != 2" class="profile-image" [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
+      </div>
+      <div class="name clickable" style="flex-grow: 1;">
+        <span [class.muted]="profile.status == 2" [matTooltip]="tooltipName" matTooltipPosition="above">Send Zaps to {{ profileName }}</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+      <qrcode [qrdata]="invoice.pr" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+      <div class="profile-labels" (click)="copy(invoice.pr)" style="display: flex; align-items: center; cursor: pointer;">
+        <div class="profile-labels-left">
+          <a class="hoverable" style="width: 100%;">{{ invoice.pr | slice:0:10 }}...{{ invoice.pr | slice:-10 }}</a>
+        </div>
+        <div class="profile-labels-middle dimmed" style="text-align: right;">
+          <mat-icon class="profile-icon" style="margin-left: 5px;">content_copy</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>

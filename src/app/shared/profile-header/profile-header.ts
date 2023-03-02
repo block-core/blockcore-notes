@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { UIService } from 'src/app/services/ui';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { nip05 } from 'nostr-tools';
+import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
 
 @Component({
   selector: 'app-profile-header',
@@ -148,4 +149,14 @@ export class ProfileHeaderComponent {
     const url = `https://${values[1]}/.well-known/nostr.json?name=${values[0]}`;
     return url;
   }
+
+  openDialog(profile?: NostrProfileDocument): void {
+    this.dialog.open(ZapDialogComponent, {
+      width: '400px',
+      data: {
+        profile: profile
+      },
+    });
+  }
+
 }
