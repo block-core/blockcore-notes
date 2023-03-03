@@ -18,16 +18,16 @@ export class RelayWorker {
   }
 
   async publish(event: Event) {
-    if (event.kind == Kind.Article) {
+    if (event.kind == Kind.Article || (event.kind as number) == 30009) {
       // If we don't have metadata from the relay, don't publish articles.
       if (!this.relay.nip11) {
-        console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article will not be published here.`);
+        console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article/Badge will not be published here.`);
         return;
       } else if (!this.relay.nip11.supported_nips.includes(33)) {
-        console.log(`${this.relay.url}: This relay does not NIP-23. Article will not be published here.`);
+        console.log(`${this.relay.url}: This relay does not NIP-23. Article/Badge will not be published here.`);
         return;
       } else {
-        console.log(`${this.relay.url}: This relay supports NIP-23. Publishing article on this relay.`);
+        console.log(`${this.relay.url}: This relay supports NIP-23. Publishing article/badge on this relay.`);
       }
     }
 
@@ -54,6 +54,8 @@ export class RelayWorker {
       this.queue.queues.event.jobs.push(job);
     } else if (job.type == 'Article') {
       this.queue.queues.article.jobs.push(job);
+    } else if (job.type == 'BadgeDefinition') {
+      this.queue.queues.badgedefinition.jobs.push(job);
     } else {
       throw Error(`This type of job (${job.type}) is currently not supported.`);
     }
@@ -68,6 +70,7 @@ export class RelayWorker {
 
   process() {
     this.processArticle();
+    this.processBadgeDefinition();
     this.processProfiles();
     this.processContacts();
     this.processEvents();
@@ -188,6 +191,32 @@ export class RelayWorker {
     this.downloadArticle(eventsToDownload, eventsToDownload.length * 3);
   }
 
+  processBadgeDefinition() {
+    if (!this.relay || this.relay.status != 1 || this.queue.queues.badgedefinition.active) {
+      console.log(`${this.url}: processBadgeDefinition: Relay not ready or currently active: ${this.queue.queues.badgedefinition.active}.`, this.relay);
+      return;
+    }
+
+    console.log(`${this.url}: processBadgeDefinition: Processing with downloading... Count: ` + this.queue.queues.badgedefinition.jobs.length);
+
+    if (this.queue.queues.badgedefinition.jobs.length == 0) {
+      this.queue.queues.badgedefinition.active = false;
+      return;
+    }
+
+    this.queue.queues.badgedefinition.active = true;
+
+    console.log(this.relay);
+
+    const eventsToDownload = this.queue.queues.badgedefinition.jobs
+      .splice(0, 500)
+      .map((j) => j.identifier)
+      .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
+
+    console.log('badgeDefinitionsToDownload:', eventsToDownload);
+    this.downloadBadgeDefinition(eventsToDownload, eventsToDownload.length * 3);
+  }
+
   /** Provide event to publish and terminate immediately. */
   async connect(event?: any) {
     // const relay = relayInit('wss://relay.nostr.info');
@@ -282,6 +311,9 @@ export class RelayWorker {
   articleSub?: NostrSub;
   articleTimer?: any;
 
+  badgeDefinitionSub?: NostrSub;
+  badgeDefinitionTimer?: any;
+
   clearProfileSub() {
     this.profileSub?.unsub();
     this.profileSub = undefined;
@@ -300,6 +332,11 @@ export class RelayWorker {
   clearArticleSub() {
     this.articleSub?.unsub();
     this.articleTimer = undefined;
+  }
+
+  clearBadgeDefinitionSub() {
+    this.badgeDefinitionSub?.unsub();
+    this.badgeDefinitionTimer = undefined;
   }
 
   downloadProfile(pubkeys: string[], timeoutSeconds: number = 12) {
@@ -472,6 +509,64 @@ export class RelayWorker {
       this.clearArticleSub();
       this.queue.queues.article.active = false;
       this.processArticle();
+
+      postMessage({ url: this.url, type: 'timeout', data: { type: 'Event', identifier: ids } } as RelayResponse);
+
+      // if (!finalizedCalled) {
+      //   finalizedCalled = true;
+      //   finalized();
+      // }
+    }, timeoutSeconds * 1000);
+  }
+
+  downloadBadgeDefinition(ids: string[], timeoutSeconds: number = 12) {
+    console.log('DOWNLOAD BADGE DEFINITION....');
+    let finalizedCalled = false;
+
+    if (!this.relay) {
+      debugger;
+      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      return;
+    }
+
+    // If the profilesub already exists, unsub and remove.
+    if (this.badgeDefinitionSub) {
+      console.log('Article sub already existed, unsub before continue.');
+      this.clearBadgeDefinitionSub();
+    }
+
+    // Skip if the subscription is already added.
+    // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
+    //   debugger;
+    //   console.log('This subscription is already added!');
+    //   return;
+    // }
+
+    const filter = { kinds: [30009], authors: ids };
+    const sub = this.relay.sub([filter]) as NostrSub;
+    this.badgeDefinitionSub = sub;
+
+    sub.on('event', (originalEvent: any) => {
+      console.log('POST MESSAGE BACK TO MAIN');
+      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+      console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    });
+
+    sub.on('eose', () => {
+      console.log('eose on event.');
+      clearTimeout(this.badgeDefinitionTimer);
+      this.clearBadgeDefinitionSub();
+      this.queue.queues.badgedefinition.active = false;
+      this.processBadgeDefinition();
+    });
+
+    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
+
+    this.badgeDefinitionTimer = setTimeout(() => {
+      console.warn(`${this.url}: Event download timeout reached.`);
+      this.clearBadgeDefinitionSub();
+      this.queue.queues.badgedefinition.active = false;
+      this.processBadgeDefinition();
 
       postMessage({ url: this.url, type: 'timeout', data: { type: 'Event', identifier: ids } } as RelayResponse);
 

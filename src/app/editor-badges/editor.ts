@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular
 import { NavigationService } from '../services/navigation';
 import { Location } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
-import { BlogEvent } from '../services/interfaces';
+import { BadgeDefinitionEvent, BlogEvent } from '../services/interfaces';
 import { Event } from 'nostr-tools';
 import { Subscription } from 'rxjs';
 import { Utilities } from '../services/utilities';
@@ -11,6 +11,7 @@ import { QueueService } from '../services/queue.service';
 import { ArticleService } from '../services/article';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProfileService } from '../services/profile';
+import { BadgeService } from '../services/badge';
 
 export interface NoteDialogData {
   note: string;
@@ -22,31 +23,17 @@ export interface NoteDialogData {
   styleUrls: ['editor.css'],
 })
 export class EditorBadgesComponent {
-  @ViewChild('picker') picker: unknown;
-  @ViewChild('noteContent') noteContent?: FormControl;
-  @ViewChild('articleContent') articleContent?: FormControl;
-
-  isEmojiPickerVisible: boolean | undefined;
-
-  noteForm = this.fb.group({
-    content: ['', Validators.required],
-    expiration: [''],
-    dateControl: [],
-  });
-
-  articleForm = this.fb.group({
-    content: ['', Validators.required],
-    title: ['', Validators.required],
-    summary: [''],
-    image: [''],
-    slug: [''],
-    tags: [''],
-    published_at: [''],
+  form = this.fb.group({
+    name: ['', Validators.required],
+    description: ['', Validators.required],
+    image: ['', Validators.required],
+    thumb: [''],
+    slug: ['', Validators.required],
   });
 
   note: string = '';
 
-  blog?: BlogEvent = { title: '', content: '', tags: '' };
+  badge?: BadgeDefinitionEvent = { name: '', description: '', image: '', thumb: '', slug: '' };
 
   title = '';
 
@@ -62,7 +49,7 @@ export class EditorBadgesComponent {
 
   constructor(
     private snackBar: MatSnackBar,
-    public articleService: ArticleService,
+    public badgeService: BadgeService,
     private queueService: QueueService,
     private utilities: Utilities,
     private appState: ApplicationState,
@@ -80,46 +67,50 @@ export class EditorBadgesComponent {
 
     this.minDate = Date.now();
 
+    this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
+
     this.subscriptions.push(
-      this.articleForm.controls.title.valueChanges.subscribe((text) => {
+      this.form.controls.name.valueChanges.subscribe((text) => {
         if (text) {
-          this.articleForm.controls.slug.setValue(this.createSlug(text));
+          this.form.controls.slug.setValue(this.createSlug(text));
         }
       })
     );
   }
 
-  selectedArticle: string = '';
+  selectedBadge: string = '';
 
   changedArticle() {
-    const article = this.articleService.get(this.selectedArticle!);
+    const article = this.badgeService.getDefinition(this.selectedBadge!);
 
     if (!article) {
-      this.articleForm.reset();
+      this.form.reset();
 
       return;
     }
 
-    if (article.summary == null) {
-      article.summary = '';
+    if (article.name == null) {
+      article.name = '';
     }
 
     if (article.image == null) {
       article.image = '';
     }
 
-    if (article.title == null) {
-      article.title = '';
+    if (article.thumb == null) {
+      article.thumb = '';
     }
 
-    this.articleForm.setValue({
-      content: article.content,
-      title: article.title,
-      summary: article.summary,
+    if (article.description == null) {
+      article.description = '';
+    }
+
+    this.form.setValue({
+      name: article.name,
+      description: article.description,
       image: article.image,
+      thumb: article.thumb,
       slug: article.slug ? article.slug : '',
-      tags: article.metatags ? article.metatags.toString() : '',
-      published_at: article.published_at ? article.published_at.toString() : '',
     });
   }
 
@@ -145,65 +136,28 @@ export class EditorBadgesComponent {
     return input;
   }
 
-  public addEmojiNote(event: { emoji: { native: any } }) {
-    let startPos = (<any>this.noteContent).nativeElement.selectionStart;
-    let value = this.noteForm.controls.content.value;
-
-    let parsedValue = value?.substring(0, startPos) + event.emoji.native + value?.substring(startPos, value.length);
-    this.noteForm.controls.content.setValue(parsedValue);
-    this.isEmojiPickerVisible = false;
-
-    (<any>this.noteContent).nativeElement.focus();
-  }
-
-  items: string[] = ['Noah', 'Liam', 'Mason', 'Jacob'];
-
-  public addEmojiArticle(event: { emoji: { native: any } }) {
-    let startPos = (<any>this.articleContent).nativeElement.selectionStart;
-    let value = this.articleForm.controls.content.value;
-
-    let parsedValue = value?.substring(0, startPos) + event.emoji.native + value?.substring(startPos, value.length);
-    this.articleForm.controls.content.setValue(parsedValue);
-    this.isEmojiPickerVisible = false;
-
-    (<any>this.articleContent).nativeElement.focus();
-  }
-
   formatSlug() {
-    this.articleForm.controls.slug.setValue(this.createSlug(this.articleForm.controls.slug.value!));
+    this.form.controls.slug.setValue(this.createSlug(this.form.controls.slug.value!));
   }
 
   async onSubmitArticle() {
-    const controls = this.articleForm.controls;
+    const controls = this.form.controls;
 
-    const blog: BlogEvent = {
-      content: controls.content.value!,
-      title: controls.title.value!,
-      summary: controls.summary.value!,
+    const blog: BadgeDefinitionEvent = {
+      name: controls.name.value!,
+      description: controls.description.value!,
       image: controls.image.value!,
+      thumb: controls.thumb.value!,
       slug: controls.slug.value!,
-      tags: controls.tags.value!,
     };
 
-    if (controls.published_at.value) {
-      blog.published_at = Number(controls.published_at.value);
-    }
+    await this.navigation.saveBadgeDefinition(blog);
 
-    await this.navigation.saveArticle(blog);
-
-    this.snackBar.open(`Article was published. Notes does not support viewing articles yet.`, 'Hide', {
+    this.snackBar.open(`Badge design was published. Notes does not support viewing badge designs yet.`, 'Hide', {
       duration: 2000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
     });
-  }
-
-  onSubmitNote() {
-    this.navigation.saveNote(this.noteForm.controls.content.value!);
-  }
-
-  postNote() {
-    this.navigation.saveNote(this.note);
   }
 
   onCancel() {

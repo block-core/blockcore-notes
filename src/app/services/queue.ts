@@ -36,6 +36,10 @@ export class Queue {
       active: false,
       jobs: [] as QueryJob[],
     },
+    badgedefinition: {
+      active: false,
+      jobs: [] as QueryJob[],
+    },
     contacts: {
       active: false,
       jobs: [] as QueryJob[],

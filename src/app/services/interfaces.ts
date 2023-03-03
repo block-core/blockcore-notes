@@ -25,7 +25,7 @@ export interface Contact {
 }
 
 export interface QueryJob {
-  type: 'Profile' | 'Event' | 'Contacts' | 'Article';
+  type: 'Profile' | 'Event' | 'Contacts' | 'Article' | 'BadgeDefinition';
   identifier: string;
   // callback?: any;
   // limit?: number;
@@ -82,7 +82,7 @@ export interface NostrRelaySubscription {
   events: Event[];
   // events: Map<string, Event>;
   // events$: any;
-  type: string | 'Profile' | 'Event' | 'Contacts' | 'Article';
+  type: string | 'Profile' | 'Event' | 'Contacts' | 'Article' | 'BadgeDefinition';
 }
 
 export interface StateDocument {
@@ -120,6 +120,14 @@ export interface NostrArticle extends NostrEvent {
   image?: string;
   published_at: number;
   metatags: string[];
+}
+
+export interface NostrBadgeDefinition extends NostrEvent {
+  slug?: string;
+  name?: string;
+  description?: string;
+  image?: string;
+  thumb?: string;
 }
 
 export interface NostrSub extends Sub {
@@ -328,6 +336,18 @@ export interface BlogEvent {
   published_at?: number;
 }
 
+export interface BadgeDefinitionEvent {
+  name: string;
+
+  description: string;
+
+  image?: string;
+
+  thumb?: string;
+
+  slug?: string;
+}
+
 export interface Logger {
   trace(message?: any | (() => any), ...additional: any[]): void;
 
@@ -345,18 +365,18 @@ export interface Logger {
 }
 
 export interface LNURLPayRequest {
-  allowsNostr?: boolean
+  allowsNostr?: boolean;
   nostrPubkey?: string;
   minSendable?: number;
   maxSendable?: number;
   metadata?: string;
   callback: string;
   commentAllowed?: number;
-  status?: string
+  status?: string;
 }
 
 export interface LNURLPayResponse {
-  pr: string
+  pr: string;
 }
 
 export interface LNURLInvoice {

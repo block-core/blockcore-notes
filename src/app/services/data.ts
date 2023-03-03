@@ -757,6 +757,11 @@ export class DataService {
     return signedEvent;
   }
 
+  /** Request an badge definition to be signed. This method does not add id. */
+  async signBadgeDefinition(event: UnsignedEvent) {
+    return this.signArticle(event);
+  }
+
   /** Request an event to be signed. This method will calculate the content id automatically. */
   async signEvent(event: UnsignedEvent) {
     let signedEvent = event as Event;

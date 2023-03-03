@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BlogEvent, Circle, NostrEvent, NostrEventDocument, NostrProfileDocument, NostrThreadEventDocument } from './interfaces';
+import { BadgeDefinitionEvent, BlogEvent, Circle, NostrEvent, NostrEventDocument, NostrProfileDocument, NostrThreadEventDocument } from './interfaces';
 import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject, map, combineLatest, single, Subject, Observer, concat, concatMap, switchMap, catchError, race } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
@@ -145,6 +145,43 @@ export class NavigationService {
     // TODO: We should likely save this event locally to ensure user don't loose their posts
     // if all of the network is down.
     const signedEvent = await this.dataService.signArticle(event);
+
+    await this.dataService.publishEvent(signedEvent);
+
+    // this.router.navigate(['/a', signedEvent.id]);
+  }
+
+  /** Saves a new badge definition */
+  async saveBadgeDefinition(badge: BadgeDefinitionEvent) {
+    console.log('save badge data:', badge);
+
+    debugger;
+
+    let event = this.dataService.createEvent(30009, '');
+
+    if (badge.slug) {
+      event.tags.push(['d', badge.slug]);
+    }
+
+    if (badge.description) {
+      event.tags.push(['description', badge.description]);
+    }
+
+    if (badge.name) {
+      event.tags.push(['name', badge.name]);
+    }
+
+    if (badge.image) {
+      event.tags.push(['image', badge.image]);
+    }
+
+    if (badge.thumb) {
+      event.tags.push(['thumb', badge.thumb]);
+    }
+
+    // TODO: We should likely save this event locally to ensure user don't loose their posts
+    // if all of the network is down.
+    const signedEvent = await this.dataService.signBadgeDefinition(event);
 
     await this.dataService.publishEvent(signedEvent);
 

@@ -16,6 +16,7 @@ import { UIService } from './ui';
 import { NostrService } from './nostr';
 import { ArticleService } from './article';
 import { LoggerService } from './logger';
+import { BadgeService } from './badge';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +46,7 @@ export class RelayService {
   constructor(
     private logger: LoggerService,
     private articleService: ArticleService,
+    private badgeService: BadgeService,
     private nostr: NostrService,
     private ui: UIService,
     private queue: QueueService,
@@ -484,7 +486,9 @@ export class RelayService {
       }
     }
 
-    if (event.kind == Kind.Article) {
+    if ((event.kind as number) == 30009) {
+      this.badgeService.putDefinition(event);
+    } else if (event.kind == Kind.Article) {
       this.articleService.put(event);
     } else if (event.kind == Kind.Metadata) {
       // This is a profile event, store it.

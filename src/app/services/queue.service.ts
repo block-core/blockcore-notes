@@ -25,6 +25,10 @@ export class QueueService {
     this.#queuesChanged.next({ identifier: identifier, type: 'Article' });
   }
 
+  enqueBadgeDefinition(identifier: string) {
+    this.#queuesChanged.next({ identifier: identifier, type: 'BadgeDefinition' });
+  }
+
   enqueContacts(identifier: string) {
     this.#queuesChanged.next({ identifier: identifier, type: 'Contacts' });
   }
@@ -38,6 +42,8 @@ export class QueueService {
       this.enqueContacts(identifier);
     } else if (type === 'Article') {
       this.enqueArticle(identifier);
+    } else if (type === 'BadgeDefinition') {
+      this.enqueBadgeDefinition(identifier);
     }
   }
 }
