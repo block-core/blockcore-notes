@@ -76,8 +76,9 @@ A goal of Blockcore Notes is to be feature rich and have functionality that goes
 - [ ] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
 - [ ] [NIP-42: Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
 - [ ] [NIP-50: Keywords filter](https://github.com/nostr-protocol/nips/blob/master/50.md)
-- [ ] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
 - [ ] [NIP-56: Reporting](https://github.com/nostr-protocol/nips/blob/master/56.md)
+- [x] [NIP-57: Lightning Zaps](https://github.com/nostr-protocol/nips/blob/master/57.md)
+- [ ] [NIP-58: Badges](https://github.com/nostr-protocol/nips/blob/master/58.md)
 - [x] [NIP-65: Relay List Metadata](https://github.com/nostr-protocol/nips/blob/master/65.md)
 
 # Development
