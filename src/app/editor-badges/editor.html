@@ -1,0 +1,116 @@
+<div class="page">
+  <!-- <h1>Write your thoughts</h1> -->
+
+  <div class="note-type">
+    <mat-button-toggle-group name="fontStyle" (change)="noteTypeChanged()" [(ngModel)]="eventType" aria-label="Font Style" #group="matButtonToggleGroup">
+      <mat-button-toggle value="badge">Badge</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <mat-form-field appearance="fill" *ngIf="group.value == 'badge'">
+    <mat-label>Existing badge designs</mat-label>
+    <mat-select [(value)]="selectedArticle" (selectionChange)="changedArticle()">
+      <mat-option></mat-option>
+      <mat-option [value]="article.slug" *ngFor="let article of articleService.articles">{{ article.title }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <form [formGroup]="articleForm" *ngIf="group.value == 'badge'" (ngSubmit)="onSubmitArticle()">
+    <div mat-dialog-content class="mat-dialog-content">
+      <mat-form-field appearance="outline" class="input-full-width">
+        <mat-label>Name</mat-label>
+        <input matInput #message formControlName="name" placeholder="Ex. Medal of Bravery..." />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-full-width">
+        <mat-label>URL (slug)</mat-label>
+        <input matInput #message placeholder="Ex. bravery (Can only contain - and lower case text)" formControlName="slug" (blur)="formatSlug()" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-full-width">
+        <mat-label>Description</mat-label>
+        <textarea #articleContent appAutoInputHeight class="note-input" matInput type="text" [(ngModel)]="note" formControlName="content" rows="2"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-full-width">
+        <mat-label>Badge Graphics (1024x1024)</mat-label>
+        <input matInput #message placeholder="Article banner image" formControlName="image" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-full-width">
+        <mat-label>Badge Thumbnail (256x256)</mat-label>
+        <input matInput #message placeholder="Article banner image" formControlName="image" />
+      </mat-form-field>
+
+      <!-- <mat-form-field appearance="outline" class="input-full-width">
+        <mat-label>Tags (optional, comma separated)</mat-label>
+        <input matInput #message placeholder="Tech, News, Social" formControlName="tags" />
+      </mat-form-field> -->
+
+      <input type="hidden" formControlName="published_at" />
+
+      <!-- <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiArticle($event)" title="Choose your emoji"></emoji-mart>
+      <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon> -->
+      <!-- <mat-icon class="toolbar-icon margin-right" matTooltip="Upload file">attach_file</mat-icon> -->
+
+      <!-- <mat-form-field>
+            <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a timeout" [formControl]="dateControl" [min]="minDate" />
+            <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
+              <ng-template> 
+                <span>Set timeout</span>
+              </ng-template>
+            </ngx-mat-datetime-picker>
+          </mat-form-field> -->
+    </div>
+    <div mat-dialog-actions class="mat-dialog-actions" align="end">
+      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
+      <!-- <button type="button" mat-stroked-button disabled="disabled">Save Draft</button>&nbsp; -->
+      WORK-IN-PROGRESS, NOT WORKING YET!
+      <!-- <button mat-flat-button [disabled]="!articleForm.valid" type="submit" color="primary">Publish Badge Design</button> -->
+    </div>
+  </form>
+
+  <form [formGroup]="noteForm" *ngIf="group.value == 'text'" (ngSubmit)="onSubmitNote()">
+    <div mat-dialog-content class="mat-dialog-content">
+      <mat-form-field appearance="outline" class="input-full-width">
+        <mat-label>What's on your mind?</mat-label>
+        <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2"></textarea>
+      </mat-form-field>
+
+      <!-- <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let profile of profileService.following$ | async" [value]="profile.pubkey">
+          <div class="autocomplete-option">
+            <img alt="" class="autocomplete-image" [src]="profile.picture" height="25" />
+            <span class="autocomplete-name">{{profile.name}}</span> |
+            <small class="autocomplete-meta">{{profile.nip05}}</small>
+          </div>
+        </mat-option>
+      </mat-autocomplete> -->
+
+      <!-- <div appContentEditor autocomplete="off" contenteditable="true" class="form-control" class="text-editor"></div>
+      <div [mention]="profileService.following" [mentionConfig]="{labelKey:'name'}" autocomplete="off" contenteditable="true" class="form-control" class="text-editor"></div> -->
+
+      <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiNote($event)" title="Choose your emoji"></emoji-mart>
+      <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+      <!-- <mat-icon class="toolbar-icon margin-right" matTooltip="Upload file">attach_file</mat-icon> -->
+
+      <!-- <mat-form-field>
+            <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a timeout" [formControl]="dateControl" [min]="minDate" />
+            <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
+              <ng-template>
+                <span>Set timeout</span>
+              </ng-template>
+            </ngx-mat-datetime-picker>
+          </mat-form-field> -->
+    </div>
+    <div mat-dialog-actions class="mat-dialog-actions" align="end">
+      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
+      <!-- <button mat-stroked-button type="button" disabled="disabled">Save Draft</button>&nbsp; -->
+      <button mat-flat-button [disabled]="!noteForm.valid" type="submit" color="primary">Publish Note</button>
+    </div>
+  </form>
+  <!-- </mat-card-content>
+  </mat-card> -->
+</div>

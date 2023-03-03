@@ -29,7 +29,7 @@ export class QueueService {
     this.#queuesChanged.next({ identifier: identifier, type: 'Contacts' });
   }
 
-  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts' | 'Article') {
+  enque(identifier: string, type: 'Profile' | 'Event' | 'Contacts' | 'Article' | 'BadgeDefinition') {
     if (type === 'Profile') {
       this.enqueProfile(identifier);
     } else if (type === 'Event') {

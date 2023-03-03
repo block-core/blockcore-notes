@@ -1,0 +1,48 @@
+h1 {
+  margin-top: 0;
+}
+
+.input-full-width {
+  width: 100% !important;
+}
+
+.toolbar {
+  display: flex;
+  margin-bottom: 5px;
+  margin-top: 3px;
+}
+
+.toolbar-icon {
+  cursor: pointer;
+}
+
+.toolbar-icon:hover {
+  color: #9c27b0;
+}
+
+.margin-right {
+  margin-right: 5px;
+}
+
+.picker {
+  display: block;
+  position: fixed;
+  z-index: 3;
+}
+
+.note-type {
+  text-align: right;
+  margin-bottom: 1em;
+}
+
+@media only screen and (max-width: 599px) {
+  h1 {
+    font-size: 1.8em;
+  }
+}
+
+.text-editor {
+  border: 1px lightgrey solid;
+  min-height: 88px;
+  padding: 1em;
+}

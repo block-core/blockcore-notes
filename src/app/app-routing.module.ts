@@ -31,6 +31,7 @@ import { RelaysManagementComponent } from './relays/relays';
 import { BadgesComponent } from './badges/badges';
 import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
+import { EditorBadgesComponent } from './editor-badges/editor';
 
 const routes: Routes = [
   {
@@ -156,6 +157,14 @@ const routes: Routes = [
   {
     path: 'editor',
     component: EditorComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'editor/badges',
+    component: EditorBadgesComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

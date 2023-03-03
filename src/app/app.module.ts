@@ -147,6 +147,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 import { ZapDialogComponent } from './shared/zap-dialog/zap-dialog.component';
 import { QRCodeModule } from 'angularx-qrcode';
 import { ZapQrCodeComponent } from './shared/zap-qr-code/zap-qr-code.component';
+import { EditorBadgesComponent } from './editor-badges/editor';
 
 @NgModule({
   declarations: [
@@ -233,7 +234,8 @@ import { ZapQrCodeComponent } from './shared/zap-qr-code/zap-qr-code.component';
     ContentEditorDirective,
     ContentInputHeightDirective,
     ZapQrCodeComponent,
-    ZapDialogComponent
+    ZapDialogComponent,
+    EditorBadgesComponent,
   ],
   imports: [
     AboutModule,
