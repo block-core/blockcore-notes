@@ -123,7 +123,7 @@
             <div mat-dialog-content class="mat-dialog-content">
  
               <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
-              <mat-form-field appearance="outline" class="input-full-width">
+              <mat-form-field class="input-full-width">
                 <mat-label>Note</mat-label>
                 <textarea class="note-input" matInput type="text" [(ngModel)]="note" formControlName="note" rows="6"></textarea>
               </mat-form-field>

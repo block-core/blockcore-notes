@@ -11,7 +11,7 @@
       </p>
 
       <div *ngIf="showIssuing">
-        <mat-form-field appearance="outline" class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-label>Pub Key (hex format only, line separated, add relay comma separated at the end)</mat-label>
           <textarea appAutoInputHeight class="note-input" matInput type="text" [(ngModel)]="pubkeys" rows="2"></textarea>
         </mat-form-field>

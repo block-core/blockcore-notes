@@ -1,4 +1,4 @@
-<mat-form-field class="tags-chip-list" appearance="outline">
+<mat-form-field class="tags-chip-list">
   <mat-label>Tags</mat-label>
   <mat-chip-grid #chipGrid aria-label="Enter tags">
     <mat-chip-row *ngFor="let tag of tags" (removed)="remove(tag)" [editable]="true" (edited)="edit(tag, $event)" [aria-description]="'press enter to edit ' + tag">

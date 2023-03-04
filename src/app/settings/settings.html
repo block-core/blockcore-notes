@@ -32,14 +32,14 @@
             </mat-card-header>
             <mat-card-content>
               <br />
-              <mat-form-field class="input-full-width" appearance="outline">
+              <mat-form-field class="input-full-width">
                 <mat-label>{{ 'Settings.DisplayLanguage' | translate}}</mat-label>
                 <mat-select (selectionChange)="onLanguageChanged($event)" [(value)]="optionsService.values.language">
                   <mat-option *ngFor="let lang of translate.getLangs()" [value]="lang"> {{ lang | translate }}</mat-option>
                 </mat-select>
               </mat-form-field>
 
-              <mat-form-field class="input-full-width" appearance="outline">
+              <mat-form-field class="input-full-width">
                 <mat-label>{{ 'Settings.ChooseMode' | translate }}</mat-label>
                 <mat-select (selectionChange)="theme.darkMode = !theme.darkMode" [value]="theme.darkMode">
                   <mat-option [value]="true">{{ 'Settings.Dark' | translate }}</mat-option>
@@ -57,7 +57,7 @@
               <mat-card-subtitle>Choose which service to use for uploading photos and films</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-              <mat-form-field class="input-full-width" appearance="outline">
+              <mat-form-field class="input-full-width">
                 <mat-select [(value)]="optionsService.values.mediaService">
                   <mat-option [value]="'void.cat'">void.cat</mat-option>
                   <mat-option [value]="'nostr.build'">nostr.build</mat-option>

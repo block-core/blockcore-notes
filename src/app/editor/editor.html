@@ -18,32 +18,32 @@
 
   <form [formGroup]="articleForm" *ngIf="group.value == 'article'" (ngSubmit)="onSubmitArticle()">
     <div mat-dialog-content class="mat-dialog-content">
-      <mat-form-field appearance="outline" class="input-full-width">
+      <mat-form-field class="input-full-width">
         <mat-label>Title</mat-label>
         <input matInput #message formControlName="title" placeholder="Ex. My favorite food..." />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="input-full-width">
+      <mat-form-field class="input-full-width">
         <mat-label>URL (slug)</mat-label>
         <input matInput #message placeholder="Can only contain - and lower case text" formControlName="slug" (blur)="formatSlug()" />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="input-full-width">
+      <mat-form-field class="input-full-width">
         <mat-label>Long form text that supports markdown formatting</mat-label>
         <textarea #articleContent appAutoInputHeight class="note-input" matInput type="text" [(ngModel)]="note" formControlName="content" rows="2"></textarea>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="input-full-width">
+      <mat-form-field class="input-full-width">
         <mat-label>Summary (optional)</mat-label>
         <textarea class="note-input" appAutoInputHeight matInput type="text" [(ngModel)]="summary" formControlName="summary" rows="2"></textarea>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="input-full-width">
+      <mat-form-field class="input-full-width">
         <mat-label>Banner image (optional)</mat-label>
         <input matInput #message placeholder="Article banner image" formControlName="image" />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="input-full-width">
+      <mat-form-field class="input-full-width">
         <mat-label>Tags (optional, comma separated)</mat-label>
         <input matInput #message placeholder="Tech, News, Social" formControlName="tags" />
       </mat-form-field>
@@ -73,7 +73,7 @@
 
   <form [formGroup]="noteForm" *ngIf="group.value == 'text'" (ngSubmit)="onSubmitNote()">
     <div mat-dialog-content class="mat-dialog-content">
-      <mat-form-field appearance="outline" class="input-full-width">
+      <mat-form-field class="input-full-width">
         <mat-label>What's on your mind?</mat-label>
         <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2"></textarea>
       </mat-form-field>

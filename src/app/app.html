@@ -33,7 +33,7 @@
     </span>
 
     <form class="search-box" *ngIf="appState.showSearch">
-      <mat-form-field appearance="outline" class="search-box-input">
+      <mat-form-field class="search-box-input">
         <mat-label>Search</mat-label>
         <input matInput #searchInput aria-label="Search" [formControl]="searchControl" [matAutocomplete]="auto" />
         <mat-autocomplete #auto="matAutocomplete">

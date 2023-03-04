@@ -16,34 +16,34 @@
 
     <form [formGroup]="form" *ngIf="group.value == 'badge'" (ngSubmit)="onSubmitArticle()">
       <div mat-dialog-content class="mat-dialog-content">
-        <mat-form-field appearance="outline" class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-label>Name</mat-label>
           <input matInput #message formControlName="name" placeholder="Ex. Medal of Bravery..." />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-label>URL (slug)</mat-label>
           <input matInput #message placeholder="Ex. bravery (Can only contain - and lower case text)" formControlName="slug" (blur)="formatSlug()" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-label>Description</mat-label>
           <textarea appAutoInputHeight class="note-input" matInput type="text" formControlName="description" rows="2"></textarea>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-label>Badge Graphics (1024x1024)</mat-label>
           <input matInput #message placeholder="Article banner image" formControlName="image" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-label>Badge Thumbnail</mat-label>
           <input matInput #message placeholder="Article banner image" formControlName="thumb" />
         </mat-form-field>
 
         <app-tags [tags]="badge.hashtags"></app-tags>
 
-        <!-- <mat-form-field appearance="outline" class="input-full-width">
+        <!-- <mat-form-field class="input-full-width">
           <mat-label>Tags (optional, comma separated)</mat-label>
           <input matInput #message placeholder="Tech, News, Social" formControlName="tags" />
         </mat-form-field> -->

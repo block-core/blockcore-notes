@@ -21,7 +21,7 @@
           <mat-slide-toggle class="options-slider" [(ngModel)]="showCached" (change)="optionsUpdated($event, 3)">Show cached</mat-slide-toggle>
         </p> -->
 
-        <mat-form-field class="options-field" appearance="outline">
+        <mat-form-field class="options-field">
           <mat-label>Show</mat-label>
           <mat-select (selectionChange)="showChanged()" [(value)]="optionsService.values.peopleDisplayType">
             <mat-option [value]="1">Following</mat-option>
@@ -31,7 +31,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="options-field" appearance="outline">
+        <mat-form-field class="options-field">
           <mat-label>Sorting</mat-label>
           <mat-select (selectionChange)="updateSorting()" [(value)]="optionsService.values.peopleDisplaySort">
             <mat-option value="name-asc">Name (A-Z)</mat-option>
@@ -43,7 +43,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="options-field" appearance="outline">
+        <mat-form-field class="options-field">
           <mat-label>View</mat-label>
           <mat-select (selectionChange)="showChanged()" [(value)]="optionsService.values.peopleDisplayView">
             <mat-option [value]="6">Large icons</mat-option>

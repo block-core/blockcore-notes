@@ -151,6 +151,7 @@ import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeCardComponent } from './shared/badge-card/badge-card';
 import { TagsComponent } from './shared/tags/tags';
 import { BadgeComponent } from './badge/badge';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -319,7 +320,7 @@ import { BadgeComponent } from './badge/badge';
     }),
   ],
   exports: [],
-  providers: [AuthGuardService, AppUpdateService, CheckForUpdateService, ChatService, UserService],
+  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } }, AuthGuardService, AppUpdateService, CheckForUpdateService, ChatService, UserService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

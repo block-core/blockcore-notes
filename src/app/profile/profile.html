@@ -5,70 +5,70 @@
     <mat-card>
       <mat-card-content *ngIf="profile">
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>badge</mat-icon>
             <mat-label>Display Name</mat-label>
             <input matInput type="text" [(ngModel)]="profile.display_name" />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>alternate_email</mat-icon>
             <mat-label>Nickname</mat-label>
             <input matInput type="text" [(ngModel)]="profile.name" />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>help_outline</mat-icon>
             <mat-label>About</mat-label>
             <textarea matInput type="text" [(ngModel)]="profile.about" rows="3"></textarea>
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>image</mat-icon>
             <mat-label>Profile Image</mat-label>
             <input matInput type="text" [(ngModel)]="profile.picture" />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>image</mat-icon>
             <mat-label>Profile Banner</mat-label>
             <input matInput type="text" [(ngModel)]="profile.banner" />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>how_to_reg</mat-icon>
             <mat-label>E-mail/Domain Identifier (NIP05)</mat-label>
             <input matInput type="text" [(ngModel)]="profile.nip05" />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>public</mat-icon>
             <mat-label>Website</mat-label>
             <input matInput type="text" [(ngModel)]="profile.website" />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>currency_bitcoin</mat-icon>
             <mat-label>Bitcoin Payment Link (LUD06)</mat-label>
             <input matInput type="text" [(ngModel)]="profile.lud06" placeholder="LNURL..." />
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field appearance="outline" class="input-full-width">
+          <mat-form-field class="input-full-width">
             <mat-icon matPrefix>currency_bitcoin</mat-icon>
             <mat-label>Bitcoin Payment Alias (LUD16)</mat-label>
             <input matInput type="text" [(ngModel)]="profile.lud16" placeholder="user@domain" />
           </mat-form-field>
         </p>
         <!-- <p>
-        <mat-form-field appearance="outline" class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-icon matPrefix>currency_bitcoin</mat-icon>
           <mat-label>Bitcoin Identity Identifier (LUD16)</mat-label>
           <input matInput type="text" [(ngModel)]="profile.lud16" placeholder="satoshi@bitcoin.org" />
