@@ -14,6 +14,8 @@
     </mat-accordion>
   </div>
 
+  <app-event-header [pubkey]="pubkey"></app-event-header>
+
   <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
     <mat-tab>
       <ng-template mat-tab-label>

@@ -8,6 +8,7 @@ import { BadgeService } from '../services/badge';
 import { NavigationService } from '../services/navigation';
 import { RelayService } from '../services/relay';
 import { Utilities } from '../services/utilities';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-badge',
@@ -18,6 +19,7 @@ export class BadgeComponent implements OnInit {
   showIssuing: boolean = false;
   sub: any;
   pubkeys: string = '';
+  subscriptions: Subscription[] = [];
 
   constructor(
     private snackBar: MatSnackBar,
@@ -32,6 +34,7 @@ export class BadgeComponent implements OnInit {
 
   ngOnDestroy() {
     this.relayService.unsubscribe(this.sub.id);
+    this.utilities.unsubscribe(this.subscriptions);
   }
 
   edit(badge: any) {
@@ -74,47 +77,49 @@ export class BadgeComponent implements OnInit {
     this.appState.updateTitle('Badge');
     this.appState.showBackButton = true;
 
-    this.activatedRoute.paramMap.subscribe(async (params) => {
-      const id: string | null = params.get('id');
+    this.subscriptions.push(
+      this.activatedRoute.paramMap.subscribe(async (params) => {
+        const id: string | null = params.get('id');
 
-      if (!id) {
-        this.router.navigateByUrl('/');
-        return;
-      }
+        if (!id) {
+          this.router.navigateByUrl('/');
+          return;
+        }
 
-      if (id.startsWith('naddr')) {
-        const result = nip19.decode(id);
-        console.log(result);
+        if (id.startsWith('naddr')) {
+          const result = nip19.decode(id);
+          console.log(result);
 
-        if (result.type == 'naddr') {
-          const data = result.data as AddressPointer;
+          if (result.type == 'naddr') {
+            const data = result.data as AddressPointer;
 
-          if (data.kind == 30009) {
-            this.router.navigate(['/b', data.pubkey, data.identifier]);
-            return;
+            if (data.kind == 30009) {
+              this.router.navigate(['/b', data.pubkey, data.identifier]);
+              return;
+            }
           }
         }
-      }
 
-      const pubkey = id;
-      const identifier = params.get('slug');
+        const pubkey = id;
+        const identifier = params.get('slug');
 
-      if (!identifier) {
-        return;
-      }
+        if (!identifier) {
+          return;
+        }
 
-      console.log('pubkey', pubkey);
-      console.log('identifier', identifier);
+        console.log('pubkey', pubkey);
+        console.log('identifier', identifier);
 
-      this.sub = this.relayService.download([{ kinds: [30009], authors: [pubkey], ['#d']: [identifier] }], undefined, 'Replaceable');
-      //   this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
+        this.sub = this.relayService.download([{ kinds: [30009], authors: [pubkey], ['#d']: [identifier] }], undefined, 'Replaceable');
+        //   this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
 
-      //   // Only trigger the event event ID if it's different than the navigation ID.
-      //   if (this.navigation.currentEvent?.id != id) {
-      //     debugger;
-      //     // this.ui.setEventId(id);
-      //     // this.thread.changeSelectedEvent(id);
-      //   }
-    });
+        //   // Only trigger the event event ID if it's different than the navigation ID.
+        //   if (this.navigation.currentEvent?.id != id) {
+        //     debugger;
+        //     // this.ui.setEventId(id);
+        //     // this.thread.changeSelectedEvent(id);
+        //   }
+      })
+    );
   }
 }

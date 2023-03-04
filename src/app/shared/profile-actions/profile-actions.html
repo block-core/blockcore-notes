@@ -126,12 +126,12 @@
 </mat-menu>
 
 <mat-menu #badges="matMenu">
-  <button mat-menu-item>
+  <button mat-menu-item (click)="openBadges(profile!.pubkey)">
     <mat-icon>badge</mat-icon>
     <span>View Badges</span>
   </button>
-  <button mat-menu-item>
+  <!-- <button mat-menu-item>
     <mat-icon>badge</mat-icon>
     <span>Issue Badge to</span>
-  </button>
+  </button> -->
 </mat-menu>

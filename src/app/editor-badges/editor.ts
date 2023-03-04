@@ -85,8 +85,6 @@ export class EditorBadgesComponent {
       })
     );
 
-    debugger;
-
     if (this.badgeService.selectedBadge) {
       this.selectedBadge = this.badgeService.selectedBadge.slug;
       this.changedArticle();

@@ -11,6 +11,7 @@ import { nip19 } from 'nostr-tools';
 import { EventPointer } from 'nostr-tools/nip19';
 import { UIService } from 'src/app/services/ui';
 import { ApplicationState } from 'src/app/services/applicationstate';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-actions',
@@ -45,7 +46,8 @@ export class ProfileActionsComponent {
     private snackBar: MatSnackBar,
     private profileService: ProfileService,
     private notesService: NotesService,
-    private utilities: Utilities
+    private utilities: Utilities,
+    private router: Router
   ) {}
 
   async saveNote() {
@@ -67,6 +69,10 @@ export class ProfileActionsComponent {
     console.log('DELETE EVENT:', this.event);
 
     await this.notesService.deleteNote(this.event.id);
+  }
+
+  openBadges(pubkey: string) {
+    this.router.navigate(['/badges', pubkey]);
   }
 
   async follow(circle?: number) {

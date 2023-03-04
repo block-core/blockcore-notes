@@ -45,8 +45,32 @@ export class BadgesComponent implements OnInit {
       })
     );
 
+    this.subscriptions.push(
+      this.activatedRoute.paramMap.subscribe(async (params) => {
+        const id: string | null = params.get('id');
+
+        debugger;
+
+        if (id) {
+          this.pubkey = id;
+        }
+
+        // this.sub = this.relayService.download([{ kinds: [30009], authors: [pubkey], ['#d']: [identifier] }], undefined, 'Replaceable');
+        //   this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
+
+        //   // Only trigger the event event ID if it's different than the navigation ID.
+        //   if (this.navigation.currentEvent?.id != id) {
+        //     debugger;
+        //     // this.ui.setEventId(id);
+        //     // this.thread.changeSelectedEvent(id);
+        //   }
+      })
+    );
+
     this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
   }
+
+  pubkey = '';
 
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);

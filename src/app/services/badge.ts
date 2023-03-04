@@ -23,6 +23,10 @@ export class BadgeService {
   }
 
   denormalizeBadge(badge: NostrBadgeDefinition) {
+    if (!badge) {
+      return;
+    }
+
     badge.slug = this.eventService.firstDTag(badge);
     badge.name = this.eventService.lastTagOfType(badge, 'name');
     badge.description = this.eventService.lastTagOfType(badge, 'description');
