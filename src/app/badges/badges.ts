@@ -7,7 +7,7 @@ import { ApplicationState } from '../services/applicationstate';
   styleUrls: ['badges.css'],
 })
 export class BadgesComponent implements OnInit {
-  constructor(private appState: ApplicationState) {}
+  constructor(public appState: ApplicationState) {}
 
   ngOnInit() {
     this.appState.updateTitle('Badges');

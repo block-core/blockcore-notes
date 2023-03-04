@@ -19,7 +19,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">verified</mat-icon>
-        <span>&nbsp;Accepted</span>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Accepted</span>
       </ng-template>
       <ng-template matTabContent>
         <div class="badges">
@@ -59,7 +59,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">emoji_events</mat-icon>
-        <span>&nbsp;Awarded</span>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Awarded</span>
       </ng-template>
       <ng-template matTabContent>
         <div class="badges">
@@ -99,7 +99,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">badge</mat-icon>
-        <span>&nbsp;Created</span>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Created</span>
       </ng-template>
       <ng-template matTabContent>
         <div class="badges">
