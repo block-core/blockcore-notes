@@ -50,9 +50,9 @@
           <app-badge-card [badge]="badge" *ngFor="let badge of receivedBadgesSub.events">
             {{badge | json}}
             <br /><br />
-            Created by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
+            Issued by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
             <br />
-            Last updated: <app-date [date]="badge.created_at"></app-date>
+            Issued date: <app-date [date]="badge.created_at"></app-date>
           </app-badge-card>
         </div>
       </ng-template>
@@ -64,11 +64,15 @@
         <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Created</span>
       </ng-template>
       <ng-template matTabContent>
-        <div class="badges">
-          <app-badge-card [badge]="badge" *ngFor="let badge of badgeService.definitions">
+        <div class="badges" *ngIf="badgeDefinitionsSub.events">
+          <app-badge-card [badge]="badge" *ngFor="let badge of badgeDefinitionsSub.events">
             <!-- <button class="badge-card-button" (click)="issue(badge)" mat-stroked-button>ISSUE BADGE</button> -->
             <button class="badge-card-button" (click)="edit(badge)" mat-stroked-button>EDIT</button>
           </app-badge-card>
+
+          <!-- <app-badge-card [badge]="badge" *ngFor="let badge of badgeService.definitions">
+            <button class="badge-card-button" (click)="edit(badge)" mat-stroked-button>EDIT</button>
+          </app-badge-card> -->
         </div>
       </ng-template>
     </mat-tab>

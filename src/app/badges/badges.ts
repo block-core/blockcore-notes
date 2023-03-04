@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
@@ -20,6 +20,7 @@ export class BadgesComponent implements OnInit {
   subscriptions: Subscription[] = [];
   receivedBadgesSub: any;
   profileBadgesSub: any;
+  badgeDefinitionsSub: any;
 
   constructor(
     private relayService: RelayService,
@@ -28,7 +29,8 @@ export class BadgesComponent implements OnInit {
     private router: Router,
     public appState: ApplicationState,
     public badgeService: BadgeService,
-    public queueService: QueueService
+    public queueService: QueueService,
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -64,8 +66,11 @@ export class BadgesComponent implements OnInit {
         if (id) {
           this.pubkey = id;
           this.queueService.enque(this.pubkey, 'BadgeDefinition');
-          this.receivedBadgesSub = this.relayService.download([{ kinds: [8], ['#p']: [this.pubkey] }], undefined, 'Replaceable');
+          this.receivedBadgesSub = this.relayService.download([{ kinds: [8], ['#p']: [this.pubkey] }], undefined, 'Event');
           this.profileBadgesSub = this.relayService.download([{ kinds: [30008], authors: [this.pubkey], ['#d']: ['profile_badges'] }], undefined, 'Replaceable');
+          this.badgeDefinitionsSub = this.relayService.download([{ kinds: [30009], authors: [this.pubkey] }], undefined, 'Replaceable');
+
+          this.cd.detectChanges();
         }
 
         // this.sub = this.relayService.download([{ kinds: [30009], authors: [pubkey], ['#d']: [identifier] }], undefined, 'Replaceable');
@@ -92,6 +97,10 @@ export class BadgesComponent implements OnInit {
 
     if (this.profileBadgesSub) {
       this.relayService.unsubscribe(this.profileBadgesSub.id);
+    }
+
+    if (this.badgeDefinitionsSub) {
+      this.relayService.unsubscribe(this.badgeDefinitionsSub.id);
     }
   }
 
