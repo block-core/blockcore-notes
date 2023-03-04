@@ -41,10 +41,12 @@
           <input matInput #message placeholder="Article banner image" formControlName="thumb" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="input-full-width">
+        <app-tags [tags]="badge.hashtags"></app-tags>
+
+        <!-- <mat-form-field appearance="outline" class="input-full-width">
           <mat-label>Tags (optional, comma separated)</mat-label>
           <input matInput #message placeholder="Tech, News, Social" formControlName="tags" />
-        </mat-form-field>
+        </mat-form-field> -->
 
       </div>
       <div mat-dialog-actions class="mat-dialog-actions" align="end">

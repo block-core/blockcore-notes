@@ -179,7 +179,7 @@ export class NavigationService {
       event.tags.push(['thumb', badge.thumb]);
     }
 
-    const tags = badge.tags.split(',').filter((t) => t);
+    const tags = badge.hashtags;
 
     for (let index = 0; index < tags.length; index++) {
       const tag = tags[index];

@@ -23,7 +23,6 @@ export class ArticleService {
     article.summary = this.eventService.lastTagOfType(event, 'summary');
     article.image = this.eventService.lastTagOfType(event, 'image');
     article.metatags = this.eventService.tagsOfTypeValues(event, 't');
-    article.metatags = this.eventService.tagsOfTypeValues(event, 't');
 
     const publishedAt = this.eventService.lastTagOfType(event, 'published_at');
 

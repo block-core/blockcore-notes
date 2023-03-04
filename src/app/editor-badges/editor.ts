@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular
 import { NavigationService } from '../services/navigation';
 import { Location } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
-import { BadgeDefinitionEvent, BlogEvent } from '../services/interfaces';
+import { BadgeDefinitionEvent, BlogEvent, NostrBadgeDefinition } from '../services/interfaces';
 import { Event } from 'nostr-tools';
 import { Subscription } from 'rxjs';
 import { Utilities } from '../services/utilities';
@@ -12,6 +12,7 @@ import { ArticleService } from '../services/article';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProfileService } from '../services/profile';
 import { BadgeService } from '../services/badge';
+import { EventService } from '../services/event';
 
 export interface NoteDialogData {
   note: string;
@@ -29,12 +30,11 @@ export class EditorBadgesComponent {
     image: ['', Validators.required],
     thumb: [''],
     slug: ['', Validators.required],
-    tags: [''],
   });
 
   note: string = '';
 
-  badge: BadgeDefinitionEvent = { name: '', description: '', image: '', thumb: '', slug: '', tags: '' };
+  badge: BadgeDefinitionEvent = { name: '', description: '', image: '', thumb: '', slug: '', hashtags: ['Collectible', 'Membership', 'Recognition'] };
 
   title = '';
 
@@ -54,6 +54,7 @@ export class EditorBadgesComponent {
     private queueService: QueueService,
     private utilities: Utilities,
     private appState: ApplicationState,
+    private eventService: EventService,
     private location: Location,
     private fb: FormBuilder,
     public navigation: NavigationService,
@@ -116,18 +117,22 @@ export class EditorBadgesComponent {
       image: badgeDefinition.image,
       thumb: badgeDefinition.thumb,
       slug: badgeDefinition.slug ? badgeDefinition.slug : '',
-      tags: badgeDefinition.metatags ? badgeDefinition.metatags.toString() : '',
+      // tags: badgeDefinition.metatags ? badgeDefinition.metatags.toString() : '',
     });
 
-    this.updateBadge();
+    this.updateBadge(badgeDefinition);
   }
 
-  updateBadge() {
+  updateBadge(badgeDefinition?: NostrBadgeDefinition) {
     this.badge.name = this.form.controls.name.value!;
     this.badge.description = this.form.controls.description.value!;
     this.badge.slug = this.form.controls.slug.value!;
     this.badge.image = this.form.controls.image.value!;
     this.badge.thumb = this.form.controls.thumb.value!;
+
+    if (badgeDefinition) {
+      this.badge.hashtags = this.eventService.hashTags(badgeDefinition);
+    }
   }
 
   ngOnDestroy() {
@@ -165,8 +170,10 @@ export class EditorBadgesComponent {
       image: controls.image.value!,
       thumb: controls.thumb.value!,
       slug: controls.slug.value!,
-      tags: controls.tags.value!,
+      hashtags: this.badge.hashtags,
     };
+
+    debugger;
 
     await this.navigation.saveBadgeDefinition(blog);
 

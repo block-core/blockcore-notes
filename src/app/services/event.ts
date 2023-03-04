@@ -97,6 +97,10 @@ export class EventService {
     return tags[tags.length - 1][1];
   }
 
+  hashTags(event: NostrEventDocument | null) {
+    return this.tagsOfTypeValues(event, 't');
+  }
+
   tagsOfType(event: NostrEventDocument | null, type: string) {
     if (!event) {
       return [];
