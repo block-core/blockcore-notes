@@ -15,35 +15,125 @@
     </mat-accordion>
   </div>
 
-  <div class="badges">
-    <mat-card class="badge-card">
-      <mat-card-header class="badge-header">
-        <mat-card-title>Verified Human Badge</mat-card-title>
-        <mat-card-subtitle>Human</mat-card-subtitle>
-      </mat-card-header>
-      <img mat-card-image src="/assets/badge-512x512.png" />
-      <mat-card-content>
-        <p>Badge earned by Fully Verified Humans.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-stroked-button>PUT ON PROFILE</button>
-        <button mat-stroked-button>HIDE</button>
-      </mat-card-actions>
-    </mat-card>
+  <mat-tab-group>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">verified</mat-icon>
+        <span>&nbsp;Accepted</span>
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="badges">
+          <mat-card class="badge-card">
+            <mat-card-header class="badge-header">
+              <mat-card-title>Verified Human Badge</mat-card-title>
+              <mat-card-subtitle>Human</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src="/assets/badge-512x512.png" />
+            <mat-card-content>
+              <p>Badge earned by Fully Verified Humans.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-stroked-button>PUT ON PROFILE</button>
+              <button mat-stroked-button>HIDE</button>
+            </mat-card-actions>
+          </mat-card>
 
-    <mat-card class="badge-card">
-      <mat-card-header class="badge-header">
-        <mat-card-title>Liberstad Membership Organization</mat-card-title>
-        <mat-card-subtitle>liberstad-member</mat-card-subtitle>
-      </mat-card-header>
-      <img mat-card-image src="/assets/badge-512x512.png" />
-      <mat-card-content>
-        <p>Verified One Year Membership.</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-stroked-button>PUT ON PROFILE</button>
-        <button mat-stroked-button>HIDE</button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+          <mat-card class="badge-card">
+            <mat-card-header class="badge-header">
+              <mat-card-title>Liberstad Membership Organization</mat-card-title>
+              <mat-card-subtitle>liberstad-member</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src="/assets/badge-512x512.png" />
+            <mat-card-content>
+              <p>Verified One Year Membership.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-stroked-button>PUT ON PROFILE</button>
+              <button mat-stroked-button>HIDE</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">emoji_events</mat-icon>
+        <span>&nbsp;Awarded</span>
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="badges">
+          <mat-card class="badge-card">
+            <mat-card-header class="badge-header">
+              <mat-card-title>Verified Human Badge</mat-card-title>
+              <mat-card-subtitle>Human</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src="/assets/badge-512x512.png" />
+            <mat-card-content>
+              <p>Badge earned by Fully Verified Humans.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-stroked-button>PUT ON PROFILE</button>
+              <button mat-stroked-button>HIDE</button>
+            </mat-card-actions>
+          </mat-card>
+
+          <mat-card class="badge-card">
+            <mat-card-header class="badge-header">
+              <mat-card-title>Liberstad Membership Organization</mat-card-title>
+              <mat-card-subtitle>liberstad-member</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src="/assets/badge-512x512.png" />
+            <mat-card-content>
+              <p>Verified One Year Membership.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-stroked-button>PUT ON PROFILE</button>
+              <button mat-stroked-button>HIDE</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">badge</mat-icon>
+        <span>&nbsp;Created</span>
+      </ng-template>
+      <ng-template matTabContent>
+        <div class="badges">
+          <mat-card class="badge-card">
+            <mat-card-header class="badge-header">
+              <mat-card-title>Verified Human Badge</mat-card-title>
+              <mat-card-subtitle>Human</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src="/assets/badge-512x512.png" />
+            <mat-card-content>
+              <p>Badge earned by Fully Verified Humans.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-stroked-button>PUT ON PROFILE</button>
+              <button mat-stroked-button>HIDE</button>
+            </mat-card-actions>
+          </mat-card>
+
+          <mat-card class="badge-card">
+            <mat-card-header class="badge-header">
+              <mat-card-title>Liberstad Membership Organization</mat-card-title>
+              <mat-card-subtitle>liberstad-member</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image src="/assets/badge-512x512.png" />
+            <mat-card-content>
+              <p>Verified One Year Membership.</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-stroked-button>PUT ON PROFILE</button>
+              <button mat-stroked-button>HIDE</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
 </div>

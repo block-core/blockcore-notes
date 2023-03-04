@@ -11,6 +11,7 @@
   flex-wrap: wrap;
   flex-direction: row;
   gap: 1em;
+  padding-top: 1em;
 }
 
 .badge-card button {

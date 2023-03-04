@@ -91,7 +91,7 @@ export class EditorBadgesComponent {
 
     if (!badgeDefinition) {
       this.form.reset();
-
+      this.badge.hashtags = ['Collectible', 'Membership', 'Recognition'];
       return;
     }
 
