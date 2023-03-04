@@ -256,17 +256,18 @@ export class HomeComponent {
 
     this.subscriptions.push(
       this.profileService.following$.subscribe((profiles) => {
-        this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
+        // this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
+        this.profileCount = 75;
         this.profiles = profiles.slice(0, this.profileCount);
       })
     );
 
-    this.resizeObservable$ = fromEvent(window, 'resize');
+    // this.resizeObservable$ = fromEvent(window, 'resize');
 
-    this.resizeSubscription$ = this.resizeObservable$.pipe(debounceTime(100)).subscribe((evt) => {
-      this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
-      this.profiles = this.profileService.following.slice(0, this.profileCount);
-    });
+    // this.resizeSubscription$ = this.resizeObservable$.pipe(debounceTime(100)).subscribe((evt) => {
+    //   this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
+    //   this.profiles = this.profileService.following.slice(0, this.profileCount);
+    // });
   }
 
   profileThumbnailWidth = 72;

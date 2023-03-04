@@ -3,6 +3,9 @@
 
   <div class="profile-line">
     <app-event-header [listType]="'icon'" [iconSize]="'thumbnail'" [displayName]="false" [displayContent]="false" *ngFor="let profile of profiles" [profile]="profile"></app-event-header>
+    <button mat-icon-button routerLink="/people" class="profile-line-more-button">
+      <mat-icon>more_horiz</mat-icon>
+    </button>
   </div>
 
   <div class="home">

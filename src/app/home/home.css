@@ -150,10 +150,19 @@
 
 .profile-line {
   width: 100%;
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: scroll;
   display: flex;
   flex-direction: row;
   margin-bottom: 0.2em;
+}
+
+.profile-line::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.profile-line::-webkit-scrollbar-thumb:hover {
+  background-color: #a3a5a7c2;
 }
 
 .profile-line .event-header {
@@ -163,4 +172,9 @@
 .profile-line .icon-medium {
   width: 64px !important;
   height: 64px !important;
+}
+
+.profile-line-more-button {
+  margin-top: 0.4em;
+  margin-left: 0.4em;
 }
