@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { nip19 } from 'nostr-tools';
 import { AddressPointer } from 'nostr-tools/nip19';
@@ -14,7 +15,12 @@ import { Utilities } from '../services/utilities';
   styleUrls: ['badge.css'],
 })
 export class BadgeComponent implements OnInit {
+  showIssuing: boolean = false;
+  sub: any;
+  pubkeys: string = '';
+
   constructor(
+    private snackBar: MatSnackBar,
     private relayService: RelayService,
     public badgeService: BadgeService,
     public appState: ApplicationState,
@@ -24,10 +30,34 @@ export class BadgeComponent implements OnInit {
     private utilities: Utilities
   ) {}
 
-  sub: any;
-
   ngOnDestroy() {
     this.relayService.unsubscribe(this.sub.id);
+  }
+
+  async issueBadge(badge: any) {
+    const pubkeys = this.pubkeys.split(/\r?\n/);
+    const receivers: { pubkey: string; relay?: string }[] = [];
+
+    for (let index = 0; index < pubkeys.length; index++) {
+      const pubkey = pubkeys[index];
+      if (pubkey.indexOf(',')) {
+        const values = pubkey.split(',');
+        receivers.push({ pubkey: values[0], relay: values[1] });
+      } else {
+        receivers.push({ pubkey });
+      }
+    }
+
+    await this.navigation.issueBadge(badge.slug, receivers);
+
+    this.showIssuing = false;
+    this.pubkeys = '';
+
+    this.snackBar.open('Badge has been issued', 'Hide', {
+      duration: 2500,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
 
   ngOnInit() {

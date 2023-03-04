@@ -4,6 +4,19 @@
       Created by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
       <br />
       Last updated: <app-date [date]="badge.created_at"></app-date>
+
+      <p *ngIf="appState.getPublicKey() == badge.pubkey">
+        <button class="badge-card-button" (click)="showIssuing = !showIssuing" mat-stroked-button>ISSUE BADGE</button>
+      </p>
+
+      <div *ngIf="showIssuing">
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-label>Pub Key (hex format only, line separated, add relay comma separated at the end)</mat-label>
+          <textarea appAutoInputHeight class="note-input" matInput type="text" [(ngModel)]="pubkeys" rows="2"></textarea>
+        </mat-form-field>
+        <br />
+        <button mat-flat-button [disabled]="pubkeys.length == 0" type="button" (click)="issueBadge(badge)" color="primary">Publish Badge Reward</button>
+      </div>
     </app-badge-card>
   </div>
 </div>

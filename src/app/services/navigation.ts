@@ -195,6 +195,30 @@ export class NavigationService {
     // this.router.navigate(['/a', signedEvent.id]);
   }
 
+  async issueBadge(slug: string, receivers: { pubkey: string; relay?: string }[]) {
+    let event = this.dataService.createEvent(8, '');
+
+    const author = `30009:${this.appState.getPublicKey()}:${slug}`;
+    event.tags.push(['a', author]);
+
+    for (let index = 0; index < receivers.length; index++) {
+      const receiver = receivers[index];
+      const receiverEntry = ['p', receiver.pubkey];
+
+      if (receiver.relay) {
+        receiverEntry.push(receiver.relay);
+      }
+
+      event.tags.push(receiverEntry);
+    }
+
+    // TODO: We should likely save this event locally to ensure user don't loose their posts
+    // if all of the network is down.
+    const signedEvent = await this.dataService.signEvent(event);
+
+    await this.dataService.publishEvent(signedEvent);
+  }
+
   createNote(): void {
     this.router.navigateByUrl('/editor');
 

@@ -18,7 +18,7 @@ export class RelayWorker {
   }
 
   async publish(event: Event) {
-    if (event.kind == Kind.Article || (event.kind as number) == 30009) {
+    if (event.kind == Kind.Article || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
       // If we don't have metadata from the relay, don't publish articles.
       if (!this.relay.nip11) {
         console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article/Badge will not be published here.`);
