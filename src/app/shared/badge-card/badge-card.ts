@@ -1,5 +1,5 @@
 import { Component, HostListener, Output, EventEmitter, Input, ElementRef, OnInit } from '@angular/core';
-import { BadgeDefinitionEvent, NostrEventDocument } from 'src/app/services/interfaces';
+import { BadgeDefinitionEvent, NostrBadgeDefinition, NostrEventDocument } from 'src/app/services/interfaces';
 import { Utilities } from 'src/app/services/utilities';
 
 @Component({
@@ -8,7 +8,7 @@ import { Utilities } from 'src/app/services/utilities';
   styleUrls: ['badge-card.css'],
 })
 export class BadgeCardComponent implements OnInit {
-  @Input() badge?: BadgeDefinitionEvent;
+  @Input() badge?: BadgeDefinitionEvent | NostrBadgeDefinition;
   @Input() preview: boolean = false;
 
   constructor(private utilities: Utilities) {}

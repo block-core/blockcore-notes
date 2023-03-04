@@ -103,35 +103,7 @@
       </ng-template>
       <ng-template matTabContent>
         <div class="badges">
-          <mat-card class="badge-card">
-            <mat-card-header class="badge-header">
-              <mat-card-title>Verified Human Badge</mat-card-title>
-              <mat-card-subtitle>Human</mat-card-subtitle>
-            </mat-card-header>
-            <img mat-card-image src="/assets/badge-512x512.png" />
-            <mat-card-content>
-              <p>Badge earned by Fully Verified Humans.</p>
-            </mat-card-content>
-            <mat-card-actions>
-              <button mat-stroked-button>PUT ON PROFILE</button>
-              <button mat-stroked-button>HIDE</button>
-            </mat-card-actions>
-          </mat-card>
-
-          <mat-card class="badge-card">
-            <mat-card-header class="badge-header">
-              <mat-card-title>Liberstad Membership Organization</mat-card-title>
-              <mat-card-subtitle>liberstad-member</mat-card-subtitle>
-            </mat-card-header>
-            <img mat-card-image src="/assets/badge-512x512.png" />
-            <mat-card-content>
-              <p>Verified One Year Membership.</p>
-            </mat-card-content>
-            <mat-card-actions>
-              <button mat-stroked-button>PUT ON PROFILE</button>
-              <button mat-stroked-button>HIDE</button>
-            </mat-card-actions>
-          </mat-card>
+          <app-badge-card [badge]="badge" *ngFor="let badge of badgeService.definitions"> </app-badge-card>
         </div>
       </ng-template>
     </mat-tab>

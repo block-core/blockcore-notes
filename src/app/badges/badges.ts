@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplicationState } from '../services/applicationstate';
+import { BadgeService } from '../services/badge';
+import { QueueService } from '../services/queue.service';
 
 @Component({
   selector: 'app-badges',
@@ -7,7 +9,7 @@ import { ApplicationState } from '../services/applicationstate';
   styleUrls: ['badges.css'],
 })
 export class BadgesComponent implements OnInit {
-  constructor(public appState: ApplicationState) {}
+  constructor(public appState: ApplicationState, public badgeService: BadgeService, public queueService: QueueService) {}
 
   ngOnInit() {
     this.appState.updateTitle('Badges');
@@ -28,6 +30,8 @@ export class BadgesComponent implements OnInit {
         },
       },
     ];
+
+    this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
   }
 
   private createBadgeType() {}
