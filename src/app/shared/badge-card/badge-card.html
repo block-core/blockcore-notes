@@ -6,6 +6,10 @@
   <img mat-card-image [src]="thumbUrl(badge.thumb)" />
   <mat-card-content>
     <p>{{ badge.description }}</p>
+
+    <mat-chip-set class="hashtags">
+      <mat-chip *ngFor="let tag of badge.hashtags">#{{ tag }}</mat-chip>
+    </mat-chip-set>
   </mat-card-content>
   <mat-card-actions *ngIf="!preview">
     <button mat-stroked-button>PUT ON PROFILE</button>
