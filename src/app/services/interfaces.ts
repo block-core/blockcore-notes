@@ -128,6 +128,7 @@ export interface NostrBadgeDefinition extends NostrEvent {
   description?: string;
   image?: string;
   thumb?: string;
+  metatags: string[];
 }
 
 export interface NostrSub extends Sub {
@@ -346,6 +347,8 @@ export interface BadgeDefinitionEvent {
   thumb?: string;
 
   slug?: string;
+
+  tags: string;
 }
 
 export interface Logger {

@@ -29,11 +29,12 @@ export class EditorBadgesComponent {
     image: ['', Validators.required],
     thumb: [''],
     slug: ['', Validators.required],
+    tags: [''],
   });
 
   note: string = '';
 
-  badge: BadgeDefinitionEvent = { name: '', description: '', image: '', thumb: '', slug: '' };
+  badge: BadgeDefinitionEvent = { name: '', description: '', image: '', thumb: '', slug: '', tags: '' };
 
   title = '';
 
@@ -85,36 +86,37 @@ export class EditorBadgesComponent {
   selectedBadge: string = '';
 
   changedArticle() {
-    const article = this.badgeService.getDefinition(this.selectedBadge!);
+    const badgeDefinition = this.badgeService.getDefinition(this.selectedBadge!);
 
-    if (!article) {
+    if (!badgeDefinition) {
       this.form.reset();
 
       return;
     }
 
-    if (article.name == null) {
-      article.name = '';
+    if (badgeDefinition.name == null) {
+      badgeDefinition.name = '';
     }
 
-    if (article.image == null) {
-      article.image = '';
+    if (badgeDefinition.image == null) {
+      badgeDefinition.image = '';
     }
 
-    if (article.thumb == null) {
-      article.thumb = '';
+    if (badgeDefinition.thumb == null) {
+      badgeDefinition.thumb = '';
     }
 
-    if (article.description == null) {
-      article.description = '';
+    if (badgeDefinition.description == null) {
+      badgeDefinition.description = '';
     }
 
     this.form.setValue({
-      name: article.name,
-      description: article.description,
-      image: article.image,
-      thumb: article.thumb,
-      slug: article.slug ? article.slug : '',
+      name: badgeDefinition.name,
+      description: badgeDefinition.description,
+      image: badgeDefinition.image,
+      thumb: badgeDefinition.thumb,
+      slug: badgeDefinition.slug ? badgeDefinition.slug : '',
+      tags: badgeDefinition.metatags ? badgeDefinition.metatags.toString() : '',
     });
 
     this.updateBadge();
@@ -163,6 +165,7 @@ export class EditorBadgesComponent {
       image: controls.image.value!,
       thumb: controls.thumb.value!,
       slug: controls.slug.value!,
+      tags: controls.tags.value!,
     };
 
     await this.navigation.saveBadgeDefinition(blog);

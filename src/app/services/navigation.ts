@@ -179,6 +179,13 @@ export class NavigationService {
       event.tags.push(['thumb', badge.thumb]);
     }
 
+    const tags = badge.tags.split(',').filter((t) => t);
+
+    for (let index = 0; index < tags.length; index++) {
+      const tag = tags[index];
+      event.tags.push(['t', tag]);
+    }
+
     // TODO: We should likely save this event locally to ensure user don't loose their posts
     // if all of the network is down.
     const signedEvent = await this.dataService.signBadgeDefinition(event);
