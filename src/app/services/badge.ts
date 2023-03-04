@@ -10,6 +10,8 @@ import { Utilities } from './utilities';
 export class BadgeService {
   definitions: NostrBadgeDefinition[] = [];
 
+  selectedBadge?: NostrBadgeDefinition;
+
   constructor(private appState: ApplicationState, private utilities: Utilities, private eventService: EventService) {}
 
   getDefinition(slug: string) {

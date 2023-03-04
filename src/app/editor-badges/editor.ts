@@ -48,6 +48,8 @@ export class EditorBadgesComponent {
 
   subscriptions: Subscription[] = [];
 
+  selectedBadge?: string = '';
+
   constructor(
     private snackBar: MatSnackBar,
     public badgeService: BadgeService,
@@ -82,9 +84,13 @@ export class EditorBadgesComponent {
         }
       })
     );
-  }
 
-  selectedBadge: string = '';
+    if (this.badgeService.selectedBadge) {
+      this.selectedBadge = this.badgeService.selectedBadge.slug;
+      this.changedArticle();
+      this.badgeService.selectedBadge = undefined;
+    }
+  }
 
   changedArticle() {
     const badgeDefinition = this.badgeService.getDefinition(this.selectedBadge!);

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { BadgeService } from '../services/badge';
 import { QueueService } from '../services/queue.service';
@@ -9,7 +10,7 @@ import { QueueService } from '../services/queue.service';
   styleUrls: ['badges.css'],
 })
 export class BadgesComponent implements OnInit {
-  constructor(public appState: ApplicationState, public badgeService: BadgeService, public queueService: QueueService) {}
+  constructor(private router: Router, public appState: ApplicationState, public badgeService: BadgeService, public queueService: QueueService) {}
 
   ngOnInit() {
     this.appState.updateTitle('Badges');
@@ -32,6 +33,11 @@ export class BadgesComponent implements OnInit {
     ];
 
     this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
+  }
+
+  edit(badge: any) {
+    this.badgeService.selectedBadge = badge;
+    this.router.navigateByUrl('/editor/badges');
   }
 
   private createBadgeType() {}

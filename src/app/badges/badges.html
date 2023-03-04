@@ -103,7 +103,10 @@
       </ng-template>
       <ng-template matTabContent>
         <div class="badges">
-          <app-badge-card [badge]="badge" *ngFor="let badge of badgeService.definitions"> </app-badge-card>
+          <app-badge-card [badge]="badge" *ngFor="let badge of badgeService.definitions">
+            <button class="badge-card-button" [disabled]="'disabled'" mat-stroked-button>ISSUE BADGE</button>
+            <button class="badge-card-button" (click)="edit(badge)" mat-stroked-button>EDIT</button>
+          </app-badge-card>
         </div>
       </ng-template>
     </mat-tab>

@@ -11,8 +11,7 @@
       <mat-chip *ngFor="let tag of badge.hashtags">#{{ tag }}</mat-chip>
     </mat-chip-set>
   </mat-card-content>
-  <mat-card-actions *ngIf="!preview">
-    <button mat-stroked-button>PUT ON PROFILE</button>
-    <button mat-stroked-button>HIDE</button>
+  <mat-card-actions>
+    <ng-content></ng-content>
   </mat-card-actions>
 </mat-card>
