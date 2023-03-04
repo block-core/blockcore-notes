@@ -251,7 +251,9 @@ header {
 .app-outlet {
   flex: 2 2 auto;
   box-sizing: border-box;
-  overflow: auto;
+  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+  overflow-y: overlay !important;
 }
 
 .app-mediaplayer {
