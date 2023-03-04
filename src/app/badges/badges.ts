@@ -6,6 +6,8 @@ import { BadgeService } from '../services/badge';
 import { QueueService } from '../services/queue.service';
 import { Subscription } from 'rxjs';
 import { Utilities } from '../services/utilities';
+import { RelayService } from '../services/relay';
+import { Sub } from 'nostr-tools';
 
 @Component({
   selector: 'app-badges',
@@ -16,8 +18,18 @@ export class BadgesComponent implements OnInit {
   tabIndex?: number;
 
   subscriptions: Subscription[] = [];
+  receivedBadgesSub: any;
+  profileBadgesSub: any;
 
-  constructor(private activatedRoute: ActivatedRoute, private utilities: Utilities, private router: Router, public appState: ApplicationState, public badgeService: BadgeService, public queueService: QueueService) {}
+  constructor(
+    private relayService: RelayService,
+    private activatedRoute: ActivatedRoute,
+    private utilities: Utilities,
+    private router: Router,
+    public appState: ApplicationState,
+    public badgeService: BadgeService,
+    public queueService: QueueService
+  ) {}
 
   ngOnInit() {
     this.appState.updateTitle('Badges');
@@ -49,10 +61,11 @@ export class BadgesComponent implements OnInit {
       this.activatedRoute.paramMap.subscribe(async (params) => {
         const id: string | null = params.get('id');
 
-        debugger;
-
         if (id) {
           this.pubkey = id;
+          this.queueService.enque(this.pubkey, 'BadgeDefinition');
+          this.receivedBadgesSub = this.relayService.download([{ kinds: [8], ['#p']: [this.pubkey] }], undefined, 'Replaceable');
+          this.profileBadgesSub = this.relayService.download([{ kinds: [30008], authors: [this.pubkey], ['#d']: ['profile_badges'] }], undefined, 'Replaceable');
         }
 
         // this.sub = this.relayService.download([{ kinds: [30009], authors: [pubkey], ['#d']: [identifier] }], undefined, 'Replaceable');
@@ -66,14 +79,20 @@ export class BadgesComponent implements OnInit {
         //   }
       })
     );
-
-    this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
   }
 
   pubkey = '';
 
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);
+
+    if (this.receivedBadgesSub) {
+      this.relayService.unsubscribe(this.receivedBadgesSub.id);
+    }
+
+    if (this.profileBadgesSub) {
+      this.relayService.unsubscribe(this.profileBadgesSub.id);
+    }
   }
 
   onTabChanged(event: MatTabChangeEvent) {

@@ -23,11 +23,19 @@
         <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Accepted</span>
       </ng-template>
       <ng-template matTabContent>
-        <div class="badges">
-          <app-badge-card>
+        <div class="badges" *ngIf="profileBadgesSub.events">
+          <app-badge-card [badge]="badge" *ngFor="let badge of profileBadgesSub.events">
+            {{badge | json}}
+            <br /><br />
+            Created by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
+            <br />
+            Last updated: <app-date [date]="badge.created_at"></app-date>
+          </app-badge-card>
+
+          <!-- <app-badge-card>
             <button class="badge-card-button" mat-stroked-button>PUT ON PROFILE</button>
             <button class="badge-card-button" mat-stroked-button>HIDE</button>
-          </app-badge-card>
+          </app-badge-card> -->
         </div>
       </ng-template>
     </mat-tab>
@@ -38,7 +46,15 @@
         <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Awarded</span>
       </ng-template>
       <ng-template matTabContent>
-        <div class="badges"></div>
+        <div class="badges" *ngIf="receivedBadgesSub.events">
+          <app-badge-card [badge]="badge" *ngFor="let badge of receivedBadgesSub.events">
+            {{badge | json}}
+            <br /><br />
+            Created by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
+            <br />
+            Last updated: <app-date [date]="badge.created_at"></app-date>
+          </app-badge-card>
+        </div>
       </ng-template>
     </mat-tab>
 
