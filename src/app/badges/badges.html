@@ -14,7 +14,7 @@
     </mat-accordion>
   </div>
 
-  <mat-tab-group>
+  <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">verified</mat-icon>
