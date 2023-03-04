@@ -1,52 +1,54 @@
-<div class="page">
-  <div class="note-type">
-    <mat-button-toggle-group name="fontStyle" (change)="noteTypeChanged()" [(ngModel)]="eventType" aria-label="Font Style" #group="matButtonToggleGroup">
-      <mat-button-toggle value="badge">Badge</mat-button-toggle>
-    </mat-button-toggle-group>
+<div class="split-page">
+  <div class="primary-page">
+    <div class="note-type">
+      <mat-button-toggle-group name="fontStyle" (change)="noteTypeChanged()" [(ngModel)]="eventType" aria-label="Font Style" #group="matButtonToggleGroup">
+        <mat-button-toggle value="badge">Badge</mat-button-toggle>
+      </mat-button-toggle-group>
+      </div>
+
+    <mat-form-field appearance="fill" *ngIf="group.value == 'badge'">
+      <mat-label>Existing badge designs</mat-label>
+      <mat-select [(value)]="selectedBadge" (selectionChange)="changedArticle()">
+        <mat-option></mat-option>
+        <mat-option [value]="badge.slug" *ngFor="let badge of badgeService.definitions">{{ badge.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <form [formGroup]="form" *ngIf="group.value == 'badge'" (ngSubmit)="onSubmitArticle()">
+      <div mat-dialog-content class="mat-dialog-content">
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-label>Name</mat-label>
+          <input matInput #message formControlName="name" placeholder="Ex. Medal of Bravery..." />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-label>URL (slug)</mat-label>
+          <input matInput #message placeholder="Ex. bravery (Can only contain - and lower case text)" formControlName="slug" (blur)="formatSlug()" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-label>Description</mat-label>
+          <textarea appAutoInputHeight class="note-input" matInput type="text" [(ngModel)]="note" formControlName="description" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-label>Badge Graphics (1024x1024)</mat-label>
+          <input matInput #message placeholder="Article banner image" formControlName="image" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="input-full-width">
+          <mat-label>Badge Thumbnail</mat-label>
+          <input matInput #message placeholder="Article banner image" formControlName="thumb" />
+        </mat-form-field>
+      </div>
+      <div mat-dialog-actions class="mat-dialog-actions" align="end">
+        <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
+        <button mat-flat-button [disabled]="!form.valid" type="submit" color="primary">Publish Badge Design</button>
+      </div>
+    </form>
   </div>
-
-  <mat-form-field appearance="fill" *ngIf="group.value == 'badge'">
-    <mat-label>Existing badge designs</mat-label>
-    <mat-select [(value)]="selectedBadge" (selectionChange)="changedArticle()">
-      <mat-option></mat-option>
-      <mat-option [value]="badge.slug" *ngFor="let badge of badgeService.definitions">{{ badge.name }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <form [formGroup]="form" *ngIf="group.value == 'badge'" (ngSubmit)="onSubmitArticle()">
-    <div mat-dialog-content class="mat-dialog-content">
-      <mat-form-field appearance="outline" class="input-full-width">
-        <mat-label>Name</mat-label>
-        <input matInput #message formControlName="name" placeholder="Ex. Medal of Bravery..." />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="input-full-width">
-        <mat-label>URL (slug)</mat-label>
-        <input matInput #message placeholder="Ex. bravery (Can only contain - and lower case text)" formControlName="slug" (blur)="formatSlug()" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="input-full-width">
-        <mat-label>Description</mat-label>
-        <textarea appAutoInputHeight class="note-input" matInput type="text" [(ngModel)]="note" formControlName="description" rows="2"></textarea>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="input-full-width">
-        <mat-label>Badge Graphics (1024x1024)</mat-label>
-        <input matInput #message placeholder="Article banner image" formControlName="image" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="input-full-width">
-        <mat-label>Badge Thumbnail</mat-label>
-        <input matInput #message placeholder="Article banner image" formControlName="thumb" />
-      </mat-form-field>
-    </div>
-    <div mat-dialog-actions class="mat-dialog-actions" align="end">
-      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
-      <button mat-flat-button [disabled]="!form.valid" type="submit" color="primary">Publish Badge Design</button>
-    </div>
-  </form>
-
-  <h2>Badge Design Preview</h2>
-
-  <app-badge-card [badge]="badge" [preview]="true"></app-badge-card>
+  <div class="secondary-page">
+    <h2 class="marginless">Badge Design Preview</h2><br>
+    <app-badge-card [badge]="badge" [preview]="true"></app-badge-card>
+  </div>
 </div>

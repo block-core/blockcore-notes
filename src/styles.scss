@@ -960,3 +960,42 @@ textarea.noscrollbars {
 .autocomplete-meta {
   flex: 1 1 auto;
 }
+
+.split-page {
+  display: flex;
+  flex-direction: row;
+  padding: 2em;
+  gap: 2em;
+}
+
+.primary-page {
+  flex-grow: 2;
+  flex-shrink: 1;
+  flex-basis: 70%;
+}
+
+.secondary-page {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 30%;
+}
+
+@media only screen and (max-width: 1500px) {
+  .split-page {
+    flex-direction: column;
+    padding: 0.8em;
+    gap: 0.8em;
+  }
+
+  .primary-page {
+    flex-grow: 2;
+    flex-shrink: 1;
+    flex-basis: 100%;
+  }
+
+  .secondary-page {
+    flex-grow: 2;
+    flex-shrink: 1;
+    flex-basis: 100%;
+  }
+}
