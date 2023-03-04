@@ -7,6 +7,7 @@
 
       <p *ngIf="appState.getPublicKey() == badge.pubkey">
         <button class="badge-card-button" (click)="showIssuing = !showIssuing" mat-stroked-button>ISSUE BADGE</button>
+        <button class="badge-card-button" (click)="edit(badge)" mat-stroked-button>EDIT</button>
       </p>
 
       <div *ngIf="showIssuing">

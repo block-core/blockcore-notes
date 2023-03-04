@@ -85,6 +85,8 @@ export class EditorBadgesComponent {
       })
     );
 
+    debugger;
+
     if (this.badgeService.selectedBadge) {
       this.selectedBadge = this.badgeService.selectedBadge.slug;
       this.changedArticle();
@@ -93,7 +95,7 @@ export class EditorBadgesComponent {
   }
 
   changedArticle() {
-    const badgeDefinition = this.badgeService.getDefinition(this.selectedBadge!);
+    let badgeDefinition = this.badgeService.selectedBadge || this.badgeService.getDefinition(this.selectedBadge!);
 
     if (!badgeDefinition) {
       this.form.reset();
@@ -178,8 +180,6 @@ export class EditorBadgesComponent {
       slug: controls.slug.value!,
       hashtags: this.badge.hashtags,
     };
-
-    debugger;
 
     await this.navigation.saveBadgeDefinition(blog);
 

@@ -34,6 +34,11 @@ export class BadgeComponent implements OnInit {
     this.relayService.unsubscribe(this.sub.id);
   }
 
+  edit(badge: any) {
+    this.badgeService.selectedBadge = badge;
+    this.router.navigateByUrl('/editor/badges');
+  }
+
   async issueBadge(badge: any) {
     const pubkeys = this.pubkeys.split(/\r?\n/);
     const receivers: { pubkey: string; relay?: string }[] = [];
