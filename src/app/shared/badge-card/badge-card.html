@@ -5,7 +5,7 @@
   </mat-card-header>
   <img mat-card-image [src]="thumbUrl(badge.thumb)" />
   <mat-card-content>
-    <p>{{ badge.description }}</p>
+    <p class="text">{{ badge.description }}</p>
 
     <mat-chip-set class="hashtags">
       <mat-chip *ngFor="let tag of badge.hashtags">#{{ tag }}</mat-chip>
