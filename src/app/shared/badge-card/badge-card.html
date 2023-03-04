@@ -1,0 +1,14 @@
+<mat-card class="badge-card" *ngIf="badge">
+  <mat-card-header class="badge-header">
+    <mat-card-title>{{ badge.name }}</mat-card-title>
+    <mat-card-subtitle>{{badge.slug}}</mat-card-subtitle>
+  </mat-card-header>
+  <img mat-card-image [src]="thumbUrl(badge.thumb)" />
+  <mat-card-content>
+    <p>{{ badge.description }}</p>
+  </mat-card-content>
+  <mat-card-actions *ngIf="!preview">
+    <button mat-stroked-button>PUT ON PROFILE</button>
+    <button mat-stroked-button>HIDE</button>
+  </mat-card-actions>
+</mat-card>

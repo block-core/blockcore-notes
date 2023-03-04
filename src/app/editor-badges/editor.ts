@@ -33,7 +33,7 @@ export class EditorBadgesComponent {
 
   note: string = '';
 
-  badge?: BadgeDefinitionEvent = { name: '', description: '', image: '', thumb: '', slug: '' };
+  badge: BadgeDefinitionEvent = { name: '', description: '', image: '', thumb: '', slug: '' };
 
   title = '';
 
@@ -66,6 +66,10 @@ export class EditorBadgesComponent {
     this.appState.actions = [];
 
     this.minDate = Date.now();
+
+    this.form.valueChanges.subscribe((value) => {
+      this.updateBadge();
+    });
 
     this.queueService.enque(this.appState.getPublicKey(), 'BadgeDefinition');
 
@@ -112,6 +116,16 @@ export class EditorBadgesComponent {
       thumb: article.thumb,
       slug: article.slug ? article.slug : '',
     });
+
+    this.updateBadge();
+  }
+
+  updateBadge() {
+    this.badge.name = this.form.controls.name.value!;
+    this.badge.description = this.form.controls.description.value!;
+    this.badge.slug = this.form.controls.slug.value!;
+    this.badge.image = this.form.controls.image.value!;
+    this.badge.thumb = this.form.controls.thumb.value!;
   }
 
   ngOnDestroy() {

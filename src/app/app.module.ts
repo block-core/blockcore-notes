@@ -148,6 +148,7 @@ import { ZapDialogComponent } from './shared/zap-dialog/zap-dialog.component';
 import { QRCodeModule } from 'angularx-qrcode';
 import { ZapQrCodeComponent } from './shared/zap-qr-code/zap-qr-code.component';
 import { EditorBadgesComponent } from './editor-badges/editor';
+import { BadgeCardComponent } from './shared/badge-card/badge-card';
 
 @NgModule({
   declarations: [
@@ -236,6 +237,7 @@ import { EditorBadgesComponent } from './editor-badges/editor';
     ZapQrCodeComponent,
     ZapDialogComponent,
     EditorBadgesComponent,
+    BadgeCardComponent
   ],
   imports: [
     AboutModule,

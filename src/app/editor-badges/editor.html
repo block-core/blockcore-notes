@@ -45,4 +45,8 @@
       <button mat-flat-button [disabled]="!form.valid" type="submit" color="primary">Publish Badge Design</button>
     </div>
   </form>
+
+  <h2>Badge Design Preview</h2>
+
+  <app-badge-card [badge]="badge" [preview]="true"></app-badge-card>
 </div>
