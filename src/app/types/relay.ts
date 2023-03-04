@@ -43,8 +43,8 @@ export class RelayType {
     this.action('publish', data);
   }
 
-  download(query: any) {
-    this.action('download', query);
+  download(filters: any, id?: string, type?: string) {
+    this.action('download', { filters, id, type });
   }
 
   subscribe(filters: Filter[], id: string) {

@@ -77,14 +77,24 @@ export class EventService {
     return tags[tags.length - 1][1];
   }
 
-  lastDTag(event: NostrEventDocument | null) {
+  // lastDTag(event: NostrEventDocument | null) {
+  //   const tags = this.tagsOfType(event, 'd');
+
+  //   if (tags.length == 0) {
+  //     return undefined;
+  //   }
+
+  //   return tags[tags.length - 1][1];
+  // }
+
+  firstDTag(event: NostrEventDocument | null | any) {
     const tags = this.tagsOfType(event, 'd');
 
     if (tags.length == 0) {
       return undefined;
     }
 
-    return tags[tags.length - 1][1];
+    return tags[0][1];
   }
 
   lastTagOfType(event: NostrEventDocument | null, type: string) {

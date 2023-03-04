@@ -6,7 +6,7 @@ import { bech32 } from '@scure/base';
 import { Subscription } from 'rxjs';
 import { copyToClipboard } from '../shared/utilities';
 import { DataValidation } from './data-validation';
-import { NostrProfileDocument, NostrProfile, NostrEvent, NostrEventDocument } from './interfaces';
+import { NostrProfileDocument, NostrProfile, NostrEvent, NostrEventDocument, NostrBadgeDefinition } from './interfaces';
 
 export function sleep(durationInMillisecond: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, durationInMillisecond));

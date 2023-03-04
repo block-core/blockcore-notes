@@ -40,6 +40,11 @@
     <span>Move to Circle</span>
   </button>
 
+  <button mat-menu-item [matMenuTriggerFor]="badges">
+    <mat-icon>badge</mat-icon>
+    <span>Badge</span>
+  </button>
+
   <button mat-menu-item [matMenuTriggerFor]="copyMenu" (click)="copy(getNpub(profile!.pubkey))">
     <mat-icon>copy_all</mat-icon>
     <span>Copy</span>
@@ -117,5 +122,16 @@
   <button mat-menu-item (click)="copy('https://notes.blockcore.net/p/' + profile!.pubkey)">
     <mat-icon>content_copy</mat-icon>
     <span>Profile URL</span>
+  </button>
+</mat-menu>
+
+<mat-menu #badges="matMenu">
+  <button mat-menu-item>
+    <mat-icon>badge</mat-icon>
+    <span>View Badges</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>badge</mat-icon>
+    <span>Issue Badge to</span>
   </button>
 </mat-menu>

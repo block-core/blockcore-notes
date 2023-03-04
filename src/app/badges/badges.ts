@@ -62,6 +62,11 @@ export class BadgesComponent implements OnInit {
     this.router.navigateByUrl('/editor/badges');
   }
 
+  issue(badge: any) {
+    this.badgeService.selectedBadge = badge;
+    this.router.navigateByUrl('/editor/badges');
+  }
+
   private createBadgeType() {}
 
   private assignBadge() {}

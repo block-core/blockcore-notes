@@ -1,6 +1,6 @@
 <mat-card class="badge-card" *ngIf="badge">
   <mat-card-header class="badge-header">
-    <mat-card-title>{{ badge.name }}</mat-card-title>
+    <mat-card-title><a [routerLink]="['/b', badge.pubkey, badge.slug]">{{ badge.name }}</a></mat-card-title>
     <mat-card-subtitle>{{badge.slug}}</mat-card-subtitle>
   </mat-card-header>
   <img mat-card-image [src]="thumbUrl(badge.thumb)" />
@@ -9,8 +9,13 @@
     <mat-chip-set class="hashtags">
       <mat-chip *ngFor="let tag of badge.hashtags">#{{ tag }}</mat-chip>
     </mat-chip-set>
+
+    <p>
+      <ng-content></ng-content>
+    </p>
+
   </mat-card-content>
-  <mat-card-actions>
+  <!-- <mat-card-actions>
     <ng-content></ng-content>
-  </mat-card-actions>
+  </mat-card-actions> -->
 </mat-card>

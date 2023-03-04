@@ -9,6 +9,8 @@ import { OptionsService } from '../services/options';
 import { ThreadService } from '../services/thread';
 import { NavigationService } from '../services/navigation';
 import { UIService } from '../services/ui';
+import { Kind, nip19 } from 'nostr-tools';
+import { AddressPointer } from 'nostr-tools/nip19';
 
 @Component({
   selector: 'app-article',
@@ -130,9 +132,16 @@ export class ArticleComponent {
       }
 
       if (id.startsWith('naddr')) {
-        const convertedId = this.utilities.convertFromBech32ToHex(id);
-        this.router.navigate(['/a', convertedId]);
-        return;
+        const result = nip19.decode(id);
+
+        if (result.type == 'naddr') {
+          const data = result.data as AddressPointer;
+
+          if (data.kind == Kind.Article) {
+            this.router.navigate(['/a', data.pubkey, data.identifier]);
+            return;
+          }
+        }
       }
 
       // Only trigger the event event ID if it's different than the navigation ID.

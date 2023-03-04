@@ -32,6 +32,7 @@ import { BadgesComponent } from './badges/badges';
 import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
+import { BadgeComponent } from './badge/badge';
 
 const routes: Routes = [
   {
@@ -181,6 +182,22 @@ const routes: Routes = [
   {
     path: 'p/:id',
     component: UserComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'b/:id',
+    component: BadgeComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'b/:id/:slug',
+    component: BadgeComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

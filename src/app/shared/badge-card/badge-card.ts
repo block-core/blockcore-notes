@@ -1,4 +1,5 @@
 import { Component, HostListener, Output, EventEmitter, Input, ElementRef, OnInit } from '@angular/core';
+import { BadgeService } from 'src/app/services/badge';
 import { BadgeDefinitionEvent, NostrBadgeDefinition, NostrEventDocument } from 'src/app/services/interfaces';
 import { Utilities } from 'src/app/services/utilities';
 
@@ -11,9 +12,14 @@ export class BadgeCardComponent implements OnInit {
   @Input() badge?: BadgeDefinitionEvent | NostrBadgeDefinition;
   @Input() preview: boolean = false;
 
-  constructor(private utilities: Utilities) {}
+  constructor(private utilities: Utilities, private badgeService: BadgeService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    // If there are no slug, we must parse the badge event.
+    if (!this.badge?.slug) {
+      this.badge = this.badgeService.denormalizeBadge(this.badge as any);
+    }
+  }
 
   imageUrl(url?: string) {
     if (!url) {

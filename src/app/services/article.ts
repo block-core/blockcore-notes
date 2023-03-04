@@ -18,7 +18,7 @@ export class ArticleService {
 
   put(event: NostrEvent) {
     const article = event as NostrArticle;
-    article.slug = this.eventService.lastDTag(event);
+    article.slug = this.eventService.firstDTag(event);
     article.title = this.eventService.lastTagOfType(event, 'title');
     article.summary = this.eventService.lastTagOfType(event, 'summary');
     article.image = this.eventService.lastTagOfType(event, 'image');

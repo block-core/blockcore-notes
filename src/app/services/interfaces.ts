@@ -338,6 +338,8 @@ export interface BlogEvent {
 }
 
 export interface BadgeDefinitionEvent {
+  pubkey?: string;
+
   name: string;
 
   description: string;

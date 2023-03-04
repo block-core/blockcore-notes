@@ -150,6 +150,7 @@ import { ZapQrCodeComponent } from './shared/zap-qr-code/zap-qr-code.component';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeCardComponent } from './shared/badge-card/badge-card';
 import { TagsComponent } from './shared/tags/tags';
+import { BadgeComponent } from './badge/badge';
 
 @NgModule({
   declarations: [
@@ -240,6 +241,7 @@ import { TagsComponent } from './shared/tags/tags';
     EditorBadgesComponent,
     BadgeCardComponent,
     TagsComponent,
+    BadgeComponent,
   ],
   imports: [
     AboutModule,

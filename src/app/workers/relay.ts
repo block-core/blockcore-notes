@@ -577,6 +577,37 @@ export class RelayWorker {
     }, timeoutSeconds * 1000);
   }
 
+  download(filters: Filter[], id: string, type: string = 'Event', timeoutSeconds: number = 12) {
+    if (!this.relay) {
+      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      return;
+    }
+
+    let sub: NostrSub | undefined = this.relay.sub(filters) as NostrSub;
+
+    sub.on('event', (originalEvent: any) => {
+      postMessage({ url: this.url, type: 'event', data: originalEvent, subscription: id } as RelayResponse);
+    });
+
+    sub.on('eose', () => {
+      clearTimeout(timer);
+
+      if (sub) {
+        sub.unsub();
+        sub = undefined;
+      }
+    });
+
+    const timer = setTimeout(() => {
+      if (sub) {
+        sub.unsub();
+        sub = undefined;
+      }
+
+      postMessage({ url: this.url, type: 'timeout', data: { type, filters } } as RelayResponse);
+    }, timeoutSeconds * 1000);
+  }
+
   downloadEvent(ids: string[], timeoutSeconds: number = 12) {
     console.log('DOWNLOAD EVENT....');
     let finalizedCalled = false;

@@ -426,6 +426,19 @@ export class RelayService {
           } else {
             sub.events.push(event);
           }
+        } else if (sub.type == 'Replaceable') {
+          const index = sub.events.findIndex((e) => e.pubkey == event.pubkey && this.eventService.firstDTag(e) == this.eventService.firstDTag(event));
+
+          if (index > -1) {
+            if (event.created_at > sub.events[index].created_at) {
+              sub.events[index] = event;
+            }
+          } else {
+            sub.events.push(event);
+          }
+
+          // Skip further processing, the correct consumer has received the event.
+          return;
         }
       }
     }
@@ -800,6 +813,26 @@ export class RelayService {
     for (let index = 0; index < this.workers.length; index++) {
       const worker = this.workers[index];
       worker.subscribe(filters, id);
+    }
+
+    // this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);
+    return sub;
+  }
+
+  download(filters: Filter[], id?: string, type: string = 'Event') {
+    if (!id) {
+      id = uuidv4();
+    }
+
+    const sub = { id: id, filters: filters, events: [], type: type };
+
+    // this.action('subscribe', { filters, id });
+    this.subs.set(id, sub);
+    // this.subs2.push({ id: id, filters: filters, events: [] });
+
+    for (let index = 0; index < this.workers.length; index++) {
+      const worker = this.workers[index];
+      worker.download(filters, id, type);
     }
 
     // this.sub = this.relayService.workers[0].subscribe([{ authors: [this.appState.getPublicKey()], kinds: [1] }]);

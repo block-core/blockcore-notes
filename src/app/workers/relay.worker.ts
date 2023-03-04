@@ -34,6 +34,9 @@ addEventListener('message', async (ev: MessageEvent) => {
     case 'subscribe':
       await relayWorker.subscribe(request.data.filters, request.data.id);
       break;
+    case 'download':
+      await relayWorker.download(request.data.filters, request.data.id, request.data.type);
+      break;
     case 'unsubscribe':
       await relayWorker.unsubscribe(request.data);
       break;
