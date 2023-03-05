@@ -5,6 +5,7 @@ import { NostrBadgeDefinition, NostrBadgeDocument, NostrEvent } from './interfac
 import { QueueService } from './queue.service';
 import { StorageService } from './storage';
 import { Utilities } from './utilities';
+import { BehaviorSubject, finalize, distinct, flatMap, from, groupBy, map, Observable, of, Subscription, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -20,10 +21,58 @@ export class BadgeService {
 
   // downloadQueue: string[] = [];
 
+  get editable() {
+    const filtered = this.definitions.filter((a) => a.pubkey == this.appState.getPublicKey());
+    return filtered;
+  }
+
+  // #editable: BehaviorSubject<NostrBadgeDefinition[]> = new BehaviorSubject<NostrBadgeDefinition[]>(this.definitions);
+
+  // get editable$(): Observable<NostrBadgeDefinition[]> {
+  //   return this.#editable.asObservable().pipe();
+  // }
+
   constructor(private queueService: QueueService, private storage: StorageService, private appState: ApplicationState, private utilities: Utilities, private eventService: EventService) {}
 
   getDefinition(slug: string) {
     return this.definitions.find((a) => a.slug == slug);
+  }
+
+  async initialize() {
+    const badges = await this.storage.storage.getBadges();
+
+    if (badges.length > 0) {
+      this.definitions = this.convert(badges);
+    }
+  }
+
+  // Quick and dirty, the badge types needs a proper refactoring very soon!
+  convert(badges: NostrBadgeDocument[]) {
+    const list: NostrBadgeDefinition[] = [];
+
+    for (let index = 0; index < badges.length; index++) {
+      const badge = badges[index];
+
+      list.push({
+        id: badge.id,
+        slug: badge.slug,
+        name: badge.name,
+        description: badge.description,
+        image: badge.image,
+        thumb: badge.thumb,
+        hashtags: badge.hashtags,
+        kind: 30009,
+        contentCut: false,
+        tagsCut: false,
+        tags: [],
+        content: '',
+        created_at: badge.created,
+        sig: '',
+        pubkey: badge.pubkey,
+      });
+    }
+
+    return list;
   }
 
   // enqueueDownload(id: string) {

@@ -10,7 +10,7 @@
       <mat-label>Existing badge designs</mat-label>
       <mat-select [(value)]="selectedBadge" (selectionChange)="changedArticle()">
         <mat-option></mat-option>
-        <mat-option [value]="badge.slug" *ngFor="let badge of badgeService.definitions">{{ badge.name }}</mat-option>
+        <mat-option [value]="badge.slug" *ngFor="let badge of badgeService.editable">{{ badge.name }}</mat-option>
       </mat-select>
     </mat-form-field>
 

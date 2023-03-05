@@ -290,6 +290,10 @@ export class Storage {
     return this.db.getAll('relays');
   }
 
+  async getBadges() {
+    return this.db.getAll('badges');
+  }
+
   async getNotes() {
     return this.db.getAll('notes');
   }

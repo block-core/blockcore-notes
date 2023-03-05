@@ -26,6 +26,7 @@ import { UIService } from './services/ui';
 import { OptionsService } from './services/options';
 import { LabelService } from './services/label';
 import { TranslateService } from '@ngx-translate/core';
+import { BadgeService } from './services/badge';
 
 @Component({
   selector: 'app-root',
@@ -59,6 +60,7 @@ export class AppComponent {
     private dataService: DataService,
     private circleService: CircleService,
     public profileService: ProfileService,
+    private badgeService: BadgeService,
     public navigationService: NavigationService,
     public translate: TranslateService,
     public ui: UIService,
@@ -214,6 +216,8 @@ export class AppComponent {
     // await this.relayStorage.initialize();
 
     await this.relayService.initialize();
+
+    await this.badgeService.initialize();
     // await this.relayService.connect();
 
     // await this.feedService.initialize();

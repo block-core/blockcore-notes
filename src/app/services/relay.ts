@@ -432,9 +432,11 @@ export class RelayService {
           if (index > -1) {
             if (event.created_at > sub.events[index].created_at) {
               sub.events[index] = event;
+              await this.badgeService.putDefinition(event);
             }
           } else {
             sub.events.push(event);
+            await this.badgeService.putDefinition(event);
           }
 
           // Skip further processing, the correct consumer has received the event.
