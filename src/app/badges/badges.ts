@@ -88,6 +88,17 @@ export class BadgesComponent implements OnInit {
     );
   }
 
+  get profileBadges() {
+    if (!this.profileBadgesSub || this.profileBadgesSub.events.length == 0) {
+      return [];
+    }
+
+    const profileBadgesEvent = this.profileBadgesSub.events[0];
+    const badges = this.eventService.tagsOfTypeValues(profileBadgesEvent, 'a');
+
+    return badges;
+  }
+
   getId(event: any) {
     return this.eventService.firstATag(event);
   }
