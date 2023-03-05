@@ -44,9 +44,9 @@ export class RelayService {
   }
 
   constructor(
+    private badgeService: BadgeService,
     private logger: LoggerService,
     private articleService: ArticleService,
-    private badgeService: BadgeService,
     private nostr: NostrService,
     private ui: UIService,
     private queue: QueueService,
@@ -500,7 +500,7 @@ export class RelayService {
     }
 
     if ((event.kind as number) == 30009) {
-      this.badgeService.putDefinition(event);
+      await this.badgeService.putDefinition(event);
     } else if (event.kind == Kind.Article) {
       this.articleService.put(event);
     } else if (event.kind == Kind.Metadata) {

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ApplicationState } from './applicationstate';
 import { EventService } from './event';
-import { NostrBadgeDefinition, NostrEvent } from './interfaces';
+import { NostrBadgeDefinition, NostrBadgeDocument, NostrEvent } from './interfaces';
+import { QueueService } from './queue.service';
+import { StorageService } from './storage';
 import { Utilities } from './utilities';
 
 @Injectable({
@@ -16,10 +18,42 @@ export class BadgeService {
 
   selectedBadgeSlug?: string;
 
-  constructor(private appState: ApplicationState, private utilities: Utilities, private eventService: EventService) {}
+  // downloadQueue: string[] = [];
+
+  constructor(private queueService: QueueService, private storage: StorageService, private appState: ApplicationState, private utilities: Utilities, private eventService: EventService) {}
 
   getDefinition(slug: string) {
     return this.definitions.find((a) => a.slug == slug);
+  }
+
+  // enqueueDownload(id: string) {
+  //   if (!this.downloadQueue.includes(id)) {
+  //     this.downloadQueue.push(id);
+  //   }
+
+  //   this.processQueue();
+  // }
+
+  // processQueue() {
+  //   const process = this.downloadQueue.splice(0, 50);
+
+  //   if (process.length > 0) {
+
+  //   }
+  // }
+
+  async getBadge(id: string) {
+    let badge = await this.storage.storage.getBadge(id);
+
+    if (!badge) {
+      this.queueService.enqueBadgeDefinition(id);
+    }
+
+    return badge;
+  }
+
+  async putBadge(badge: NostrBadgeDocument) {
+    await this.storage.storage.putBadge(badge);
   }
 
   denormalizeBadge(badge: NostrBadgeDefinition) {
@@ -36,7 +70,7 @@ export class BadgeService {
     return badge;
   }
 
-  putDefinition(event: NostrEvent) {
+  async putDefinition(event: NostrEvent) {
     const badge = event as NostrBadgeDefinition;
     badge.slug = this.eventService.firstDTag(event);
     badge.name = this.eventService.lastTagOfType(event, 'name');
@@ -44,26 +78,40 @@ export class BadgeService {
     badge.image = this.eventService.lastTagOfType(event, 'image');
     badge.thumb = this.eventService.lastTagOfType(event, 'thumb');
     badge.hashtags = this.eventService.tagsOfTypeValues(event, 't');
+    badge.id = `30009:${badge.pubkey}:${badge.slug}`;
 
-    if (badge.pubkey == this.appState.getPublicKey()) {
-      const index = this.definitions.findIndex((a) => a.slug == badge.slug);
+    const index = this.definitions.findIndex((a) => a.id == badge.id);
 
-      if (index > -1) {
-        const existing = this.definitions[index];
+    if (index > -1) {
+      const existing = this.definitions[index];
 
-        // If the existing is newer, ignore this article.
-        if (existing.created_at > badge.created_at) {
-          return;
-        }
-
-        // Replace when newer.
-        this.definitions[index] = badge;
-      } else {
-        this.definitions.push(badge);
+      // If the existing is newer, ignore this article.
+      if (existing.created_at > badge.created_at) {
+        return;
       }
+
+      // Replace when newer.
+      this.definitions[index] = badge;
+      await this.saveDefinition(badge);
     } else {
-      // TODO: We currently don't support lookup of others articles, when the time comes, update this.
-      debugger;
+      this.definitions.push(badge);
+      await this.saveDefinition(badge);
     }
+  }
+
+  async saveDefinition(badge: NostrBadgeDefinition) {
+    let document: NostrBadgeDocument = {
+      id: badge.id,
+      pubkey: badge.pubkey,
+      created: badge.created_at,
+      created_at: badge.created_at,
+      description: badge.description!,
+      name: badge.name!,
+      thumb: badge.thumb,
+      image: badge.image,
+      hashtags: badge.hashtags,
+    };
+
+    await this.storage.storage.putBadge(document);
   }
 }

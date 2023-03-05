@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { Utilities } from '../services/utilities';
 import { RelayService } from '../services/relay';
 import { Sub } from 'nostr-tools';
+import { EventService } from '../services/event';
 
 @Component({
   selector: 'app-badges',
@@ -27,10 +28,11 @@ export class BadgesComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private utilities: Utilities,
     private router: Router,
+    private eventService: EventService,
     public appState: ApplicationState,
     public badgeService: BadgeService,
     public queueService: QueueService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -65,7 +67,7 @@ export class BadgesComponent implements OnInit {
 
         if (id) {
           this.pubkey = id;
-          this.queueService.enque(this.pubkey, 'BadgeDefinition');
+          // this.queueService.enque(this.pubkey, 'BadgeDefinition');
           this.receivedBadgesSub = this.relayService.download([{ kinds: [8], ['#p']: [this.pubkey] }], undefined, 'Event');
           this.profileBadgesSub = this.relayService.download([{ kinds: [30008], authors: [this.pubkey], ['#d']: ['profile_badges'] }], undefined, 'Replaceable');
           this.badgeDefinitionsSub = this.relayService.download([{ kinds: [30009], authors: [this.pubkey] }], undefined, 'Replaceable');
@@ -84,6 +86,10 @@ export class BadgesComponent implements OnInit {
         //   }
       })
     );
+  }
+
+  getId(event: any) {
+    return this.eventService.firstATag(event);
   }
 
   pubkey = '';

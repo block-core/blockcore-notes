@@ -9,17 +9,47 @@ import { Utilities } from 'src/app/services/utilities';
   styleUrls: ['badge-card.css'],
 })
 export class BadgeCardComponent implements OnInit {
-  @Input() badge?: BadgeDefinitionEvent | NostrBadgeDefinition | any;
+  #badge: BadgeDefinitionEvent | NostrBadgeDefinition | any;
+  @Input() set badge(value: BadgeDefinitionEvent | NostrBadgeDefinition | any) {
+    this.#badge = value;
+    this.update();
+    // this.#id = value.id;
+  }
+  get badge() {
+    return this.#badge;
+  }
+
+  #id: string | undefined = '';
+  @Input() set id(value: string | undefined) {
+    this.#id = value;
+
+    if (value) {
+      this.badgeService.getBadge(value).then(async (badge) => {
+        if (badge != null) {
+          this.#badge = badge;
+          this.update();
+        }
+      });
+    } else {
+      this.#badge = undefined;
+    }
+  }
+  get id() {
+    return this.#id;
+  }
+
   @Input() preview: boolean = false;
 
   constructor(private utilities: Utilities, private badgeService: BadgeService) {}
 
-  ngOnInit() {
+  update() {
     // If there are no slug, we must parse the badge event.
-    if (!this.badge?.slug && this.badge.tags) {
-      this.badge = this.badgeService.denormalizeBadge(this.badge as any);
+    if (!this.#badge?.slug && this.#badge.tags) {
+      this.#badge = this.badgeService.denormalizeBadge(this.#badge as any);
     }
   }
+
+  ngOnInit() {}
 
   imageUrl(url?: string) {
     if (!url) {

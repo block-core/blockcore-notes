@@ -27,9 +27,11 @@
           <app-badge-card [badge]="badge" *ngFor="let badge of profileBadgesSub.events">
             {{badge | json}}
             <br /><br />
-            Created by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
-            <br />
-            Last updated: <app-date [date]="badge.created_at"></app-date>
+            <div class="dimmed">
+              Created by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
+              <br />
+              Last updated: <app-date [date]="badge.created_at"></app-date>
+            </div>
           </app-badge-card>
 
           <!-- <app-badge-card>
@@ -47,12 +49,12 @@
       </ng-template>
       <ng-template matTabContent>
         <div class="badges" *ngIf="receivedBadgesSub.events">
-          <app-badge-card [badge]="badge" *ngFor="let badge of receivedBadgesSub.events">
-            {{badge | json}}
-            <br /><br />
-            Issued by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
-            <br />
-            Issued date: <app-date [date]="badge.created_at"></app-date>
+          <app-badge-card [id]="getId(badge)" *ngFor="let badge of receivedBadgesSub.events">
+            <div class="dimmed">
+              Issued by:&nbsp;<app-profile-name [pubkey]="badge.pubkey"></app-profile-name>
+              <br />
+              Issued date: <app-date [date]="badge.created_at"></app-date>
+            </div>
           </app-badge-card>
         </div>
       </ng-template>

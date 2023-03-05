@@ -1,5 +1,5 @@
 import { openDB, deleteDB, wrap, unwrap, IDBPDatabase, DBSchema } from 'idb';
-import { Circle, LabelModel, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, NotificationModel, StateDocument } from '../services/interfaces';
+import { Circle, LabelModel, NostrBadgeDocument, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, NotificationModel, StateDocument } from '../services/interfaces';
 
 /** Make sure you read and learn: https://github.com/jakearchibald/idb */
 
@@ -55,6 +55,11 @@ interface NotesDB extends DBSchema {
     key: string;
     indexes: { created: number };
   };
+
+  badges: {
+    value: NostrBadgeDocument;
+    key: string;
+  };
 }
 
 export class Storage {
@@ -63,13 +68,18 @@ export class Storage {
   constructor(private name: string) {}
 
   async open() {
-    this.db = await openDB<NotesDB>(this.name, 1, {
+    this.db = await openDB<NotesDB>(this.name, 2, {
       upgrade(db, oldVersion, newVersion, transaction, event) {
+        debugger;
+
         switch (oldVersion) {
           case 0:
             upgradeV0toV1();
           /* FALLTHROUGH */
           case 1:
+            upgradeV1toV2();
+            break;
+          case 2:
             upgradeV1toV2();
             break;
           default:
@@ -95,7 +105,9 @@ export class Storage {
           profilesStore.createIndex('status', 'status');
         }
 
-        function upgradeV1toV2() {}
+        function upgradeV1toV2() {
+          db.createObjectStore('badges', { keyPath: 'id' });
+        }
       },
       blocked(currentVersion, blockedVersion, event) {
         // …
@@ -168,6 +180,15 @@ export class Storage {
   async putProfile(value: NostrProfileDocument) {
     value.modified = now();
     return this.db.put('profiles', value);
+  }
+
+  async getBadge(key: string) {
+    return this.db.get('badges', key);
+  }
+
+  async putBadge(value: NostrBadgeDocument) {
+    value.modified = now();
+    return this.db.put('badges', value);
   }
 
   async getProfilesByStatus(status: number) {

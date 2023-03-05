@@ -213,6 +213,25 @@ export interface NostrSubscription extends Sub {
   timeout: any;
 }
 
+export interface NostrBadgeDocument extends BadgeDefinitionEvent {
+  /** The full identifier of the badge (30009:pubkey:slug) */
+  id: string;
+
+  /** The public key in hex encoding. */
+  pubkey: string;
+
+  /** The timestamp when the profile was created. Internal property, not from event. */
+  created: number;
+
+  /** The timestamp when the profile was modified. Internal property, not from event. */
+  modified?: number;
+
+  /** Timestamp when last retrieved. */
+  retrieved?: number;
+
+  created_at?: number;
+}
+
 export interface NostrProfileDocument extends NostrProfile {
   /** The npub encoded public key. */
   npub: string;

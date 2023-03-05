@@ -87,6 +87,16 @@ export class EventService {
   //   return tags[tags.length - 1][1];
   // }
 
+  firstATag(event: NostrEventDocument | null | any) {
+    const tags = this.tagsOfType(event, 'a');
+
+    if (tags.length == 0) {
+      return undefined;
+    }
+
+    return tags[0][1];
+  }
+
   firstDTag(event: NostrEventDocument | null | any) {
     const tags = this.tagsOfType(event, 'd');
 
