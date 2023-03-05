@@ -102,6 +102,7 @@ export class BadgeService {
   async saveDefinition(badge: NostrBadgeDefinition) {
     let document: NostrBadgeDocument = {
       id: badge.id,
+      slug: badge.slug,
       pubkey: badge.pubkey,
       created: badge.created_at,
       created_at: badge.created_at,

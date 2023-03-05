@@ -553,13 +553,10 @@ export class RelayWorker {
       filters.push({ kinds: [30009], authors: [pubkey], ['#d']: [slug] });
     }
 
-    debugger;
-
     const sub = this.relay.sub(filters) as NostrSub;
     this.badgeDefinitionSub = sub;
 
     sub.on('event', (originalEvent: any) => {
-      debugger;
       console.log('POST MESSAGE BACK TO MAIN');
       postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
       console.log('FINISHED POST MESSAGE BACK TO MAIN');
@@ -576,7 +573,6 @@ export class RelayWorker {
     console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
     this.badgeDefinitionTimer = setTimeout(() => {
-      debugger;
       console.warn(`${this.url}: Event download timeout reached.`);
       this.clearBadgeDefinitionSub();
       this.queue.queues.badgedefinition.active = false;
