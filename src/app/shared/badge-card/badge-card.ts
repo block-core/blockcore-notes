@@ -9,14 +9,14 @@ import { Utilities } from 'src/app/services/utilities';
   styleUrls: ['badge-card.css'],
 })
 export class BadgeCardComponent implements OnInit {
-  @Input() badge?: BadgeDefinitionEvent | NostrBadgeDefinition;
+  @Input() badge?: BadgeDefinitionEvent | NostrBadgeDefinition | any;
   @Input() preview: boolean = false;
 
   constructor(private utilities: Utilities, private badgeService: BadgeService) {}
 
   ngOnInit() {
     // If there are no slug, we must parse the badge event.
-    if (!this.badge?.slug) {
+    if (!this.badge?.slug && this.badge.tags) {
       this.badge = this.badgeService.denormalizeBadge(this.badge as any);
     }
   }
