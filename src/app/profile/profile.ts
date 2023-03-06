@@ -46,10 +46,12 @@ export class ProfileComponent {
     private profileService: ProfileService,
     private dataService: DataService,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) {
+
+    this.appState.updateTitle('Edit Profile');
+  }
 
   async ngOnInit() {
-    this.appState.updateTitle('Edit Profile');
 
     this.originalProfile = {
       name: '',

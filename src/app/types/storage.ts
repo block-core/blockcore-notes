@@ -70,7 +70,7 @@ export class Storage {
   async open() {
     this.db = await openDB<NotesDB>(this.name, 2, {
       upgrade(db, oldVersion, newVersion, transaction, event) {
-        debugger;
+        // debugger;
 
         switch (oldVersion) {
           case 0:
