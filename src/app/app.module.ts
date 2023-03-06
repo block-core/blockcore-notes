@@ -151,6 +151,7 @@ import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeCardComponent } from './shared/badge-card/badge-card';
 import { TagsComponent } from './shared/tags/tags';
 import { BadgeComponent } from './badge/badge';
+import { PrivateThreadsComponent } from './shared/private-threads/private-threads.component';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 @NgModule({
@@ -243,6 +244,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     BadgeCardComponent,
     TagsComponent,
     BadgeComponent,
+    PrivateThreadsComponent,
   ],
   imports: [
     AboutModule,

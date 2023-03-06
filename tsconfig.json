@@ -23,7 +23,18 @@
       "ES2022",
       "ESNext",
       "dom"
-    ]
+    ],
+    "paths": {
+      "animiq-lib": [
+        "../../animiq-lib/dist/animiq-lib"
+      ],
+      "animiq-nip76-tools": [
+        "../../animiq-nip76-tools/dist/"
+      ],
+      "@angular/*": [
+        "./node_modules/@angular/*"
+      ]
+    },
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

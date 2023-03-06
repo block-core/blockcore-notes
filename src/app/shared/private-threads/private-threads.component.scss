@@ -1,0 +1,33 @@
+
+.menu-link {
+    display: inline-block;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    cursor: pointer;
+}
+.action-link {
+    display: inline-block;
+    cursor: pointer;
+}
+li.instruction {
+    padding-bottom: 16px;
+}
+.rounded-button {
+    border-radius: 16px;
+    margin-top: 0.24em;
+    margin-right: 0.5em;
+    margin-bottom: 12px;
+}
+.thread-toolbar {
+    text-align: right;;
+}
+.thread-card{
+    margin-bottom: 16px;
+}
+.thread-card.edit {
+    background-color: aliceblue;
+}
+.input-full-width {
+    width: 100%;
+    background-color: white;
+}

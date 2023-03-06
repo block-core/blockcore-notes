@@ -33,6 +33,7 @@ import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
+import { PrivateThreadsComponent } from './shared/private-threads/private-threads.component';
 
 const routes: Routes = [
   {
@@ -134,6 +135,22 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'profile/private-threads',
+    component: PrivateThreadsComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'profile/private-threads/:threadPubKey',
+    component: PrivateThreadsComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

@@ -1,0 +1,91 @@
+<div class="scrolling-content" infiniteScroll (scrollAction)="navigation.showMore()">
+    <app-profile-header *ngIf="!activeThreadPubKey" ></app-profile-header>
+
+    <div class="page">
+        <a class="menu-link" (click)="appState.navigateBack()" *ngIf="!activeThreadPubKey" >Back to Edit Profile</a>
+        <a class="menu-link" (click)="appState.navigateBack()" *ngIf="activeThreadPubKey" >Manage Private Threads</a>
+        <a class="menu-link" (click)="randomize()" *ngIf="nip76Service.wallet.isGuest">Randomize</a>
+        <a class="menu-link" (click)="saveKey()" *ngIf="nip76Service.wallet.isGuest">Save</a>
+        <a class="menu-link" (click)="addThread()" *ngIf="!nip76Service.wallet.isGuest && !activeThreadPubKey">Add Thread</a>
+        <div *ngIf="nip76Service.wallet.isGuest">
+            <p>NIP 76 Private Threads are not initialized for this profile yet.</p>
+            <p>To get started:</p>
+            <ol>
+                <li class="instruction"><a class="action-link" (click)="randomize()">Randomize</a> the thread profile
+                    keys. (OPTIONAL).</li>
+                <li class="instruction"><a class="action-link" (click)="saveKey()">Save</a> it to begin using this
+                    thread profile.</li>
+            </ol>
+        </div>
+        <div *ngIf="profile && privateThreads.length && !activeThreadPubKey">
+            <div *ngFor="let thread of privateThreads.reverse();" [style.display]="!thread.ready ? 'none' : 'block'">
+                <mat-card class="thread-card" [class]="editThread===thread ? 'edit': ''">
+                    <mat-card-content>
+                        <div *ngIf="!nip76Service.wallet.isGuest" class="thread-toolbar">
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="editThread=thread" *ngIf="editThread!==thread">Edit</button>
+                            <button class="rounded-button"  mat-flat-button color="primary" (click)="viewThread(thread)" *ngIf="editThread!==thread">View</button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="cancelEdit()" *ngIf="editThread===thread">Cancel</button>
+                            <button class="rounded-button"  mat-flat-button color="primary" (click)="saveThread()" *ngIf="editThread===thread">Save</button>
+                        </div>                  
+                        <div *ngIf="editThread!==thread">
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Index</mat-label>
+                                <input matInput type="text" [value]="thread.address.formatted" readonly/>
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Name</mat-label>
+                                <input matInput type="text" [value]="thread.p.name || ''" readonly/>
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Description</mat-label>
+                                <input matInput type="text" [value]="thread.p.description || ''" readonly/>
+                            </mat-form-field>
+                        </div>
+                        <div *ngIf="editThread===thread">
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Index</mat-label>
+                                <input matInput type="text" [value]="editThread.address.formatted" readonly/>
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width">
+                                <mat-label>Name</mat-label>
+                                <input matInput type="text" [(ngModel)]="editThread.p.name" />
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width">
+                                <mat-label>Description</mat-label>
+                                <input matInput type="text" [(ngModel)]="editThread.p.description"/>
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <div *ngIf="profile && privateThreads.length && activeThreadPubKey">
+            <form [formGroup]="noteForm" *ngIf="true" (ngSubmit)="saveNote()">
+                <div mat-dialog-content class="mat-dialog-content">
+                  <mat-form-field class="input-full-width">
+                    <mat-label>What's on your mind?</mat-label>
+                    <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2"></textarea>
+                  </mat-form-field>            
+                  <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiNote($event)" title="Choose your emoji"></emoji-mart>
+                  <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+                </div>
+                <div mat-dialog-actions class="mat-dialog-actions" align="end">
+                  <button mat-stroked-button type="button" >Cancel</button>&nbsp;
+                  <button mat-flat-button type="submit" color="primary" [disabled]="!noteForm.valid || !activeThread?.ready">Publish Note</button>
+                </div>
+              </form>
+
+              <mat-card class="events" *ngFor="let post of activeThread!.posts; trackBy: trackByFn">
+                <div class="events-header">
+                  <app-event-header [pubkey]="activeThread!.ownerPubKey">
+                    <span class="event-date" [matTooltip]="post.nostrEvent.id!" matTooltipPosition="below">{{ post.nostrEvent.created_at | ago }}</span> 
+                    <app-directory-icon [pubkey]="post.nostrEvent.pubkey"></app-directory-icon>
+                </app-event-header>
+                  <app-event-actions [event]="post.nostrEvent"></app-event-actions>
+                </div>
+                <app-content [event]="post.nostrEvent"></app-content>
+              </mat-card>
+
+        </div>
+    </div>
+</div>

@@ -2,8 +2,9 @@
   <app-profile-header></app-profile-header>
 
   <div class="page">
+    <a [routerLink]="['private-threads']">Manage Private Threads</a>
     <mat-card>
-      <mat-card-content *ngIf="profile">
+      <mat-card-content *ngIf="profile">      
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>badge</mat-icon>
