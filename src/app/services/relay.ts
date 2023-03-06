@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LoadMoreOptions, NostrRelay, NostrRelayDocument, NostrRelaySubscription, QueryJob } from './interfaces';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, SubjectLike } from 'rxjs';
 import { Event, Filter, Kind } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
@@ -405,6 +405,9 @@ export class RelayService {
 
           if (index === -1) {
             sub.events.push(event);
+            if(sub.observable) {
+              sub.observable.next(event);
+            }
           }
         } else if (sub.type == 'Profile') {
           const index = sub.events.findIndex((e) => e.pubkey == event.pubkey);
@@ -432,10 +435,16 @@ export class RelayService {
           if (index > -1) {
             if (event.created_at > sub.events[index].created_at) {
               sub.events[index] = event;
+              if(sub.observable) {
+                sub.observable.next(event);
+              }
               await this.badgeService.putDefinition(event);
             }
           } else {
             sub.events.push(event);
+            if(sub.observable) {
+              sub.observable.next(event);
+            }
             await this.badgeService.putDefinition(event);
           }
 
@@ -801,12 +810,12 @@ export class RelayService {
     return id;
   }
 
-  subscribe(filters: Filter[], id?: string, type: string = 'Event') {
+  subscribe(filters: Filter[], id?: string, type: string = 'Event', observable: SubjectLike<any> | undefined = undefined) {
     if (!id) {
       id = uuidv4();
     }
 
-    const sub = { id: id, filters: filters, events: [], type: type };
+    const sub = { id: id, filters: filters, events: [], type: type, observable };
 
     // this.action('subscribe', { filters, id });
     this.subs.set(id, sub);
@@ -868,7 +877,10 @@ export class RelayService {
       const worker = this.workers[index];
       worker.unsubscribe(id);
     }
-
+    const sub = this.subs.get(id);
+    if(sub && sub.observable) { 
+      sub.observable.complete(); 
+    }
     this.subs.delete(id);
   }
 

@@ -1,4 +1,5 @@
 import { Event, Filter, Relay, Sub } from 'nostr-tools';
+import { SubjectLike } from 'rxjs';
 
 export interface Circle {
   id?: number;
@@ -82,6 +83,7 @@ export interface NostrRelaySubscription {
   events: Event[];
   // events: Map<string, Event>;
   // events$: any;
+  observable?: SubjectLike<any> | undefined;
   type: string | 'Profile' | 'Event' | 'Contacts' | 'Article' | 'BadgeDefinition';
 }
 
