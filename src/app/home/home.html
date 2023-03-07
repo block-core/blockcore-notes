@@ -2,10 +2,12 @@
   <!-- <button mat-flat-button class="wipe-button" (click)="db.clearAndReload()">Issues? Wipe Local Database</button> -->
 
   <div class="profile-line">
-    <app-event-header [listType]="'icon'" [iconSize]="'thumbnail'" [displayName]="false" [displayContent]="false" *ngFor="let profile of profiles" [profile]="profile"></app-event-header>
-    <button mat-icon-button routerLink="/people" class="profile-line-more-button">
-      <mat-icon>more_horiz</mat-icon>
-    </button>
+    <drag-scroll [scrollbar-hidden]="true" [drag-scroll-y-disabled]="true">
+      <app-event-header [listType]="'icon'" [iconSize]="'thumbnail'" [displayName]="false" [displayContent]="false" *ngFor="let profile of profiles" [profile]="profile"></app-event-header>
+      <button mat-icon-button routerLink="/people" class="profile-line-more-button">
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+    </drag-scroll>
   </div>
 
   <div class="home">
@@ -124,7 +126,7 @@
           <br />
           <form [formGroup]="formGroup">
             <div mat-dialog-content class="mat-dialog-content">
- 
+
               <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
               <mat-form-field class="input-full-width">
                 <mat-label>Note</mat-label>

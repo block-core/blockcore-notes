@@ -178,3 +178,9 @@
   margin-top: 0.4em;
   margin-left: 0.4em;
 }
+
+drag-scroll {
+  height: 90px;
+  width: 100%;
+}
+
