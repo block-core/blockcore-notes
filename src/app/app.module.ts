@@ -151,8 +151,9 @@ import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeCardComponent } from './shared/badge-card/badge-card';
 import { TagsComponent } from './shared/tags/tags';
 import { BadgeComponent } from './badge/badge';
-import { PrivateThreadsComponent } from './shared/private-threads/private-threads.component';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { Nip76SettingsComponent } from './nip76/nip76-settings/nip76-settings.component';
+import { AddThreadDialog } from './nip76/add-thread-dialog/add-thread-dialog.component';
 
 @NgModule({
   declarations: [
@@ -244,7 +245,8 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     BadgeCardComponent,
     TagsComponent,
     BadgeComponent,
-    PrivateThreadsComponent,
+    Nip76SettingsComponent,
+    AddThreadDialog,
   ],
   imports: [
     AboutModule,

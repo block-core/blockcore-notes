@@ -1,0 +1,140 @@
+<div mat-dialog-actions class="mat-dialog-actions" align="end">
+    <button *ngIf="nip76Service.wallet.isGuest"
+            class="rounded-button"  mat-flat-button color="secondary" (click)="randomizeKey()">Randomize</button>
+    <button *ngIf="nip76Service.wallet.isGuest"
+            class="rounded-button"  mat-flat-button color="primary" (click)="saveConfiguration()">Save Configuration</button>
+    <button *ngIf="!nip76Service.wallet.isGuest && nip76Service.wallet.isInSession"
+            class="rounded-button"  mat-flat-button color="secondary" (click)="previewThread()">Preview a Thread</button>
+    <button *ngIf="!nip76Service.wallet.isGuest && !nip76Service.wallet.isInSession"
+            class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.login()">Start Secure Session</button>
+    <button *ngIf="nip76Service.wallet.isInSession"
+            class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.logout()">End Secure Session</button>
+</div>
+
+<div *ngIf="nip76Service.wallet.isGuest" class="feed-page">
+    <p>NIP 76 Private Threads are not initialized for this profile yet.</p>
+    <p>To get started:</p>
+    <ol>
+        <li class="instruction"><a class="action-link" (click)="randomizeKey()">Randomize</a> the thread profile
+            keys. (OPTIONAL).</li>
+        <li class="instruction"><a class="action-link" (click)="saveConfiguration()">Save</a> it to begin using this
+            thread profile.</li>
+    </ol>
+    <mat-card-content>               
+        <div *ngIf="editThread">
+            <mat-form-field class="input-full-width" appearance="fill">
+                <mat-label>Index</mat-label>
+                <input matInput type="text" [value]="editThread.address.formatted" readonly/>
+            </mat-form-field>
+            <mat-form-field class="input-full-width">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" [(ngModel)]="editThread.p.name" />
+            </mat-form-field>
+            <mat-form-field class="input-full-width">
+                <mat-label>Description</mat-label>
+                <input matInput type="text" [(ngModel)]="editThread.p.description"/>
+            </mat-form-field>
+        </div>
+    </mat-card-content>    
+</div>
+
+<mat-tab-group  *ngIf="nip76Service.wallet.isInSession" [selectedIndex]="tabIndex"  (selectedTabChange)="onTabChanged($event)" class="feed-page">
+    <mat-tab label="Settings">
+        <div *ngIf="profile && nip76Service.threads.length">
+            <div *ngFor="let thread of nip76Service.threads" [style.display]="!thread.ready ? 'none' : 'block'">
+                <mat-card class="settings-card" [class]="editThread===thread ? 'edit': ''">
+                    <mat-card-content>
+                        <div mat-dialog-actions class="mat-dialog-actions">
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="cancelEdit()" *ngIf="editThread===thread">Cancel</button>
+                            <button class="rounded-button"  mat-flat-button color="primary" (click)="saveThread()" *ngIf="editThread===thread" style="float:right;">Save</button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="editThread=thread" *ngIf="editThread!==thread"> Edit </button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewThreadFollowers(thread)" *ngIf="editThread!==thread">Followers</button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(thread)" *ngIf="editThread!==thread">Copy Keys</button>
+                            <button class="rounded-button"  mat-flat-button color="primary" (click)="viewThreadNotes(thread)" *ngIf="editThread!==thread" style="float:right;">View Notes</button>
+                        </div>                  
+                        <div *ngIf="editThread!==thread">
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Index</mat-label>
+                                <input matInput type="text" [value]="thread.address.formatted" readonly/>
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Name</mat-label>
+                                <input matInput type="text" [value]="thread.p.name || ''" readonly/>
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Description</mat-label>
+                                <input matInput type="text" [value]="thread.p.description || ''" readonly/>
+                            </mat-form-field>
+                        </div>
+                        <div *ngIf="editThread===thread">
+                            <mat-form-field class="input-full-width" appearance="fill">
+                                <mat-label>Index</mat-label>
+                                <input matInput type="text" [value]="editThread.address.formatted" readonly/>
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width">
+                                <mat-label>Name</mat-label>
+                                <input matInput type="text" [(ngModel)]="editThread.p.name" />
+                            </mat-form-field>
+                            <mat-form-field class="input-full-width">
+                                <mat-label>Description</mat-label>
+                                <input matInput type="text" [(ngModel)]="editThread.p.description"/>
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <div mat-dialog-actions class="mat-dialog-actions" align="end">
+            <button *ngIf="nip76Service.wallet.isInSession"
+                    class="rounded-button"  mat-flat-button color="primary" (click)="addThread()">Add Thread</button>
+        </div> 
+    </mat-tab>
+    <mat-tab label="Following">
+    </mat-tab>
+    <mat-tab label="Followers">
+        <div *ngIf="profile && activeThread" [style.padding]="8">
+            <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
+                <small>Private Thread {{activeThread.address.formatted}}</small><br>
+            </div>        
+        </div>
+    </mat-tab>
+    <mat-tab label="Notes">
+        <div *ngIf="profile && activeThread" [style.padding]="8">
+            <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
+                <small>Private Thread {{activeThread.address.formatted}}</small><br>
+                <img *ngIf="!showNoteForm && profile.pubkey === activeThread.ownerPubKey" width="46" height="46" (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" />
+            </div>
+            <form [formGroup]="noteForm" *ngIf="showNoteForm" (ngSubmit)="saveNote()">
+                <div mat-dialog-content class="mat-dialog-content">
+                    <mat-form-field class="input-full-width">
+                    <mat-label>What's on your mind?</mat-label>
+                    <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2"></textarea>
+                    </mat-form-field>            
+                    <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiNote($event)" title="Choose your emoji"></emoji-mart>
+                    <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+                </div>
+                <div mat-dialog-actions class="mat-dialog-actions" align="end">
+                    <button mat-stroked-button type="button" (click)="showNoteForm=false" >Cancel</button>&nbsp;
+                    <button mat-flat-button type="submit" color="primary" [disabled]="!noteForm.valid || !activeThread.ready">Publish Note</button>
+                </div>
+            </form>
+            <mat-card class="events" *ngFor="let post of activeThread!.posts; trackBy: trackByFn">
+                <div class="events-header">
+                    <app-event-header [pubkey]="post.ownerPubKey">
+                    <span class="event-date" [matTooltip]="post.nostrEvent.id!" matTooltipPosition="below">{{ post.nostrEvent.created_at | ago }}</span> 
+                    <app-directory-icon [pubkey]="post.nostrEvent.pubkey"></app-directory-icon>
+                </app-event-header>
+                    <app-event-actions [event]="post.nostrEvent"></app-event-actions>
+                </div>
+                <app-content [event]="post.nostrEvent"></app-content>
+            </mat-card>
+        </div>        
+    </mat-tab>        
+</mat-tab-group>
+
+<!--
+<div class="scrolling-content" infiniteScroll (scrollAction)="navigation.showMore()">
+    <div class="page">
+    </div>
+</div>
+-->

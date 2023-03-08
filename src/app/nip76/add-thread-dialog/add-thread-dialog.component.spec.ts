@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PrivateThreadsComponent } from './private-threads.component';
+import { AddThreadDialog } from './add-thread-dialog.component';
 
-describe('PrivateThreadsComponent', () => {
-  let component: PrivateThreadsComponent;
-  let fixture: ComponentFixture<PrivateThreadsComponent>;
+describe('AddThreadDialogComponent', () => {
+  let component: AddThreadDialog;
+  let fixture: ComponentFixture<AddThreadDialog>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PrivateThreadsComponent ]
+      declarations: [ AddThreadDialog ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PrivateThreadsComponent);
+    fixture = TestBed.createComponent(AddThreadDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

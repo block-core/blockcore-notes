@@ -33,7 +33,7 @@ import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
-import { PrivateThreadsComponent } from './shared/private-threads/private-threads.component';
+import { Nip76SettingsComponent } from './nip76/nip76-settings/nip76-settings.component';
 
 const routes: Routes = [
   {
@@ -141,17 +141,36 @@ const routes: Routes = [
     },
   },
   {
-    path: 'profile/private-threads',
-    component: PrivateThreadsComponent,
+    path: 'private-threads',
+    component: Nip76SettingsComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,
     },
   },
   {
-    path: 'profile/private-threads/:threadPubKey',
-    component: PrivateThreadsComponent,
+    path: 'private-threads/following',
+    component: Nip76SettingsComponent,
     canActivate: [AuthGuard],
+    data: { tabIndex: 1 },
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },  
+  {
+    path: 'private-threads/:threadPubKey/followers',
+    component: Nip76SettingsComponent,
+    data: { tabIndex: 2 },
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },  
+  {
+    path: 'private-threads/:threadPubKey/notes',
+    component: Nip76SettingsComponent,
+    canActivate: [AuthGuard],
+    data: { tabIndex: 3 },
     resolve: {
       data: LoadingResolverService,
     },
