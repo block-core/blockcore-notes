@@ -39,10 +39,6 @@ export class Nip76SettingsComponent {
     private fb: FormBuilder,
   ) { }
 
-  get profile(): NostrProfileDocument {
-    return this.nip76Service.profile;
-  }
-
   async ngOnInit() {
     if (this.nip76Service.wallet.isGuest) {
       this.randomizeKey();
@@ -50,11 +46,11 @@ export class Nip76SettingsComponent {
     this.activatedRoute.paramMap.subscribe(async (params) => {
       this.tabIndex = this.activatedRoute.snapshot.data['tabIndex'] as number || 0;
       const activeThreadPubKey = params.get('threadPubKey');
-      const thread = this.nip76Service.threads.find(x => activeThreadPubKey === x.ap.publicKey.slice(1).toString('hex'));
+      const thread = this.nip76Service.findThread(activeThreadPubKey!);
       if (thread) {
         this.activeThread = thread;
         if (this.tabIndex < 2) this.tabIndex = 3;
-        if (this.tabIndex === 3 && !thread.sub) {
+        if (this.tabIndex === 3 && !thread.notesSubscription) {
           this.nip76Service.loadNotes(this.activeThread);
         }
       }
@@ -76,7 +72,7 @@ export class Nip76SettingsComponent {
 
   async saveConfiguration() {
     const savedLocal = await this.nip76Service.save();
-    const savedRemote = await this.nip76Service.updateThreadMetadata(this.editThread!);
+    const savedRemote = await this.nip76Service.saveThread(this.editThread!);
     location.reload();
   }
 
@@ -98,24 +94,24 @@ export class Nip76SettingsComponent {
         this.router.navigate(['/private-threads/following']);
         break;
       case 2:
-        this.viewThreadFollowers(this.nip76Service.threads[0]);
+        this.viewThreadFollowers(this.nip76Service.wallet.threads[0]);
         break;
       case 3:
-        this.viewThreadNotes(this.nip76Service.threads[0]);
+        this.viewThreadNotes(this.nip76Service.wallet.threads[0]);
         break;
     }
   }
 
   viewThreadNotes(thread: PrivateThread) {
-    this.router.navigate(['private-threads', thread.ap.publicKey.slice(1).toString('hex'), 'notes']);
+    this.router.navigate(['private-threads', thread.indexMap.post.ap.nostrPubKey, 'notes']);
   }
 
   viewThreadFollowers(thread: PrivateThread) {
-    this.router.navigate(['private-threads', thread.ap.publicKey.slice(1).toString('hex'), 'followers']);
+    this.router.navigate(['private-threads', thread.indexMap.post.ap.nostrPubKey, 'followers']);
   }
 
   copyKeys(thread: PrivateThread) {
-    navigator.clipboard.writeText(thread.thread);
+    navigator.clipboard.writeText(thread.getThreadPointer());
     this.snackBar.open(`Thread keys are now in your clipboard.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',
@@ -134,15 +130,25 @@ export class Nip76SettingsComponent {
     }
   }
 
+  async follow(thread: PrivateThread) {
+    this.nip76Service.saveFollowing(this.nip76Service.wallet.threads[0], thread)
+    this.snackBar.open(`You are now following this thread.`, 'Hide', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
+  }
+
   addThread() {
     this.cancelEdit();
-    const firstAvailable = this.nip76Service.wallet.threads.find(x => !x.ready);
-    if (firstAvailable) {
-      firstAvailable.pending = firstAvailable.a;
-      firstAvailable.ready = true;
-      firstAvailable.p.name = 'New Thread';
-      this._editThread = firstAvailable;
+    let firstAvailable = this.nip76Service.wallet.threads.find(x => !x.ready);
+    if (!firstAvailable) {
+      firstAvailable = this.nip76Service.wallet.getThread(this.nip76Service.wallet.threads.length);
     }
+    firstAvailable.pending = firstAvailable.a;
+    firstAvailable.ready = true;
+    firstAvailable.p.name = 'New Thread';
+    this._editThread = firstAvailable;
   }
 
   cancelEdit() {
@@ -155,7 +161,7 @@ export class Nip76SettingsComponent {
 
   async saveThread() {
     this._editThread!.pending = '';
-    const savedRemote = await this.nip76Service.updateThreadMetadata(this._editThread!);
+    const savedRemote = await this.nip76Service.saveThread(this._editThread!);
     if (savedRemote) {
       this._editThread = null;
     }

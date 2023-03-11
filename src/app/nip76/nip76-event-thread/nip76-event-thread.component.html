@@ -1,0 +1,15 @@
+<div class="thread-event" *ngFor="let reaction of doc.reactions">
+    <span>
+        <div class="events-header">
+            <app-event-header [pubkey]="reaction.p.authorPubKey || ''">
+                <app-date [date]="reaction.nostrEvent.created_at"></app-date>
+                <app-directory-icon [pubkey]="reaction.nostrEvent.pubkey"></app-directory-icon>
+            </app-event-header>
+            <app-event-actions [event]="reaction.nostrEvent" [pubkey]="reaction.nostrEvent.pubkey"></app-event-actions>
+        </div>
+        <app-content class="thread-content" [displayRepliesTo]="true" [event]="reaction.nostrEvent"></app-content>
+        <app-event-reactions [event]="reaction.nostrEvent"></app-event-reactions>
+        <app-nip76-event-buttons [doc]="reaction"></app-nip76-event-buttons>
+        <app-nip76-event-thread [doc]="reaction"></app-nip76-event-thread>
+    </span>
+</div>

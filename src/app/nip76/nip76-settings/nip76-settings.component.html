@@ -15,10 +15,12 @@
     <p>NIP 76 Private Threads are not initialized for this profile yet.</p>
     <p>To get started:</p>
     <ol>
-        <li class="instruction"><a class="action-link" (click)="randomizeKey()">Randomize</a> the thread profile
-            keys. (OPTIONAL).</li>
-        <li class="instruction"><a class="action-link" (click)="saveConfiguration()">Save</a> it to begin using this
-            thread profile.</li>
+        <li class="instruction">
+            <a class="action-link" (click)="randomizeKey()">Randomize</a> the keys. (OPTIONAL).
+        </li>
+        <li class="instruction">
+            <a class="action-link" (click)="saveConfiguration()">Save</a> it to begin using.
+        </li>
     </ol>
     <mat-card-content>               
         <div *ngIf="editThread">
@@ -39,9 +41,9 @@
 </div>
 
 <mat-tab-group  *ngIf="nip76Service.wallet.isInSession" [selectedIndex]="tabIndex"  (selectedTabChange)="onTabChanged($event)" class="feed-page">
-    <mat-tab label="Settings">
-        <div *ngIf="profile && nip76Service.threads.length">
-            <div *ngFor="let thread of nip76Service.threads" [style.display]="!thread.ready ? 'none' : 'block'">
+    <mat-tab label="Manage Threads">
+        <div *ngIf="nip76Service.wallet.threads.length">
+            <div *ngFor="let thread of nip76Service.wallet.threads" [style.display]="!thread.ready ? 'none' : 'block'">
                 <mat-card class="settings-card" [class]="editThread===thread ? 'edit': ''">
                     <mat-card-content>
                         <div mat-dialog-actions class="mat-dialog-actions">
@@ -90,19 +92,47 @@
         </div> 
     </mat-tab>
     <mat-tab label="Following">
+        <div *ngFor="let thread of nip76Service.wallet.following" [style.display]="!thread.ready ? 'none' : 'block'">
+            <mat-card class="settings-card">
+                <mat-card-content>
+                    <app-event-header [pubkey]="thread.ownerPubKey"></app-event-header>
+                    <div mat-dialog-actions class="mat-dialog-actions">
+                        <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(thread)" *ngIf="editThread!==thread">Copy Keys</button>
+                        <button class="rounded-button"  mat-flat-button color="primary" (click)="viewThreadNotes(thread)" *ngIf="editThread!==thread" style="float:right;">View Notes</button>
+                    </div>                  
+                    <div *ngIf="editThread!==thread">
+                        <mat-form-field class="input-full-width" appearance="fill">
+                            <mat-label>Index</mat-label>
+                            <input matInput type="text" [value]="thread.address.formatted" readonly/>
+                        </mat-form-field>
+                        <mat-form-field class="input-full-width" appearance="fill">
+                            <mat-label>Name</mat-label>
+                            <input matInput type="text" [value]="thread.p.name || ''" readonly/>
+                        </mat-form-field>
+                        <mat-form-field class="input-full-width" appearance="fill">
+                            <mat-label>Description</mat-label>
+                            <input matInput type="text" [value]="thread.p.description || ''" readonly/>
+                        </mat-form-field>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>        
     </mat-tab>
     <mat-tab label="Followers">
-        <div *ngIf="profile && activeThread" [style.padding]="8">
+        <div *ngIf="activeThread" [style.padding]="8">
             <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
                 <small>Private Thread {{activeThread.address.formatted}}</small><br>
             </div>        
         </div>
     </mat-tab>
     <mat-tab label="Notes">
-        <div *ngIf="profile && activeThread" [style.padding]="8">
-            <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
-                <small>Private Thread {{activeThread.address.formatted}}</small><br>
-                <img *ngIf="!showNoteForm && profile.pubkey === activeThread.ownerPubKey" width="46" height="46" (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" />
+        <div *ngIf="activeThread" [style.padding]="8">
+            <div style="font-size: 8px;">Private Thread {{activeThread.address.formatted}}</div>
+            <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
+                <button class="rounded-button"  mat-flat-button color="primary" (click)="follow(activeThread)">Follow</button>
+                <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeThread)">Copy Keys</button>
+                <img *ngIf="!showNoteForm && nip76Service.wallet.ownerPubKey === activeThread.ownerPubKey" width="46" height="46" 
+                    (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" style="float: right;" />
             </div>
             <form [formGroup]="noteForm" *ngIf="showNoteForm" (ngSubmit)="saveNote()">
                 <div mat-dialog-content class="mat-dialog-content">
@@ -127,11 +157,15 @@
                     <app-event-actions [event]="post.nostrEvent"></app-event-actions>
                 </div>
                 <app-content [event]="post.nostrEvent"></app-content>
-            </mat-card>
-        </div>        
-    </mat-tab>        
-</mat-tab-group>
-
+                <app-event-reactions [event]="post.nostrEvent"></app-event-reactions>
+                <app-nip76-event-buttons [doc]="post"></app-nip76-event-buttons>
+                <app-nip76-event-thread [doc]="post"></app-nip76-event-thread>
+                </mat-card>
+            </div>        
+        </mat-tab>        
+    </mat-tab-group>
+    
+    <!-- <app-event-thread [event]="post.nostrEvent"></app-event-thread> -->
 <!--
 <div class="scrolling-content" infiniteScroll (scrollAction)="navigation.showMore()">
     <div class="page">
