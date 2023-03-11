@@ -152,6 +152,7 @@ import { BadgeCardComponent } from './shared/badge-card/badge-card';
 import { TagsComponent } from './shared/tags/tags';
 import { BadgeComponent } from './badge/badge';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { DragScrollModule } from 'ngx-drag-scroll';
 import { Nip76SettingsComponent } from './nip76/nip76-settings/nip76-settings.component';
 import { AddThreadDialog } from './nip76/add-thread-dialog/add-thread-dialog.component';
 import { Nip76EventButtonsComponent } from './nip76/nip76-event-buttons/nip76-event-buttons.component';
@@ -262,6 +263,7 @@ import { Nip76EventThreadComponent } from './nip76/nip76-event-thread/nip76-even
         useFactory: HttpLoaderFactory,
         deps: [HttpClient],
       },
+
     }),
     LoggerModule.forRoot(
       { level: NgxLoggerLevel.INFO, enableSourceMaps: true, serverLogLevel: NgxLoggerLevel.OFF }, // Don't send logs anywhere!
@@ -319,6 +321,7 @@ import { Nip76EventThreadComponent } from './nip76/nip76-event-thread/nip76-even
     NgxMatTimepickerModule,
     NgxColorsModule,
     QRCodeModule,
+    DragScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // enabled: true,
