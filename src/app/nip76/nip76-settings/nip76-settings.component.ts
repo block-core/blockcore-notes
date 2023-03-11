@@ -71,7 +71,7 @@ export class Nip76SettingsComponent {
   }
 
   async saveConfiguration() {
-    const savedLocal = await this.nip76Service.save();
+    const savedLocal = await this.nip76Service.saveWallet();
     const savedRemote = await this.nip76Service.saveThread(this.editThread!);
     location.reload();
   }

@@ -13,7 +13,6 @@ import { SecurityService } from '../services/security';
 import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
 import { AddThreadDialog, AddThreadDialogData } from './add-thread-dialog/add-thread-dialog.component';
 
-const sessionKeyAddress = 'blockcore:notes:nostr:nip76:sessionKey';
 const nostrPrivKeyAddress = 'blockcore:notes:nostr:prvkey';
 
 interface PrivateThreadWithRelaySub extends PrivateThread {
@@ -45,17 +44,7 @@ export class Nip76Service {
     this.profileService.profile$.subscribe((profile) => {
       this.wallet.ownerPubKey = profile!.pubkey;
       if (this.wallet.isInSession) {
-        const sessionKey = sessionStorage.getItem(sessionKeyAddress);
-        if (sessionKey) {
-          if (this.wallet.readKey(sessionKey, 'session', '')) {
-            this.loadThreads();
-          } else {
-            sessionStorage.removeItem(sessionKeyAddress);
-            this.wallet.clearSession();
-          }
-        } else {
-          this.login();
-        }
+        this.loadThreads();
       } else if (this.wallet.requiresLogin) {
         this.login();
       }
@@ -91,33 +80,26 @@ export class Nip76Service {
     });
   }
 
-  private loadWallet(password: string) {
-    if (this.wallet.readKey(password, 'backup', '')) {
-      this.loadThreads();
-      this.saveWallet(password);
-    }
-  }
-
-  private saveWallet(password: string) {
-    this.wallet.saveKey(password, 'backup', false);
-    const sessionKey = this.wallet.generateSessionKey();
-    sessionStorage.setItem(sessionKeyAddress, sessionKey);
-    this.wallet.saveKey(sessionKey, 'session', false);
-    this.wallet.isInSession = true;
-  }
-
-  async save(): Promise<boolean> {
-    return this.passwordDialog('Save Private Thread Keys', this.saveWallet);
+  async saveWallet(): Promise<boolean> {
+    return this.passwordDialog('Save Private Thread Keys', (privateKey: string) => {
+      this.wallet.saveWallet(privateKey);
+    });
   }
 
   async login(): Promise<boolean> {
-    return this.passwordDialog('Load Private Thread Keys', this.loadWallet);
+    return this.passwordDialog('Load Private Thread Keys', (privateKey: string) => {
+      if (this.wallet.readKey(privateKey, 'backup', '')) {
+        this.loadThreads();
+        this.wallet.saveWallet(privateKey);
+      }
+    });
   }
 
   async logout() {
-    sessionStorage.removeItem(sessionKeyAddress);
+    const ownerPubKey = this.wallet.ownerPubKey;
     this.wallet.clearSession();
     this.wallet = new Nip76Wallet();
+    this.wallet.ownerPubKey = ownerPubKey;
   }
 
   async previewThread(): Promise<PrivateThreadWithRelaySub> {
@@ -367,7 +349,7 @@ export class Nip76Service {
     }
     const privateNotes$ = new Subject<NostrEvent>();
     privateNotes$.subscribe(nostrEvent => {
-      const post = posts.find(x=>x.rp.nostrPubKey === nostrEvent.tags[0][1])!;
+      const post = posts.find(x => x.rp.nostrPubKey === nostrEvent.tags[0][1])!;
       const reactionIndex = post.reactions.findIndex(x => x.h === nostrEvent.id);
       if (reactionIndex === -1 || post.reactions[reactionIndex].t < nostrEvent.created_at) {
         let keyIndex = nostrEvent.created_at - post.t;
