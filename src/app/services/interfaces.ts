@@ -169,6 +169,29 @@ export interface ThreadEntry {
   reactions: { [key: string | symbol]: number };
   // reactions: {};
   boosts: number;
+  zaps?: ParsedZap[];
+}
+
+export interface Zapper {
+  pubkey?: string;
+  isValid: boolean;
+  content: string;
+}
+
+export interface ZappersListData {
+  zaps: ParsedZap[] | undefined;
+  event?: NostrEventDocument;
+}
+
+export interface ParsedZap {
+  id: string;
+  e?: string;
+  p: string;
+  amount: number;
+  content: string;
+  zapper?: string;
+  valid: boolean;
+  zapService: string;
 }
 
 export enum EmojiEnum {
