@@ -30,11 +30,11 @@
             </mat-form-field>
             <mat-form-field class="input-full-width">
                 <mat-label>Name</mat-label>
-                <input matInput type="text" [(ngModel)]="editThread.p.name" />
+                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.name" />
             </mat-form-field>
             <mat-form-field class="input-full-width">
                 <mat-label>Description</mat-label>
-                <input matInput type="text" [(ngModel)]="editThread.p.description"/>
+                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.description"/>
             </mat-form-field>
         </div>
     </mat-card-content>    
@@ -61,11 +61,11 @@
                             </mat-form-field>
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Name</mat-label>
-                                <input matInput type="text" [value]="thread.p.name || ''" readonly/>
+                                <input matInput type="text" [value]="thread.decryptedContent.name || ''" readonly/>
                             </mat-form-field>
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Description</mat-label>
-                                <input matInput type="text" [value]="thread.p.description || ''" readonly/>
+                                <input matInput type="text" [value]="thread.decryptedContent.description || ''" readonly/>
                             </mat-form-field>
                         </div>
                         <div *ngIf="editThread===thread">
@@ -75,11 +75,11 @@
                             </mat-form-field>
                             <mat-form-field class="input-full-width">
                                 <mat-label>Name</mat-label>
-                                <input matInput type="text" [(ngModel)]="editThread.p.name" />
+                                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.name" />
                             </mat-form-field>
                             <mat-form-field class="input-full-width">
                                 <mat-label>Description</mat-label>
-                                <input matInput type="text" [(ngModel)]="editThread.p.description"/>
+                                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.description"/>
                             </mat-form-field>
                         </div>
                     </mat-card-content>
@@ -107,11 +107,11 @@
                         </mat-form-field>
                         <mat-form-field class="input-full-width" appearance="fill">
                             <mat-label>Name</mat-label>
-                            <input matInput type="text" [value]="thread.p.name || ''" readonly/>
+                            <input matInput type="text" [value]="thread.decryptedContent.name || ''" readonly/>
                         </mat-form-field>
                         <mat-form-field class="input-full-width" appearance="fill">
                             <mat-label>Description</mat-label>
-                            <input matInput type="text" [value]="thread.p.description || ''" readonly/>
+                            <input matInput type="text" [value]="thread.decryptedContent.description || ''" readonly/>
                         </mat-form-field>
                     </div>
                 </mat-card-content>

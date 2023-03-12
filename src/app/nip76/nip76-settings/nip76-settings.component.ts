@@ -64,9 +64,9 @@ export class Nip76SettingsComponent {
   randomizeKey() {
     this.nip76Service.wallet.reKey();
     this.editThread = this.nip76Service.wallet.threads[0];
-    this.editThread.pending = 'preview';
-    this.editThread.p.name = 'Example Thread 1';
-    this.editThread.p.description = 'My First Private Trace Resistant Thread 1';
+    this.editThread.decryptedContent.created_at = 1;
+    this.editThread.decryptedContent.name = 'Example Thread 1';
+    this.editThread.decryptedContent.description = 'My First Trace Resistant Thread 1';
     this.editThread.ready = true;
   }
 
@@ -145,22 +145,22 @@ export class Nip76SettingsComponent {
     if (!firstAvailable) {
       firstAvailable = this.nip76Service.wallet.getThread(this.nip76Service.wallet.threads.length);
     }
-    firstAvailable.pending = firstAvailable.a;
+    firstAvailable.decryptedContent.created_at = 1;
     firstAvailable.ready = true;
-    firstAvailable.p.name = 'New Thread';
+    firstAvailable.decryptedContent.name = 'New Thread';
     this._editThread = firstAvailable;
   }
 
   cancelEdit() {
-    if (this._editThread && this._editThread.pending === this._editThread.a) {
-      this._editThread.pending = '';
+    if (this._editThread && this._editThread.decryptedContent.created_at === 1) {
+      this._editThread.decryptedContent.created_at = undefined;
       this._editThread.ready = false;
     }
     this._editThread = null;
   }
 
   async saveThread() {
-    this._editThread!.pending = '';
+    this._editThread!.decryptedContent.created_at = undefined;
     const savedRemote = await this.nip76Service.saveThread(this._editThread!);
     if (savedRemote) {
       this._editThread = null;

@@ -138,7 +138,7 @@ export class Nip76Service {
       const thread = this.findThread(nostrEvent.pubkey);
       if (thread) {
         const decrypted = thread.address.decrypt(nostrEvent.content, thread.indexMap.post.sp.publicKey, thread.v);
-        thread.p = JSON.parse(decrypted) as IThreadPayload;
+        thread.decryptedContent = JSON.parse(decrypted) as IThreadPayload;
         thread.ready = true;
         if (ownerThreadSearch) {
           this.loadFollowings(thread);
@@ -166,9 +166,9 @@ export class Nip76Service {
   }
 
   async saveThread(thread: PrivateThreadWithRelaySub) {
-    const encrypted = thread.address.encrypt(JSON.stringify(thread.p), thread.indexMap.post.sp.publicKey, 1);
+    const encrypted = thread.address.encrypt(JSON.stringify(thread.decryptedContent), thread.indexMap.post.sp.publicKey, 1);
     let event = this.dataService.createEventWithPubkey(17761, encrypted, thread.indexMap.post.ap.nostrPubKey);
-    thread!.p.created_at = event.created_at;
+    thread!.decryptedContent.created_at = event.created_at;
     event.content = encrypted;
     const signature = signEvent(event, thread.indexMap.post.ap.privateKey.toString('hex')) as any;
     const signedEvent = event as Event;
@@ -196,30 +196,33 @@ export class Nip76Service {
         }
       }
       if (sp) {
-        const postIndex = thread.posts.findIndex(x => x.h === nostrEvent.id);
-        if (postIndex === -1 || thread.posts[postIndex].t < nostrEvent.created_at) {
-          const post = PostDocument.default;
+        const postIndex = thread.posts.findIndex(x => x.id === nostrEvent.id);
+        if (postIndex === -1 || thread.posts[postIndex].created_at < nostrEvent.created_at) {
+          const post = new PostDocument();
           post.ownerPubKey = thread.ownerPubKey;
           post.setKeys(ap!, sp!);
           post.address = new HDKissAddress({ publicKey: ap!.publicKey, type: HDKissDocumentType.Post, version: Versions.animiqAPI3 });
           post.thread = thread;
-          post.s = nostrEvent.sig;
-          post.h = nostrEvent.id;
+          post.sig = nostrEvent.sig;
+          post.id = nostrEvent.id;
           post.a = post.a = post.address.value;
           post.v = 3;
-          post.e = nostrEvent.content;
+          post.content = nostrEvent.content;
           post.i = keyIndex;
-          post.t = nostrEvent.created_at;
-          const decrypted = post.address.decrypt(post.e, sp.publicKey, post.v);
-          post.p = JSON.parse(decrypted);
-          if (post.p) nostrEvent.content = post.p.message!;
+          post.created_at = nostrEvent.created_at;
+          const decrypted = post.address.decrypt(post.content, sp.publicKey, post.v);
+          post.decryptedContent = JSON.parse(decrypted);
+          if (post.decryptedContent) {
+            nostrEvent.content = post.decryptedContent.message!;
+            // post.rp 
+          }
           post.nostrEvent = nostrEvent;
           if (postIndex === -1) {
             thread.posts.push(post);
           } else {
             thread.posts[postIndex] = post;
           }
-          thread.posts = thread.posts.sort((a, b) => b.t - a.t);
+          thread.posts = thread.posts.sort((a, b) => b.created_at - a.created_at);
           if (thread.posts.length > 3) this.loadReactions(thread.posts);
         }
       }
@@ -238,22 +241,22 @@ export class Nip76Service {
   }
 
   async saveNote(thread: PrivateThreadWithRelaySub, noteText: string) {
-    const postDocument = PostDocument.default;
-    postDocument.p = {
+    const postDocument = new PostDocument();
+    postDocument.decryptedContent = {
       message: noteText
     }
-    const index = thread.p.last_known_index + 1;
+    const index = thread.decryptedContent.last_known_index + 1;
     const ap = thread.indexMap.post.ap.deriveChildKey(index);
     const sp = thread.indexMap.post.sp.deriveChildKey(index);
     const address = new HDKissAddress({ publicKey: ap.publicKey, type: HDKissDocumentType.Post, version: Versions.animiqAPI3 });
-    const encrypted = address.encrypt(JSON.stringify(postDocument.p), sp.publicKey, 1);
+    const encrypted = address.encrypt(JSON.stringify(postDocument.decryptedContent), sp.publicKey, 1);
     let event = this.dataService.createEventWithPubkey(17761, encrypted, ap.nostrPubKey);
     const signature = signEvent(event, ap.privateKey.toString('hex')) as any;
     const signedEvent = event as Event;
     signedEvent.sig = signature;
     signedEvent.id = await getEventHash(event);
     await this.dataService.publishEvent(signedEvent);
-    thread.p.last_known_index = index;
+    thread.decryptedContent.last_known_index = index;
     await this.saveThread(thread);
     return true;
   }
@@ -350,29 +353,29 @@ export class Nip76Service {
     const privateNotes$ = new Subject<NostrEvent>();
     privateNotes$.subscribe(nostrEvent => {
       const post = posts.find(x => x.rp.nostrPubKey === nostrEvent.tags[0][1])!;
-      const reactionIndex = post.reactions.findIndex(x => x.h === nostrEvent.id);
-      if (reactionIndex === -1 || post.reactions[reactionIndex].t < nostrEvent.created_at) {
-        let keyIndex = nostrEvent.created_at - post.t;
+      const reactionIndex = post.reactions.findIndex(x => x.id === nostrEvent.id);
+      if (reactionIndex === -1 || post.reactions[reactionIndex].created_at < nostrEvent.created_at) {
+        let keyIndex = nostrEvent.created_at - post.created_at;
         const ap = post!.reactionsIndex.ap.deriveChildKey(keyIndex);
         const sp = post!.reactionsIndex.sp.deriveChildKey(keyIndex);
-        const reaction = PostDocument.default;
+        const reaction = new PostDocument();
         reaction.ownerPubKey = post.ownerPubKey;
         reaction.setKeys(ap!, sp!);
         reaction.address = new HDKissAddress({ publicKey: ap!.publicKey, type: HDKissDocumentType.Post, version: Versions.animiqAPI3 });
         reaction.thread = post.thread;
-        reaction.s = nostrEvent.sig;
-        reaction.h = nostrEvent.id;
+        reaction.sig = nostrEvent.sig;
+        reaction.id = nostrEvent.id;
         reaction.a = reaction.a = reaction.address.value;
         reaction.v = 3;
-        reaction.e = nostrEvent.content;
+        reaction.content = nostrEvent.content;
         reaction.i = keyIndex;
-        reaction.t = nostrEvent.created_at;
-        const decrypted = reaction.address.decrypt(reaction.e, sp.publicKey, reaction.v);
-        reaction.p = JSON.parse(decrypted);
-        if (reaction.p) {
-          nostrEvent.content = reaction.p.message!;
-          if (!reaction.p.type) {
-            reaction.p.type = reaction.p.message?.length == 1 ? 1 : 2;
+        reaction.created_at = nostrEvent.created_at;
+        const decrypted = reaction.address.decrypt(reaction.content, sp.publicKey, reaction.v);
+        reaction.decryptedContent = JSON.parse(decrypted);
+        if (reaction.decryptedContent) {
+          nostrEvent.content = reaction.decryptedContent.message!;
+          if (!reaction.decryptedContent.type) {
+            reaction.decryptedContent.type = reaction.decryptedContent.message?.length == 1 ? 1 : 2;
           }
         }
         reaction.nostrEvent = nostrEvent;
@@ -381,7 +384,7 @@ export class Nip76Service {
         } else {
           post.reactions[reactionIndex] = reaction;
         }
-        post.reactions = post.reactions.sort((a, b) => b.t - a.t);
+        post.reactions = post.reactions.sort((a, b) => b.created_at - a.created_at);
       }
     });
 
@@ -393,25 +396,25 @@ export class Nip76Service {
   }
 
   async saveReaction(post: PostDocument, message: any, type: 1 | 2): Promise<PostDocument> {
-    const postDocument = PostDocument.default;
-    postDocument.p = {
+    const postDocument = new PostDocument();
+    postDocument.decryptedContent = {
       message,
       type,
       authorPubKey: this.wallet.ownerPubKey
     };
 
     await this.passwordDialog('Save Private Thread Keys', (privateKey) => {
-      post.p.sig = secp256k1.utils.bytesToHex(
+      post.decryptedContent.sig = secp256k1.utils.bytesToHex(
         secp256k1.schnorr.signSync(post.rp.nostrPubKey, privateKey)
       );
     });
 
     const created_at = Math.floor(Date.now() / 1000);
-    const index = created_at - post.t;
+    const index = created_at - post.created_at;
     const ap = post.reactionsIndex.ap.deriveChildKey(index);
     const sp = post.reactionsIndex.sp.deriveChildKey(index);
     const address = new HDKissAddress({ publicKey: ap.publicKey, type: HDKissDocumentType.Post, version: Versions.animiqAPI3 });
-    const encrypted = address.encrypt(JSON.stringify(postDocument.p), sp.publicKey, 1);
+    const encrypted = address.encrypt(JSON.stringify(postDocument.decryptedContent), sp.publicKey, 1);
     let event = this.dataService.createEventWithPubkey(17761, encrypted, ap.nostrPubKey);
     event.created_at = created_at;
     event.tags.push(['e', post.rp.nostrPubKey]);
