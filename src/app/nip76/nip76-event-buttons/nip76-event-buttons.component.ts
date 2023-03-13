@@ -1,3 +1,4 @@
+import * as nostrTools from 'nostr-tools';
 import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Kind } from 'nostr-tools';
@@ -38,12 +39,12 @@ export class Nip76EventButtonsComponent extends EventButtonsComponent {
 
   override async addEmoji(e: { emoji: { native: any } }) {
     this.isEmojiPickerVisible = false;
-    const reactionDoc = await this.nip76Service.saveReaction(this.doc, e.emoji.native, 1);
+    const reactionDoc = await this.nip76Service.saveReaction(this.doc, e.emoji.native, nostrTools.Kind.Reaction);
   }
 
   override async addReply() {
     this.isEmojiPickerVisible = false;
-    const reactionDoc = await this.nip76Service.saveReaction(this.doc, this.note, 2);
+    const reactionDoc = await this.nip76Service.saveReaction(this.doc, this.note, nostrTools.Kind.Text);
     this.hideReply();
   }
 }

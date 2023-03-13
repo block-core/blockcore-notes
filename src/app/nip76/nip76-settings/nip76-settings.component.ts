@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PostDocument, PrivateThread } from 'animiq-nip76-tools';
+import { Nip76Wallet, PostDocument, PrivateThread } from 'animiq-nip76-tools';
 import { ApplicationState } from '../../services/applicationstate';
 import { NostrProfileDocument } from '../../services/interfaces';
 import { NavigationService } from '../../services/navigation';
@@ -15,6 +15,7 @@ import { Nip76Service } from '../nip76.service';
   styleUrls: ['./nip76-settings.component.scss']
 })
 export class Nip76SettingsComponent {
+
   tabIndex?: number;
   showNoteForm = false;
   private _editThread: PrivateThread | null = null;
@@ -27,6 +28,9 @@ export class Nip76SettingsComponent {
     expiration: [''],
     dateControl: [],
   });
+  get wallet(): Nip76Wallet {
+    return this.nip76Service.wallet;
+  }
 
   constructor(
     private router: Router,
@@ -40,9 +44,6 @@ export class Nip76SettingsComponent {
   ) { }
 
   async ngOnInit() {
-    if (this.nip76Service.wallet.isGuest) {
-      this.randomizeKey();
-    }
     this.activatedRoute.paramMap.subscribe(async (params) => {
       this.tabIndex = this.activatedRoute.snapshot.data['tabIndex'] as number || 0;
       const activeThreadPubKey = params.get('threadPubKey');
@@ -62,8 +63,8 @@ export class Nip76SettingsComponent {
   }
 
   randomizeKey() {
-    this.nip76Service.wallet.reKey();
-    this.editThread = this.nip76Service.wallet.threads[0];
+    this.wallet.reKey();
+    this.editThread = this.wallet.threads[0];
     this.editThread.decryptedContent.created_at = 1;
     this.editThread.decryptedContent.name = 'Example Thread 1';
     this.editThread.decryptedContent.description = 'My First Trace Resistant Thread 1';
@@ -94,10 +95,10 @@ export class Nip76SettingsComponent {
         this.router.navigate(['/private-threads/following']);
         break;
       case 2:
-        this.viewThreadFollowers(this.nip76Service.wallet.threads[0]);
+        this.viewThreadFollowers(this.wallet.threads[0]);
         break;
       case 3:
-        this.viewThreadNotes(this.nip76Service.wallet.threads[0]);
+        this.viewThreadNotes(this.wallet.threads[0]);
         break;
     }
   }
@@ -110,8 +111,8 @@ export class Nip76SettingsComponent {
     this.router.navigate(['private-threads', thread.indexMap.post.ap.nostrPubKey, 'followers']);
   }
 
-  copyKeys(thread: PrivateThread) {
-    navigator.clipboard.writeText(thread.getThreadPointer());
+  async copyKeys(thread: PrivateThread) {
+    navigator.clipboard.writeText(await thread.getThreadPointer());
     this.snackBar.open(`Thread keys are now in your clipboard.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',
@@ -131,7 +132,7 @@ export class Nip76SettingsComponent {
   }
 
   async follow(thread: PrivateThread) {
-    this.nip76Service.saveFollowing(this.nip76Service.wallet.threads[0], thread)
+    this.nip76Service.saveFollowing(this.wallet.threads[0], thread)
     this.snackBar.open(`You are now following this thread.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',
@@ -141,9 +142,9 @@ export class Nip76SettingsComponent {
 
   addThread() {
     this.cancelEdit();
-    let firstAvailable = this.nip76Service.wallet.threads.find(x => !x.ready);
+    let firstAvailable = this.wallet.threads.find(x => !x.ready);
     if (!firstAvailable) {
-      firstAvailable = this.nip76Service.wallet.getThread(this.nip76Service.wallet.threads.length);
+      firstAvailable = this.wallet.getThread(this.wallet.threads.length);
     }
     firstAvailable.decryptedContent.created_at = 1;
     firstAvailable.ready = true;

@@ -1,17 +1,17 @@
 <div mat-dialog-actions class="mat-dialog-actions" align="end">
-    <button *ngIf="nip76Service.wallet.isGuest"
+    <button *ngIf="wallet?.isGuest"
             class="rounded-button"  mat-flat-button color="secondary" (click)="randomizeKey()">Randomize</button>
-    <button *ngIf="nip76Service.wallet.isGuest"
+    <button *ngIf="wallet?.isGuest"
             class="rounded-button"  mat-flat-button color="primary" (click)="saveConfiguration()">Save Configuration</button>
-    <button *ngIf="!nip76Service.wallet.isGuest && nip76Service.wallet.isInSession"
+    <button *ngIf="!wallet?.isGuest && wallet?.isInSession"
             class="rounded-button"  mat-flat-button color="secondary" (click)="previewThread()">Preview a Thread</button>
-    <button *ngIf="!nip76Service.wallet.isGuest && !nip76Service.wallet.isInSession"
+    <button *ngIf="!wallet?.isGuest && !wallet?.isInSession"
             class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.login()">Start Secure Session</button>
-    <button *ngIf="nip76Service.wallet.isInSession"
+    <button *ngIf="wallet?.isInSession"
             class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.logout()">End Secure Session</button>
 </div>
 
-<div *ngIf="nip76Service.wallet.isGuest" class="feed-page">
+<div *ngIf="wallet?.isGuest" class="feed-page">
     <p>NIP 76 Private Threads are not initialized for this profile yet.</p>
     <p>To get started:</p>
     <ol>
@@ -40,10 +40,10 @@
     </mat-card-content>    
 </div>
 
-<mat-tab-group  *ngIf="nip76Service.wallet.isInSession" [selectedIndex]="tabIndex"  (selectedTabChange)="onTabChanged($event)" class="feed-page">
+<mat-tab-group  *ngIf="wallet?.isInSession" [selectedIndex]="tabIndex"  (selectedTabChange)="onTabChanged($event)" class="feed-page">
     <mat-tab label="Manage Threads">
-        <div *ngIf="nip76Service.wallet.threads.length">
-            <div *ngFor="let thread of nip76Service.wallet.threads" [style.display]="!thread.ready ? 'none' : 'block'">
+        <div *ngIf="wallet.threads.length">
+            <div *ngFor="let thread of wallet.threads" [style.display]="!thread.ready ? 'none' : 'block'">
                 <mat-card class="settings-card" [class]="editThread===thread ? 'edit': ''">
                     <mat-card-content>
                         <div mat-dialog-actions class="mat-dialog-actions">
@@ -87,12 +87,12 @@
             </div>
         </div>
         <div mat-dialog-actions class="mat-dialog-actions" align="end">
-            <button *ngIf="nip76Service.wallet.isInSession"
+            <button *ngIf="wallet.isInSession"
                     class="rounded-button"  mat-flat-button color="primary" (click)="addThread()">Add Thread</button>
         </div> 
     </mat-tab>
     <mat-tab label="Following">
-        <div *ngFor="let thread of nip76Service.wallet.following" [style.display]="!thread.ready ? 'none' : 'block'">
+        <div *ngFor="let thread of wallet.following" [style.display]="!thread.ready ? 'none' : 'block'">
             <mat-card class="settings-card">
                 <mat-card-content>
                     <app-event-header [pubkey]="thread.ownerPubKey"></app-event-header>
@@ -131,7 +131,7 @@
             <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
                 <button class="rounded-button"  mat-flat-button color="primary" (click)="follow(activeThread)">Follow</button>
                 <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeThread)">Copy Keys</button>
-                <img *ngIf="!showNoteForm && nip76Service.wallet.ownerPubKey === activeThread.ownerPubKey" width="46" height="46" 
+                <img *ngIf="!showNoteForm && wallet.ownerPubKey === activeThread.ownerPubKey" width="46" height="46" 
                     (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" style="float: right;" />
             </div>
             <form [formGroup]="noteForm" *ngIf="showNoteForm" (ngSubmit)="saveNote()">
@@ -157,7 +157,9 @@
                     <app-event-actions [event]="post.nostrEvent"></app-event-actions>
                 </div>
                 <app-content [event]="post.nostrEvent"></app-content>
-                <app-event-reactions [event]="post.nostrEvent"></app-event-reactions>
+                <div class="thread-reactions">
+                    <span class="thread-reaction" *ngFor="let item of post.reactionTracker | keyvalue"> {{ item.key }} {{ item.value }} </span>
+                </div>
                 <app-nip76-event-buttons [doc]="post"></app-nip76-event-buttons>
                 <app-nip76-event-thread [doc]="post"></app-nip76-event-thread>
                 </mat-card>
