@@ -1,10 +1,10 @@
 <div class="thread-actions" [ngClass]="{ 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
   <ng-template [ngIf]="!replyOpen">
-    <mat-icon *ngIf="optionsService.values.enableZapping" class="reaction-icon toolbar-icon" style="margin-right: 10px;" (click)="openDialog()" matTooltip="Reaction to post">offline_bolt</mat-icon>
-    <mat-icon class="reaction-icon toolbar-icon" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Reaction to post">sentiment_satisfied</mat-icon>
+    <mat-icon tabindex="0" class="reaction-icon toolbar-icon" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Reaction to note">sentiment_satisfied</mat-icon>
+    <mat-icon tabindex="0" class="reaction-icon toolbar-icon" (click)="openReply()" matTooltip="Reply to note">chat_bubble_outline</mat-icon>
+    <mat-icon tabindex="0" *ngIf="optionsService.values.enableZapping" class="reaction-icon toolbar-icon" (click)="openDialog()" matTooltip="Zap the note">offline_bolt</mat-icon>
     <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="true" (emojiSelect)="addEmoji($event)" title="Choose your reaction"></emoji-mart>
-    
-    <button (click)="openReply()" mat-button>Reply</button>
+    <!-- <button (click)="openReply()" mat-button>Reply</button> -->
   </ng-template>
   <!-- <button mat-button>
     <mat-icon class="toolbar-icon" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert reaction">sentiment_satisfied</mat-icon>

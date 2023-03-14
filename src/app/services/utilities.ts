@@ -85,7 +85,7 @@ export class Utilities {
     }
   }
 
-  millisatoshiToSatoshis(millisatoshis: number) {
+  millisatoshisToSatoshis(millisatoshis: number) {
     return Math.floor(millisatoshis / 1000);
   }
 
