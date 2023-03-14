@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { NostrEventDocument, Zapper, ParsedZap } from './interfaces';
-var lightningPayReq = require('light-bolt11-decoder');
+import { decode } from 'light-bolt11-decoder';
 import { sha256 } from '@noble/hashes/sha256';
 import { Utilities } from './utilities';
-import { ProfileService } from './profile';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +36,7 @@ export class ZapService {
     }
 
     try {
-      const decodedBolt11 = lightningPayReq.decode(bolt11);
+      const decodedBolt11 = decode(bolt11);
 
       const amount = decodedBolt11.sections.find((s: any) => s.name === 'amount')?.value;
       const hash = decodedBolt11.sections.find((s: any) => s.name === 'description_hash')?.value;
