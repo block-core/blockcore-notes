@@ -20,7 +20,7 @@ export class ZapService {
       id: zapEvent.id,
       e: e != undefined ? e : undefined,
       p: p != undefined ? p : '',
-      amount: Number(amount) / 1000,
+      amount: this.util.millisatoshiToSatoshis(Number(amount)),
       zapper: zapper?.pubkey,
       content: zapper?.content,
       valid: zapper?.isValid,

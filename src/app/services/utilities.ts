@@ -85,6 +85,10 @@ export class Utilities {
     }
   }
 
+  millisatoshiToSatoshis(millisatoshis: number) {
+    return Math.floor(millisatoshis / 1000);
+  }
+
   mapProfileEvent(event: NostrEventDocument): NostrProfileDocument | undefined {
     // If a timeout is received, the event content will be: "The query timed out before it could complete: [{"kinds":[0],"authors":["edcd205..."]}]."
     if (typeof event === 'string') {
@@ -191,7 +195,7 @@ export class Utilities {
     const buf = bech32.fromWords(decoded.words);
     return new TextDecoder().decode(Uint8Array.from(buf));
   }
-  
+
   keyToHex(publicKey: Uint8Array) {
     return secp.utils.bytesToHex(publicKey);
   }
