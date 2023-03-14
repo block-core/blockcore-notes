@@ -3,10 +3,11 @@
   z-index: 3;
 }
 
-.thread-actions {
+.thread-buttons {
   padding-left: 1em;
   margin-left: 27px;
-  padding-bottom: 0.3em;
+  padding-bottom: 0.2em;
+  padding-top: 0.4em;
 }
 
 .toolbar-icon {
@@ -36,6 +37,10 @@
   flex: 1 2 auto;
 }
 
-.thread-actions button {
+.thread-buttons button {
   margin-left: 0.4em;
+}
+
+.right-side {
+  float: right;
 }
