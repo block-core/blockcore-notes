@@ -83,6 +83,18 @@
 
           <mat-card>
             <mat-card-header>
+              <mat-card-title>Zapping</mat-card-title>
+              <mat-card-subtitle>Control if zapping features should be enabled</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.enableZapping">Enable Zapping</mat-slide-toggle>
+            </mat-card-content>
+          </mat-card>
+
+          <br />
+
+          <mat-card>
+            <mat-card-header>
               <mat-card-title>Media widgets</mat-card-title>
               <mat-card-subtitle>Control how content are rendered</mat-card-subtitle>
             </mat-card-header>

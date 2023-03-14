@@ -602,6 +602,10 @@ export class UIService {
         this.#viewReplyEventsChanged.next(this.viewReplyEvents);
       }
     } else if (event.kind == Kind.Zap) {
+      if (!this.options.values.enableZapping) {
+        return;
+      }
+
       const eventId = this.eventService.lastETag(event);
 
       if (eventId) {

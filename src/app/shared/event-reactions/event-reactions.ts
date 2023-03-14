@@ -31,7 +31,7 @@ export class EventReactionsComponent {
   ngAfterViewInit() { }
 
   async ngOnInit() {
-    if (!this.optionsService.values.enableReactions) {
+    if (!this.optionsService.values.enableReactions && !this.optionsService.values.enableZapping) {
       this.event = undefined;
       this.threadEntry = undefined;
       return;
