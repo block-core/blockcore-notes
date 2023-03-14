@@ -1,4 +1,5 @@
-<div class="thread-reactions" [ngClass]="{ 'no-lines': !optionsService.values.showLines, lines: optionsService.values.showLines }" *ngIf="threadEntry?.boosts || threadEntry?.reactions">
-  <span class="thread-reaction" *ngIf="threadEntry?.boosts">🔁 {{ threadEntry?.boosts }}</span>
+<div class="thread-reactions" [ngClass]="{ 'no-lines': !optionsService.values.showLines, lines: optionsService.values.showLines }">
+  <span class="thread-reaction" *ngIf="threadEntry?.boosts && optionsService.values.enableReactions">🔁 {{ threadEntry?.boosts }}</span>
+  <span class="thread-reaction" style="cursor: pointer" (click)="openDialog()" *ngIf="threadEntry?.zaps || optionsService.values.enableZapping">⚡️{{ amountZapped }}</span>
   <span class="thread-reaction" *ngFor="let item of threadEntry!.reactions | keyvalue"> {{ item.key }} {{ item.value }} </span>
 </div>

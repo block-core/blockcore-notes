@@ -14,7 +14,6 @@
 .profile-container {
     display: flex;
     align-items: center;
-    justify-content: center;
     margin-bottom: 30px;
   }
   
@@ -87,4 +86,29 @@
   .mat-mdc-icon-button.mat-primary {
     --mat-mdc-button-persistent-ripple-color: rgba(255, 255, 255, 0);
     --mat-mdc-button-ripple-color: rgba(255, 255, 255, 0);
+  }
+
+
+  .profile-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .left {
+    align-self: flex-start;
+  }
+  
+  .right {
+    align-self: flex-end;
+  }
+
+  .zap-amount {
+    display: inline-block;
+    border: 2px solid #9c27b0; /* blue border */
+    border-radius: 10px; /* rounded corners */
+    padding: 10px 15px; /* add some padding */
+    font-weight: bold; /* make font bold */
+    color: #fff; /* white text color */
+    background-color: #9c27b0; /* blue background color */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* add a subtle box shadow */
   }
