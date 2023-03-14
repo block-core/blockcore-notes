@@ -11,3 +11,19 @@
   /* border-left: 2px solid rgba(255, 255, 255, 0.15) !important; */
   display: block;
 }
+
+@media only screen and (max-width: 1150px) {
+  .thread-event {
+    margin-top: 1em;
+    margin-left: 0;
+    padding-left: 4px;
+  }
+
+  .thread-content {
+    margin-left: 27px;
+  }
+
+  .events-header {
+    padding-left: 28px;
+  }
+}
