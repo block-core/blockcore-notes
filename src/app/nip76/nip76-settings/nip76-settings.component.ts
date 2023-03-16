@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Nip76Wallet, PostDocument, PrivateThread } from 'animiq-nip76-tools';
+import { Nip76Wallet, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
 import { ApplicationState } from '../../services/applicationstate';
 import { NavigationService } from '../../services/navigation';
 import { UIService } from '../../services/ui';
@@ -17,8 +17,8 @@ export class Nip76SettingsComponent {
 
   tabIndex?: number;
   showNoteForm = false;
-  private _editThread: PrivateThread | null = null;
-  activeThread: PrivateThread | undefined;
+  private _editChannel: PrivateChannel | null = null;
+  activeChannel: PrivateChannel | undefined;
   isEmojiPickerVisible = false;
   @ViewChild('picker') picker: unknown;
   @ViewChild('noteContent') noteContent?: FormControl;
@@ -33,7 +33,7 @@ export class Nip76SettingsComponent {
   }
 
   get readyPosts(): PostDocument[] {
-    return this.activeThread ? this.activeThread.posts.filter(x => x.ready) : [];
+    return this.activeChannel ? this.activeChannel.posts.filter(x => x.ready) : [];
   }
 
   constructor(
@@ -50,10 +50,9 @@ export class Nip76SettingsComponent {
   async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(async (params) => {
       this.tabIndex = this.activatedRoute.snapshot.data['tabIndex'] as number || 0;
-      const activeThreadPubKey = params.get('threadPubKey');
-      const thread = this.nip76Service.findThread(activeThreadPubKey!);
-      if (thread) {
-        this.activeThread = thread;
+      const channel = this.nip76Service.findChannel(params.get('channelPubKey')!);
+      if (channel) {
+        this.activeChannel = channel;
         if (this.tabIndex < 2) this.tabIndex = 3;
       }
     });
@@ -65,76 +64,76 @@ export class Nip76SettingsComponent {
 
   randomizeKey() {
     this.wallet.reKey();
-    this.editThread = this.wallet.threads[0];
-    this.editThread.editing = true;
-    this.editThread.content.name = 'Example Thread 1';
-    this.editThread.content.about = 'My First Trace Resistant Thread 1';
-    this.editThread.ready = true;
+    this.editChannel = this.wallet.channels[0];
+    this.editChannel.editing = true;
+    this.editChannel.content.name = 'Example Channel 1';
+    this.editChannel.content.about = 'My First Trace Resistant Channel 1';
+    this.editChannel.ready = true;
   }
 
   async saveConfiguration() {
     const savedLocal = await this.nip76Service.saveWallet();
-    const savedRemote = await this.nip76Service.saveThread(this.editThread!);
+    const savedRemote = await this.nip76Service.saveChannel(this.editChannel!);
     location.reload();
   }
 
-  get editThread(): PrivateThread | null {
-    return this._editThread!;
+  get editChannel(): PrivateChannel | null {
+    return this._editChannel!;
   }
-  set editThread(value: PrivateThread | null) {
+  set editChannel(value: PrivateChannel | null) {
     this.cancelEdit();
-    this._editThread = value;
+    this._editChannel = value;
   }
 
   onTabChanged(event: MatTabChangeEvent) {
     this.tabIndex = event.index;
     switch (event.index) {
       case 0:
-        this.router.navigate(['/private-threads']);
+        this.router.navigate(['/private-channels']);
         break;
       case 1:
-        this.router.navigate(['/private-threads/following']);
+        this.router.navigate(['/private-channels/following']);
         break;
       case 2:
-        this.viewThreadFollowers(this.wallet.threads[0]);
+        this.viewChannelFollowers(this.wallet.channels[0]);
         break;
       case 3:
-        this.viewThreadNotes(this.wallet.threads[0]);
+        this.viewChannelNotes(this.wallet.channels[0]);
         break;
     }
   }
 
-  viewThreadNotes(thread: PrivateThread) {
-    this.router.navigate(['private-threads', thread.ap.nostrPubKey, 'notes']);
+  viewChannelNotes(channel: PrivateChannel) {
+    this.router.navigate(['private-channels', channel.ap.nostrPubKey, 'notes']);
   }
 
-  viewThreadFollowers(thread: PrivateThread) {
-    this.router.navigate(['private-threads', thread.ap.nostrPubKey, 'followers']);
+  viewChannelFollowers(channel: PrivateChannel) {
+    this.router.navigate(['private-channels', channel.ap.nostrPubKey, 'followers']);
   }
 
-  async copyKeys(thread: PrivateThread) {
-    navigator.clipboard.writeText(await thread.getThreadPointer());
-    this.snackBar.open(`Thread keys are now in your clipboard.`, 'Hide', {
+  async copyKeys(channel: PrivateChannel) {
+    navigator.clipboard.writeText(await channel.getChannelPointer());
+    this.snackBar.open(`Channel keys are now in your clipboard.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
     });
   }
 
-  async previewThread() {
-    const thread = await this.nip76Service.previewThread();
-    if (thread) {
-      this.activeThread = thread;
+  async previewChannel() {
+    const channel = await this.nip76Service.previewChannel();
+    if (channel) {
+      this.activeChannel = channel;
       if (this.tabIndex != 3) {
-        this.viewThreadNotes(thread);
+        this.viewChannelNotes(channel);
       } else {
       }
     }
   }
 
-  async follow(thread: PrivateThread) {
-    this.nip76Service.saveFollowing(this.wallet.threads[0], thread)
-    this.snackBar.open(`You are now following this thread.`, 'Hide', {
+  async follow(channel: PrivateChannel) {
+    this.nip76Service.saveFollowing(this.wallet.channels[0], channel)
+    this.snackBar.open(`You are now following this channel.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
@@ -143,28 +142,28 @@ export class Nip76SettingsComponent {
 
   addThread() {
     this.cancelEdit();
-    let firstAvailable = this.wallet.threads.find(x => !x.ready);
+    let firstAvailable = this.wallet.channels.find(x => !x.ready);
     if (!firstAvailable) {
-      firstAvailable = this.wallet.getThread(this.wallet.threads.length);
+      firstAvailable = this.wallet.getChannel(this.wallet.channels.length);
     }
     firstAvailable.ready = firstAvailable.editing = true;
-    firstAvailable.content.name = 'New Thread';
-    this._editThread = firstAvailable;
+    firstAvailable.content.name = 'New Channel';
+    this._editChannel = firstAvailable;
   }
 
   cancelEdit() {
-    if (this._editThread && this._editThread.editing) {
-      this._editThread.editing = false;
-      this._editThread.ready = false;
+    if (this._editChannel && this._editChannel.editing) {
+      this._editChannel.editing = false;
+      this._editChannel.ready = false;
     }
-    this._editThread = null;
+    this._editChannel = null;
   }
 
-  async saveThread() {
-    this._editThread!.editing = false;
-    const savedRemote = await this.nip76Service.saveThread(this._editThread!);
+  async saveChannel() {
+    this._editChannel!.editing = false;
+    const savedRemote = await this.nip76Service.saveChannel(this._editChannel!);
     if (savedRemote) {
-      this._editThread = null;
+      this._editChannel = null;
     }
   }
 
@@ -180,7 +179,7 @@ export class Nip76SettingsComponent {
   }
 
   async saveNote() {
-    if (await this.nip76Service.saveNote(this.activeThread!, this.noteForm.controls.content.value!)) {
+    if (await this.nip76Service.saveNote(this.activeChannel!, this.noteForm.controls.content.value!)) {
       this.noteForm.reset();
       this.showNoteForm = false;
     }

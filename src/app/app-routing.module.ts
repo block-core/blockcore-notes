@@ -141,7 +141,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'private-threads',
+    path: 'private-channels',
     component: Nip76SettingsComponent,
     canActivate: [AuthGuard],
     resolve: {
@@ -149,7 +149,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'private-threads/following',
+    path: 'private-channels/following',
     component: Nip76SettingsComponent,
     canActivate: [AuthGuard],
     data: { tabIndex: 1 },
@@ -158,7 +158,7 @@ const routes: Routes = [
     },
   },  
   {
-    path: 'private-threads/:threadPubKey/followers',
+    path: 'private-channels/:channelPubKey/followers',
     component: Nip76SettingsComponent,
     data: { tabIndex: 2 },
     canActivate: [AuthGuard],
@@ -167,7 +167,7 @@ const routes: Routes = [
     },
   },  
   {
-    path: 'private-threads/:threadPubKey/notes',
+    path: 'private-channels/:channelPubKey/notes',
     component: Nip76SettingsComponent,
     canActivate: [AuthGuard],
     data: { tabIndex: 3 },

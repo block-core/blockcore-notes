@@ -1,20 +1,20 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-export interface AddThreadDialogData {
-  threadPointer: string
+export interface AddChannelDialogData {
+  channelPointer: string
 }
 
 @Component({
-  selector: 'app-add-thread-dialog',
+  selector: 'app-add-channel-dialog',
   templateUrl: './add-thread-dialog.component.html',
   styleUrls: ['./add-thread-dialog.component.scss']
 })
-export class AddThreadDialog {
-  constructor(public dialogRef: MatDialogRef<AddThreadDialogData>, @Inject(MAT_DIALOG_DATA) public data: AddThreadDialogData) {}
+export class AddChannelDialog {
+  constructor(public dialogRef: MatDialogRef<AddChannelDialogData>, @Inject(MAT_DIALOG_DATA) public data: AddChannelDialogData) {}
 
   onNoClick(): void {
-    this.data.threadPointer = '';
+    this.data.channelPointer = '';
     this.dialogRef.close();
   }
 }
