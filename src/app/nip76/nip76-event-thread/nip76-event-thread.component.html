@@ -1,7 +1,7 @@
 <div class="thread-event" *ngFor="let reaction of doc.replies">
     <span>
         <div class="events-header">
-            <app-event-header [pubkey]="reaction.decryptedContent.authorPubKey || ''">
+            <app-event-header [pubkey]="reaction.content.pubkey || ''">
                 <app-date [date]="reaction.nostrEvent.created_at"></app-date>
                 <app-directory-icon [pubkey]="reaction.nostrEvent.pubkey"></app-directory-icon>
             </app-event-header>

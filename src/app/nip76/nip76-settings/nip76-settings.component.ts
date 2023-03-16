@@ -5,7 +5,6 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Nip76Wallet, PostDocument, PrivateThread } from 'animiq-nip76-tools';
 import { ApplicationState } from '../../services/applicationstate';
-import { NostrProfileDocument } from '../../services/interfaces';
 import { NavigationService } from '../../services/navigation';
 import { UIService } from '../../services/ui';
 import { Nip76Service } from '../nip76.service';
@@ -28,8 +27,13 @@ export class Nip76SettingsComponent {
     expiration: [''],
     dateControl: [],
   });
+
   get wallet(): Nip76Wallet {
     return this.nip76Service.wallet;
+  }
+
+  get readyPosts(): PostDocument[] {
+    return this.activeThread ? this.activeThread.posts.filter(x => x.ready) : [];
   }
 
   constructor(
@@ -51,23 +55,20 @@ export class Nip76SettingsComponent {
       if (thread) {
         this.activeThread = thread;
         if (this.tabIndex < 2) this.tabIndex = 3;
-        if (this.tabIndex === 3 && !thread.notesSubscription) {
-          this.nip76Service.loadNotes(this.activeThread);
-        }
       }
     });
   }
 
   public trackByFn(index: number, item: PostDocument) {
-    return item.a;
+    return item.ap.keyIdentifier;
   }
 
   randomizeKey() {
     this.wallet.reKey();
     this.editThread = this.wallet.threads[0];
-    this.editThread.decryptedContent.created_at = 1;
-    this.editThread.decryptedContent.name = 'Example Thread 1';
-    this.editThread.decryptedContent.description = 'My First Trace Resistant Thread 1';
+    this.editThread.editing = true;
+    this.editThread.content.name = 'Example Thread 1';
+    this.editThread.content.about = 'My First Trace Resistant Thread 1';
     this.editThread.ready = true;
   }
 
@@ -104,11 +105,11 @@ export class Nip76SettingsComponent {
   }
 
   viewThreadNotes(thread: PrivateThread) {
-    this.router.navigate(['private-threads', thread.indexMap.post.ap.nostrPubKey, 'notes']);
+    this.router.navigate(['private-threads', thread.ap.nostrPubKey, 'notes']);
   }
 
   viewThreadFollowers(thread: PrivateThread) {
-    this.router.navigate(['private-threads', thread.indexMap.post.ap.nostrPubKey, 'followers']);
+    this.router.navigate(['private-threads', thread.ap.nostrPubKey, 'followers']);
   }
 
   async copyKeys(thread: PrivateThread) {
@@ -123,10 +124,10 @@ export class Nip76SettingsComponent {
   async previewThread() {
     const thread = await this.nip76Service.previewThread();
     if (thread) {
+      this.activeThread = thread;
       if (this.tabIndex != 3) {
         this.viewThreadNotes(thread);
       } else {
-        this.activeThread = thread;
       }
     }
   }
@@ -146,22 +147,21 @@ export class Nip76SettingsComponent {
     if (!firstAvailable) {
       firstAvailable = this.wallet.getThread(this.wallet.threads.length);
     }
-    firstAvailable.decryptedContent.created_at = 1;
-    firstAvailable.ready = true;
-    firstAvailable.decryptedContent.name = 'New Thread';
+    firstAvailable.ready = firstAvailable.editing = true;
+    firstAvailable.content.name = 'New Thread';
     this._editThread = firstAvailable;
   }
 
   cancelEdit() {
-    if (this._editThread && this._editThread.decryptedContent.created_at === 1) {
-      this._editThread.decryptedContent.created_at = undefined;
+    if (this._editThread && this._editThread.editing) {
+      this._editThread.editing = false;
       this._editThread.ready = false;
     }
     this._editThread = null;
   }
 
   async saveThread() {
-    this._editThread!.decryptedContent.created_at = undefined;
+    this._editThread!.editing = false;
     const savedRemote = await this.nip76Service.saveThread(this._editThread!);
     if (savedRemote) {
       this._editThread = null;

@@ -26,15 +26,15 @@
         <div *ngIf="editThread">
             <mat-form-field class="input-full-width" appearance="fill">
                 <mat-label>Index</mat-label>
-                <input matInput type="text" [value]="editThread.address.formatted" readonly/>
+                <input matInput type="text" [value]="editThread.ap.nostrPubKey" readonly/>
             </mat-form-field>
             <mat-form-field class="input-full-width">
                 <mat-label>Name</mat-label>
-                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.name" />
+                <input matInput type="text" [(ngModel)]="editThread.content.name" />
             </mat-form-field>
             <mat-form-field class="input-full-width">
-                <mat-label>Description</mat-label>
-                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.description"/>
+                <mat-label>About</mat-label>
+                <input matInput type="text" [(ngModel)]="editThread.content.about"/>
             </mat-form-field>
         </div>
     </mat-card-content>    
@@ -57,29 +57,29 @@
                         <div *ngIf="editThread!==thread">
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Index</mat-label>
-                                <input matInput type="text" [value]="thread.address.formatted" readonly/>
+                                <input matInput type="text" [value]="thread.ap.nostrPubKey" readonly/>
                             </mat-form-field>
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Name</mat-label>
-                                <input matInput type="text" [value]="thread.decryptedContent.name || ''" readonly/>
+                                <input matInput type="text" [value]="thread.content.name || ''" readonly/>
                             </mat-form-field>
                             <mat-form-field class="input-full-width" appearance="fill">
-                                <mat-label>Description</mat-label>
-                                <input matInput type="text" [value]="thread.decryptedContent.description || ''" readonly/>
+                                <mat-label>About</mat-label>
+                                <input matInput type="text" [value]="thread.content.about || ''" readonly/>
                             </mat-form-field>
                         </div>
                         <div *ngIf="editThread===thread">
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Index</mat-label>
-                                <input matInput type="text" [value]="editThread.address.formatted" readonly/>
+                                <input matInput type="text" [value]="editThread.ap.nostrPubKey" readonly/>
                             </mat-form-field>
                             <mat-form-field class="input-full-width">
                                 <mat-label>Name</mat-label>
-                                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.name" />
+                                <input matInput type="text" [(ngModel)]="editThread.content.name" />
                             </mat-form-field>
                             <mat-form-field class="input-full-width">
-                                <mat-label>Description</mat-label>
-                                <input matInput type="text" [(ngModel)]="editThread.decryptedContent.description"/>
+                                <mat-label>About</mat-label>
+                                <input matInput type="text" [(ngModel)]="editThread.content.about"/>
                             </mat-form-field>
                         </div>
                     </mat-card-content>
@@ -103,15 +103,15 @@
                     <div *ngIf="editThread!==thread">
                         <mat-form-field class="input-full-width" appearance="fill">
                             <mat-label>Index</mat-label>
-                            <input matInput type="text" [value]="thread.address.formatted" readonly/>
+                            <input matInput type="text" [value]="thread.ap.nostrPubKey" readonly/>
                         </mat-form-field>
                         <mat-form-field class="input-full-width" appearance="fill">
                             <mat-label>Name</mat-label>
-                            <input matInput type="text" [value]="thread.decryptedContent.name || ''" readonly/>
+                            <input matInput type="text" [value]="thread.content.name || ''" readonly/>
                         </mat-form-field>
                         <mat-form-field class="input-full-width" appearance="fill">
-                            <mat-label>Description</mat-label>
-                            <input matInput type="text" [value]="thread.decryptedContent.description || ''" readonly/>
+                            <mat-label>About</mat-label>
+                            <input matInput type="text" [value]="thread.content.about || ''" readonly/>
                         </mat-form-field>
                     </div>
                 </mat-card-content>
@@ -121,13 +121,13 @@
     <mat-tab label="Followers">
         <div *ngIf="activeThread" [style.padding]="8">
             <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
-                <small>Private Thread {{activeThread.address.formatted}}</small><br>
+                <small>Private Thread {{activeThread.ap.nostrPubKey}}</small><br>
             </div>        
         </div>
     </mat-tab>
     <mat-tab label="Notes">
-        <div *ngIf="activeThread" [style.padding]="8">
-            <div style="font-size: 8px;">Private Thread {{activeThread.address.formatted}}</div>
+        <div *ngIf="activeThread && tabIndex === 3" [style.padding]="8">
+            <div style="font-size: 8px;">Private Thread {{activeThread.ap.nostrPubKey}}</div>
             <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
                 <button class="rounded-button"  mat-flat-button color="primary" (click)="follow(activeThread)">Follow</button>
                 <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeThread)">Copy Keys</button>
@@ -148,7 +148,7 @@
                     <button mat-flat-button type="submit" color="primary" [disabled]="!noteForm.valid || !activeThread.ready">Publish Note</button>
                 </div>
             </form>
-            <mat-card class="events" *ngFor="let post of activeThread!.posts; trackBy: trackByFn">
+            <mat-card class="events" *ngFor="let post of readyPosts; trackBy: trackByFn">
                 <div class="events-header">
                     <app-event-header [pubkey]="post.ownerPubKey">
                     <span class="event-date" [matTooltip]="post.nostrEvent.id!" matTooltipPosition="below">{{ post.nostrEvent.created_at | ago }}</span> 

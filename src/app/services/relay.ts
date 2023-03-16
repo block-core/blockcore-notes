@@ -437,6 +437,9 @@ export class RelayService {
               sub.events[index] = event;
               if(sub.observable) {
                 sub.observable.next(event);
+                if((event.kind as number) === 17761) {
+                  return;
+                }
               }
               await this.badgeService.putDefinition(event);
             }
@@ -444,6 +447,9 @@ export class RelayService {
             sub.events.push(event);
             if(sub.observable) {
               sub.observable.next(event);
+              if((event.kind as number) === 17761) {
+                return;
+              }
             }
             await this.badgeService.putDefinition(event);
           }

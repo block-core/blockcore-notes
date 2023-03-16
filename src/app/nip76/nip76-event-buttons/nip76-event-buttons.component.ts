@@ -22,7 +22,7 @@ export class Nip76EventButtonsComponent extends EventButtonsComponent {
   @Input()
   set doc(doc: PostDocument) {
     this._doc = doc;
-    this.event = doc.nostrEvent;
+    this.event = doc.nostrEvent as NostrEventDocument;
   }
   get doc(): PostDocument { return this._doc; }
 
@@ -44,7 +44,7 @@ export class Nip76EventButtonsComponent extends EventButtonsComponent {
 
   override async addReply() {
     this.isEmojiPickerVisible = false;
-    const reactionDoc = await this.nip76Service.saveReaction(this.doc, this.note, nostrTools.Kind.Text);
+    const reactionDoc = await this.nip76Service.saveReaction(this.doc, this.note!, nostrTools.Kind.Text);
     this.hideReply();
   }
 }
