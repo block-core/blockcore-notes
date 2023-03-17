@@ -39,18 +39,18 @@
 
         <app-profile-actions [fab]="false" [profile]="profile"></app-profile-actions>
       </div>
-      <h2 class="profile-name" [matTooltip]="profile.npub" matTooltipPosition="above">
+      <h2 class="profile-name" [matTooltip]="profile.name" matTooltipPosition="above">
         <span *ngIf="profile.display_name"> {{ profile.display_name }} </span>
         <span *ngIf="!profile.display_name">
           <span *ngIf="profile.name"> {{ profile.name }} </span>
           <span *ngIf="!profile.display_name && !profile.name"> {{ profile.npub }} </span>
         </span>
+        <span class="follows-you" *ngIf="isFollowing(profile)">Follows you</span>
       </h2>
       <div class="profile-labels">
         <div class="profile-labels-left"><mat-icon class="profile-icon">key</mat-icon></div>
         <div class="profile-labels-middle dimmed">
-          <span class="hoverable" (click)="copy(profile.npub)">@{{ profile.name }}</span>
-          <span class="follows-you" *ngIf="isFollowing(profile)">Follows you</span>
+          <span class="hoverable" (click)="copy(profile.npub)">{{ profile.npub }}</span>
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
