@@ -15,7 +15,8 @@ import { NavigationService } from '../services/navigation';
 
 @Component({
   selector: 'app-profile',
-  templateUrl: './profile.html',
+  templateUrl: 'profile.html',
+  styleUrls: ['profile.css'],
 })
 export class ProfileComponent {
   pubkey?: string;
@@ -70,6 +71,29 @@ export class ProfileComponent {
         }
       })
     );
+  }
+
+  selectedProfileFile: any = null;
+  selectedBannerFile: any = null;
+
+  onProfileFileSelected(event: any): void {
+    if (!this.profile) {
+      return;
+    }
+
+    this.selectedProfileFile = event.target.files[0] ?? null;
+    const url = (window.URL ? URL : webkitURL).createObjectURL(this.selectedProfileFile);
+    this.profile.picture = this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+
+  onBannerFileSelected(event: any): void {
+    if (!this.profile) {
+      return;
+    }
+
+    this.selectedBannerFile = event.target.files[0] ?? null;
+    const url = (window.URL ? URL : webkitURL).createObjectURL(this.selectedBannerFile);
+    this.profile.banner = this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
   cloneProfile() {

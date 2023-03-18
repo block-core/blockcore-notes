@@ -63,6 +63,18 @@
                   <mat-option [value]="'nostr.build'">nostr.build</mat-option>
                 </mat-select>
               </mat-form-field>
+
+              <p class="dimmed" *ngIf="optionsService.values.mediaService == 'nostr.build'">
+                By uploading media using this <a href="https://nostr.build" target="_blank">nostr.build</a> you agree to their Terms of Service: <a href="https://nostr.build/tos.html" target="_blank">https://nostr.build/tos.html</a>
+                <br><br>
+                You can create your private account with nostr.build to do media management. <a href="https://nostr.build/login.php" target="_blank">https://nostr.build/login.php</a>
+              </p>
+
+              <p class="dimmed" *ngIf="optionsService.values.mediaService == 'void.cat'">
+                By uploading media using this <a href="https://void.cat" target="_blank">void.cat</a> you agree to their Terms of Service.
+                <!-- <br><br> -->
+                <!-- You can create your private account with void.cat to do media management. <a href="https://void.cat/login" target="_blank">https://void.cat/login</a> -->
+              </p>
             </mat-card-content>
           </mat-card>
 

@@ -58,13 +58,17 @@ export class Utilities {
       return this.defaultBackground;
     }
 
-    const url = this.sanitizeImageUrl(banner);
+    if (typeof banner === 'string') {
+      const url = this.sanitizeImageUrl(banner);
 
-    if (!url) {
-      return this.defaultBackground;
+      if (!url) {
+        return this.defaultBackground;
+      }
+
+      return `url(${url})`;
+    } else {
+      return `url(${this.bypassStyle(banner)})`;
     }
-
-    return `url(${url})`;
   }
 
   getProfileDisplayName(profile: NostrProfileDocument) {
