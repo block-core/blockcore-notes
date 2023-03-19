@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as secp256k1 from '@noble/secp256k1';
-import { HDKey, nip19Extension, Nip76Wallet, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
+import { HDKey, nip19Extension, Nip76Wallet, Nip76WebWalletStorage, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
 import { Event, getEventHash, signEvent } from 'nostr-tools';
 import { Subject } from 'rxjs';
@@ -23,16 +23,14 @@ interface PrivateChannelWithRelaySub extends PrivateChannel {
   followingSubscription?: NostrRelaySubscription;
 }
 
-interface PostDocumentWithRelaySub extends PostDocument {
-  reactionSubscription?: NostrRelaySubscription;
-}
+// Nip76Wallet.store = new WebWalletStorage();
 
 @Injectable({
   providedIn: 'root'
 })
 export class Nip76Service {
 
-  wallet = Nip76Wallet.create();
+  wallet!: Nip76Wallet;
 
   constructor(
     private dialog: MatDialog,
@@ -43,17 +41,14 @@ export class Nip76Service {
     private dataService: DataService,
     private ui: UIService
   ) {
-    Nip76Wallet.fromStorage().then(wallet => {
+    Nip76WebWalletStorage.fromStorage({ publicKey: this.profileService.profile!.pubkey }).then(wallet => {
       this.wallet = wallet;
-      this.profileService.profile$.subscribe((profile) => {
-        this.wallet.ownerPubKey = profile!.pubkey;
-        if (this.wallet.isInSession) {
-          [...Array(wallet.channels.length + 2)].forEach((_, i) => wallet.getChannel(i));
-          this.loadChannel(wallet.channels[0]);
-        } else if (this.wallet.requiresLogin) {
-          this.login();
-        }
-      });
+      if (this.wallet.isInSession) {
+        Array(4).forEach((_, i) => wallet.getChannel(i));
+        this.loadChannel(wallet.channels[0]);
+      } else if (!this.wallet.isGuest) {
+        this.login();
+      }
     });
   }
 
@@ -93,20 +88,22 @@ export class Nip76Service {
 
   async login(): Promise<boolean> {
     const privateKey = await this.passwordDialog('Load Private Channel Keys');
-    if (await this.wallet.readKey(privateKey, 'backup', '')) {
-      [...Array(this.wallet.channels.length + 2)].forEach((_, i) => this.wallet.getChannel(i));
+    this.wallet = await Nip76WebWalletStorage.fromStorage({ privateKey });
+    if (this.wallet.isInSession) {
+      Array(4).forEach((_, i) => this.wallet.getChannel(i));
       this.loadChannel(this.wallet.channels[0]);
-      await this.wallet.saveWallet(privateKey);
-      return true;
     }
-    return false;
+    return this.wallet.isInSession;
   }
 
   async logout() {
-    const ownerPubKey = this.wallet.ownerPubKey;
+    this.wallet.channels.forEach((channel: PrivateChannelWithRelaySub) => {
+      if (channel.channelSubscription) {
+        this.relayService.unsubscribe(channel.channelSubscription.id);
+      }
+    });
     this.wallet.clearSession();
-    this.wallet = await Nip76Wallet.fromStorage();
-    this.wallet.ownerPubKey = ownerPubKey;
+    this.wallet = await Nip76WebWalletStorage.fromStorage({ publicKey: this.wallet.ownerPubKey });
   }
 
   async previewChannel(): Promise<PrivateChannelWithRelaySub> {
@@ -151,30 +148,30 @@ export class Nip76Service {
           nostrEvent.content = post.content?.text! || nostrEvent.content;
         }
       } else if (nostrEvent.tags[0][0] === 'e') {
-        const post = channel.posts.find(x => x.rp.nostrPubKey === nostrEvent.tags[0][1])!;
-        if (post) {
-          const reply = new PostDocument();
-          reply.nostrEvent = nostrEvent;
-          reply.index = nostrEvent.created_at - post.nostrEvent.created_at;
-          await post.reactionsIndex.decrypt(reply, nostrEvent);
-          if (reply.content) {
-            const coll = reply.content.kind === nostrTools.Kind.Text ? post.replies : post.reactions;
-            const collIndex = coll.findIndex(x => x.nostrEvent?.id === nostrEvent.id);
-            if (collIndex === -1) {
-              coll.push(reply);
-              if (reply.content.kind === nostrTools.Kind.Text) {
-                post.replies = post.replies.sort((a, b) => b.nostrEvent.created_at - a.nostrEvent.created_at);
-                nostrEvent.content = reply.content.text;
-                // this.loadReactions(post.replies)
-              } else {
-                const count = post.reactionTracker[reply.content.text!];
-                post.reactionTracker[reply.content.text!] = count ? count + 1 : 1;
-              }
-            } else {
-              coll[collIndex] = reply;
-            }
-          }
-        }
+        // const post = channel.posts.find(x => x.rp.nostrPubKey === nostrEvent.tags[0][1])!;
+        // if (post) {
+        //   const reply = new PostDocument();
+        //   reply.nostrEvent = nostrEvent;
+        //   reply.index = nostrEvent.created_at - post.nostrEvent.created_at;
+        //   await post.reactionsIndex.decrypt(reply, nostrEvent);
+        //   if (reply.content) {
+        //     const coll = reply.content.kind === nostrTools.Kind.Text ? post.replies : post.reactions;
+        //     const collIndex = coll.findIndex(x => x.nostrEvent?.id === nostrEvent.id);
+        //     if (collIndex === -1) {
+        //       coll.push(reply);
+        //       if (reply.content.kind === nostrTools.Kind.Text) {
+        //         post.replies = post.replies.sort((a, b) => b.nostrEvent.created_at - a.nostrEvent.created_at);
+        //         nostrEvent.content = reply.content.text;
+        //         // this.loadReactions(post.replies)
+        //       } else {
+        //         const count = post.reactionTracker[reply.content.text!];
+        //         post.reactionTracker[reply.content.text!] = count ? count + 1 : 1;
+        //       }
+        //     } else {
+        //       coll[collIndex] = reply;
+        //     }
+        //   }
+        // }
       }
     });
     channel.channelSubscription = this.relayService.subscribe(
@@ -184,9 +181,9 @@ export class Nip76Service {
   }
 
   findChannel(pubkey: string): PrivateChannelWithRelaySub | undefined {
-    let channel = this.wallet.channels.find(x => pubkey === x.ap.nostrPubKey);
+    let channel = this.wallet?.channels.find(x => pubkey === x.ap.nostrPubKey);
     if (!channel) {
-      channel = this.wallet.following.find(x => pubkey === x.ap.nostrPubKey);
+      channel = this.wallet?.following.find(x => pubkey === x.ap.nostrPubKey);
     }
     return channel;
   }
@@ -293,8 +290,8 @@ export class Nip76Service {
     };
     const created_at = Math.floor(Date.now() / 1000);
     postDocument.index = created_at - post.nostrEvent.created_at;
-    const event = await post.reactionsIndex.encrypt(postDocument, privateKey, created_at, [['e', post.rp.nostrPubKey]]);
-    await this.dataService.publishEvent(event);
+    // const event = await post.reactionsIndex.encrypt(postDocument, privateKey, created_at, [['e', post.rp.nostrPubKey]]);
+    // await this.dataService.publishEvent(event);
     return postDocument;
   }
 

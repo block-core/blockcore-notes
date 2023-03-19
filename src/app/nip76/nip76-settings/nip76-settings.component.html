@@ -1,13 +1,13 @@
-<div mat-dialog-actions class="mat-dialog-actions" align="end">
-    <button *ngIf="wallet?.isGuest"
+<div mat-dialog-actions *ngIf="wallet" class="mat-dialog-actions" align="end">
+    <button *ngIf="wallet.isGuest"
             class="rounded-button"  mat-flat-button color="secondary" (click)="randomizeKey()">Randomize</button>
-    <button *ngIf="wallet?.isGuest"
+    <button *ngIf="wallet.isGuest"
             class="rounded-button"  mat-flat-button color="primary" (click)="saveConfiguration()">Save Configuration</button>
-    <button *ngIf="!wallet?.isGuest && wallet?.isInSession"
+    <button *ngIf="!wallet.isGuest && wallet.isInSession"
             class="rounded-button"  mat-flat-button color="secondary" (click)="previewChannel()">Preview a Channel</button>
-    <button *ngIf="!wallet?.isGuest && !wallet?.isInSession"
+    <button *ngIf="!wallet.isGuest && !wallet.isInSession"
             class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.login()">Start Secure Session</button>
-    <button *ngIf="wallet?.isInSession"
+    <button *ngIf="wallet.isInSession"
             class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.logout()">End Secure Session</button>
 </div>
 
