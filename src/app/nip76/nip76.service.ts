@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as secp256k1 from '@noble/secp256k1';
-import { HDKey, nip19Extension, Nip76Wallet, Nip76WebWalletStorage, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
+import { FollowDocument, HDKey, nip19Extension, Nip76Wallet, Nip76WebWalletStorage, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
 import { Event, getEventHash, signEvent } from 'nostr-tools';
-import { Subject } from 'rxjs';
+import { startWith, Subject } from 'rxjs';
 import { DataService } from '../services/data';
 import { NostrEvent, NostrRelaySubscription } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -46,6 +46,7 @@ export class Nip76Service {
       if (this.wallet.isInSession) {
         Array(4).forEach((_, i) => wallet.getChannel(i));
         this.loadChannel(wallet.channels[0]);
+        this.loadFollowings();
       } else if (!this.wallet.isGuest) {
         this.login();
       }
@@ -136,42 +137,39 @@ export class Nip76Service {
     privateChannel$.subscribe(async nostrEvent => {
       const fchannel = this.findChannel(nostrEvent.pubkey);
       if (fchannel) {
-        if (await fchannel?.indexMap.post.decrypt(fchannel, nostrEvent)) {
-          if (fchannel.ownerPubKey === this.wallet.ownerPubKey) {
-            this.loadFollowings(fchannel as PrivateChannelWithRelaySub);
-          }
+        if (await fchannel?.indexMap.post.decrypt2(fchannel, nostrEvent)) {
+          // if (fchannel.ownerPubKey === this.wallet.ownerPubKey) {
+          //   this.loadFollowings(fchannel as PrivateChannelWithRelaySub);
+          // }
         }
       } else if (!nostrEvent.tags[0]) {
         const post = channel.posts.find(x => x.ap.nostrPubKey === nostrEvent.pubkey);
         if (post) {
-          await channel.indexMap.post.decrypt(post, nostrEvent);
+          await channel.indexMap.post.decrypt2(post, nostrEvent);
           nostrEvent.content = post.content?.text! || nostrEvent.content;
         }
       } else if (nostrEvent.tags[0][0] === 'e') {
-        // const post = channel.posts.find(x => x.rp.nostrPubKey === nostrEvent.tags[0][1])!;
-        // if (post) {
-        //   const reply = new PostDocument();
-        //   reply.nostrEvent = nostrEvent;
-        //   reply.index = nostrEvent.created_at - post.nostrEvent.created_at;
-        //   await post.reactionsIndex.decrypt(reply, nostrEvent);
-        //   if (reply.content) {
-        //     const coll = reply.content.kind === nostrTools.Kind.Text ? post.replies : post.reactions;
-        //     const collIndex = coll.findIndex(x => x.nostrEvent?.id === nostrEvent.id);
-        //     if (collIndex === -1) {
-        //       coll.push(reply);
-        //       if (reply.content.kind === nostrTools.Kind.Text) {
-        //         post.replies = post.replies.sort((a, b) => b.nostrEvent.created_at - a.nostrEvent.created_at);
-        //         nostrEvent.content = reply.content.text;
-        //         // this.loadReactions(post.replies)
-        //       } else {
-        //         const count = post.reactionTracker[reply.content.text!];
-        //         post.reactionTracker[reply.content.text!] = count ? count + 1 : 1;
-        //       }
-        //     } else {
-        //       coll[collIndex] = reply;
-        //     }
-        //   }
-        // }
+        const post = new PostDocument();
+        post.channel = channel;
+        await channel.indexMap.post.decrypt2(post, nostrEvent);
+        nostrEvent.content = post.content?.text! || nostrEvent.content;
+        channel.posts = [...channel.posts, post].sort((a, b) => b.nostrEvent.created_at - a.nostrEvent.created_at);
+        var i = channel.posts.length;
+        while (i--) {
+          const p1 = channel.posts[i];
+          if (p1.content.tags?.length && p1.content.tags[0][0] == 'e') {
+            const p2 = channel.posts.find(x => x.nostrEvent.id === p1.content.tags![0][1]);
+            if (p2) {
+              channel.posts.splice(i, 1);
+              if (p1.content.kind === nostrTools.Kind.Text) {
+                p2.replies.push(p1);
+              } else {
+                const count = p2.reactionTracker[p1.content.text!];
+                p2.reactionTracker[p1.content.text!] = count ? count + 1 : 1;
+              }
+            }
+          }
+        }
       }
     });
     channel.channelSubscription = this.relayService.subscribe(
@@ -223,9 +221,11 @@ export class Nip76Service {
     }
   }
 
-  loadFollowings(channel: PrivateChannelWithRelaySub, indexStart = 0) {
-    if (channel.followingSubscription) {
-      this.relayService.unsubscribe(channel.followingSubscription.id);
+  followingSubscription?: NostrRelaySubscription;
+
+  loadFollowings(indexStart = 0) {
+    if (this.followingSubscription) {
+      this.relayService.unsubscribe(this.followingSubscription.id);
     }
     const privateNotes$ = new Subject<NostrEvent>();
     privateNotes$.subscribe(async nostrEvent => {
@@ -233,33 +233,49 @@ export class Nip76Service {
       let ap: HDKey;
       let sp: HDKey | undefined;
       for (let i = indexStart; i < indexStart + 10; i++) {
-        ap = channel!.indexMap.following.ap.deriveChildKey(i);
+        ap = this.wallet.followingIndex.ap.deriveChildKey(i);
         if (nostrEvent.pubkey === ap.nostrPubKey) {
           keyIndex = i;
-          sp = channel!.indexMap.following.sp.deriveChildKey(i);
+          sp = this.wallet.followingIndex.sp.deriveChildKey(i);
           break;
         }
       }
       if (sp) {
-        await this.loadFollowing('nprivatethread11' + nostrEvent.content, [sp.publicKey, sp.privateKey]);
+        const followingDoc = new FollowDocument();
+        followingDoc.index = keyIndex;
+        if (await this.wallet.followingIndex.decrypt3(followingDoc, nostrEvent)) {
+          const channel = PrivateChannel.fromPointer({
+            ownerPubKey: followingDoc.content.owner,
+            addresses:{
+              pubkey: followingDoc.content.ap.publicKey,
+              chain: followingDoc.content.ap.chainCode,
+            },
+            secrets:{
+              pubkey: followingDoc.content.sp.publicKey,
+              chain: followingDoc.content.sp.chainCode,
+            },
+          });
+          this.wallet.following.push(channel);
+          this.loadChannel(channel);
+        }
       }
     });
 
     const followingPubKeys: string[] = [];
     for (let i = indexStart; i < indexStart + 10; i++) {
-      const ap = channel.indexMap.following.ap.deriveChildKey(i);
+      const ap = this.wallet.followingIndex.ap.deriveChildKey(i);
       followingPubKeys.push(ap.nostrPubKey);
     }
-    channel.followingSubscription = this.relayService.subscribe([{
+    this.followingSubscription = this.relayService.subscribe([{
       authors: followingPubKeys,
       kinds: [17761],
       limit: 100
-    }], `nip76Service.loadFollowings.${channel.ap.nostrPubKey}`, 'Replaceable', privateNotes$);
+    }], `nip76Service.loadFollowings.${startWith}`, 'Replaceable', privateNotes$);
   }
 
   async saveChannel(channel: PrivateChannelWithRelaySub, privateKey?: string) {
     privateKey = privateKey || await this.passwordDialog('Save Channel Details');
-    const ev = await channel.indexMap.post.encrypt(channel, privateKey);
+    const ev = await channel.indexMap.post.encrypt2(channel, channel, privateKey, this.wallet.signingKey);
     await this.dataService.publishEvent(ev);
     return true;
   }
@@ -272,11 +288,12 @@ export class Nip76Service {
       pubkey: this.wallet.ownerPubKey,
       kind: nostrTools.Kind.Text
     }
-    postDocument.index = text === 'start over please' ? 1 : channel.content!.last_known_index + 1;
-    const event = await channel.indexMap.post.encrypt(postDocument, privateKey);
+    // postDocument.index = text === 'start over please' ? 1 : channel.content!.last_known_index + 1;
+    // const event = await channel.indexMap.post.encrypt(postDocument, privateKey);
+    const event = await channel.indexMap.post.encrypt2(postDocument, channel, privateKey, this.wallet.signingKey);
     await this.dataService.publishEvent(event);
-    channel.content!.last_known_index = postDocument.index;
-    await this.saveChannel(channel, privateKey);
+    // channel.content!.last_known_index = postDocument.index;
+    // await this.saveChannel(channel, privateKey);
     return true;
   }
 
@@ -287,27 +304,48 @@ export class Nip76Service {
       kind,
       pubkey: this.wallet.ownerPubKey,
       text,
+      tags: [['e', post.nostrEvent.id]]
     };
-    const created_at = Math.floor(Date.now() / 1000);
-    postDocument.index = created_at - post.nostrEvent.created_at;
+    const event = await post.channel.indexMap.post.encrypt2(postDocument, post.channel, privateKey, this.wallet.signingKey);
+    await this.dataService.publishEvent(event);
+    // const created_at = Math.floor(Date.now() / 1000);
+    // postDocument.index = created_at - post.nostrEvent.created_at;
     // const event = await post.reactionsIndex.encrypt(postDocument, privateKey, created_at, [['e', post.rp.nostrPubKey]]);
     // await this.dataService.publishEvent(event);
     return postDocument;
   }
 
   async saveFollowing(channel: PrivateChannelWithRelaySub, following: PrivateChannelWithRelaySub) {
-    const index = 0;//channel.following.length;
-    const ap = channel.indexMap.following.ap.deriveChildKey(index);
-    const sp = channel.indexMap.following.sp.deriveChildKey(index);
-    const tp = await following.getChannelPointer([sp.publicKey, sp.privateKey]);
-    const encrypted = tp.substring(16);
-    let event = this.dataService.createEventWithPubkey(17761, encrypted, ap.nostrPubKey);
-    const signature = signEvent(event, secp256k1.utils.bytesToHex(ap.privateKey)) as any;
-    const signedEvent = event as Event;
-    signedEvent.sig = signature;
-    signedEvent.id = await getEventHash(event);
-    await this.dataService.publishEvent(signedEvent);
-    channel.following.push(following);
+    const privateKey = await this.passwordDialog('Save Follow');
+    const followDocument = new FollowDocument();
+    followDocument.content = {
+      pubkey: this.wallet.ownerPubKey,
+      kind: nostrTools.Kind.Contacts,
+      ap: following.ap,
+      sp: following.sp,
+      owner: following.ownerPubKey
+    }
+    const event = await this.wallet.followingIndex.encrypt3(followDocument, this.wallet, privateKey);
+    await this.dataService.publishEvent(event);
     return true;
   }
+
+  // async saveFollowingOLD(channel: PrivateChannelWithRelaySub, following: PrivateChannelWithRelaySub) {
+
+  //   const index = 0;//channel.following.length;
+  //   const ap = channel.indexMap.following.ap.deriveChildKey(index);
+  //   const sp = channel.indexMap.following.sp.deriveChildKey(index);
+  //   const tp = await following.getChannelPointer([sp.publicKey, sp.privateKey]);
+  //   const encrypted = tp.substring(16);
+  //   let event = this.dataService.createEventWithPubkey(17761, encrypted, ap.nostrPubKey);
+  //   const signature = signEvent(event, bytesToHex(ap.privateKey)) as any;
+  //   const signedEvent = event as Event;
+  //   signedEvent.sig = signature;
+  //   signedEvent.id = await getEventHash(event);
+  //   await this.dataService.publishEvent(signedEvent);
+  //   channel.following.push(following);
+  //   return true;
+  // }
 }
+
+

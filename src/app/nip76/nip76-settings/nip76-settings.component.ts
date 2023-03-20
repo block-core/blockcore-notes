@@ -18,7 +18,8 @@ export class Nip76SettingsComponent {
   tabIndex?: number;
   showNoteForm = false;
   private _editChannel: PrivateChannel | null = null;
-  activeChannel: PrivateChannel | undefined;
+  activeChannelId!: string | null;
+  // _activeChannel: PrivateChannel | undefined;
   isEmojiPickerVisible = false;
   @ViewChild('picker') picker: unknown;
   @ViewChild('noteContent') noteContent?: FormControl;
@@ -36,6 +37,10 @@ export class Nip76SettingsComponent {
     return this.activeChannel ? this.activeChannel.posts.filter(x => x.ready) : [];
   }
 
+  get activeChannel(): PrivateChannel | undefined {
+    return this.activeChannelId ? this.nip76Service.findChannel(this.activeChannelId) : undefined;
+  }
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -50,9 +55,8 @@ export class Nip76SettingsComponent {
   async ngOnInit() {
     this.activatedRoute.paramMap.subscribe(async (params) => {
       this.tabIndex = this.activatedRoute.snapshot.data['tabIndex'] as number || 0;
-      const channel = this.nip76Service.findChannel(params.get('channelPubKey')!);
-      if (channel) {
-        this.activeChannel = channel;
+      this.activeChannelId = params.get('channelPubKey');
+      if (this.activeChannelId) {
         if (this.tabIndex < 2) this.tabIndex = 3;
       }
     });
@@ -123,7 +127,7 @@ export class Nip76SettingsComponent {
   async previewChannel() {
     const channel = await this.nip76Service.previewChannel();
     if (channel) {
-      this.activeChannel = channel;
+      this.activeChannelId = channel.ap.nostrPubKey;
       if (this.tabIndex != 3) {
         this.viewChannelNotes(channel);
       } else {
@@ -140,7 +144,7 @@ export class Nip76SettingsComponent {
     });
   }
 
-  addThread() {
+  addChannel() {
     this.cancelEdit();
     let firstAvailable = this.wallet.channels.find(x => !x.ready);
     if (!firstAvailable) {

@@ -88,7 +88,7 @@
         </div>
         <div mat-dialog-actions class="mat-dialog-actions" align="end">
             <button *ngIf="wallet.isInSession"
-                    class="rounded-button"  mat-flat-button color="primary" (click)="addThread()">Add Thread</button>
+                    class="rounded-button"  mat-flat-button color="primary" (click)="addChannel()">Add Channel</button>
         </div> 
     </mat-tab>
     <mat-tab label="Following">
@@ -131,7 +131,7 @@
             <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
                 <button class="rounded-button"  mat-flat-button color="primary" (click)="follow(activeChannel)">Follow</button>
                 <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeChannel)">Copy Keys</button>
-                <img *ngIf="!showNoteForm && wallet.ownerPubKey === activeChannel.ownerPubKey" width="46" height="46" 
+                <img *ngIf="!showNoteForm" width="46" height="46" 
                     (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" style="float: right;" />
             </div>
             <form [formGroup]="noteForm" *ngIf="showNoteForm" (ngSubmit)="saveNote()">
