@@ -108,7 +108,6 @@ import { DevelopmentComponent } from './development/development';
 import { RelayComponent } from './shared/relay/relay';
 import { RelaysComponent } from './shared/relays/relays';
 import { LabelsComponent } from './shared/labels/labels';
-import { AboutModule } from './about/about.module';
 import { EventComponent } from './shared/event/event';
 import { NotificationsComponent } from './notifications/notifications';
 import { NotificationLabelComponent } from './shared/notification-label/notification-label';
@@ -247,7 +246,6 @@ import { ZappersListDialogComponent } from './shared/zappers-list-dialog/zappers
     ZappersListDialogComponent,
   ],
   imports: [
-    AboutModule,
     HttpClientModule,
     BrowserModule,
     TranslateModule.forRoot({

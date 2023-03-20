@@ -8,10 +8,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from '../services/auth-guard';
 import { LoadingResolverService } from '../services/loading-resolver';
+import { CommonModule } from '@angular/common';
 
 const routes: Routes = [
   {
-    path: 'about',
+    path: '',
     component: AboutComponent,
     canActivate: [AuthGuardService],
     resolve: {
@@ -19,7 +20,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'about/licenses',
+    path: 'licenses',
     component: LicensesComponent,
     canActivate: [AuthGuardService],
     resolve: {
@@ -30,8 +31,8 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [AboutComponent, LicensesComponent],
-  imports: [RouterModule.forChild(routes), HttpClientModule, BrowserAnimationsModule, MatExpansionModule, MatSnackBarModule],
-  exports: [RouterModule, AboutComponent, LicensesComponent],
+  imports: [RouterModule.forChild(routes), MatExpansionModule, MatSnackBarModule],
+  exports: [],
   providers: [],
 })
 export class AboutModule {}
