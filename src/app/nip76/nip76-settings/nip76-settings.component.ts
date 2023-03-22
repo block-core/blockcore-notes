@@ -63,7 +63,7 @@ export class Nip76SettingsComponent {
   }
 
   public trackByFn(index: number, item: PostDocument) {
-    return item.ap.keyIdentifier;
+    return item.nostrEvent.id;
   }
 
   randomizeKey() {
@@ -108,11 +108,11 @@ export class Nip76SettingsComponent {
   }
 
   viewChannelNotes(channel: PrivateChannel) {
-    this.router.navigate(['private-channels', channel.ap.nostrPubKey, 'notes']);
+    this.router.navigate(['private-channels', channel.hdkIndex.signingParent.nostrPubKey, 'notes']);
   }
 
   viewChannelFollowers(channel: PrivateChannel) {
-    this.router.navigate(['private-channels', channel.ap.nostrPubKey, 'followers']);
+    this.router.navigate(['private-channels', channel.hdkIndex.signingParent.nostrPubKey, 'followers']);
   }
 
   async copyKeys(channel: PrivateChannel) {
@@ -127,16 +127,16 @@ export class Nip76SettingsComponent {
   async previewChannel() {
     const channel = await this.nip76Service.previewChannel();
     if (channel) {
-      this.activeChannelId = channel.ap.nostrPubKey;
-      if (this.tabIndex != 3) {
-        this.viewChannelNotes(channel);
-      } else {
-      }
+      this.activeChannelId = channel.hdkIndex.signingParent.nostrPubKey;
+      if (this.tabIndex != 1) {
+        // this.viewChannelFollowers(channel);
+        this.router.navigate(['private-channels','following']);
+      } 
     }
   }
 
   async follow(channel: PrivateChannel) {
-    this.nip76Service.saveFollowing(this.wallet.channels[0], channel)
+    this.nip76Service.saveFollowing(channel)
     this.snackBar.open(`You are now following this channel.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',

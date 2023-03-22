@@ -26,7 +26,7 @@
         <div *ngIf="editChannel">
             <mat-form-field class="input-full-width" appearance="fill">
                 <mat-label>Index</mat-label>
-                <input matInput type="text" [value]="editChannel.ap.nostrPubKey" readonly/>
+                <input matInput type="text" [value]="editChannel.hdkIndex.signingParent.nostrPubKey" readonly/>
             </mat-form-field>
             <mat-form-field class="input-full-width">
                 <mat-label>Name</mat-label>
@@ -43,35 +43,35 @@
 <mat-tab-group  *ngIf="wallet?.isInSession" [selectedIndex]="tabIndex"  (selectedTabChange)="onTabChanged($event)" class="feed-page">
     <mat-tab label="Manage Channels">
         <div *ngIf="wallet.channels.length">
-            <div *ngFor="let thread of wallet.channels" [style.display]="!thread.ready ? 'none' : 'block'">
-                <mat-card class="settings-card" [class]="editChannel===thread ? 'edit': ''">
+            <div *ngFor="let channel of wallet.channels" [style.display]="!channel.ready ? 'none' : 'block'">
+                <mat-card class="settings-card" [class]="editChannel===channel ? 'edit': ''">
                     <mat-card-content>
                         <div mat-dialog-actions class="mat-dialog-actions">
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="cancelEdit()" *ngIf="editChannel===thread">Cancel</button>
-                            <button class="rounded-button"  mat-flat-button color="primary" (click)="saveChannel()" *ngIf="editChannel===thread" style="float:right;">Save</button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="editChannel=thread" *ngIf="editChannel!==thread"> Edit </button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewChannelFollowers(thread)" *ngIf="editChannel!==thread">Followers</button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(thread)" *ngIf="editChannel!==thread">Copy Keys</button>
-                            <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(thread)" *ngIf="editChannel!==thread" style="float:right;">View Notes</button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="cancelEdit()" *ngIf="editChannel===channel">Cancel</button>
+                            <button class="rounded-button"  mat-flat-button color="primary" (click)="saveChannel()" *ngIf="editChannel===channel" style="float:right;">Save</button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="editChannel=channel" *ngIf="editChannel!==channel"> Edit </button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewChannelFollowers(channel)" *ngIf="editChannel!==channel">Followers</button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="editChannel!==channel">Copy Keys</button>
+                            <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
                         </div>                  
-                        <div *ngIf="editChannel!==thread">
+                        <div *ngIf="editChannel!==channel">
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Index</mat-label>
-                                <input matInput type="text" [value]="thread.ap.nostrPubKey" readonly/>
+                                <input matInput type="text" [value]="channel.hdkIndex.signingParent.nostrPubKey" readonly/>
                             </mat-form-field>
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Name</mat-label>
-                                <input matInput type="text" [value]="thread.content.name || ''" readonly/>
+                                <input matInput type="text" [value]="channel.content.name || ''" readonly/>
                             </mat-form-field>
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>About</mat-label>
-                                <input matInput type="text" [value]="thread.content.about || ''" readonly/>
+                                <input matInput type="text" [value]="channel.content.about || ''" readonly/>
                             </mat-form-field>
                         </div>
-                        <div *ngIf="editChannel===thread">
+                        <div *ngIf="editChannel===channel">
                             <mat-form-field class="input-full-width" appearance="fill">
                                 <mat-label>Index</mat-label>
-                                <input matInput type="text" [value]="editChannel.ap.nostrPubKey" readonly/>
+                                <input matInput type="text" [value]="editChannel.hdkIndex.signingParent.nostrPubKey" readonly/>
                             </mat-form-field>
                             <mat-form-field class="input-full-width">
                                 <mat-label>Name</mat-label>
@@ -92,26 +92,26 @@
         </div> 
     </mat-tab>
     <mat-tab label="Following">
-        <div *ngFor="let thread of wallet.following" [style.display]="!thread.ready ? 'none' : 'block'">
+        <div *ngFor="let channel of wallet.following" [style.display]="!channel.ready ? 'none' : 'block'">
             <mat-card class="settings-card">
                 <mat-card-content>
-                    <app-event-header [pubkey]="thread.ownerPubKey"></app-event-header>
+                    <app-event-header [pubkey]="channel.ownerPubKey"></app-event-header>
                     <div mat-dialog-actions class="mat-dialog-actions">
-                        <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(thread)" *ngIf="editChannel!==thread">Copy Keys</button>
-                        <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(thread)" *ngIf="editChannel!==thread" style="float:right;">View Notes</button>
+                        <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="editChannel!==channel">Copy Keys</button>
+                        <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
                     </div>                  
-                    <div *ngIf="editChannel!==thread">
+                    <div *ngIf="editChannel!==channel">
                         <mat-form-field class="input-full-width" appearance="fill">
                             <mat-label>Index</mat-label>
-                            <input matInput type="text" [value]="thread.ap.nostrPubKey" readonly/>
+                            <input matInput type="text" [value]="channel.hdkIndex.signingParent.nostrPubKey" readonly/>
                         </mat-form-field>
                         <mat-form-field class="input-full-width" appearance="fill">
                             <mat-label>Name</mat-label>
-                            <input matInput type="text" [value]="thread.content.name || ''" readonly/>
+                            <input matInput type="text" [value]="channel.content.name || ''" readonly/>
                         </mat-form-field>
                         <mat-form-field class="input-full-width" appearance="fill">
                             <mat-label>About</mat-label>
-                            <input matInput type="text" [value]="thread.content.about || ''" readonly/>
+                            <input matInput type="text" [value]="channel.content.about || ''" readonly/>
                         </mat-form-field>
                     </div>
                 </mat-card-content>
@@ -121,13 +121,13 @@
     <mat-tab label="Followers">
         <div *ngIf="activeChannel" [style.padding]="8">
             <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
-                <small>Private Thread {{activeChannel.ap.nostrPubKey}}</small><br>
+                <small>Private Thread {{activeChannel.hdkIndex.signingParent.nostrPubKey}}</small><br>
             </div>        
         </div>
     </mat-tab>
     <mat-tab label="Notes">
         <div *ngIf="activeChannel && tabIndex === 3" [style.padding]="8">
-            <div style="font-size: 8px;">Private Thread {{activeChannel.ap.nostrPubKey}}</div>
+            <div style="font-size: 8px;">Private Thread {{activeChannel.hdkIndex.signingParent.nostrPubKey}}</div>
             <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
                 <button class="rounded-button"  mat-flat-button color="primary" (click)="follow(activeChannel)">Follow</button>
                 <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeChannel)">Copy Keys</button>
