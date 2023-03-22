@@ -12,6 +12,7 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DataService } from '../services/data';
 import { UIService } from '../services/ui';
 import { NavigationService } from '../services/navigation';
+import { UploadService } from '../services/upload';
 
 @Component({
   selector: 'app-profile',
@@ -36,6 +37,7 @@ export class ProfileComponent {
   }
 
   constructor(
+    private upload: UploadService,
     public navigation: NavigationService,
     public ui: UIService,
     public appState: ApplicationState,
@@ -126,23 +128,33 @@ export class ProfileComponent {
   }
 
   async updateMetadata() {
+    if (this.profile?.picture != this.originalProfile?.picture) {
+      console.log('Upload profile image...');
+
+      const uploadResult = await this.upload.upload(this.selectedProfileFile);
+      console.log(uploadResult);
+
+      if (uploadResult.url) {
+        this.profile!.picture = uploadResult.url;
+      }
+    }
+
+    if (this.profile?.banner != this.originalProfile?.banner) {
+      console.log('Upload banner image...');
+
+      const uploadResult = await this.upload.upload(this.selectedBannerFile);
+      console.log(uploadResult);
+
+      if (uploadResult.url) {
+        this.profile!.banner = uploadResult.url;
+      }
+    }
+
+    console.log(this.profile);
+
     await this.dataService.updateMetadata(this.profile!);
 
-    // const profileContent = this.utilities.reduceProfile(this.profile!);
-
-    // let event = this.dataService.createEvent(Kind.Metadata, JSON.stringify(profileContent));
-
-    // const signedEvent = await this.dataService.signEvent(event);
-
-    // // await this.feedService.publish(event, false); // Don't persist this locally.
-    // this.profile!.created_at = event.created_at;
-
-    // // Use the whole document for this update as we don't want to loose additional metadata we have, such
-    // // as follow (on self).
-    // await this.profileService.updateProfile(this.profile!.pubkey, this.profile!);
-
-    // await this.dataService.publishEvent(signedEvent);
-
-    this.appState.navigateBack();
+    this.router.navigate(['/p', this.profile?.pubkey]);
+    // this.appState.navigateBack();
   }
 }

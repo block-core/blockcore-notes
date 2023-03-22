@@ -36,7 +36,7 @@ export class OptionsService {
     this.load();
   }
 
-  values: Options = { language: 'en', dir: 'ltr', enableReactions: true, enableZapping: true, showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
+  values: Options = { mediaService: UploadService.defaultService, language: 'en', dir: 'ltr', enableReactions: true, enableZapping: true, showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
 
   load() {
     let options = localStorage.getItem('blockcore:notes:nostr:options');
