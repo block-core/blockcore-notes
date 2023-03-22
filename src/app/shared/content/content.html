@@ -38,7 +38,7 @@
           </button>
         </ng-container>
         <ng-container *ngSwitchCase="'youtube'"
-          ><iframe sandbox="allow-scripts allow-same-origin" id="ytplayer" class="event-video" type="text/html" [src]="token.safeWord" frameborder="0" allowfullscreen></iframe>
+          ><iframe sandbox="allow-scripts allow-same-origin allow-presentation" id="ytplayer" class="event-video" type="text/html" [src]="token.safeWord" frameborder="0" allowfullscreen></iframe>
           <button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">
             <mat-icon>add_to_queue</mat-icon>
           </button></ng-container

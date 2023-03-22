@@ -1,5 +1,9 @@
 <div class="profile-page" *ngIf="ui.profile$ | async as profile">
-  <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div>
+  <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
+
+  <div class="profile-banner">
+    <img class="profile-banner-image" [src]="profile.banner" />
+  </div>
 
   <div class="profile-page-header">
     <div class="profile-page-header-left">
@@ -68,7 +72,7 @@
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
-      <div class="profile-labels"  (click)="openDialog(profile)" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
+      <div class="profile-labels" (click)="openDialog(profile)" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
         <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
         <div class="profile-labels-middle dimmed">
           <!-- <a class="dimmed lightning-link" (click)="toggleLn()" *ngIf="profile.lud16 && paymentVersion == 'lud16'" [href]="utilities.sanitize('lightning:' + profile.lud16)">{{ profile.lud16 }}</a> -->
@@ -76,7 +80,7 @@
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
-      <div class="profile-labels"  (click)="openDialog(profile)" *ngIf="profile.lud16" [mtxTooltip]="tooltipTpl2" [mtxTooltipPosition]="'left'">
+      <div class="profile-labels" (click)="openDialog(profile)" *ngIf="profile.lud16" [mtxTooltip]="tooltipTpl2" [mtxTooltipPosition]="'left'">
         <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
         <div class="profile-labels-middle dimmed">
           <!-- <a class="dimmed lightning-link" (click)="toggleLn()" *ngIf="profile.lud16 && paymentVersion == 'lud16'" [href]="utilities.sanitize('lightning:' + profile.lud16)">{{ profile.lud16 }}</a> -->

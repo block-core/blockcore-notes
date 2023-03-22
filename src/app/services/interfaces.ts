@@ -214,8 +214,8 @@ export interface NostrNoteDocument extends NostrEventDocument {
 export interface NostrProfile {
   name: string;
   about: string;
-  picture: string;
-  banner?: string;
+  picture: string | any;
+  banner?: string | any;
 
   /** https://github.com/nostr-protocol/nips/blob/master/05.md */
   nip05: string;
