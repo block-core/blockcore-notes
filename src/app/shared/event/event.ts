@@ -14,7 +14,16 @@ import { Circle, NostrEventDocument, ThreadEntry } from '../../services/interfac
 })
 export class EventComponent {
   @Input() threadEntry?: ThreadEntry | undefined;
-  @Input() event?: NostrEventDocument | undefined;
+  // @Input() event?: NostrEventDocument | undefined;
+
+  #event?: NostrEventDocument | undefined;
+
+  @Input() set event(value: NostrEventDocument | undefined) {
+    this.#event = value;
+  }
+  get event(): any {
+    return this.#event;
+  }
 
   imagePath = '/assets/profile.png';
   tooltip = '';
