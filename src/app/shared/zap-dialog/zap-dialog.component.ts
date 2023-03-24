@@ -68,6 +68,7 @@ export class ZapDialogComponent implements OnInit {
   }
 
   canZap = true;
+  loading = true;
 
   async fetchPayReq(): Promise<void> {
     this.payRequest = await this.fetchZapper();
@@ -77,6 +78,8 @@ export class ZapDialogComponent implements OnInit {
     } else {
       this.canZap = true;
     }
+
+    this.loading = false;
 
     this.recofigureFormValidators();
   }
