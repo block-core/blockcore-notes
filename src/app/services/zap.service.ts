@@ -13,8 +13,8 @@ export class ZapService {
   parseZap(zapEvent: NostrEventDocument): ParsedZap {
     const { amount, hash } = this.getInvoice(zapEvent);
     const zapper = hash ? this.getZapper(zapEvent, hash) : ({ isValid: false, content: '' } as Zapper);
-    const e = this.zappedAuthor(zapEvent);
-    const p = this.zappedPost(zapEvent);
+    const p = this.zappedAuthor(zapEvent);
+    const e = this.zappedPost(zapEvent);
 
     return {
       id: zapEvent.id,

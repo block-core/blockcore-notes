@@ -13,7 +13,7 @@ import { ZapService } from './zap.service';
 })
 /** The orchestrator for UI that holds data to be rendered in different views at any given time. */
 export class UIService {
-  constructor(private eventService: EventService, private options: OptionsService, private zapService: ZapService) { }
+  constructor(private eventService: EventService, private options: OptionsService, private zapService: ZapService) {}
 
   #lists = {
     feedEvents: [] as NostrEventDocument[],
@@ -202,7 +202,7 @@ export class UIService {
       // this.checkExhausted();
     }
   }
-  
+
   children(parentId: string): NostrEventDocument[] {
     // if (this.events.length > 4) {
     //   console.log('PARENT ID:', parentId);
@@ -617,9 +617,9 @@ export class UIService {
 
         entry.reactionIds.push(event.id!);
         const parsedZap = this.zapService.parseZap(event);
-        entry.zaps != undefined ? entry.zaps.push(parsedZap) : entry.zaps = [parsedZap];
+        entry.zaps != undefined ? entry.zaps.push(parsedZap) : (entry.zaps = [parsedZap]);
 
-        this.putThreadEntry(entry)
+        this.putThreadEntry(entry);
       }
     }
   }

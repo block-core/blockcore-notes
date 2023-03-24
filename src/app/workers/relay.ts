@@ -641,7 +641,9 @@ export class RelayWorker {
     //   return;
     // }
 
-    const sub = this.relay.sub([{ kinds: [1], ids: ids }]) as NostrSub;
+    const kinds = [Kind.Text];
+
+    const sub = this.relay.sub([{ kinds: kinds, ids: ids }]) as NostrSub;
     this.eventSub = sub;
 
     sub.on('event', (originalEvent: any) => {

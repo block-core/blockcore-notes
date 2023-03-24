@@ -17,6 +17,7 @@ import { NostrService } from './nostr';
 import { ArticleService } from './article';
 import { LoggerService } from './logger';
 import { BadgeService } from './badge';
+import { ZapUiService } from './zap-ui';
 
 @Injectable({
   providedIn: 'root',
@@ -55,7 +56,8 @@ export class RelayService {
     private db: StorageService,
     private options: OptionsService,
     private eventService: EventService,
-    private appState: ApplicationState
+    private appState: ApplicationState,
+    private zapUi: ZapUiService
   ) {
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
@@ -85,6 +87,11 @@ export class RelayService {
 
         // Then create a new subscription:
         const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+
+        if (this.options.values.enableZapping) {
+          kinds.push(Kind.Zap);
+        }
+
         this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: kinds, until: options.until, limit: 100 }]).id;
       } else if (options.type == 'feed') {
         // If there are no subscription yet, just skip load more.
@@ -108,6 +115,11 @@ export class RelayService {
 
         // Then create a new subscription:
         const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+
+        if (this.options.values.enableZapping) {
+          kinds.push(Kind.Zap);
+        }
+
         this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, until: options.until, limit: 100 }], 'feed').id;
       }
     });
@@ -132,6 +144,11 @@ export class RelayService {
       }
 
       const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+
+      if (this.options.values.enableZapping) {
+        kinds.push(Kind.Zap);
+      }
+
       this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, limit: 100 }], 'feed').id;
     });
 
@@ -153,12 +170,16 @@ export class RelayService {
         this.ui.setProfile(profile);
       }
 
+      this.zapUi.reset();
+
       // else {
       //   this.enque({ type: 'Profile', identifier: id });
       // }
-
-      // Subscribe to events for the current user profile.
-      this.profileEventSubscription = this.subscribe([{ authors: [id], kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 }]).id;
+      // Subscribe to events and zaps (received) for the current user profile.
+      this.profileEventSubscription = this.subscribe([
+        { ['#p']: [id], kinds: [Kind.Zap] },
+        { authors: [id], kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 },
+      ]).id;
     });
 
     // Whenever the event ID changes, we'll attempt to load the event.
@@ -396,9 +417,12 @@ export class RelayService {
 
     this.logger.debug('SAVE EVENT?:', event);
 
+    if (event.kind == Kind.Zap) {
+      this.zapUi.addZap(event);
+    }
+
     if (response.subscription) {
       const sub = this.subs.get(response.subscription);
-
       if (sub) {
         if (sub.type == 'Event') {
           const index = sub.events.findIndex((e) => e.id == event.id);

@@ -107,8 +107,9 @@
         <p class="wrap linebreaks" *ngIf="profile.about">{{ profile.about }}</p>
       </span>
 
-      <div class="following-counts" *ngIf="profile.following">
-        <a class="following-link" [routerLink]="['/following', profile.pubkey]">{{ profile.following.length }} <span class="dimmed">Following</span></a>
+      <div class="following-counts">
+        <a class="following-link" *ngIf="profile.following" [routerLink]="['/following', profile.pubkey]">{{ profile.following.length }} <span class="dimmed">Following</span></a>
+        &nbsp;&nbsp;⚡️{{ zapUi.getProfileZapAmount(profile.pubkey) }} <span class="dimmed">Sats</span>
       </div>
 
       <div>
