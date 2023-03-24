@@ -4,7 +4,7 @@
     <mat-icon tabindex="0" class="reaction-icon toolbar-icon" (click)="openReply()" matTooltip="Reply to note">chat_bubble_outline</mat-icon>
     <mat-icon tabindex="0" *ngIf="optionsService.values.enableZapping" class="reaction-icon toolbar-icon" (click)="openDialog()" matTooltip="Zap the note">offline_bolt</mat-icon>
     <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="true" (emojiSelect)="addEmoji($event)" title="Choose your reaction"></emoji-mart>
-    <mat-icon tabindex="0" class="reaction-icon toolbar-icon right-side" (click)="saveNote()" matTooltip="Save Note">bookmark_border</mat-icon>
+    <mat-icon tabindex="0" class="reaction-icon toolbar-icon right-side" (click)="saveNote()" matTooltip="Bookmark">bookmark_border</mat-icon>
     <!-- <button (click)="openReply()" mat-button>Reply</button> -->
   </ng-template>
   <!-- <button mat-button>
