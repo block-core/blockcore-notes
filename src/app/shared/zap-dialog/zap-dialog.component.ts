@@ -20,28 +20,29 @@ export interface ZapDialogData {
 @Component({
   selector: 'app-zap-dialog',
   templateUrl: './zap-dialog.component.html',
-  styleUrls: ['./zap-dialog.component.scss']
+  styleUrls: ['./zap-dialog.component.scss'],
 })
 export class ZapDialogComponent implements OnInit {
   sendZapForm!: UntypedFormGroup;
   minSendable: number = 0;
   maxSendable: number = 0;
-  profile!: NostrProfileDocument
+  profile!: NostrProfileDocument;
   amount: number = 0;
-  comment = "";
-  payRequest: LNURLPayRequest | null = null
+  comment = '';
+  payRequest: LNURLPayRequest | null = null;
   invoice: LNURLInvoice = {
-    pr: ""
-  }
+    pr: '',
+  };
 
   imagePath = '/assets/profile.png';
   tooltip = '';
   tooltipName = '';
   profileName = '';
-  error: string = "";
+  error: string = '';
   event?: NostrEventDocument | undefined;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: ZapDialogData,
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: ZapDialogData,
     private formBuilder: UntypedFormBuilder,
     private eventService: EventService,
     private relayService: RelayService,
@@ -51,36 +52,42 @@ export class ZapDialogComponent implements OnInit {
     private dataService: DataService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ZapDialogComponent>
-  ) {
-
-
-  }
+  ) {}
 
   async ngOnInit() {
-    this.profile = this.data.profile
-    this.event = this.data.event
+    this.profile = this.data.profile;
+    this.event = this.data.event;
     this.sendZapForm = this.formBuilder.group({
       amount: ['', [Validators.required]],
-      comment: ['']
-    })
+      comment: [''],
+    });
 
-    this.fetchPayReq()
+    this.fetchPayReq();
+
     await this.updateProfileDetails();
   }
 
+  canZap = true;
+
   async fetchPayReq(): Promise<void> {
-    this.payRequest = await this.fetchZapper()
-    this.recofigureFormValidators()
+    this.payRequest = await this.fetchZapper();
+
+    if (!this.payRequest) {
+      this.canZap = false;
+    } else {
+      this.canZap = true;
+    }
+
+    this.recofigureFormValidators();
   }
 
-
   async fetchZapper(): Promise<LNURLPayRequest | null> {
-    let staticPayReq = ""
+    let staticPayReq = '';
     if (this.profile.lud16) {
-      const parts = this.profile.lud16.split("@")
+      const parts = this.profile.lud16.split('@');
       staticPayReq = `https://${parts[1]}/.well-known/lnurlp/${parts[0]}`;
-    } else if (this.profile.lud06 && this.profile.lud06.toLowerCase().startsWith("lnurl")) {
-      staticPayReq = this.util.convertBech32ToText(this.profile.lud06).toString()
+    } else if (this.profile.lud06 && this.profile.lud06.toLowerCase().startsWith('lnurl')) {
+      staticPayReq = this.util.convertBech32ToText(this.profile.lud06).toString();
     }
 
     if (staticPayReq.length !== 0) {
@@ -88,69 +95,69 @@ export class ZapDialogComponent implements OnInit {
         const resp = await fetch(staticPayReq);
         if (resp.ok) {
           const payReq = await resp.json();
-          if (payReq.status === "ERROR") {
-            this.error = payReq.reason ? payReq.reason : "Error fetching the invoice - please try again later"
+          if (payReq.status === 'ERROR') {
+            this.error = payReq.reason ? payReq.reason : 'Error fetching the invoice - please try again later';
           } else {
-            return payReq
+            return payReq;
           }
         }
       } catch (err) {
-        this.error = "Error fetching the invoice - please try again later"
+        this.error = 'Error fetching the invoice - please try again later';
       }
     }
 
-    return null
+    return null;
   }
 
   async onSubmit() {
     if (this.sendZapForm.valid) {
-      debugger
-      let comment = this.sendZapForm.get('comment')?.value
-      let amount = this.sendZapForm.get('amount')?.value
+      debugger;
+      let comment = this.sendZapForm.get('comment')?.value;
+      let amount = this.sendZapForm.get('amount')?.value;
       if (!amount || !this.payRequest) {
-        console.log("error: please enter an amount and  a valid pay request")
+        console.log('error: please enter an amount and  a valid pay request');
       } else {
-        const callback = new URL(this.payRequest.callback)
-        const query = new Map<string, string>()
-        query.set("amount", Math.floor(amount * 1000).toString())
+        const callback = new URL(this.payRequest.callback);
+        const query = new Map<string, string>();
+        query.set('amount', Math.floor(amount * 1000).toString());
         if (comment && this.payRequest?.commentAllowed) {
-          query.set("comment", comment)
+          query.set('comment', comment);
         }
 
         let zapReqEvent;
         if (this.payRequest.nostrPubkey)
           if (this.profile.pubkey) {
-            debugger
-            let note = this.event?.id ? this.event.id : null
+            debugger;
+            let note = this.event?.id ? this.event.id : null;
             zapReqEvent = await this.createZapEvent(this.profile.pubkey, note, comment);
-            query.set("nostr", JSON.stringify(zapReqEvent))
+            query.set('nostr', JSON.stringify(zapReqEvent));
           }
 
         const baseUrl = `${callback.protocol}//${callback.host}${callback.pathname}`;
-        const queryJoined = [...query.entries()].map(val => `${val[0]}=${encodeURIComponent(val[1])}`).join("&");
+        const queryJoined = [...query.entries()].map((val) => `${val[0]}=${encodeURIComponent(val[1])}`).join('&');
 
         try {
-          const response = await fetch(`${baseUrl}?${queryJoined}`)
+          const response = await fetch(`${baseUrl}?${queryJoined}`);
           if (response.ok) {
-            const result = await response.json()
-            if (result.status === "ERROR") {
-              this.error = result.reason ? result.reason : "Error fetching the invoice - please try again later"
+            const result = await response.json();
+            if (result.status === 'ERROR') {
+              this.error = result.reason ? result.reason : 'Error fetching the invoice - please try again later';
             } else {
-              this.invoice = result
+              this.invoice = result;
               this.dialog.open(ZapQrCodeComponent, {
                 width: '400px',
                 data: {
                   invoice: this.invoice,
-                  profile: this.profile
-                }
-              })
+                  profile: this.profile,
+                },
+              });
               this.dialogRef.close(ZapDialogComponent);
             }
           } else {
-            this.error = "Error fetching the invoice - please try again later"
+            this.error = 'Error fetching the invoice - please try again later';
           }
         } catch (err) {
-          this.error = "Error fetching the invoice - please try again later"
+          this.error = 'Error fetching the invoice - please try again later';
         }
       }
     }
@@ -176,11 +183,10 @@ export class ZapDialogComponent implements OnInit {
     }
 
     return signedEvent;
-
   }
 
   async addRelaysTag(zapEvent: UnsignedEvent) {
-    debugger
+    debugger;
     this.items = await this.db.storage.getRelays();
     const relays = this.items.map((item) => item.url);
     zapEvent.tags.push(['relays', ...relays]);
@@ -214,13 +220,9 @@ export class ZapDialogComponent implements OnInit {
   }
 
   private recofigureFormValidators() {
-    this.minSendable = (this.payRequest?.minSendable || 1000) / 1000
-    this.maxSendable = (this.payRequest?.maxSendable || 21_000_000_000) / 1000
-    this.sendZapForm.get('amount')?.setValidators([
-      Validators.min((this.payRequest?.minSendable || 1000) / 1000),
-      Validators.max((this.payRequest?.maxSendable || 21_000_000_000) / 1000),
-      Validators.required
-    ])
+    this.minSendable = (this.payRequest?.minSendable || 1000) / 1000;
+    this.maxSendable = (this.payRequest?.maxSendable || 21_000_000_000) / 1000;
+    this.sendZapForm.get('amount')?.setValidators([Validators.min((this.payRequest?.minSendable || 1000) / 1000), Validators.max((this.payRequest?.maxSendable || 21_000_000_000) / 1000), Validators.required]);
   }
 
   private async updateProfileDetails() {
@@ -236,6 +238,6 @@ export class ZapDialogComponent implements OnInit {
   }
 
   setAmount(amount: number) {
-    this.sendZapForm.get('amount')?.setValue(amount)
+    this.sendZapForm.get('amount')?.setValue(amount);
   }
 }

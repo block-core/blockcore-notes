@@ -15,6 +15,13 @@
       <span [class.muted]="profile.status == 2" [matTooltip]="tooltipName" matTooltipPosition="above">{{ profileName }}</span>
     </div>
   </div>
+
+  <div *ngIf="!canZap">
+    Unable to send Zap to {{ profileName }}. Their profile does not have any lightning payment address, please let them know so you can zap them in the future.
+  </div>
+
+  <div *ngIf="canZap">
+
   <div class="emoji-container">
     <div class="emoji-button">
       <button (click)="setAmount(50)" class="thumb-up-btn" mat-icon-button color="primary">
@@ -68,8 +75,6 @@
       </button>
     </div>
   </div>
-  
-
 
   <form [formGroup]="sendZapForm" (ngSubmit)="onSubmit()" novalidate>
     <div class="row">
@@ -144,5 +149,6 @@
       {{error}}
     </mat-error>
   </form>
+</div>
 </div>
 
