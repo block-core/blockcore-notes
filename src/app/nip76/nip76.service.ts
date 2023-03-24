@@ -138,29 +138,8 @@ export class Nip76Service {
           fchannel.content = foo.content;
           fchannel.ready = foo.ready;
         }
-      } else if (nostrEvent.tags[0][0] === 'e') {
-        const post = await channel.hdkIndex.readEvent(nostrEvent) as PostDocument;
-        if (post) {
-          post.channel = channel;
-          nostrEvent.content = post.content?.text! || nostrEvent.content;
-          channel.posts = [...channel.posts, post].sort((a, b) => b.nostrEvent.created_at - a.nostrEvent.created_at);
-          var i = channel.posts.length;
-          while (i--) {
-            const p1 = channel.posts[i];
-            if (p1.content.tags?.length && p1.content.tags[0][0] == 'e') {
-              const p2 = channel.posts.find(x => x.nostrEvent.id === p1.content.tags![0][1]);
-              if (p2) {
-                channel.posts.splice(i, 1);
-                if (p1.content.kind === nostrTools.Kind.Text) {
-                  p2.replies.push(p1);
-                } else {
-                  const count = p2.reactionTracker[p1.content.text!];
-                  p2.reactionTracker[p1.content.text!] = count ? count + 1 : 1;
-                }
-              }
-            }
-          }
-        }
+      } else {
+        await channel.hdkIndex.readEvent(nostrEvent);
       }
     });
     channel.channelSubscription = this.relayService.subscribe(
@@ -174,11 +153,7 @@ export class Nip76Service {
   }
 
   findChannel(pubkey: string): PrivateChannelWithRelaySub | undefined {
-    let channel = this.wallet?.channels.find(x => pubkey === x.hdkIndex.signingParent.nostrPubKey);
-    if (!channel) {
-      channel = this.wallet?.following.find(x => pubkey === x.hdkIndex.signingParent.nostrPubKey);
-    }
-    return channel;
+    return this.wallet?.channels.find(x => pubkey === x.hdkIndex.signingParent.nostrPubKey);
   }
 
   private async loadFollowing(channelPointer: string | nip19Extension.PrivateChannelPointer, secret?: string | Uint8Array[]) {
@@ -190,7 +165,7 @@ export class Nip76Service {
       pointer = channelPointer;
     }
     if (pointer) {
-      const channel = PrivateChannel.fromPointer(pointer, this.wallet.signingKey) as PrivateChannelWithRelaySub;
+      const channel = PrivateChannel.fromPointer(pointer) as PrivateChannelWithRelaySub;
       if (channel.ownerPubKey === this.wallet.ownerPubKey) {
         const message = 'Self owned channels should only be initialized from the wallet directly.';
         this.snackBar.open(message, 'Hide', {
@@ -211,7 +186,7 @@ export class Nip76Service {
           channel.hdkIndex.eventTag = channel.hdkIndex.signingParent.deriveChildKey(0).deriveChildKey(0).pubKeyHash;
           this.relayService.unsubscribe(channel.channelSubscription!.id);
           this.loadChannel(channel);
-          this.wallet.following.push(channel);
+          this.wallet.channels.push(channel);
         }
       });
       channel.channelSubscription = this.relayService.subscribe(
@@ -247,7 +222,7 @@ export class Nip76Service {
           ownerPubKey: followDocument.content.owner,
           signingKey: hexToBytes(followDocument.content.signing_key),
           cryptoKey: hexToBytes(followDocument.content.crypto_key),
-          // relays: followDocument.content
+          relays: followDocument.content.relays
         }
         await this.loadFollowing(pointer);
       }
@@ -289,12 +264,12 @@ export class Nip76Service {
       text,
       tags: [['e', post.nostrEvent.id]]
     };
-    const event = await post.channel.hdkIndex.createEvent(postDocument, privateKey);
+    const event = await post.hdkIndex.createEvent(postDocument, privateKey);
     await this.dataService.publishEvent(event);
     return postDocument;
   }
 
-  async saveFollowing(following: PrivateChannelWithRelaySub) {
+  async saveFollowing(following: PrivateChannel) {
     const privateKey = await this.passwordDialog('Save Follow');
     const followDocument = new FollowDocument();
     followDocument.content = {
@@ -302,7 +277,8 @@ export class Nip76Service {
       kind: nostrTools.Kind.Contacts,
       signing_key: bytesToHex(following.hdkIndex.signingParent.publicKey),
       crypto_key: bytesToHex(following.hdkIndex.cryptoParent.publicKey),
-      owner: following.ownerPubKey
+      owner: following.ownerPubKey,
+      relays: following.content.relays
     }
     const event = await this.wallet.documentsIndex.createEvent(followDocument, privateKey);
     await this.dataService.publishEvent(event);

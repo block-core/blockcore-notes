@@ -157,6 +157,7 @@ import { Nip76SettingsComponent } from './nip76/nip76-settings/nip76-settings.co
 import { AddChannelDialog } from './nip76/add-thread-dialog/add-thread-dialog.component';
 import { Nip76EventButtonsComponent } from './nip76/nip76-event-buttons/nip76-event-buttons.component';
 import { Nip76EventThreadComponent } from './nip76/nip76-event-thread/nip76-event-thread.component';
+import { Nip76ContentComponent } from './nip76/nip76-content/nip76-event-content.component';
 
 @NgModule({
   declarations: [
@@ -252,6 +253,7 @@ import { Nip76EventThreadComponent } from './nip76/nip76-event-thread/nip76-even
     AddChannelDialog,
     Nip76EventButtonsComponent,
     Nip76EventThreadComponent,
+    Nip76ContentComponent
   ],
   imports: [
     AboutModule,

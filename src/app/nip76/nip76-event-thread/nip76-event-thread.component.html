@@ -3,11 +3,12 @@
         <div class="events-header">
             <app-event-header [pubkey]="reaction.content.pubkey || ''">
                 <app-date [date]="reaction.nostrEvent.created_at"></app-date>
-                <app-directory-icon [pubkey]="reaction.nostrEvent.pubkey"></app-directory-icon>
+                <app-directory-icon [pubkey]="reaction.ownerPubKey"></app-directory-icon>
+                <mat-icon *ngIf="reaction.verified"  class="directory-icon" matTooltip="Verified" style="color: green;">verified_user</mat-icon>
             </app-event-header>
             <app-event-actions [event]="reaction.nostrEvent" [pubkey]="reaction.nostrEvent.pubkey"></app-event-actions>
         </div>
-        <app-content class="thread-content" [displayRepliesTo]="true" [event]="reaction.nostrEvent"></app-content>
+        <app-nip76-content class="thread-content" [displayRepliesTo]="true" [post]="reaction"></app-nip76-content>
         <div class="thread-reactions">
             <span class="thread-reaction" *ngFor="let item of reaction.reactionTracker | keyvalue"> {{ item.key }} {{ item.value }} </span>
         </div>

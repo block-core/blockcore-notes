@@ -34,7 +34,7 @@ export class Nip76SettingsComponent {
   }
 
   get readyPosts(): PostDocument[] {
-    return this.activeChannel ? this.activeChannel.posts.filter(x => x.ready) : [];
+    return this.activeChannel ? this.activeChannel.posts : [];
   }
 
   get activeChannel(): PrivateChannel | undefined {

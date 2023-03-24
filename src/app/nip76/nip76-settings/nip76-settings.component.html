@@ -46,12 +46,20 @@
             <div *ngFor="let channel of wallet.channels" [style.display]="!channel.ready ? 'none' : 'block'">
                 <mat-card class="settings-card" [class]="editChannel===channel ? 'edit': ''">
                     <mat-card-content>
+                        <div class="events-header">
+                            <app-event-header [pubkey]="channel.ownerPubKey">
+                                <!-- <app-date [date]="channel.nostrEvent.created_at"></app-date>
+                                <app-directory-icon [pubkey]="channel.ownerPubKey"></app-directory-icon>
+                                <mat-icon *ngIf="channel.verified"  class="directory-icon" matTooltip="Verified" style="color: green;">verified_user</mat-icon> -->
+                            </app-event-header>
+                            <!-- <app-event-actions [event]="channel.nostrEvent" [pubkey]="channel.nostrEvent.pubkey"></app-event-actions> -->
+                        </div>  
                         <div mat-dialog-actions class="mat-dialog-actions">
                             <button class="rounded-button"  mat-flat-button color="secondary" (click)="cancelEdit()" *ngIf="editChannel===channel">Cancel</button>
                             <button class="rounded-button"  mat-flat-button color="primary" (click)="saveChannel()" *ngIf="editChannel===channel" style="float:right;">Save</button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="editChannel=channel" *ngIf="editChannel!==channel"> Edit </button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewChannelFollowers(channel)" *ngIf="editChannel!==channel">Followers</button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="editChannel!==channel">Copy Keys</button>
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="editChannel=channel" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel"> Edit </button>
+                            <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewChannelFollowers(channel)" *ngIf="editChannel!==channel">Followers</button> -->
+                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel">Copy Keys</button>
                             <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
                         </div>                  
                         <div *ngIf="editChannel!==channel">
@@ -92,31 +100,7 @@
         </div> 
     </mat-tab>
     <mat-tab label="Following">
-        <div *ngFor="let channel of wallet.following" [style.display]="!channel.ready ? 'none' : 'block'">
-            <mat-card class="settings-card">
-                <mat-card-content>
-                    <app-event-header [pubkey]="channel.ownerPubKey"></app-event-header>
-                    <div mat-dialog-actions class="mat-dialog-actions">
-                        <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="editChannel!==channel">Copy Keys</button>
-                        <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
-                    </div>                  
-                    <div *ngIf="editChannel!==channel">
-                        <mat-form-field class="input-full-width" appearance="fill">
-                            <mat-label>Index</mat-label>
-                            <input matInput type="text" [value]="channel.hdkIndex.signingParent.nostrPubKey" readonly/>
-                        </mat-form-field>
-                        <mat-form-field class="input-full-width" appearance="fill">
-                            <mat-label>Name</mat-label>
-                            <input matInput type="text" [value]="channel.content.name || ''" readonly/>
-                        </mat-form-field>
-                        <mat-form-field class="input-full-width" appearance="fill">
-                            <mat-label>About</mat-label>
-                            <input matInput type="text" [value]="channel.content.about || ''" readonly/>
-                        </mat-form-field>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>        
+        TBD
     </mat-tab>
     <mat-tab label="Followers">
         <div *ngIf="activeChannel" [style.padding]="8">
@@ -153,10 +137,11 @@
                     <app-event-header [pubkey]="post.ownerPubKey">
                     <span class="event-date" [matTooltip]="post.nostrEvent.id!" matTooltipPosition="below">{{ post.nostrEvent.created_at | ago }}</span> 
                     <app-directory-icon [pubkey]="post.nostrEvent.pubkey"></app-directory-icon>
+                    <mat-icon *ngIf="post.verified"  class="directory-icon" matTooltip="Verified" style="color: green;">verified_user</mat-icon>
                 </app-event-header>
                     <app-event-actions [event]="post.nostrEvent"></app-event-actions>
                 </div>
-                <app-content [event]="post.nostrEvent"></app-content>
+                <app-nip76-content [post]="post"></app-nip76-content>
                 <div class="thread-reactions">
                     <span class="thread-reaction" *ngFor="let item of post.reactionTracker | keyvalue"> {{ item.key }} {{ item.value }} </span>
                 </div>
