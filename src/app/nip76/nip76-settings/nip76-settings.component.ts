@@ -146,13 +146,9 @@ export class Nip76SettingsComponent {
 
   addChannel() {
     this.cancelEdit();
-    let firstAvailable = this.wallet.channels.find(x => !x.ready);
-    if (!firstAvailable) {
-      firstAvailable = this.wallet.getChannel(this.wallet.channels.length);
-    }
-    firstAvailable.ready = firstAvailable.editing = true;
-    firstAvailable.content.name = 'New Channel';
-    this._editChannel = firstAvailable;
+    let newChannel = this.wallet.createChannel()
+    newChannel.ready = newChannel.editing = true;
+    this._editChannel = newChannel;
   }
 
   cancelEdit() {

@@ -48,6 +48,7 @@
                     <mat-card-content>
                         <div class="events-header">
                             <app-event-header [pubkey]="channel.ownerPubKey">
+                                <div><small>{{channel.hdkIndex.signingParent.nostrPubKey}}</small></div>
                                 <!-- <app-date [date]="channel.nostrEvent.created_at"></app-date>
                                 <app-directory-icon [pubkey]="channel.ownerPubKey"></app-directory-icon>
                                 <mat-icon *ngIf="channel.verified"  class="directory-icon" matTooltip="Verified" style="color: green;">verified_user</mat-icon> -->
@@ -63,24 +64,18 @@
                             <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
                         </div>                  
                         <div *ngIf="editChannel!==channel">
-                            <mat-form-field class="input-full-width" appearance="fill">
-                                <mat-label>Index</mat-label>
-                                <input matInput type="text" [value]="channel.hdkIndex.signingParent.nostrPubKey" readonly/>
-                            </mat-form-field>
-                            <mat-form-field class="input-full-width" appearance="fill">
-                                <mat-label>Name</mat-label>
-                                <input matInput type="text" [value]="channel.content.name || ''" readonly/>
-                            </mat-form-field>
-                            <mat-form-field class="input-full-width" appearance="fill">
-                                <mat-label>About</mat-label>
-                                <input matInput type="text" [value]="channel.content.about || ''" readonly/>
-                            </mat-form-field>
+                            <div class="field-label">Name</div>
+                            <div>{{channel.content.name}}</div>
+                            <div class="field-label">About</div>
+                            <div>{{channel.content.about}}&nbsp;</div>
+                            <div class="field-label">Invitations
+                                <mat-icon matTooltip="Add Invitation" color="primary" style="cursor: pointer;" (click)="nip76Service.addInvitation()" >add_circle</mat-icon>
+                            </div>
+                            <div>
+
+                            </div>
                         </div>
                         <div *ngIf="editChannel===channel">
-                            <mat-form-field class="input-full-width" appearance="fill">
-                                <mat-label>Index</mat-label>
-                                <input matInput type="text" [value]="editChannel.hdkIndex.signingParent.nostrPubKey" readonly/>
-                            </mat-form-field>
                             <mat-form-field class="input-full-width">
                                 <mat-label>Name</mat-label>
                                 <input matInput type="text" [(ngModel)]="editChannel.content.name" />
