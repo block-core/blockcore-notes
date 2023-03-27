@@ -12,7 +12,7 @@ import { RelayService } from '../services/relay';
 import { SecurityService } from '../services/security';
 import { UIService } from '../services/ui';
 import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
-import { AddChannelDialog, AddChannelDialogData } from './add-thread-dialog/add-thread-dialog.component';
+import { AddChannelDialog, AddChannelDialogData } from './nip76-add-channel-dialog/add-thread-dialog.component';
 import { AddInvitationDialogData, Nip76AddInvitationComponent } from './nip76-add-invitation/nip76-add-invitation.component';
 
 const nostrPrivKeyAddress = 'blockcore:notes:nostr:prvkey';
