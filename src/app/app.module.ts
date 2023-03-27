@@ -154,7 +154,7 @@ import { BadgeComponent } from './badge/badge';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DragScrollModule } from 'ngx-drag-scroll';
 import { Nip76SettingsComponent } from './nip76/nip76-settings/nip76-settings.component';
-import { AddChannelDialog } from './nip76/nip76-add-channel-dialog/add-thread-dialog.component';
+import { AddChannelDialog } from './nip76/nip76-add-channel-dialog/add-channel-dialog.component';
 import { Nip76EventButtonsComponent } from './nip76/nip76-event-buttons/nip76-event-buttons.component';
 import { Nip76EventThreadComponent } from './nip76/nip76-event-thread/nip76-event-thread.component';
 import { Nip76ContentComponent } from './nip76/nip76-content/nip76-event-content.component';

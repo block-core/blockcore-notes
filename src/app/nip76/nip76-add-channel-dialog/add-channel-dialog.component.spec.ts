@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddChannelDialog } from './add-thread-dialog.component';
+import { AddChannelDialog } from './add-channel-dialog.component';
 
 describe('AddChannelDialogComponent', () => {
   let component: AddChannelDialog;

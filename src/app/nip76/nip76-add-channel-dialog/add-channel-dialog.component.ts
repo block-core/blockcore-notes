@@ -6,9 +6,9 @@ export interface AddChannelDialogData {
 }
 
 @Component({
-  selector: 'app-add-channel-dialog',
-  templateUrl: './add-thread-dialog.component.html',
-  styleUrls: ['./add-thread-dialog.component.scss']
+  selector: 'nip76-add-channel-dialog',
+  templateUrl: './add-channel-dialog.component.html',
+  styleUrls: ['./add-channel-dialog.component.scss']
 })
 export class AddChannelDialog {
   constructor(public dialogRef: MatDialogRef<AddChannelDialogData>, @Inject(MAT_DIALOG_DATA) public data: AddChannelDialogData) {}
