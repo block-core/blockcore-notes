@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Nip76Wallet, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
+import { Invitation, Nip76Wallet, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
 import { ApplicationState } from '../../services/applicationstate';
 import { NavigationService } from '../../services/navigation';
 import { UIService } from '../../services/ui';
@@ -108,16 +108,16 @@ export class Nip76SettingsComponent {
   }
 
   viewChannelNotes(channel: PrivateChannel) {
-    this.router.navigate(['private-channels', channel.hdkIndex.signingParent.nostrPubKey, 'notes']);
+    this.router.navigate(['private-channels', channel.dkxPost.signingParent.nostrPubKey, 'notes']);
   }
 
   viewChannelFollowers(channel: PrivateChannel) {
-    this.router.navigate(['private-channels', channel.hdkIndex.signingParent.nostrPubKey, 'followers']);
+    this.router.navigate(['private-channels', channel.dkxPost.signingParent.nostrPubKey, 'followers']);
   }
 
-  async copyKeys(channel: PrivateChannel) {
-    navigator.clipboard.writeText(await channel.getChannelPointer());
-    this.snackBar.open(`Channel keys are now in your clipboard.`, 'Hide', {
+  async copyKeys(invite: Invitation) {
+    navigator.clipboard.writeText(await invite.getPointer());
+    this.snackBar.open(`The invitation is now in your clipboard.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
@@ -127,7 +127,7 @@ export class Nip76SettingsComponent {
   async previewChannel() {
     const channel = await this.nip76Service.previewChannel();
     if (channel) {
-      this.activeChannelId = channel.hdkIndex.signingParent.nostrPubKey;
+      this.activeChannelId = channel.dkxPost.signingParent.nostrPubKey;
       if (this.tabIndex != 1) {
         // this.viewChannelFollowers(channel);
         this.router.navigate(['private-channels','following']);

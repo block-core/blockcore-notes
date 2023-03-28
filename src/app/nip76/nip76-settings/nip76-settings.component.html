@@ -26,7 +26,7 @@
         <div *ngIf="editChannel">
             <mat-form-field class="input-full-width" appearance="fill">
                 <mat-label>Index</mat-label>
-                <input matInput type="text" [value]="editChannel.hdkIndex.signingParent.nostrPubKey" readonly/>
+                <input matInput type="text" [value]="editChannel.dkxPost.signingParent.nostrPubKey" readonly/>
             </mat-form-field>
             <mat-form-field class="input-full-width">
                 <mat-label>Name</mat-label>
@@ -48,7 +48,7 @@
                     <mat-card-content>
                         <div class="events-header">
                             <app-event-header [pubkey]="channel.ownerPubKey">
-                                <div><small>{{channel.hdkIndex.signingParent.nostrPubKey}}</small></div>
+                                <div><small>{{channel.dkxPost.signingParent.nostrPubKey}}</small></div>
                                 <!-- <app-date [date]="channel.nostrEvent.created_at"></app-date>
                                 <app-directory-icon [pubkey]="channel.ownerPubKey"></app-directory-icon>
                                 <mat-icon *ngIf="channel.verified"  class="directory-icon" matTooltip="Verified" style="color: green;">verified_user</mat-icon> -->
@@ -60,7 +60,7 @@
                             <button class="rounded-button"  mat-flat-button color="primary" (click)="saveChannel()" *ngIf="editChannel===channel" style="float:right;">Save</button>
                             <button class="rounded-button"  mat-flat-button color="secondary" (click)="editChannel=channel" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel"> Edit </button>
                             <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewChannelFollowers(channel)" *ngIf="editChannel!==channel">Followers</button> -->
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel">Copy Keys</button>
+                            <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel">Copy Keys</button> -->
                             <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
                         </div>                  
                         <div *ngIf="editChannel!==channel">
@@ -68,8 +68,18 @@
                             <div>{{channel.content.name}}</div>
                             <div class="field-label">About</div>
                             <div>{{channel.content.about}}&nbsp;</div>
-                            <div class="field-label">Invitations
-                                <mat-icon matTooltip="Add Invitation" color="primary" style="cursor: pointer;" (click)="nip76Service.addInvitation()" >add_circle</mat-icon>
+                            <div *ngIf="channel.dkxInvite">
+                                <div class="field-label">Invitations
+                                    <mat-icon matTooltip="Add Invitation" color="primary" style="cursor: pointer;" (click)="nip76Service.addInvitation(channel)" >add_circle</mat-icon>
+                                </div>
+                                <ul style="padding-left: 0px;">
+                                    <li *ngFor="let invite of channel.invites" style="list-style: none;">
+                                        <a *ngIf="invite.content.password" class="label-only-anchor"><span class="mat-mdc-tooltip-trigger">Password Protected</span></a>
+                                        <app-event-header [pubkey]="invite.content.for||''" [displayName]="!!invite.content.for">
+                                            <mat-icon matTooltip="Copy Invitation" color="primary" style="cursor: pointer; font-size: 12px;" (click)="copyKeys(invite)" >content_copy</mat-icon>
+                                        </app-event-header>
+                                    </li>
+                                </ul>
                             </div>
                             <div>
 
@@ -100,16 +110,16 @@
     <mat-tab label="Followers">
         <div *ngIf="activeChannel" [style.padding]="8">
             <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
-                <small>Private Thread {{activeChannel.hdkIndex.signingParent.nostrPubKey}}</small><br>
+                <small>Private Thread {{activeChannel.dkxPost.signingParent.nostrPubKey}}</small><br>
             </div>        
         </div>
     </mat-tab>
     <mat-tab label="Notes">
         <div *ngIf="activeChannel && tabIndex === 3" [style.padding]="8">
-            <div style="font-size: 8px;">Private Thread {{activeChannel.hdkIndex.signingParent.nostrPubKey}}</div>
+            <div style="font-size: 8px;">Private Thread {{activeChannel.dkxPost.signingParent.nostrPubKey}}</div>
             <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
                 <button class="rounded-button"  mat-flat-button color="primary" (click)="follow(activeChannel)">Follow</button>
-                <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeChannel)">Copy Keys</button>
+                <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeChannel)">Copy Keys</button> -->
                 <img *ngIf="!showNoteForm" width="46" height="46" 
                     (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" style="float: right;" />
             </div>
