@@ -6,7 +6,7 @@ import {
   ContentDocument,
   HDKey,
   HDKIndex, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
-  Nip76WebWalletStorage, PostDocument, PrivateChannel, Versions, walletRsvpDocumentsOffset
+  Nip76WebWalletStorage, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset
 } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
 import { firstValueFrom, Subject } from 'rxjs';
@@ -128,9 +128,23 @@ export class Nip76Service {
         }
       } else {
         docIndex = invitePubkeys.findIndex(x => x === nostrEvent.pubkey) + start + walletRsvpDocumentsOffset;
-        const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex) as Invitation;
-        if (doc) {
-          this.readInvitation(doc);
+        const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex);
+        if (doc && doc instanceof Rsvp) {
+          const pointer: nip19Extension.PrivateChannelPointer = {
+            type: doc.content.type,
+            docIndex: doc.content.pointerDocIndex,
+            signingKey: doc.content.signingKey,
+            cryptoKey: doc.content.cryptoKey
+          };
+          doc.pointer = pointer;
+          const rsvpIndex = HDKIndex.fromChannelPointer(pointer);
+          this.readChannelIndex(rsvpIndex, pointer);
+        // } else {
+        //   const privateKey = await this.passwordDialog('Delete unwanted document');
+        //   const ddoc = new ContentDocument();
+        //   ddoc.nostrEvent = nostrEvent;
+        //   ddoc.docIndex = docIndex;
+        //   await this.deleteDocument(ddoc, privateKey);
         }
       }
     });
@@ -152,7 +166,12 @@ export class Nip76Service {
       if (channel.dkxPost.eventTag === nostrEvent.tags[0][1]) {
         await channel.dkxPost.readEvent(nostrEvent);
       } else if (channel.dkxRsvp.eventTag === nostrEvent.tags[0][1]) {
-        await channel.dkxRsvp.readEvent(nostrEvent);
+        const rsvp = await channel.dkxRsvp.readEvent(nostrEvent);
+        // if (rsvp && (rsvp.content.kind != 1777 || rsvp instanceof Invitation)) {
+        //   channel.dkxRsvp.documents.splice(channel.dkxRsvp.documents.findIndex(x => rsvp), 1);
+        //   const privateKey = await this.passwordDialog('Delete unwanted document');
+        //   await this.deleteDocument(rsvp, privateKey);
+        // }
       } else if (invitePubs) {
         const docIndex = invitePubs.findIndex(x => x === nostrEvent.pubkey) + start;
         await channel.dkxInvite.readEvent(nostrEvent, docIndex);
@@ -284,31 +303,35 @@ export class Nip76Service {
           return this.readInvitation(invite);
         } else {
           const inviteIndex = HDKIndex.fromChannelPointer(pointer);
-          const inviteIndex$ = new Subject<NostrEvent>();
-          const inviteIndexSub = this.relayService.subscribe(
-            [{ authors: [inviteIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
-            `nip76Service.readChannelPointer.${inviteIndex.signingParent.nostrPubKey}`, 'Replaceable', inviteIndex$
-          );
-          const nostrEvent = await firstValueFrom(inviteIndex$);
-          this.relayService.unsubscribe(inviteIndexSub.id);
-          if (nostrEvent) {
-            const invite = await inviteIndex.readEvent(nostrEvent) as Invitation;
-            if (invite) {
-              invite.pointer = pointer;
-              return this.readInvitation(invite);
-            } else {
-              this.snackBar.open(`Unable to read contents the channel pointer record.`, 'Hide', defaultSnackBarOpts);
-            }
-          } else {
-            this.snackBar.open(`Unable to locate channel pointer record.`, 'Hide', defaultSnackBarOpts);
-          }
+          return this.readChannelIndex(inviteIndex, pointer);
         }
-
       } else {
         this.snackBar.open(`Unable to decode channel pointer string.`, 'Hide', defaultSnackBarOpts);
       }
     } catch (error) {
       this.snackBar.open(`${error}`, 'Hide', defaultSnackBarOpts);
+    }
+    return undefined;
+  }
+
+  async readChannelIndex(inviteIndex: HDKIndex, pointer: nip19Extension.PrivateChannelPointer) {
+    const inviteIndex$ = new Subject<NostrEvent>();
+    const inviteIndexSub = this.relayService.subscribe(
+      [{ authors: [inviteIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
+      `nip76Service.readChannelIndex.${inviteIndex.signingParent.nostrPubKey}`, 'Replaceable', inviteIndex$
+    );
+    const nostrEvent = await firstValueFrom(inviteIndex$);
+    this.relayService.unsubscribe(inviteIndexSub.id);
+    if (nostrEvent) {
+      const invite = await inviteIndex.readEvent(nostrEvent) as Invitation;
+      if (invite) {
+        invite.pointer = pointer;
+        return this.readInvitation(invite);
+      } else {
+        this.snackBar.open(`Unable to read contents the channel pointer record.`, 'Hide', defaultSnackBarOpts);
+      }
+    } else {
+      this.snackBar.open(`Unable to locate channel pointer record.`, 'Hide', defaultSnackBarOpts);
     }
     return undefined;
   }
@@ -368,24 +391,25 @@ export class Nip76Service {
 
   async saveRSVP(channel: PrivateChannel) {
     const privateKey = await this.passwordDialog('Save RSVP');
-    if (channel.invitation.docIndex === undefined) {
-      channel.invitation.docIndex = this.wallet.rsvps.length + 1 + walletRsvpDocumentsOffset;
-    }
-    const event1 = await this.wallet.documentsIndex.createEvent(channel.invitation!, privateKey);
-    await this.dataService.publishEvent(event1);
-    const rsvp = new Invitation();
+    const rsvp = new Rsvp();
+    rsvp.docIndex = channel.invitation.docIndex || (this.wallet.rsvps.length + 1 + walletRsvpDocumentsOffset);
     rsvp.content = {
-      kind: 1776,
+      kind: 1777,
       pubkey: this.wallet.ownerPubKey,
-      docIndex: channel.invitation.pointer?.docIndex
+      pointerDocIndex: channel.invitation.pointer.docIndex,
+      type: channel.invitation.pointer.type,
+      signingKey: channel.invitation.pointer.signingKey!,
+      cryptoKey: channel.invitation.pointer.cryptoKey!,
     }
+    const event1 = await this.wallet.documentsIndex.createEvent(rsvp, privateKey);
+    await this.dataService.publishEvent(event1);
     const event2 = await channel.dkxRsvp.createEvent(rsvp, privateKey);
     await this.dataService.publishEvent(event2);
     return true;
   }
 
   async deleteDocument(doc: ContentDocument, privateKey?: string) {
-    // if(doc.ownerPubKey !== this.wallet.ownerPubKey) {
+    // if(doc.content.pubkey !== this.wallet.ownerPubKey) {
     //   this.snackBar.open(`Cannot delete another user's document.`, 'Hide', defaultSnackBarOpts);
     //   return false;
     // }

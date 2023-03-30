@@ -127,11 +127,22 @@
             </ul>
         </div> 
     </mat-tab>
-    <mat-tab label="Followers">
+    <mat-tab label="RSVPs Received">
         <div *ngIf="activeChannel" [style.padding]="8">
             <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
                 <small>Private Thread {{activeChannel.dkxPost.signingParent.nostrPubKey}}</small><br>
-            </div>        
+            </div>    
+            <div *ngIf="activeChannel.rsvps.length === 0">No RSVPs Received yet.</div>
+            <div *ngIf="activeChannel.rsvps.length > 0">
+                <ul style="padding-left: 0px;">
+                    <li *ngFor="let rsvp of activeChannel.rsvps" >
+                        <app-event-header [pubkey]="rsvp.content.pubkey">
+                            <mat-icon matTooltip="Delete RSVP" color="primary" style="cursor: pointer; font-size: 12px; display: inline;" (click)="deleteRSVP(rsvp)" >delete</mat-icon>
+                            <small>{{ createDate(rsvp) }}</small>
+                        </app-event-header>
+                    </li>
+                </ul>
+            </div>     
         </div>
     </mat-tab>
     <mat-tab label="Notes">

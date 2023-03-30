@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ContentDocument, Invitation, Nip76Wallet, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
+import { ContentDocument, Invitation, Nip76Wallet, PostDocument, PrivateChannel, Rsvp } from 'animiq-nip76-tools';
 import { ApplicationState } from '../../services/applicationstate';
 import { NavigationService } from '../../services/navigation';
 import { UIService } from '../../services/ui';
@@ -132,10 +132,10 @@ export class Nip76SettingsComponent {
   }
 
   shouldRSVP(channel: PrivateChannel) {
-    // if(channel.ownerPubKey === this.wallet.ownerPubKey) return false;
+    if(channel.ownerPubKey === this.wallet.ownerPubKey) return false;
     if (channel.invitation?.pointer?.docIndex !== undefined) {
-      const huh = this.wallet.rsvps.filter(x => x.content.signingParent?.nostrPubKey === channel.dkxPost.signingParent.nostrPubKey);
-      return !huh.find(x => x.content.docIndex === channel.invitation?.content.docIndex);
+      const huh = this.wallet.rsvps.filter(x => x.pointer === channel.invitation?.pointer);
+      return huh.length === 0;
     }
     return false;
   }
@@ -155,10 +155,10 @@ export class Nip76SettingsComponent {
     }
   }
 
-  async deleteRSVP(rsvp: Invitation) {
+  async deleteRSVP(rsvp: Rsvp) {
     const privateKey = await this.nip76Service.passwordDialog('Delete RSVP');
     if (privateKey) {
-      const channelRsvp = rsvp.channel?.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey && x.content.docIndex === rsvp.content.docIndex);
+      const channelRsvp = rsvp.channel?.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey && x.content.pointerDocIndex === rsvp.content.pointerDocIndex);
       if (await this.nip76Service.deleteDocument(rsvp, privateKey)) {
         rsvp.dkxParent.documents.splice(rsvp.dkxParent.documents.indexOf(rsvp), 1);
         if (channelRsvp) {
