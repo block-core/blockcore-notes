@@ -3,11 +3,11 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Invitation, Nip76Wallet, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
+import { ContentDocument, Invitation, Nip76Wallet, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
 import { ApplicationState } from '../../services/applicationstate';
 import { NavigationService } from '../../services/navigation';
 import { UIService } from '../../services/ui';
-import { Nip76Service } from '../nip76.service';
+import { defaultSnackBarOpts, Nip76Service } from '../nip76.service';
 @Component({
   selector: 'app-nip76-settings',
   templateUrl: './nip76-settings.component.html',
@@ -84,6 +84,7 @@ export class Nip76SettingsComponent {
   get editChannel(): PrivateChannel | null {
     return this._editChannel!;
   }
+
   set editChannel(value: PrivateChannel | null) {
     this.cancelEdit();
     this._editChannel = value;
@@ -117,11 +118,7 @@ export class Nip76SettingsComponent {
 
   async copyKeys(invite: Invitation) {
     navigator.clipboard.writeText(await invite.getPointer());
-    this.snackBar.open(`The invitation is now in your clipboard.`, 'Hide', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-    });
+    this.snackBar.open(`The invitation is now in your clipboard.`, 'Hide', defaultSnackBarOpts);
   }
 
   async previewChannel() {
@@ -135,19 +132,46 @@ export class Nip76SettingsComponent {
   }
 
   shouldRSVP(channel: PrivateChannel) {
-    if (channel.invitation?.pointer?.docIndex) {
-      return !channel.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey);
+    // if(channel.ownerPubKey === this.wallet.ownerPubKey) return false;
+    if (channel.invitation?.pointer?.docIndex !== undefined) {
+      const huh = this.wallet.rsvps.filter(x => x.content.signingParent?.nostrPubKey === channel.dkxPost.signingParent.nostrPubKey);
+      return !huh.find(x => x.content.docIndex === channel.invitation?.content.docIndex);
     }
     return false;
   }
 
   async rsvp(channel: PrivateChannel) {
     this.nip76Service.saveRSVP(channel)
-    this.snackBar.open(`Thank you for your RSVP to this channel.`, 'Hide', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-    });
+    this.snackBar.open(`Thank you for your RSVP to this channel.`, 'Hide', defaultSnackBarOpts);
+  }
+
+
+  async deleteInvitation(invite: Invitation) {
+    const privateKey = await this.nip76Service.passwordDialog('Delete Invitation');
+    if (privateKey) {
+      if (await this.nip76Service.deleteDocument(invite, privateKey)) {
+        invite.dkxParent.documents.splice(invite.dkxParent.documents.indexOf(invite), 1);
+      }
+    }
+  }
+
+  async deleteRSVP(rsvp: Invitation) {
+    const privateKey = await this.nip76Service.passwordDialog('Delete RSVP');
+    if (privateKey) {
+      const channelRsvp = rsvp.channel?.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey && x.content.docIndex === rsvp.content.docIndex);
+      if (await this.nip76Service.deleteDocument(rsvp, privateKey)) {
+        rsvp.dkxParent.documents.splice(rsvp.dkxParent.documents.indexOf(rsvp), 1);
+        if (channelRsvp) {
+          if (await this.nip76Service.deleteDocument(channelRsvp, privateKey)) {
+            channelRsvp.dkxParent.documents.splice(channelRsvp.dkxParent.documents.indexOf(channelRsvp), 1);
+          }
+        }
+      }
+    }
+  }
+
+  createDate(doc: ContentDocument) {
+    return new Date(doc.nostrEvent.created_at * 1000)
   }
 
   addChannel() {
@@ -173,7 +197,7 @@ export class Nip76SettingsComponent {
     }
   }
 
-  public addEmojiNote(event: { emoji: { native: any } }) {
+  addEmojiNote(event: { emoji: { native: any } }) {
     let startPos = (<any>this.noteContent).nativeElement.selectionStart;
     let value = this.noteForm.controls.content.value;
 

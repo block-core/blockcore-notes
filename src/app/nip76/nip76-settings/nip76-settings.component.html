@@ -48,10 +48,10 @@
                     <mat-card-content>
                         <div class="events-header">
                             <app-event-header [pubkey]="channel.ownerPubKey">
-                                <div><small>{{channel.dkxPost.signingParent.nostrPubKey}}</small></div>
-                                <!-- <app-date [date]="channel.nostrEvent.created_at"></app-date>
-                                <app-directory-icon [pubkey]="channel.ownerPubKey"></app-directory-icon>
-                                <mat-icon *ngIf="channel.verified"  class="directory-icon" matTooltip="Verified" style="color: green;">verified_user</mat-icon> -->
+                                <mat-icon matTooltip="Delete Channel Invitation" color="primary" style="cursor: pointer; font-size: 12px; display: inline;" 
+                                         *ngIf="channel.invitation" (click)="deleteInvitation(channel.invitation)" >delete</mat-icon>
+                                <small>{{channel.dkxPost.signingParent.nostrPubKey}}</small>
+                                <!-- <app-date [date]="channel.nostrEvent.created_at"></app-date> -->
                             </app-event-header>
                             <!-- <app-event-actions [event]="channel.nostrEvent" [pubkey]="channel.nostrEvent.pubkey"></app-event-actions> -->
                         </div>  
@@ -60,7 +60,6 @@
                             <button class="rounded-button"  mat-flat-button color="primary" (click)="saveChannel()" *ngIf="editChannel===channel" style="float:right;">Save</button>
                             <button class="rounded-button"  mat-flat-button color="secondary" (click)="editChannel=channel" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel"> Edit </button>
                             <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewChannelFollowers(channel)" *ngIf="editChannel!==channel">Followers</button> -->
-                            <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(channel)" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel">Copy Keys</button> -->
                             <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
                         </div>                  
                         <div *ngIf="editChannel!==channel">
@@ -76,13 +75,16 @@
                                     <li *ngFor="let invite of channel.invites" style="list-style: none;">
                                         <a *ngIf="invite.content.password" class="label-only-anchor"><span class="mat-mdc-tooltip-trigger">Password Protected</span></a>
                                         <app-event-header [pubkey]="invite.content.for||''" [displayName]="!!invite.content.for">
-                                            <mat-icon matTooltip="Copy Invitation" color="primary" style="cursor: pointer; font-size: 12px;" (click)="copyKeys(invite)" >content_copy</mat-icon>
-                                            <mat-icon *ngIf="invite.rsvps.length"  matTooltip="RSVP Accepted" style="font-size: 12px; color: green;">verified_user</mat-icon>
+                                            <mat-icon matTooltip="Copy Invitation" color="primary" style="cursor: pointer; font-size: 12px; display: inline;" (click)="copyKeys(invite)" >content_copy</mat-icon>
+                                            <mat-icon *ngIf="!invite.content.password && invite.rsvps.length"  matTooltip="RSVP Accepted" style="font-size: 12px; color: green; display: inline;">verified_user</mat-icon>
+                                            <mat-icon matTooltip="Delete Invitation" color="primary" style="cursor: pointer; font-size: 12px; display: inline;" (click)="deleteInvitation(invite)" >delete</mat-icon>
+                                            <small *ngIf="invite.rsvps.length">{{ createDate(invite.rsvps[0]) }}</small>
                                         </app-event-header>
                                         <ul *ngIf="invite.content.password && invite.rsvps.length">
                                             <li *ngFor="let rsvp of invite.rsvps" style="list-style: none;">
                                                 <app-event-header [pubkey]="rsvp.content.pubkey">
-
+                                                    <mat-icon matTooltip="RSVP Accepted" style="font-size: 12px; color: green; display: inline;">verified_user</mat-icon>
+                                                    <small>{{ createDate(rsvp) }}</small>
                                                 </app-event-header>
                                             </li>
                                         </ul>
@@ -112,8 +114,18 @@
                     class="rounded-button"  mat-flat-button color="primary" (click)="addChannel()">Add Channel</button>
         </div> 
     </mat-tab>
-    <mat-tab label="Following">
-        TBD
+    <mat-tab label="RSVPs Sent">
+        <div *ngIf="wallet.rsvps.length === 0">No RSVPs Sent yet.</div>
+        <div *ngIf="wallet.rsvps.length > 0">
+            <ul style="padding-left: 0px;">
+                <li *ngFor="let rsvp of wallet.rsvps" >
+                    <app-event-header [pubkey]="rsvp.channel.ownerPubKey">
+                        <mat-icon matTooltip="Delete RSVP" color="primary" style="cursor: pointer; font-size: 12px; display: inline;" (click)="deleteRSVP(rsvp)" >delete</mat-icon>
+                        <small>{{ createDate(rsvp) }}</small>
+                    </app-event-header>
+                </li>
+            </ul>
+        </div> 
     </mat-tab>
     <mat-tab label="Followers">
         <div *ngIf="activeChannel" [style.padding]="8">

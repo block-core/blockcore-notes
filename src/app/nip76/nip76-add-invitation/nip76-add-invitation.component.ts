@@ -1,8 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Invitation, nip19Extension, PrivateChannel } from 'animiq-nip76-tools';
 import { nip19 } from 'nostr-tools';
+import { defaultSnackBarOpts, Nip76Service } from '../nip76.service';
 
 export interface AddInvitationDialogData {
+  channel: PrivateChannel;
   invitationType: 'pubkey' | 'password';
   pubkey?: string;
   validPubkey?: string;
@@ -19,7 +23,12 @@ export interface AddInvitationDialogData {
 export class Nip76AddInvitationComponent {
   error!: string;
   valid = false;
-  constructor(public dialogRef: MatDialogRef<AddInvitationDialogData>, @Inject(MAT_DIALOG_DATA) public data: AddInvitationDialogData) {
+  constructor(
+    private snackBar: MatSnackBar,
+    private nip76Service: Nip76Service,
+    public dialogRef: MatDialogRef<AddInvitationDialogData>,
+    @Inject(MAT_DIALOG_DATA) public data: AddInvitationDialogData,
+  ) {
     data.invitationType = 'pubkey';
   }
 
@@ -60,11 +69,34 @@ export class Nip76AddInvitationComponent {
     }
   }
 
+  async copyInviteWithoutSave() {
+    if (this.valid) {
+      let pointer: string;
+      const threadPointer = {
+        type: 0,
+        docIndex: -1,
+        signingKey: this.data.channel.dkxPost.signingParent!.publicKey,
+        signingChain: this.data.channel.dkxPost.signingParent!.chainCode,
+        cryptoKey: this.data.channel.dkxPost.cryptoParent.publicKey,
+        cryptoChain: this.data.channel.dkxPost.cryptoParent.chainCode,
+      };
+      if (this.data.invitationType === 'password') {
+        pointer = await nip19Extension.nprivateChannelEncode(threadPointer, this.data.password!);
+      } else {
+        const privateKey = await this.nip76Service.passwordDialog('Save RSVP');
+        pointer = await nip19Extension.nprivateChannelEncode(threadPointer, privateKey, this.data.validPubkey);
+      }
+      navigator.clipboard.writeText(pointer);
+      this.snackBar.open(`The invitation is now in your clipboard.`, 'Hide', defaultSnackBarOpts);
+    }
+  }
+
   clearForm() {
     this.error = '';
     this.valid = false;
     this.data = {
-      invitationType: this.data.invitationType
+      invitationType: this.data.invitationType,
+      channel: this.data.channel
     };
   }
 }

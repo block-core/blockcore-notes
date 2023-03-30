@@ -36,6 +36,8 @@
     </div>
 
     <div mat-dialog-actions align="end">
+        <button mat-stroked-button (click)="copyInviteWithoutSave()" style="margin-right: 20px;" [disabled]="!valid" 
+            matTooltip="Creates an invitation without a record.  See NIP 76.">Copy Without Saving</button>
         <button mat-stroked-button (click)="onNoClick()">Cancel</button>
         <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial
             [disabled]="!valid">Save</button>

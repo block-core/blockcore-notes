@@ -3,8 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { bech32 } from '@scure/base';
 import {
+  ContentDocument,
+  HDKey,
   HDKIndex, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
-  Nip76WebWalletStorage, PostDocument, PrivateChannel, walletRsvpDocumentsOffset
+  Nip76WebWalletStorage, PostDocument, PrivateChannel, Versions, walletRsvpDocumentsOffset
 } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
 import { firstValueFrom, Subject } from 'rxjs';
@@ -24,7 +26,7 @@ interface PrivateChannelWithRelaySub extends PrivateChannel {
   channelSubscription?: NostrRelaySubscription;
 }
 
-const defaultSnackBarOpts: MatSnackBarConfig<any> = {
+export const defaultSnackBarOpts: MatSnackBarConfig<any> = {
   duration: 3000,
   horizontalPosition: 'center',
   verticalPosition: 'bottom',
@@ -59,7 +61,7 @@ export class Nip76Service {
     });
   }
 
-  private async passwordDialog(actionPrompt: string): Promise<string> {
+  async passwordDialog(actionPrompt: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const dialogRef = this.dialog.open(PasswordDialog, {
         data: { action: actionPrompt, password: '' },
@@ -200,7 +202,7 @@ export class Nip76Service {
   async addInvitation(channel: PrivateChannel): Promise<Invitation> {
     return new Promise((resolve, reject) => {
       const dialogRef = this.dialog.open(Nip76AddInvitationComponent, {
-        data: { channelPointer: '' },
+        data: { channelPointer: '', channel },
         maxWidth: '200vw',
         panelClass: 'full-width-dialog',
       });
@@ -265,25 +267,43 @@ export class Nip76Service {
       const pointer = p.data as nip19Extension.PrivateChannelPointer;
 
       if (pointer) {
-        const inviteIndex = HDKIndex.fromChannelPointer(pointer);
-        const inviteIndex$ = new Subject<NostrEvent>();
-        const inviteIndexSub = this.relayService.subscribe(
-          [{ authors: [inviteIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
-          `nip76Service.readChannelPointer.${inviteIndex.signingParent.nostrPubKey}`, 'Replaceable', inviteIndex$
-        );
-        const nostrEvent = await firstValueFrom(inviteIndex$);
-        this.relayService.unsubscribe(inviteIndexSub.id);
-        if (nostrEvent) {
-          const invite = await inviteIndex.readEvent(nostrEvent) as Invitation;
-          if (invite) {
-            invite.pointer = pointer;
-            return this.readInvitation(invite);
-          } else {
-            this.snackBar.open(`Unable to read contents the channel pointer record.`, 'Hide', defaultSnackBarOpts);
-          }
+        if ((pointer.type & nip19Extension.PointerType.FullKeySet) === nip19Extension.PointerType.FullKeySet) {
+          const signingParent = new HDKey({ publicKey: pointer.signingKey, chainCode: pointer.signingChain, version: Versions.nip76API1 });
+          const cryptoParent = new HDKey({ publicKey: pointer.cryptoKey, chainCode: pointer.cryptoChain, version: Versions.nip76API1 });
+          const invite = new Invitation();
+          pointer.docIndex = -1;
+          invite.pointer = pointer;
+          invite.content = {
+            kind: 1776,
+            pubkey: signingParent.nostrPubKey,
+            docIndex: pointer.docIndex,
+            signingParent,
+            cryptoParent
+          };
+          invite.ready = true;
+          return this.readInvitation(invite);
         } else {
-          this.snackBar.open(`Unable to locate channel pointer record.`, 'Hide', defaultSnackBarOpts);
+          const inviteIndex = HDKIndex.fromChannelPointer(pointer);
+          const inviteIndex$ = new Subject<NostrEvent>();
+          const inviteIndexSub = this.relayService.subscribe(
+            [{ authors: [inviteIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
+            `nip76Service.readChannelPointer.${inviteIndex.signingParent.nostrPubKey}`, 'Replaceable', inviteIndex$
+          );
+          const nostrEvent = await firstValueFrom(inviteIndex$);
+          this.relayService.unsubscribe(inviteIndexSub.id);
+          if (nostrEvent) {
+            const invite = await inviteIndex.readEvent(nostrEvent) as Invitation;
+            if (invite) {
+              invite.pointer = pointer;
+              return this.readInvitation(invite);
+            } else {
+              this.snackBar.open(`Unable to read contents the channel pointer record.`, 'Hide', defaultSnackBarOpts);
+            }
+          } else {
+            this.snackBar.open(`Unable to locate channel pointer record.`, 'Hide', defaultSnackBarOpts);
+          }
         }
+
       } else {
         this.snackBar.open(`Unable to decode channel pointer string.`, 'Hide', defaultSnackBarOpts);
       }
@@ -342,7 +362,6 @@ export class Nip76Service {
     }
     const event = await channel.dkxInvite.createEvent(invite, privateKey);
     await this.dataService.publishEvent(event);
-    console.log(event);
     return invite;
 
   }
@@ -365,6 +384,16 @@ export class Nip76Service {
     return true;
   }
 
+  async deleteDocument(doc: ContentDocument, privateKey?: string) {
+    // if(doc.ownerPubKey !== this.wallet.ownerPubKey) {
+    //   this.snackBar.open(`Cannot delete another user's document.`, 'Hide', defaultSnackBarOpts);
+    //   return false;
+    // }
+    privateKey = privateKey || await this.passwordDialog('Delete Document');
+    const event = await doc.dkxParent.createDeleteEvent(doc, privateKey);
+    await this.dataService.publishEvent(event);
+    return true;
+  }
 }
 
 
