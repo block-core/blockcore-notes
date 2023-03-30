@@ -1,16 +1,21 @@
 <div class="dialog">
-    <h1 mat-dialog-title>Channel Preview</h1>
-    <div mat-dialog-content class="mat-dialog-content">
-      <mat-form-field appearance="fill" class="input-full-width">
-        <mat-icon class="circle" matPrefix>key</mat-icon>
-        <mat-label>nprivatechan</mat-label>
-        <textarea matInput type="text" [(ngModel)]="data.channelPointer" rows="7" cdkFocusInitial></textarea>
-      </mat-form-field>
-    </div>
-  
-    <div mat-dialog-actions align="end">
-      <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-      <button mat-flat-button [mat-dialog-close]="data" color="primary" >Preview</button>
-    </div>
+  <h1 mat-dialog-title>Channel Preview</h1>
+  <div mat-dialog-content class="mat-dialog-content">
+    <mat-form-field appearance="fill" class="input-full-width">
+      <mat-icon class="circle" matPrefix>key</mat-icon>
+      <mat-label>nprivatechan</mat-label>
+      <textarea matInput type="text" [(ngModel)]="data.channelPointer" rows="7" cdkFocusInitial
+        (keyup)="onChannelPointerChange()" (change)="onChannelPointerChange()"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="input-full-width" *ngIf="requirePassword">
+      <mat-icon class="circle" matPrefix>password</mat-icon>
+      <mat-label>Password</mat-label>
+      <input matInput type="password" name="password" [(ngModel)]="data.password" />
+    </mat-form-field>
   </div>
-  
+
+  <div mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+    <button mat-flat-button [mat-dialog-close]="data" color="primary" [disabled]="requirePassword && !data.password">Preview</button>
+  </div>
+</div>

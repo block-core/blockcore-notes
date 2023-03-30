@@ -77,7 +77,15 @@
                                         <a *ngIf="invite.content.password" class="label-only-anchor"><span class="mat-mdc-tooltip-trigger">Password Protected</span></a>
                                         <app-event-header [pubkey]="invite.content.for||''" [displayName]="!!invite.content.for">
                                             <mat-icon matTooltip="Copy Invitation" color="primary" style="cursor: pointer; font-size: 12px;" (click)="copyKeys(invite)" >content_copy</mat-icon>
+                                            <mat-icon *ngIf="invite.rsvps.length"  matTooltip="RSVP Accepted" style="font-size: 12px; color: green;">verified_user</mat-icon>
                                         </app-event-header>
+                                        <ul *ngIf="invite.content.password && invite.rsvps.length">
+                                            <li *ngFor="let rsvp of invite.rsvps" style="list-style: none;">
+                                                <app-event-header [pubkey]="rsvp.content.pubkey">
+
+                                                </app-event-header>
+                                            </li>
+                                        </ul>
                                     </li>
                                 </ul>
                             </div>
@@ -118,7 +126,7 @@
         <div *ngIf="activeChannel && tabIndex === 3" [style.padding]="8">
             <div style="font-size: 8px;">Private Thread {{activeChannel.dkxPost.signingParent.nostrPubKey}}</div>
             <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
-                <button class="rounded-button"  mat-flat-button color="primary" (click)="follow(activeChannel)">Follow</button>
+                <button class="rounded-button"  mat-flat-button color="primary" *ngIf="shouldRSVP(activeChannel)" (click)="rsvp(activeChannel)">RSVP</button>
                 <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeChannel)">Copy Keys</button> -->
                 <img *ngIf="!showNoteForm" width="46" height="46" 
                     (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" style="float: right;" />

@@ -128,16 +128,22 @@ export class Nip76SettingsComponent {
     const channel = await this.nip76Service.previewChannel();
     if (channel) {
       this.activeChannelId = channel.dkxPost.signingParent.nostrPubKey;
-      if (this.tabIndex != 1) {
-        // this.viewChannelFollowers(channel);
-        this.router.navigate(['private-channels','following']);
-      } 
+      if (this.tabIndex != 3) {
+        this.viewChannelNotes(channel);
+      }
     }
   }
 
-  async follow(channel: PrivateChannel) {
-    this.nip76Service.saveFollowing(channel)
-    this.snackBar.open(`You are now following this channel.`, 'Hide', {
+  shouldRSVP(channel: PrivateChannel) {
+    if (channel.invitation?.pointer?.docIndex) {
+      return !channel.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey);
+    }
+    return false;
+  }
+
+  async rsvp(channel: PrivateChannel) {
+    this.nip76Service.saveRSVP(channel)
+    this.snackBar.open(`Thank you for your RSVP to this channel.`, 'Hide', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',

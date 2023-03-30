@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { bech32 } from '@scure/base';
-import { FollowDocument, Invitation, nip19Extension, Nip76Wallet, Nip76WebWalletStorage, PostDocument, PrivateChannel } from 'animiq-nip76-tools';
+import {
+  HDKIndex, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
+  Nip76WebWalletStorage, PostDocument, PrivateChannel, walletRsvpDocumentsOffset
+} from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
-import { Subject } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 import { DataService } from '../services/data';
 import { NostrEvent, NostrRelaySubscription } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -20,6 +23,12 @@ const nostrPrivKeyAddress = 'blockcore:notes:nostr:prvkey';
 interface PrivateChannelWithRelaySub extends PrivateChannel {
   channelSubscription?: NostrRelaySubscription;
 }
+
+const defaultSnackBarOpts: MatSnackBarConfig<any> = {
+  duration: 3000,
+  horizontalPosition: 'center',
+  verticalPosition: 'bottom',
+};
 
 @Injectable({
   providedIn: 'root'
@@ -64,15 +73,11 @@ export class Nip76Service {
           if (prvkey) {
             resolve(prvkey);
           } else {
-            this.snackBar.open(`Unable to decrypt data. Probably wrong password. Try again.`, 'Hide', {
-              duration: 3000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-            });
+            this.snackBar.open(`Unable to access user private key. Probably wrong password. Try again.`, 'Hide', defaultSnackBarOpts);
             reject();
           }
         } else {
-          reject();
+          reject('Unable to access user private key.');
         }
       });
     });
@@ -106,40 +111,37 @@ export class Nip76Service {
   }
 
   loadDocuments(start = 1, length = 20) {
-    const authors = this.wallet.documentsIndex.getDocKeys(start, length);
+    const channelPubkeys = this.wallet.documentsIndex.getDocKeys(start, length);
+    const invitePubkeys = this.wallet.documentsIndex.getDocKeys(start + walletRsvpDocumentsOffset, length);
     if (this.documentsSubscription) {
       this.relayService.unsubscribe(this.documentsSubscription.id);
     }
     const privateNotes$ = new Subject<NostrEvent>();
     privateNotes$.subscribe(async nostrEvent => {
-      const docIndex = authors.findIndex(x => x === nostrEvent.pubkey) + start;
-      const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex);
-      if (doc instanceof PrivateChannel) { //} && doc.hdkIndex === this.wallet.documentsIndex) {
-        // const keyset = this.wallet.documentsIndex.getKeysFromIndex(sequentialIndex);
-        // doc.hdkIndex = new HDKIndex(HDKIndexType.TimeBased, keyset.signingKey!, keyset.cryptoKey);
-        this.loadChannel(doc);
+      let docIndex = channelPubkeys.findIndex(x => x === nostrEvent.pubkey) + start;
+      if (docIndex) {
+        const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex) as PrivateChannel;
+        if (doc) {
+          this.loadChannel(doc);
+        }
+      } else {
+        docIndex = invitePubkeys.findIndex(x => x === nostrEvent.pubkey) + start + walletRsvpDocumentsOffset;
+        const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex) as Invitation;
+        if (doc) {
+          this.readInvitation(doc);
+        }
       }
-      // const followDocument = await this.wallet.documentsIndex.readEvent(nostrEvent) as FollowDocument;
-      // if (followDocument) {
-      //   const pointer: nip19Extension.PrivateChannelPointer = {
-      //     ownerPubKey: followDocument.content.owner,
-      //     signingKey: hexToBytes(followDocument.content.signing_key),
-      //     cryptoKey: hexToBytes(followDocument.content.crypto_key),
-      //     relays: followDocument.content.relays
-      //   }
-      //   await this.loadFollowing(pointer);
-      // }
     });
-
-    this.documentsSubscription = this.relayService.subscribe([{
-      authors,
-      kinds: [17761],
-      limit: length
-    }], `nip76Service.loadDocuments.${start}-${length}`, 'Replaceable', privateNotes$);
+    const filters = [
+      { authors: channelPubkeys, kinds: [17761], limit: length },
+      { authors: invitePubkeys, kinds: [17761], limit: length }
+    ];
+    this.documentsSubscription = this.relayService.subscribe(filters,
+      `nip76Service.loadDocuments.${start}-${length}`, 'Replaceable', privateNotes$);
   }
 
   loadChannel(channel: PrivateChannelWithRelaySub, start = 1, length = 20) {
-    const invitePubs = channel.dkxInvite.getDocKeys(start, length);
+    const invitePubs = channel.dkxInvite?.getDocKeys(start, length);
     if (channel.channelSubscription) {
       this.relayService.unsubscribe(channel.channelSubscription.id);
     }
@@ -147,23 +149,25 @@ export class Nip76Service {
     privateChannel$.subscribe(async nostrEvent => {
       if (channel.dkxPost.eventTag === nostrEvent.tags[0][1]) {
         await channel.dkxPost.readEvent(nostrEvent);
-      } else {
+      } else if (channel.dkxRsvp.eventTag === nostrEvent.tags[0][1]) {
+        await channel.dkxRsvp.readEvent(nostrEvent);
+      } else if (invitePubs) {
         const docIndex = invitePubs.findIndex(x => x === nostrEvent.pubkey) + start;
         await channel.dkxInvite.readEvent(nostrEvent, docIndex);
       }
     });
+    const filters: nostrTools.Filter[] = [
+      { '#e': [channel.dkxPost.eventTag], kinds: [17761], limit: length },
+      { '#e': [channel.dkxRsvp.eventTag], kinds: [17761], limit: length },
+    ];
+    if (invitePubs) {
+      filters.push({ authors: invitePubs, kinds: [17761], limit: 100 })
+    }
     channel.channelSubscription = this.relayService.subscribe(
-      [{
-        '#e': [channel.dkxPost.eventTag],
-        kinds: [17761],
-        limit: length
-      },
-      {
-        authors: invitePubs,
-        kinds: [17761],
-        limit: length
-      }],
-      `nip76Service.loadChannel.${channel.dkxPost.eventTag}`, 'Replaceable', privateChannel$
+      filters,
+      `nip76Service.loadChannel.${channel.dkxPost.eventTag}`,
+      'Replaceable',
+      privateChannel$
     );
   }
 
@@ -180,9 +184,9 @@ export class Nip76Service {
       });
       dialogRef.afterClosed().subscribe(async (result: AddChannelDialogData) => {
         if (result?.channelPointer) {
-          const following = await this.readInvitation(result.channelPointer, '');
-          if (following) {
-            resolve(following);
+          const channel = await this.readChannelPointer(result.channelPointer, result.password!);
+          if (channel) {
+            resolve(channel);
           } else {
             reject();
           }
@@ -215,64 +219,78 @@ export class Nip76Service {
     });
   }
 
+  async readInvitation(invite: Invitation): Promise<PrivateChannel | undefined> {
+    const channelIndex = new HDKIndex(HDKIndexType.Singleton, invite.content.signingParent!, invite.content.cryptoParent!);
+    const channelIndex$ = new Subject<NostrEvent>();
+    const channelIndexSub = this.relayService.subscribe(
+      [{ authors: [channelIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
+      `nip76Service.readInvitation.${channelIndex.signingParent.nostrPubKey}`, 'Replaceable', channelIndex$
+    );
+    const nostrEvent = await firstValueFrom(channelIndex$);
+    this.relayService.unsubscribe(channelIndexSub.id);
+    if (nostrEvent) {
+      const channel = await channelIndex.readEvent(nostrEvent) as PrivateChannel;
+      if (channel) {
+        channel.invitation = invite;
+        const exisitng = this.wallet.documentsIndex.documents.find(x => x.nostrEvent.id === nostrEvent.id) as PrivateChannel;
+        if (exisitng) {
+          channel.dkxPost.documents = exisitng.dkxPost.documents;
+          channel.dkxRsvp.documents = exisitng.dkxRsvp.documents;
+          channel.dkxInvite = exisitng.dkxInvite;
+          const index = this.wallet.documentsIndex.documents.findIndex(x => x.nostrEvent.id === nostrEvent.id);
+          this.wallet.documentsIndex.documents[index] = channel;
+        } else {
+          this.wallet.documentsIndex.documents.push(channel);
+        }
+        this.loadChannel(channel);
+        return channel;
+      } else {
+        this.snackBar.open(`Unable to read contents the channel pointer keyset.`, 'Hide', defaultSnackBarOpts);
+      }
+    } else {
+      this.snackBar.open(`Unable to locate the channel pointer keyset.`, 'Hide', defaultSnackBarOpts);
+    }
+    return undefined;
+  }
 
-  private async readInvitation(channelPointer: string | nip19Extension.PrivateChannelPointer, secret?: string | Uint8Array[]) {
-    let pointer: nip19Extension.PrivateChannelPointer;
-    if (typeof channelPointer === 'string') {
+  async readChannelPointer(channelPointer: string, secret?: string) {
+
+    try {
       const words = bech32.decode(channelPointer, 5000).words;
-      const pointerType  = Uint8Array.from(bech32.fromWords(words))[0] as nip19Extension.PointerType;
-      if((pointerType & nip19Extension.PointerType.SharedSecret) == nip19Extension.PointerType.SharedSecret)
-      {
-
-        debugger
+      const pointerType = Uint8Array.from(bech32.fromWords(words))[0] as nip19Extension.PointerType;
+      if ((pointerType & nip19Extension.PointerType.SharedSecret) == nip19Extension.PointerType.SharedSecret) {
+        secret = await this.passwordDialog('Preview Private Invitation');
       }
       const p = await nip19Extension.decode(channelPointer, secret!);
-      pointer = p.data as nip19Extension.PrivateChannelPointer;
-    } else {
-      pointer = channelPointer;
-    }
-    if (pointer) {
-      const channel = PrivateChannel.fromPointer(pointer) as PrivateChannelWithRelaySub;
-      if (channel.ownerPubKey === this.wallet.ownerPubKey) {
-        const message = 'Self owned channels should only be initialized from the wallet directly.';
-        this.snackBar.open(message, 'Hide', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        });
-        return undefined;
+      const pointer = p.data as nip19Extension.PrivateChannelPointer;
+
+      if (pointer) {
+        const inviteIndex = HDKIndex.fromChannelPointer(pointer);
+        const inviteIndex$ = new Subject<NostrEvent>();
+        const inviteIndexSub = this.relayService.subscribe(
+          [{ authors: [inviteIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
+          `nip76Service.readChannelPointer.${inviteIndex.signingParent.nostrPubKey}`, 'Replaceable', inviteIndex$
+        );
+        const nostrEvent = await firstValueFrom(inviteIndex$);
+        this.relayService.unsubscribe(inviteIndexSub.id);
+        if (nostrEvent) {
+          const invite = await inviteIndex.readEvent(nostrEvent) as Invitation;
+          if (invite) {
+            invite.pointer = pointer;
+            return this.readInvitation(invite);
+          } else {
+            this.snackBar.open(`Unable to read contents the channel pointer record.`, 'Hide', defaultSnackBarOpts);
+          }
+        } else {
+          this.snackBar.open(`Unable to locate channel pointer record.`, 'Hide', defaultSnackBarOpts);
+        }
+      } else {
+        this.snackBar.open(`Unable to decode channel pointer string.`, 'Hide', defaultSnackBarOpts);
       }
-      const privateChannel$ = new Subject<NostrEvent>();
-      privateChannel$.subscribe(async nostrEvent => {
-        // const fchannel = await channel.hdkIndex.readEvent(nostrEvent, channel) as PrivateChannel;
-        // if (fchannel) {
-        //   channel.content = fchannel.content;
-        //   channel.ready = fchannel.ready;
-        //   channel.hdkIndex.signingParent._chainCode = hexToBytes(fchannel.content.chain_sign!);
-        //   channel.hdkIndex.cryptoParent._chainCode = hexToBytes(fchannel.content.chain_crypto!);
-        //   channel.hdkIndex.eventTag = channel.hdkIndex.signingParent.deriveChildKey(0).deriveChildKey(0).pubKeyHash;
-        //   this.relayService.unsubscribe(channel.channelSubscription!.id);
-        //   this.loadChannel(channel);
-        //   this.wallet.channels.push(channel);
-        // }
-      });
-      channel.channelSubscription = this.relayService.subscribe(
-        [{
-          authors: [channel.dkxPost.signingParent.nostrPubKey],
-          kinds: [17761],
-          limit: length
-        }],
-        `nip76Service.loadFollowing.${channel.dkxPost.eventTag}`, 'Replaceable', privateChannel$
-      );
-      return channel;
-    } else {
-      this.snackBar.open(`Unable to decode secure channel pointer.`, 'Hide', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
-      return undefined;
+    } catch (error) {
+      this.snackBar.open(`${error}`, 'Hide', defaultSnackBarOpts);
     }
+    return undefined;
   }
 
   async saveChannel(channel: PrivateChannel, privateKey?: string) {
@@ -312,15 +330,16 @@ export class Nip76Service {
   async saveInvitation(channel: PrivateChannel, invitation: AddInvitationDialogData): Promise<Invitation> {
     const privateKey = await this.passwordDialog('Save Invitation');
     const invite = new Invitation();
+    invite.docIndex = channel.dkxInvite.documents.length + 1;
     invite.content = {
       kind: 1776,
+      docIndex: invite.docIndex,
       for: invitation.invitationType === 'pubkey' ? invitation.validPubkey : undefined,
       password: invitation.invitationType === 'password' ? invitation.password : undefined,
       pubkey: channel.dkxPost.signingParent.nostrPubKey,
       signingParent: channel.dkxPost.signingParent,
       cryptoParent: channel.dkxPost.cryptoParent,
     }
-    invite.docIndex = channel.dkxInvite.documents.length + 1;
     const event = await channel.dkxInvite.createEvent(invite, privateKey);
     await this.dataService.publishEvent(event);
     console.log(event);
@@ -328,19 +347,21 @@ export class Nip76Service {
 
   }
 
-  async saveFollowing(following: PrivateChannel) {
-    const privateKey = await this.passwordDialog('Save Follow');
-    const followDocument = new FollowDocument();
-    // followDocument.content = {
-    //   pubkey: this.wallet.ownerPubKey,
-    //   kind: nostrTools.Kind.Contacts,
-    //   signing_key: bytesToHex(following.hdkIndex.signingParent.publicKey),
-    //   crypto_key: bytesToHex(following.hdkIndex.cryptoParent.publicKey),
-    //   owner: following.ownerPubKey,
-    //   relays: following.content.relays
-    // }
-    const event = await this.wallet.documentsIndex.createEvent(followDocument, privateKey);
-    await this.dataService.publishEvent(event);
+  async saveRSVP(channel: PrivateChannel) {
+    const privateKey = await this.passwordDialog('Save RSVP');
+    if (channel.invitation.docIndex === undefined) {
+      channel.invitation.docIndex = this.wallet.rsvps.length + 1 + walletRsvpDocumentsOffset;
+    }
+    const event1 = await this.wallet.documentsIndex.createEvent(channel.invitation!, privateKey);
+    await this.dataService.publishEvent(event1);
+    const rsvp = new Invitation();
+    rsvp.content = {
+      kind: 1776,
+      pubkey: this.wallet.ownerPubKey,
+      docIndex: channel.invitation.pointer?.docIndex
+    }
+    const event2 = await channel.dkxRsvp.createEvent(rsvp, privateKey);
+    await this.dataService.publishEvent(event2);
     return true;
   }
 
