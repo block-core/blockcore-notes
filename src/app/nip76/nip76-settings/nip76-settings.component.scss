@@ -57,4 +57,12 @@ li.instruction {
     position: relative;
     left: 66px;
     top: 22px;
+    width: 300px;
+}
+
+.action-icon {
+    margin-right: 4px;
+    cursor: pointer; 
+    font-size: 14px; 
+    display: inline;
 }

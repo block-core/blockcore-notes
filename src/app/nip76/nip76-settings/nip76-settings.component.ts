@@ -33,10 +33,6 @@ export class Nip76SettingsComponent {
     return this.nip76Service.wallet;
   }
 
-  get readyPosts(): PostDocument[] {
-    return this.activeChannel ? this.activeChannel.posts : [];
-  }
-
   get activeChannel(): PrivateChannel | undefined {
     return this.activeChannelId ? this.nip76Service.findChannel(this.activeChannelId) : undefined;
   }
@@ -132,9 +128,9 @@ export class Nip76SettingsComponent {
   }
 
   shouldRSVP(channel: PrivateChannel) {
-    if(channel.ownerPubKey === this.wallet.ownerPubKey) return false;
+    if (channel.ownerPubKey === this.wallet.ownerPubKey) return false;
     if (channel.invitation?.pointer?.docIndex !== undefined) {
-      const huh = this.wallet.rsvps.filter(x => x.pointer === channel.invitation?.pointer);
+      const huh = this.wallet.rsvps.filter(x => x.content.pointerDocIndex === channel.invitation?.pointer.docIndex);
       return huh.length === 0;
     }
     return false;
@@ -145,14 +141,13 @@ export class Nip76SettingsComponent {
     this.snackBar.open(`Thank you for your RSVP to this channel.`, 'Hide', defaultSnackBarOpts);
   }
 
-
-  async deleteInvitation(invite: Invitation) {
-    const privateKey = await this.nip76Service.passwordDialog('Delete Invitation');
-    if (privateKey) {
-      if (await this.nip76Service.deleteDocument(invite, privateKey)) {
-        invite.dkxParent.documents.splice(invite.dkxParent.documents.indexOf(invite), 1);
-      }
+  async deleteChannelRSVP(channel: PrivateChannel) {
+    if (channel.invitation?.pointer?.docIndex) {
+      const rsvp = this.wallet.rsvps.find(x => x.channel === channel
+        && x.content.pointerDocIndex === channel.invitation.pointer.docIndex) as Rsvp;
+      await this.deleteRSVP(rsvp);
     }
+
   }
 
   async deleteRSVP(rsvp: Rsvp) {
@@ -166,6 +161,15 @@ export class Nip76SettingsComponent {
             channelRsvp.dkxParent.documents.splice(channelRsvp.dkxParent.documents.indexOf(channelRsvp), 1);
           }
         }
+      }
+    }
+  }
+
+  async deleteInvitation(invite: Invitation) {
+    const privateKey = await this.nip76Service.passwordDialog('Delete Invitation');
+    if (privateKey) {
+      if (await this.nip76Service.deleteDocument(invite, privateKey)) {
+        invite.dkxParent.documents.splice(invite.dkxParent.documents.indexOf(invite), 1);
       }
     }
   }

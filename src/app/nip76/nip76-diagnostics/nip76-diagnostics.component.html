@@ -1,0 +1,19 @@
+<button class="action-button" mat-icon-button #diagButton>
+    <mat-icon matTooltip="Event Diagnostics" class="action-button-icon" [class]="timer ? 'active' : ''">zoom_in</mat-icon>
+</button>
+<mat-card class="diagnostics" #diagCard>
+    <div mat-dialog-actions class="mat-dialog-actions">
+        <mat-icon matTooltip="Copy JSON" class="action-button-icon copy-json-button"
+            (click)="copyJson()">content_copy</mat-icon>
+        <button class="rounded-button" mat-flat-button [color]="diagType === 'Event' ? 'primary' : 'secondary'"
+            (click)="diagType = DiagTypeEnum.Event">Event</button>
+        <button class="rounded-button" mat-flat-button [color]="diagType === 'Payload' ? 'primary' : 'secondary'"
+            (click)="diagType = DiagTypeEnum.Payload">Payload</button>
+        <button class="rounded-button" mat-flat-button [color]="diagType === 'Content' ? 'primary' : 'secondary'"
+            (click)="diagType = DiagTypeEnum.Content">Content</button>
+        <button class="rounded-button" mat-flat-button [color]="diagType === 'Document' ? 'primary' : 'secondary'"
+            (click)="diagType = DiagTypeEnum.Document">Document</button>
+    </div>
+    <div class="json-content" [innerHtml]="prettierJson()">
+    </div>
+</mat-card>
