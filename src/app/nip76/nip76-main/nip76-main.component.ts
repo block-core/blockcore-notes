@@ -15,8 +15,8 @@ enum DisplayType {
 }
 @Component({
   selector: 'app-nip76',
-  templateUrl: './nip76-settings.component.html',
-  styleUrls: ['./nip76-settings.component.scss']
+  templateUrl: './nip76-main.component.html',
+  styleUrls: ['./nip76-main.component.scss']
 })
 export class Nip76MainComponent {
 
