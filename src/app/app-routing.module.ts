@@ -33,7 +33,7 @@ import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
-import { Nip76MainComponent } from './nip76/nip76-main/nip76-settings.component';
+import { Nip76MainComponent } from './nip76/nip76-main/nip76-main.component';
 
 const routes: Routes = [
   {

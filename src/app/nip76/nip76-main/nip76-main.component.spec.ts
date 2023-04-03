@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Nip76MainComponent } from './nip76-settings.component';
+import { Nip76MainComponent } from './nip76-main.component';
 
 describe('PrivateThreadsComponent', () => {
   let component: Nip76MainComponent;

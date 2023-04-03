@@ -153,7 +153,7 @@ import { TagsComponent } from './shared/tags/tags';
 import { BadgeComponent } from './badge/badge';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DragScrollModule } from 'ngx-drag-scroll';
-import { Nip76MainComponent } from './nip76/nip76-main/nip76-settings.component';
+import { Nip76MainComponent } from './nip76/nip76-main/nip76-main.component';
 import { AddChannelDialog } from './nip76/nip76-add-channel-dialog/add-channel-dialog.component';
 import { Nip76EventButtonsComponent } from './nip76/nip76-event-buttons/nip76-event-buttons.component';
 import { Nip76EventThreadComponent } from './nip76/nip76-event-thread/nip76-event-thread.component';
