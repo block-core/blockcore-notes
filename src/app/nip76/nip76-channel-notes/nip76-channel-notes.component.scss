@@ -1,0 +1,38 @@
+
+:host {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+// .top-menu {
+//     display: flex;
+//     flex-direction: row;
+//     flex-wrap: nowrap;
+//     justify-content: flex-start;
+// }
+// .top-menu-left {
+//     display: flex;
+//     flex-grow: 1;
+// }
+
+.top-menu-right {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+}
+
+.notes-wrapper {
+    height: 200px;
+    flex-grow: 1;
+    overflow-y: scroll;
+    // border: 1px solid red;
+}
+
+.note-card {
+    margin-top: 0;
+    padding: 1em;
+    margin-bottom: 1em;
+    border-radius: 10px !important;
+}

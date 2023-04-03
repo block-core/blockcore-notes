@@ -3,8 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { bech32 } from '@scure/base';
 import {
-  ContentDocument,
-  HDKey,
+  ContentDocument, HDKey, getNowSeconds,
   HDKIndex, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
   Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset
 } from 'animiq-nip76-tools';
@@ -185,7 +184,7 @@ export class Nip76Service {
     return this.wallet?.channels.find(x => pubkey === x.dkxPost.signingParent.nostrPubKey);
   }
 
-  async previewChannel(): Promise<PrivateChannel> {
+  async readInvitationDialog(): Promise<PrivateChannel> {
     return new Promise((resolve, reject) => {
       const dialogRef = this.dialog.open(AddChannelDialog, {
         data: { channelPointer: '' },
@@ -230,7 +229,7 @@ export class Nip76Service {
   }
 
   async readInvitation(invite: Invitation): Promise<PrivateChannel | undefined> {
-    if(!invite.content.signingParent && !invite.content.cryptoParent){
+    if (!invite.content.signingParent && !invite.content.cryptoParent) {
       this.snackBar.open(`Encountered a suspended invitation from ${invite.ownerPubKey}`, 'Hide', defaultSnackBarOpts);
       return undefined;
     }
@@ -267,7 +266,7 @@ export class Nip76Service {
     return undefined;
   }
 
-  async readChannelPointer(channelPointer: string, secret?: string): Promise<PrivateChannel | undefined>  {
+  async readChannelPointer(channelPointer: string, secret?: string): Promise<PrivateChannel | undefined> {
     try {
       const words = bech32.decode(channelPointer, 5000).words;
       const pointerType = Uint8Array.from(bech32.fromWords(words))[0] as nip19Extension.PointerType;
@@ -306,7 +305,7 @@ export class Nip76Service {
     return undefined;
   }
 
-  async readChannelIndex(inviteIndex: HDKIndex, pointer: nip19Extension.PrivateChannelPointer): Promise<PrivateChannel | undefined>  {
+  async readChannelIndex(inviteIndex: HDKIndex, pointer: nip19Extension.PrivateChannelPointer): Promise<PrivateChannel | undefined> {
     const inviteIndex$ = new Subject<NostrEvent>();
     const inviteIndexSub = this.relayService.subscribe(
       [{ authors: [inviteIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
@@ -330,6 +329,7 @@ export class Nip76Service {
 
   async saveChannel(channel: PrivateChannel, privateKey?: string) {
     privateKey = privateKey || await this.passwordDialog('Save Channel Details');
+    channel.content.created_at = channel.content.created_at || channel?.nostrEvent.created_at || getNowSeconds();
     const ev = await this.wallet.documentsIndex.createEvent(channel, privateKey);
     await this.dataService.publishEvent(ev);
     return true;
@@ -400,7 +400,7 @@ export class Nip76Service {
     }
     const event1 = await channel.dkxRsvp.createEvent(rsvp, privateKey);
     await this.dataService.publishEvent(event1);
-    
+
     rsvp.docIndex = channel.invitation.docIndex || (this.wallet.rsvps.length + 1 + walletRsvpDocumentsOffset);
     rsvp.content.signingKey = channel.invitation.pointer.signingKey;
     rsvp.content.cryptoKey = channel.invitation.pointer.cryptoKey;

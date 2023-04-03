@@ -153,13 +153,16 @@ import { TagsComponent } from './shared/tags/tags';
 import { BadgeComponent } from './badge/badge';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DragScrollModule } from 'ngx-drag-scroll';
-import { Nip76SettingsComponent } from './nip76/nip76-settings/nip76-settings.component';
+import { Nip76MainComponent } from './nip76/nip76-settings/nip76-settings.component';
 import { AddChannelDialog } from './nip76/nip76-add-channel-dialog/add-channel-dialog.component';
 import { Nip76EventButtonsComponent } from './nip76/nip76-event-buttons/nip76-event-buttons.component';
 import { Nip76EventThreadComponent } from './nip76/nip76-event-thread/nip76-event-thread.component';
 import { Nip76ContentComponent } from './nip76/nip76-content/nip76-event-content.component';
 import { Nip76AddInvitationComponent } from './nip76/nip76-add-invitation/nip76-add-invitation.component';
 import { Nip76DiagnosticsComponent } from './nip76/nip76-diagnostics/nip76-diagnostics.component';
+import { Nip76ChannelHeaderComponent } from './nip76/nip76-channel/nip76-channel.component';
+import { Nip76ChannelNotesComponent } from './nip76/nip76-channel-notes/nip76-channel-notes.component';
+import { Nip76RsvpsSentComponent } from './nip76/nip76-rsvps-sent/nip76-rsvps-sent.component';
 
 @NgModule({
   declarations: [
@@ -251,13 +254,16 @@ import { Nip76DiagnosticsComponent } from './nip76/nip76-diagnostics/nip76-diagn
     BadgeCardComponent,
     TagsComponent,
     BadgeComponent,
-    Nip76SettingsComponent,
+    Nip76MainComponent,
     AddChannelDialog,
     Nip76EventButtonsComponent,
     Nip76EventThreadComponent,
     Nip76ContentComponent,
     Nip76AddInvitationComponent,
-    Nip76DiagnosticsComponent
+    Nip76DiagnosticsComponent,
+    Nip76ChannelHeaderComponent,
+    Nip76ChannelNotesComponent,
+    Nip76RsvpsSentComponent
   ],
   imports: [
     AboutModule,

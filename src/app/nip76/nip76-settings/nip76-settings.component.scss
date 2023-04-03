@@ -1,3 +1,14 @@
+:host {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.flex-height {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
 .menu-link {
     display: inline-block;
     padding-right: 16px;
@@ -62,7 +73,24 @@ li.instruction {
 
 .action-icon {
     margin-right: 4px;
-    cursor: pointer; 
-    font-size: 14px; 
+    cursor: pointer;
+    font-size: 14px;
     display: inline;
+}
+.top-menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+.top-menu-left {
+    display: flex;
+    flex-grow: 1;
+}
+
+.top-menu-right {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
 }

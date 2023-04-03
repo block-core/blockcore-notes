@@ -33,7 +33,7 @@ import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
-import { Nip76SettingsComponent } from './nip76/nip76-settings/nip76-settings.component';
+import { Nip76MainComponent } from './nip76/nip76-settings/nip76-settings.component';
 
 const routes: Routes = [
   {
@@ -142,15 +142,15 @@ const routes: Routes = [
   },
   {
     path: 'private-channels',
-    component: Nip76SettingsComponent,
+    component: Nip76MainComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,
     },
   },
   {
-    path: 'private-channels/following',
-    component: Nip76SettingsComponent,
+    path: 'private-channels/sent-rsvps',
+    component: Nip76MainComponent,
     canActivate: [AuthGuard],
     data: { tabIndex: 1 },
     resolve: {
@@ -158,17 +158,8 @@ const routes: Routes = [
     },
   },  
   {
-    path: 'private-channels/:channelPubKey/followers',
-    component: Nip76SettingsComponent,
-    data: { tabIndex: 2 },
-    canActivate: [AuthGuard],
-    resolve: {
-      data: LoadingResolverService,
-    },
-  },  
-  {
     path: 'private-channels/:channelPubKey/notes',
-    component: Nip76SettingsComponent,
+    component: Nip76MainComponent,
     canActivate: [AuthGuard],
     data: { tabIndex: 3 },
     resolve: {

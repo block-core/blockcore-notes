@@ -1,224 +1,73 @@
-<div mat-dialog-actions *ngIf="wallet" class="mat-dialog-actions" align="end">
-    <button *ngIf="wallet.isGuest"
-            class="rounded-button"  mat-flat-button color="secondary" (click)="randomizeKey()">Randomize</button>
-    <button *ngIf="wallet.isGuest"
-            class="rounded-button"  mat-flat-button color="primary" (click)="saveConfiguration()">Save Configuration</button>
-    <button *ngIf="!wallet.isGuest && wallet.isInSession"
-            class="rounded-button"  mat-flat-button color="secondary" (click)="previewChannel()">Preview a Channel</button>
-    <button *ngIf="!wallet.isGuest && !wallet.isInSession"
-            class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.login()">Start Secure Session</button>
-    <button *ngIf="wallet.isInSession"
-            class="rounded-button"  mat-flat-button color="primary" (click)="nip76Service.logout()">End Secure Session</button>
-</div>
-
-<div *ngIf="wallet?.isGuest" class="feed-page">
-    <p>NIP 76 Private Channels are not initialized for this profile yet.</p>
-    <p>To get started:</p>
-    <ol>
-        <li class="instruction">
-            <a class="action-link" (click)="randomizeKey()">Randomize</a> the keys. (OPTIONAL).
-        </li>
-        <li class="instruction">
-            <a class="action-link" (click)="saveConfiguration()">Save</a> it to begin using.
-        </li>
-    </ol>
-    <mat-card-content>               
-        <div *ngIf="editChannel">
-            <mat-form-field class="input-full-width" appearance="fill">
-                <mat-label>Index</mat-label>
-                <input matInput type="text" [value]="editChannel.dkxPost.signingParent.nostrPubKey" readonly/>
-            </mat-form-field>
-            <mat-form-field class="input-full-width">
-                <mat-label>Name</mat-label>
-                <input matInput type="text" [(ngModel)]="editChannel.content.name" />
-            </mat-form-field>
-            <mat-form-field class="input-full-width">
-                <mat-label>About</mat-label>
-                <input matInput type="text" [(ngModel)]="editChannel.content.about"/>
-            </mat-form-field>
-        </div>
-    </mat-card-content>    
-</div>
-
-<mat-tab-group  *ngIf="wallet?.isInSession" [selectedIndex]="tabIndex"  (selectedTabChange)="onTabChanged($event)" class="feed-page">
-    <mat-tab label="Manage Channels">
-        <div *ngIf="wallet.channels.length">
-            <div *ngFor="let channel of wallet.channels" [style.display]="!channel.ready ? 'none' : 'block'">
-                <mat-card class="settings-card" [class]="editChannel===channel ? 'edit': ''">
-                    <mat-card-content>
-                        <div class="events-header">
-                            <app-event-header [pubkey]="channel.ownerPubKey">
-                                <mat-icon matTooltip="Delete Channel RSVP" color="primary" class="action-icon" 
-                                         *ngIf="channel.invitation" (click)="deleteChannelRSVP(channel)" >delete</mat-icon>
-                                <small>{{channel.dkxPost.signingParent.nostrPubKey}}</small>
-                                <!-- <app-date [date]="channel.nostrEvent.created_at"></app-date> -->
-                            </app-event-header>
-                            <app-nip76-diagnostics [doc]="channel"></app-nip76-diagnostics>
-                            <!-- <app-event-actions [event]="channel.nostrEvent" [pubkey]="channel.nostrEvent.pubkey"></app-event-actions> -->
-                        </div>  
-                        <div mat-dialog-actions class="mat-dialog-actions">
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="cancelEdit()" *ngIf="editChannel===channel">Cancel</button>
-                            <button class="rounded-button"  mat-flat-button color="primary" (click)="saveChannel()" *ngIf="editChannel===channel" style="float:right;">Save</button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="editChannel=channel" *ngIf="channel.ownerPubKey===wallet.ownerPubKey && editChannel!==channel"> Edit </button>
-                            <button class="rounded-button"  mat-flat-button color="secondary" (click)="viewChannelFollowers(channel)" *ngIf="editChannel!==channel">RSVPs</button>
-                            <button class="rounded-button"  mat-flat-button color="primary" (click)="viewChannelNotes(channel)" *ngIf="editChannel!==channel" style="float:right;">View Notes</button>
-                        </div>                  
-                        <div *ngIf="editChannel!==channel">
-                            <div class="field-label">Name</div>
-                            <div>{{channel.content.name}}</div>
-                            <div class="field-label">About</div>
-                            <div>{{channel.content.about}}&nbsp;</div>
-                            <div *ngIf="channel.dkxInvite">
-                                <div class="field-label">Invitations
-                                    <mat-icon matTooltip="Add Invitation" color="primary" style="cursor: pointer;" (click)="nip76Service.addInvitation(channel)" >add_circle</mat-icon>
-                                </div>
-                                    <mat-card class="events" *ngFor="let invite of channel.invites" style="list-style: none;">
-                                        <a *ngIf="invite.content.password" class="label-only-anchor">
-                                            <span class="mat-mdc-tooltip-trigger">
-                                                Password Protected {{ !invite.content.cryptoParent ? " (Suspended)" : ""}}
-                                            </span>
-                                        </a>
-                                        <a *ngIf="!!invite.content.for && !invite.content.cryptoParent" class="label-only-anchor"
-                                            style="left:200px;">
-                                            <span class="mat-mdc-tooltip-trigger">
-                                                (Suspended)
-                                            </span>
-                                        </a>
-                                        <div class="events-header">
-                                            <app-event-header [pubkey]="invite.content.for||''" [displayName]="!!invite.content.for">
-                                                <mat-icon matTooltip="Copy Invitation" color="primary" class="action-icon"
-                                                    (click)="copyKeys(invite)">content_copy</mat-icon>
-                                                <mat-icon *ngIf="!invite.content.password && invite.rsvps.length" matTooltip="RSVP Accepted"
-                                                    class="action-icon" style="color:green;">verified_user</mat-icon>
-                                                <mat-icon matTooltip="Delete Invitation" color="primary" class="action-icon"
-                                                    *ngIf="invite.rsvps.length === 0" (click)="deleteInvitation(invite)">delete</mat-icon>
-                                                <mat-icon matTooltip="Suspend Invitation" color="primary" class="action-icon"
-                                                    *ngIf="invite.content.cryptoParent" (click)="nip76Service.resaveInvitation(channel,invite, false)">thumb_down</mat-icon>
-                                                <mat-icon matTooltip="Reinstate Invitation" color="primary" class="action-icon"
-                                                    *ngIf="!invite.content.cryptoParent" (click)="nip76Service.resaveInvitation(channel,invite, true)">thumb_up</mat-icon>
-                                                <small *ngIf="invite.rsvps.length">{{ createDate(invite.rsvps[0]) }}</small>
-                                            </app-event-header>
-                                            <app-nip76-diagnostics [doc]="invite"></app-nip76-diagnostics>
-                                        </div>
-                                        <div *ngIf="invite.content.password && invite.rsvps.length">
-                                            <mat-card class="events" *ngFor="let rsvp of invite.rsvps" style="list-style: none;">
-                                                <div class="events-header">
-                                                    <app-event-header [pubkey]="rsvp.content.pubkey">
-                                                        <mat-icon matTooltip="RSVP Accepted" class="action-icon" style="color:green;">verified_user</mat-icon>
-                                                        <small>{{ createDate(rsvp) }}</small>
-                                                    </app-event-header>
-                                                    <app-nip76-diagnostics [doc]="rsvp"></app-nip76-diagnostics>
-                                                </div>
-                                            </mat-card>
-                                        </div>
-                                    </mat-card>
-                            </div>
-                        </div>
-                        <div *ngIf="editChannel===channel">
-                            <mat-form-field class="input-full-width">
-                                <mat-label>Name</mat-label>
-                                <input matInput type="text" [(ngModel)]="editChannel.content.name" />
-                            </mat-form-field>
-                            <mat-form-field class="input-full-width">
-                                <mat-label>About</mat-label>
-                                <input matInput type="text" [(ngModel)]="editChannel.content.about"/>
-                            </mat-form-field>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </div>
-        <div mat-dialog-actions class="mat-dialog-actions" align="end">
-            <button *ngIf="wallet.isInSession"
-                    class="rounded-button"  mat-flat-button color="primary" (click)="addChannel()">Add Channel</button>
-        </div> 
-    </mat-tab>
-    <mat-tab label="RSVPs Sent">
-        <div *ngIf="wallet.rsvps.length === 0">No RSVPs Sent yet.</div>
-        <div *ngIf="wallet.rsvps.length > 0">
-            <mat-card class="events" *ngFor="let rsvp of wallet.rsvps" >
-                <a *ngIf="!rsvp.channel" class="label-only-anchor">
-                    <span class="mat-mdc-tooltip-trigger">
-                        Suspended
-                    </span>
-                </a>
-                <div class="events-header">
-                    <app-event-header [pubkey]="rsvp.channel?.ownerPubKey || 'unknown'">
-                        <mat-icon matTooltip="Delete RSVP" color="primary" class="action-icon" (click)="deleteRSVP(rsvp)" >delete</mat-icon>
-                        <small>{{ createDate(rsvp) }}</small>
-                    </app-event-header>
-                    <app-nip76-diagnostics [doc]="rsvp"></app-nip76-diagnostics>
-                </div>
-            </mat-card>
-        </div> 
-    </mat-tab>
-    <mat-tab label="RSVPs Received">
-        <div *ngIf="activeChannel" [style.padding]="8">
-            <div mat-dialog-actions class="mat-dialog-actions" align="end" style="margin-top: 10px;" >
-                <small>Private Thread {{activeChannel.dkxPost.signingParent.nostrPubKey}}</small><br>
-            </div>    
-            <div *ngIf="activeChannel.rsvps.length === 0">No RSVPs Received yet.</div>
-            <div *ngIf="activeChannel.rsvps.length > 0">
-                <mat-card class="events" *ngFor="let rsvp of activeChannel.rsvps" >
-                    <div class="events-header">
-                        <app-event-header [pubkey]="rsvp.content.pubkey">
-                            <mat-icon matTooltip="Delete RSVP" color="primary" class="action-icon" (click)="deleteRSVP(rsvp)" >delete</mat-icon>
-                            <small>{{ createDate(rsvp) }}</small>
-                        </app-event-header>
-                        <app-nip76-diagnostics [doc]="rsvp"></app-nip76-diagnostics>
-                    </div>
-                </mat-card>
-            </div>     
-        </div>
-    </mat-tab>
-    <mat-tab label="Notes">
-        <div *ngIf="activeChannel && tabIndex === 3" [style.padding]="8">
-            <div style="font-size: 8px;">Private Thread {{activeChannel.dkxPost.signingParent.nostrPubKey}}</div>
-            <div mat-dialog-actions class="mat-dialog-actions" style="margin-top: 10px;" >
-                <button class="rounded-button"  mat-flat-button color="primary" *ngIf="shouldRSVP(activeChannel)" (click)="rsvp(activeChannel)">RSVP</button>
-                <!-- <button class="rounded-button"  mat-flat-button color="secondary" (click)="copyKeys(activeChannel)">Copy Keys</button> -->
-                <img *ngIf="!showNoteForm" width="46" height="46" 
-                    (click)="showNoteForm=true" src="/assets/post.svg" class="new-post-button" style="float: right;" />
-            </div>
-            <form [formGroup]="noteForm" *ngIf="showNoteForm" (ngSubmit)="saveNote()">
-                <div mat-dialog-content class="mat-dialog-content">
-                    <mat-form-field class="input-full-width">
-                    <mat-label>What's on your mind?</mat-label>
-                    <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2"></textarea>
-                    </mat-form-field>            
-                    <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiNote($event)" title="Choose your emoji"></emoji-mart>
-                    <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
-                </div>
-                <div mat-dialog-actions class="mat-dialog-actions" align="end">
-                    <button mat-stroked-button type="button" (click)="showNoteForm=false" >Cancel</button>&nbsp;
-                    <button mat-flat-button type="submit" color="primary" [disabled]="!noteForm.valid || !activeChannel.ready">Publish Note</button>
-                </div>
-            </form>
-            <mat-card class="events" *ngFor="let post of activeChannel.posts; trackBy: trackByFn">
-                <div class="events-header">
-                    <app-event-header [pubkey]="post.ownerPubKey">
-                        <span class="event-date" [matTooltip]="post.nostrEvent.id!" matTooltipPosition="below">{{ post.nostrEvent.created_at | ago }}</span> 
-                        <app-directory-icon [pubkey]="post.nostrEvent.pubkey"></app-directory-icon>
-                        <mat-icon *ngIf="post.verified"  class="directory-icon" matTooltip="Verified" style="color: green;">verified_user</mat-icon>
-                    </app-event-header>
-                    <app-nip76-diagnostics [doc]="post"></app-nip76-diagnostics>
-                    <app-event-actions [event]="post.nostrEvent"></app-event-actions>
-                </div>
-                <app-nip76-content [post]="post"></app-nip76-content>
-                <div class="thread-reactions">
-                    <span class="thread-reaction" *ngFor="let item of post.reactionTracker | keyvalue"> {{ item.key }} {{ item.value }} </span>
-                </div>
-                <app-nip76-event-buttons [doc]="post"></app-nip76-event-buttons>
-                <app-nip76-event-thread [doc]="post"></app-nip76-event-thread>
-                </mat-card>
-            </div>        
-        </mat-tab>        
-    </mat-tab-group>
-    
-    <!-- <app-event-thread [event]="post.nostrEvent"></app-event-thread> -->
-<!--
-<div class="scrolling-content" infiniteScroll (scrollAction)="navigation.showMore()">
-    <div class="page">
+<div class="top-menu" *ngIf="wallet">
+    <div mat-dialog-actions class="top-menu-left">
+        <button *ngIf="wallet.isInSession && displayType !== DisplayType.ChannelList" class="rounded-button"
+            mat-flat-button color="primary" (click)="listChannels()" style="display: block;">
+            &lt; Channel List
+        </button>
+        <button *ngIf="wallet.isInSession && displayType !== DisplayType.SentRSVPs" class="rounded-button"
+            mat-flat-button color="secondary" (click)="sentRvps()" style="display: block;">
+            Sent RSVPs
+        </button>
+    </div>
+    <div mat-dialog-actions class="top-menu-right">
+        <button *ngIf="wallet.isGuest" class="rounded-button" mat-flat-button color="secondary"
+            (click)="randomizeKey()">Randomize</button>
+        <button *ngIf="wallet.isGuest" class="rounded-button" mat-flat-button color="primary"
+            (click)="saveConfiguration()">Save Configuration</button>
+        <button *ngIf="!wallet.isGuest && !wallet.isInSession" class="rounded-button" mat-flat-button color="primary"
+            (click)="nip76Service.login()">Start Secure Session</button>
+        <button *ngIf="!wallet.isGuest && wallet.isInSession && !activeChannelId" class="rounded-button" mat-flat-button
+            color="secondary" (click)="createChannel()">Create Channel</button>
+        <button *ngIf="!wallet.isGuest && wallet.isInSession" class="rounded-button" mat-flat-button color="secondary"
+            (click)="readInvitation()">Read Invitation</button>
+        <button *ngIf="wallet.isInSession" class="rounded-button" mat-flat-button color="primary"
+            (click)="nip76Service.logout()">End Secure Session</button>
     </div>
 </div>
--->
+<div *ngIf="wallet?.documentsIndex" class="flex-height">
+    <div [ngSwitch]="displayType" class="flex-height">
+        <div *ngSwitchCase="DisplayType.GuestUser">
+            <p>NIP 76 Private Channels are not initialized for this profile yet.</p>
+            <p>To get started:</p>
+            <ol>
+                <li class="instruction">
+                    <a class="action-link" (click)="randomizeKey()">Randomize</a> the keys. (OPTIONAL).
+                </li>
+                <li class="instruction">
+                    <a class="action-link" (click)="saveConfiguration()">Save</a> it to begin using.
+                </li>
+            </ol>
+            <div *ngIf="editChannel">
+                <mat-form-field class="input-full-width" appearance="fill">
+                    <mat-label>Index</mat-label>
+                    <input matInput type="text" [value]="editChannel.dkxPost.signingParent.nostrPubKey" readonly />
+                </mat-form-field>
+                <mat-form-field class="input-full-width">
+                    <mat-label>Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="editChannel.content.name" />
+                </mat-form-field>
+                <mat-form-field class="input-full-width">
+                    <mat-label>About</mat-label>
+                    <input matInput type="text" [(ngModel)]="editChannel.content.about" />
+                </mat-form-field>
+            </div>
+        </div>
+        <div *ngSwitchCase="DisplayType.ChannelList">
+            <mat-card class="settings-card" *ngFor="let channel of wallet.channels">
+                <mat-card-content>
+                    <div class="events-header">
+                        <app-nip76-channel [channel]="channel">
+                        </app-nip76-channel>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div *ngSwitchCase="DisplayType.SingleChannel" class="flex-height">
+            <app-nip76-channel [channel]="activeChannel!" [displayType]="'Notes'" [showDisplayOptions]="false">
+            </app-nip76-channel>
+        </div>
+        <div *ngSwitchCase="DisplayType.SentRSVPs">
+            <app-nip76-rsvps-sent></app-nip76-rsvps-sent>
+        </div>
+    </div>
+</div>

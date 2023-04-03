@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Nip76MainComponent } from './nip76-settings.component';
+import { Nip76RsvpsSentComponent } from './nip76-rsvps-sent.component';
 
-describe('PrivateThreadsComponent', () => {
-  let component: Nip76MainComponent;
-  let fixture: ComponentFixture<Nip76MainComponent>;
+describe('Nip76RsvpsSentComponent', () => {
+  let component: Nip76RsvpsSentComponent;
+  let fixture: ComponentFixture<Nip76RsvpsSentComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ Nip76MainComponent ]
+      declarations: [ Nip76RsvpsSentComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Nip76MainComponent);
+    fixture = TestBed.createComponent(Nip76RsvpsSentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

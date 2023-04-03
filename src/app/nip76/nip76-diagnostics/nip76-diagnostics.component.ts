@@ -39,7 +39,8 @@ export class Nip76DiagnosticsComponent {
     this.diagType = DiagType.Event;
   }
 
-  @HostListener('mouseenter') onMouseEnter() {
+  @HostListener('mouseenter')
+  onMouseEnter() {
     this.timer = setTimeout(() => {
 
       let x = this.diagButton.nativeElement.getBoundingClientRect().left + this.diagButton.nativeElement.offsetWidth / 2;
@@ -54,11 +55,18 @@ export class Nip76DiagnosticsComponent {
         y = document.scrollingElement!.scrollHeight - diagHeight;
         this.diagCard.nativeElement.style.top = y + 'px';
       }
+      const sidNavWidth = parseInt((document.getElementsByClassName('mat-sidenav-content')[0] as any).style.marginLeft);
+      const diagWidth = 600;
+      if (x - diagWidth < sidNavWidth) {
+        x = sidNavWidth;
+        this.diagCard.nativeElement.style.left = x + 'px';
+      }
 
     }, this.delay)
   }
 
-  @HostListener('mouseleave') onMouseLeave() {
+  @HostListener('mouseleave')
+  onMouseLeave() {
     if (this.timer) clearTimeout(this.timer);
     this.timer = undefined;
     if (!this.keepOpen)

@@ -254,6 +254,9 @@ header {
   overscroll-behavior-y: contain;
   overflow-x: hidden;
   overflow-y: overlay !important;
+  
+  flex-direction: column;
+  display: flex;
 }
 
 .app-mediaplayer {

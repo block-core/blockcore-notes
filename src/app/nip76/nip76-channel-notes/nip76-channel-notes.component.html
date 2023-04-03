@@ -1,0 +1,41 @@
+<div mat-dialog-actions class="mat-dialog-actions top-menu-right">
+    <button class="rounded-button" mat-flat-button color="primary" *ngIf="shouldRSVP(channel)"
+        (click)="rsvp(channel)">RSVP</button>
+    <img *ngIf="!showNoteForm" width="46" height="46" (click)="showNoteForm=true" src="/assets/post.svg"
+        class="new-post-button" style="float: right;" />
+</div>
+<form [formGroup]="noteForm" *ngIf="showNoteForm" (ngSubmit)="saveNote()" style="padding: 8px;">
+    <div mat-dialog-content class="mat-dialog-content">
+        <mat-form-field class="input-full-width">
+        <mat-label>What's on your mind?</mat-label>
+        <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2"></textarea>
+        </mat-form-field>            
+        <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiNote($event)" title="Choose your emoji"></emoji-mart>
+        <mat-icon class="toolbar-icon margin-right" (click)="isEmojiPickerVisible = !isEmojiPickerVisible;" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+    </div>
+    <div mat-dialog-actions class="mat-dialog-actions" align="end">
+        <button mat-stroked-button type="button" (click)="showNoteForm=false" >Cancel</button>&nbsp;
+        <button mat-flat-button type="submit" color="primary" [disabled]="!noteForm.valid || !channel.ready">Publish Note</button>
+    </div>
+</form>  
+<div class="notes-wrapper">
+    <mat-card class="note-card" *ngFor="let post of channel.posts; trackBy: trackByFn">
+        <div class="events-header">
+            <app-event-header [pubkey]="post.ownerPubKey">
+                <span class="event-date" [matTooltip]="post.nostrEvent.id!" matTooltipPosition="below">{{
+                    post.nostrEvent.created_at | ago }}</span>
+                <app-directory-icon [pubkey]="post.nostrEvent.pubkey"></app-directory-icon>
+                <mat-icon *ngIf="post.verified" class="directory-icon" matTooltip="Verified"
+                    style="color: green;">verified_user</mat-icon>
+            </app-event-header>
+            <app-nip76-diagnostics [doc]="post"></app-nip76-diagnostics>
+        </div>
+        <app-nip76-content [post]="post"></app-nip76-content>
+        <div class="thread-reactions">
+            <span class="thread-reaction" *ngFor="let item of post.reactionTracker | keyvalue"> {{ item.key }}
+                {{ item.value }} </span>
+        </div>
+        <app-nip76-event-buttons [doc]="post"></app-nip76-event-buttons>
+        <app-nip76-event-thread [doc]="post"></app-nip76-event-thread>
+    </mat-card>
+</div>

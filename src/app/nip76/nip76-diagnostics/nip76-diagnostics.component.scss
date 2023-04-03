@@ -1,3 +1,7 @@
+:host {
+    height: 0px;
+}
+
 .diagnostics {
     position: fixed;
     z-index: 500;
@@ -6,9 +10,9 @@
     overflow: hidden;
     background-color: white;
     padding: 8px;
-    box-shadow: 0 4px 1px -1px rgba(0,0,0,.5), 
-    0 1px 1px 0 rgba(0,0,0,.5), 
-    0 1px 6px 0 rgba(0,0,0,.5);
+    box-shadow: 0 4px 1px -1px rgba(0, 0, 0, .5),
+        0 1px 1px 0 rgba(0, 0, 0, .5),
+        0 1px 6px 0 rgba(0, 0, 0, .5);
 }
 
 .action-button-icon.active {
@@ -24,13 +28,14 @@
     padding: 4px;
     overflow-wrap: break-word;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 12px; 
-    white-space: pre-wrap; 
+    font-size: 12px;
+    white-space: pre-wrap;
 }
 
 ::ng-deep .json-content b {
-    color:blue;
+    color: blue;
 }
+
 .copy-json-button {
     display: inline;
     position: relative;

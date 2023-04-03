@@ -1,0 +1,20 @@
+<div *ngIf="wallet.rsvps.length === 0">No RSVPs Sent yet.</div>
+<div *ngIf="wallet.rsvps.length > 0">
+    <mat-card class="events" *ngFor="let rsvp of wallet.rsvps" >
+        <a *ngIf="!rsvp.channel" class="label-only-anchor">
+            <span class="mat-mdc-tooltip-trigger">
+                Suspended
+            </span>
+        </a>
+        <div class="events-header">
+            <app-event-header [pubkey]="rsvp.channel?.ownerPubKey || 'unknown'">
+                <mat-icon matTooltip="Delete RSVP" color="primary" class="action-icon" (click)="deleteRSVP(rsvp)" >delete</mat-icon>
+                <div class="byline">
+                    {{ rsvp.nostrEvent.created_at *1000 | date: 'yyyy-MM-dd HH:mm:ss' }}
+                </div>
+
+            </app-event-header>
+            <app-nip76-diagnostics [doc]="rsvp"></app-nip76-diagnostics>
+        </div>
+    </mat-card>
+</div> 
