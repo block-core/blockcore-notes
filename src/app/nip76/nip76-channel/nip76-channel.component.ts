@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { ContentDocument, Invitation, Nip76Wallet, PostDocument, PrivateChannel, Rsvp } from 'animiq-nip76-tools';
 import { CircleService } from 'src/app/services/circle';
 import { Circle, NostrProfileDocument } from 'src/app/services/interfaces';
@@ -37,7 +38,8 @@ export class Nip76ChannelHeaderComponent {
     private profiles: ProfileService,
     private circleService: CircleService,
     private snackBar: MatSnackBar,
-    public nip76Service: Nip76Service
+    public nip76Service: Nip76Service,
+    private router: Router
   ) { }
 
   @Input()
@@ -74,7 +76,7 @@ export class Nip76ChannelHeaderComponent {
   }
 
   get isOwner(): boolean {
-    return this.channel.ownerPubKey === this.wallet.ownerPubKey;
+    return !!this.channel.dkxPost.signingParent.privateKey;
   }
 
   async updateProfileDetails() {
@@ -83,6 +85,10 @@ export class Nip76ChannelHeaderComponent {
       this.profileName = this.profile.display_name || this.profile.name || this.profileName;
       this.circle = await this.circleService.get(this.profile.circle);
     }
+  }
+
+  viewNotes() {
+    this.router.navigate(['/private-channels', this.pubkey, 'notes'])
   }
 
   async saveChannel() {
@@ -102,12 +108,12 @@ export class Nip76ChannelHeaderComponent {
   async deleteRSVP(rsvp: Rsvp) {
     const privateKey = await this.nip76Service.passwordDialog('Delete RSVP');
     if (privateKey) {
-      const channelRsvp = rsvp.channel?.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey && x.content.pointerDocIndex === rsvp.content.pointerDocIndex);
+      const walletRsvp = this.wallet.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey && x.content.pointerDocIndex === rsvp.content.pointerDocIndex);
       if (await this.nip76Service.deleteDocument(rsvp, privateKey)) {
         rsvp.dkxParent.documents.splice(rsvp.dkxParent.documents.indexOf(rsvp), 1);
-        if (channelRsvp) {
-          if (await this.nip76Service.deleteDocument(channelRsvp, privateKey)) {
-            channelRsvp.dkxParent.documents.splice(channelRsvp.dkxParent.documents.indexOf(channelRsvp), 1);
+        if (walletRsvp) {
+          if (await this.nip76Service.deleteDocument(walletRsvp, privateKey)) {
+            walletRsvp.dkxParent.documents.splice(walletRsvp.dkxParent.documents.indexOf(walletRsvp), 1);
           }
         }
       }

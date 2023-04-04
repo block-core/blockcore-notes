@@ -8,9 +8,9 @@ import {
   Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset
 } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
-import { filter, firstValueFrom, Subject } from 'rxjs';
+import { filter, firstValueFrom, Subject, take } from 'rxjs';
 import { DataService } from '../services/data';
-import { NostrEvent, NostrRelaySubscription } from '../services/interfaces';
+import { NostrEvent, NostrProfileDocument, NostrRelaySubscription } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { RelayService } from '../services/relay';
 import { SecurityService } from '../services/security';
@@ -38,6 +38,7 @@ export class Nip76Service {
 
   wallet!: Nip76Wallet;
   documentsSubscription?: NostrRelaySubscription;
+  profile!: NostrProfileDocument;
 
   constructor(
     private dialog: MatDialog,
@@ -48,16 +49,17 @@ export class Nip76Service {
     private dataService: DataService,
     private ui: UIService
   ) {
-    if (this.profileService.profile) {
-      Nip76WebWalletStorage.fromStorage({ publicKey: this.profileService.profile!.pubkey }).then(wallet => {
+    this.profileService.profile$.pipe(filter(x => !!x), take(1)).subscribe(profile => {
+      this.profile = profile!;
+      Nip76WebWalletStorage.fromStorage({ publicKey: profile!.pubkey }).then(wallet => {
         this.wallet = wallet;
         if (this.wallet.isInSession) {
-          this.loadDocuments();
+          setTimeout(() => { this.loadDocuments(); }, 500);
         } else if (!this.wallet.isGuest) {
           this.login();
         }
       });
-    }
+    });
   }
 
   async passwordDialog(actionPrompt: string): Promise<string> {

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Nip76Wallet, PrivateChannel } from 'animiq-nip76-tools';
+import { Nip76Wallet, Nip76WebWalletStorage, PrivateChannel } from 'animiq-nip76-tools';
 import { ApplicationState } from '../../services/applicationstate';
 import { NavigationService } from '../../services/navigation';
 import { UIService } from '../../services/ui';
-import { Nip76Service } from '../nip76.service';
+import { defaultSnackBarOpts, Nip76Service } from '../nip76.service';
 
 enum DisplayType {
   GuestUser = 'GuestUser',
@@ -21,9 +21,8 @@ enum DisplayType {
 export class Nip76MainComponent {
 
   DisplayType = DisplayType;
-  editChannel?: PrivateChannel;
   activeChannelId!: string | null;
-
+  showHelp = false;
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -38,6 +37,9 @@ export class Nip76MainComponent {
     this.activatedRoute.paramMap.subscribe(async (params) => {
       this.activeChannelId = params.get('channelPubKey');
     });
+    setTimeout(() => {
+      this.showHelp = this.wallet?.isInSession && this.wallet?.channels?.length === 0;
+    }, 3000);
   }
 
   get displayType(): DisplayType {
@@ -48,8 +50,8 @@ export class Nip76MainComponent {
         const channel = this.nip76Service.findChannel(this.activeChannelId);
         if (channel) {
           return DisplayType.SingleChannel;
-        } 
-      } if( this.router.url.endsWith('/sent-rsvps')) {
+        }
+      } if (this.router.url.endsWith('/sent-rsvps')) {
         return DisplayType.SentRSVPs;
       } else {
         return DisplayType.ChannelList;
@@ -74,19 +76,20 @@ export class Nip76MainComponent {
     return undefined;
   }
 
-  randomizeKey() {
-    // this.wallet.reKey();
-    this.editChannel = this.wallet.channels[0];
-    this.editChannel.editing = true;
-    this.editChannel.content.name = 'Example Channel 1';
-    this.editChannel.content.about = 'My First Private Channel 1';
-    this.editChannel.ready = true;
+  async initPrivateChannels() {
+    const publicKey = this.nip76Service.profile.pubkey;
+    const privateKey = await this.nip76Service.passwordDialog('Create an HD Wallet');
+    this.nip76Service.wallet = await Nip76WebWalletStorage.fromStorage({ publicKey, privateKey });
+    this.nip76Service.wallet.saveWallet(privateKey);
+    location.reload();
   }
 
-  async saveConfiguration() {
-    const savedLocal = await this.nip76Service.saveWallet();
-    const savedRemote = await this.nip76Service.saveChannel(this.editChannel!);
-    location.reload();
+  copyDemoInvitation(name: 'Alice') {
+    const invitation = {
+      'Alice': 'nprivatechan1z5ay69wdt282c54z0m5rnmvqmr5elgsadczlkn5j50d7r2mtll8klfcxm76rzg90eqjdep70c88wur2sgvw0qt90vt3jw9lfser66hkcwywjxqudzfws20zyex2pktzmfjk0hpdehu9d4swanmcsckayfxrr0wgyvzm0j6'
+    }[name];
+    navigator.clipboard.writeText(invitation);
+    this.snackBar.open(`The invitation is now in your clipboard. Click Read Invitation and paste it there.`, 'Hide', defaultSnackBarOpts);
   }
 
   async readInvitation() {
@@ -100,7 +103,6 @@ export class Nip76MainComponent {
   createChannel() {
     let newChannel = this.wallet.createChannel();
     newChannel.ready = newChannel.editing = true;
-    this.editChannel = newChannel;
     this.router.navigate(['/private-channels']);
   }
 

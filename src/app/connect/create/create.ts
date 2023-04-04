@@ -7,6 +7,7 @@ import { ThemeService } from '../../services/theme';
 import { ProfileService } from '../../services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
+import { Nip76DemoService } from 'src/app/nip76/demo-only/nip76-demo.service';
 
 @Component({
   selector: 'app-create',
@@ -31,7 +32,8 @@ export class CreateProfileComponent {
     private authService: AuthenticationService,
     public theme: ThemeService,
     private router: Router,
-    private security: SecurityService
+    private security: SecurityService,
+    private nip76DemoService: Nip76DemoService
   ) {}
 
   ngOnInit() {
@@ -65,16 +67,19 @@ export class CreateProfileComponent {
       if (!this.privateKeyHex) {
         return;
       }
-
+      
       if (!this.publicKeyHex) {
         return;
       }
-
+      
       // First attempt to get public key from the private key to see if it's possible:
       const encrypted = await this.security.encryptData(this.privateKeyHex, this.password);
       const decrypted = await this.security.decryptData(encrypted, this.password);
-
+      
       if (this.privateKeyHex == decrypted) {
+        
+        await this.nip76DemoService.createNip76Wallet(this.publicKeyHex, this.privateKeyHex);
+
         localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
         localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);
 

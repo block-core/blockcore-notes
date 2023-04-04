@@ -61,7 +61,7 @@ export class Nip76ChannelNotesComponent {
   }
 
   shouldRSVP(channel: PrivateChannel) {
-    if (channel.ownerPubKey === this.wallet.ownerPubKey) return false;
+    if (channel.dkxPost.signingParent.privateKey) return false;
     if (channel.invitation?.pointer?.docIndex !== undefined) {
       const huh = this.wallet.rsvps.filter(x => x.content.pointerDocIndex === channel.invitation?.pointer.docIndex);
       return huh.length === 0;

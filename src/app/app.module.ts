@@ -163,7 +163,7 @@ import { Nip76DiagnosticsComponent } from './nip76/nip76-diagnostics/nip76-diagn
 import { Nip76ChannelHeaderComponent } from './nip76/nip76-channel/nip76-channel.component';
 import { Nip76ChannelNotesComponent } from './nip76/nip76-channel-notes/nip76-channel-notes.component';
 import { Nip76RsvpsSentComponent } from './nip76/nip76-rsvps-sent/nip76-rsvps-sent.component';
-import { Nip76DemoAuthGuardService } from './nip76/demo-only/auth-guard';
+import { Nip76DemoService } from './nip76/demo-only/nip76-demo.service';
 import { Nip76DemoStarterComponent, Nip76DemoCreateComponent, Nip76DemoKeyComponent } from './nip76/demo-only/nip76-demo-starter/nip76-demo-starter.component';
 
 @NgModule({
@@ -348,7 +348,7 @@ import { Nip76DemoStarterComponent, Nip76DemoCreateComponent, Nip76DemoKeyCompon
     }),
   ],
   exports: [],
-  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } }, AuthGuardService, AppUpdateService, CheckForUpdateService, ChatService, UserService, Nip76DemoAuthGuardService],
+  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } }, AuthGuardService, AppUpdateService, CheckForUpdateService, ChatService, UserService, Nip76DemoService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

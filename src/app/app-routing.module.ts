@@ -34,7 +34,7 @@ import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
 import { Nip76MainComponent } from './nip76/nip76-main/nip76-main.component';
-import { Nip76DemoAuthGuardService } from './nip76/demo-only/auth-guard';
+import { Nip76DemoService } from './nip76/demo-only/nip76-demo.service';
 import { Nip76DemoStarterComponent } from './nip76/demo-only/nip76-demo-starter/nip76-demo-starter.component';
 
 const routes: Routes = [
@@ -145,7 +145,7 @@ const routes: Routes = [
   {
     path: 'private-channels',
     component: Nip76MainComponent,
-    canActivate: [Nip76DemoAuthGuardService],
+    canActivate: [Nip76DemoService],
     resolve: {
       data: LoadingResolverService,
     },

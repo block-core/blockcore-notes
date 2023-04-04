@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
 import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
+import { Nip76DemoService } from 'src/app/nip76/demo-only/nip76-demo.service';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 import { QrScanDialog } from './qr-scan-dialog/qr-scan';
@@ -22,7 +23,8 @@ export class ConnectKeyComponent {
   step = 1;
   mnemonic: string = '';
 
-  constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {}
+  constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService,
+    private nip76DemoService: Nip76DemoService) {}
 
   setPrivateKey() {
     this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
@@ -43,7 +45,7 @@ export class ConnectKeyComponent {
 
   async persistKey() {
     // this.hidePrivateKey = true;
-
+    
     setTimeout(async () => {
       if (!this.privateKeyHex) {
         return;
@@ -56,8 +58,11 @@ export class ConnectKeyComponent {
       // First attempt to get public key from the private key to see if it's possible:
       const encrypted = await this.security.encryptData(this.privateKeyHex, this.password);
       const decrypted = await this.security.decryptData(encrypted, this.password);
-
+      
       if (this.privateKeyHex == decrypted) {
+        
+        await this.nip76DemoService.createNip76Wallet(this.publicKeyHex, this.privateKeyHex);
+
         localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
         localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);
 

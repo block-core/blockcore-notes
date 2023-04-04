@@ -41,7 +41,7 @@
         </button>
         <button class="tablike-button" mat-flat-button (click)="displayType = DisplayType.RSVPs"
             [color]="displayType === DisplayType.RSVPs ? 'primary' : 'secondary'"> RSVPs </button>
-        <button class="tablike-button" mat-flat-button (click)="displayType = DisplayType.Notes"
+        <button class="tablike-button" mat-flat-button (click)="viewNotes()"
             [color]="displayType === DisplayType.Notes ? 'primary' : 'secondary'"> Notes </button>
     </div>
 </div>

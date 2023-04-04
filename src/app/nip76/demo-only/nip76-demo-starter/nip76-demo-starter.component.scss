@@ -1,9 +1,28 @@
 .intro {
     position: absolute;
-    top: 130px;
-    left: 245px;
+    top: 86px;
+    padding: 8px;
+    left: 198px;
     z-index: 1000;
-    width: 697px;
-    font-weight: bold;
-    background-color: white;
+    width: 66%;
+    background-color: floralwhite;
+    border-radius: 20px;
+}
+
+.menubar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.menubar-button {
+    display: flex;
+}
+
+.action-link {
+    cursor: pointer;
+}
+
+p {
+    margin: 4px 0px;
 }

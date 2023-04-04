@@ -25,9 +25,6 @@
       "dom"
     ],
     "paths": {
-      "animiq-lib": [
-        "../../animiq-lib/dist/animiq-lib"
-      ],
       "animiq-nip76-tools": [
         "../../animiq-nip76-tools/dist/"
       ],
