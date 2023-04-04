@@ -8,7 +8,7 @@ import {
   Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset
 } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
-import { firstValueFrom, Subject } from 'rxjs';
+import { filter, firstValueFrom, Subject } from 'rxjs';
 import { DataService } from '../services/data';
 import { NostrEvent, NostrRelaySubscription } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -48,16 +48,16 @@ export class Nip76Service {
     private dataService: DataService,
     private ui: UIService
   ) {
-    Nip76WebWalletStorage.fromStorage({ publicKey: this.profileService.profile!.pubkey }).then(wallet => {
-      this.wallet = wallet;
-      if (this.wallet.isInSession) {
-        // Array(4).forEach((_, i) => wallet.getChannel(i));
-        // this.loadChannel(wallet.channels[0]);
-        this.loadDocuments();
-      } else if (!this.wallet.isGuest) {
-        this.login();
-      }
-    });
+    if (this.profileService.profile) {
+      Nip76WebWalletStorage.fromStorage({ publicKey: this.profileService.profile!.pubkey }).then(wallet => {
+        this.wallet = wallet;
+        if (this.wallet.isInSession) {
+          this.loadDocuments();
+        } else if (!this.wallet.isGuest) {
+          this.login();
+        }
+      });
+    }
   }
 
   async passwordDialog(actionPrompt: string): Promise<string> {
@@ -94,8 +94,6 @@ export class Nip76Service {
     const privateKey = await this.passwordDialog('Load Private Channel Keys');
     this.wallet = await Nip76WebWalletStorage.fromStorage({ privateKey });
     if (this.wallet.isInSession) {
-      // Array(4).forEach((_, i) => this.wallet.getChannel(i));
-      // this.loadChannel(this.wallet.channels[0]);
       this.loadDocuments();
     }
     return this.wallet.isInSession;

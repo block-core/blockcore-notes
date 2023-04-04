@@ -75,7 +75,7 @@ export class Nip76MainComponent {
   }
 
   randomizeKey() {
-    this.wallet.reKey();
+    // this.wallet.reKey();
     this.editChannel = this.wallet.channels[0];
     this.editChannel.editing = true;
     this.editChannel.content.name = 'Example Channel 1';

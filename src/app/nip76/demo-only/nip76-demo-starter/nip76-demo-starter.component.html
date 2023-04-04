@@ -1,0 +1,18 @@
+<div class="intro">
+    Thanks for coming to checkout the Nip76 Private Channels Demo.
+    <p>
+        Feel free to use your own private nostr key, but we understand why many users would below hesitant
+        about doing this. 
+    </p>
+    <p>
+        So feel free to use a demo profile like
+        <a (click)="copyKey('Alice')">Alice</a> or <a (click)="copyKey('Bob')">Bob</a>, 
+        or create an entirely new user.
+    </p>
+    <button class="tablike-button" mat-flat-button (click)="demoUserType = 'existing'"
+        [color]="demoUserType === 'existing' ? 'primary' : 'secondary'"> Existing User </button>
+    <button class="tablike-button" mat-flat-button (click)="demoUserType = 'new'"
+        [color]="demoUserType === 'new' ? 'primary' : 'secondary'"> New User </button>
+</div>
+<nip76-demo-key *ngIf="demoUserType === 'existing'"></nip76-demo-key>
+<nip76-demo-create *ngIf="demoUserType === 'new'"></nip76-demo-create>
