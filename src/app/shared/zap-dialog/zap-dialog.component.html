@@ -1,112 +1,111 @@
 <div mat-dialog-content>
   <div class="profile-container">
     <div class="icon icon-small">
-      <img
-        onerror="this.src='/assets/profile.png'"
-        *ngIf="profile?.status == 1 || profile?.status == 2"
-        class="profile-image profile-image-follow"
-        [matTooltip]="tooltip"
-        matTooltipPosition="above"
-        [src]="imagePath"
-      />
+      <img onerror="this.src='/assets/profile.png'" *ngIf="profile?.status == 1 || profile?.status == 2" class="profile-image profile-image-follow" [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
       <img loading="lazy" onerror="this.src='/assets/profile.png'" *ngIf="profile?.status != 1 && profile?.status != 2" class="profile-image" [matTooltip]="tooltip" matTooltipPosition="above" [src]="imagePath" />
     </div>
     <div class="name clickable">
       <span [class.muted]="profile.status == 2" [matTooltip]="tooltipName" matTooltipPosition="above">{{ profileName }}</span>
     </div>
   </div>
-  <div class="emoji-container">
-    <div class="emoji-button">
-      <button (click)="setAmount(500)" class="thumb-up-btn" mat-icon-button color="primary">
-        <mat-icon>thumb_up</mat-icon><span class="emoji-number">500</span>
-      </button>
+
+  <div *ngIf="canZap && loading" class="centered">Fetching invoice...</div>
+
+  <div *ngIf="!canZap">Unable to send Zap to {{ profileName }}. Their profile does not have any lightning payment address, please let them know so you can zap them in the future.</div>
+
+  <div *ngIf="canZap && !loading">
+    <div class="emoji-container">
+      <div class="emoji-button">
+        <button (click)="setAmount(50)" class="thumb-up-btn" mat-icon-button color="primary"><mat-icon>thumb_up</mat-icon><span class="emoji-number">50</span></button>
+      </div>
+      <div class="emoji-button">
+        <button (click)="setAmount(100)" class="favorite-btn" mat-icon-button color="primary"><mat-icon>favorite</mat-icon><span class="emoji-number">100</span></button>
+      </div>
+      <div class="emoji-button">
+        <button (click)="setAmount(500)" class="applause-btn" mat-icon-button color="primary"><mat-icon>sentiment_very_satisfied</mat-icon><span class="emoji-number">500</span></button>
+      </div>
     </div>
-    <div class="emoji-button">
-      <button (click)="setAmount(1000)" class="favorite-btn" mat-icon-button color="primary">
-        <mat-icon>favorite</mat-icon><span class="emoji-number">1k</span>
-      </button>
+
+    <div class="emoji-container">
+      <div class="emoji-button">
+        <button (click)="setAmount(1000)" class="thumb-up-btn" mat-icon-button color="primary"><mat-icon>star</mat-icon><span class="emoji-number">1k</span></button>
+      </div>
+      <div class="emoji-button">
+        <button (click)="setAmount(5000)" class="favorite-btn" mat-icon-button color="primary"><mat-icon>celebration</mat-icon><span class="emoji-number">5k</span></button>
+      </div>
+      <div class="emoji-button">
+        <button (click)="setAmount(10000)" class="applause-btn" mat-icon-button color="primary"><mat-icon>rocket</mat-icon><span class="emoji-number">10k</span></button>
+      </div>
     </div>
-    <div class="emoji-button">
-      <button (click)="setAmount(10000)" class="applause-btn" mat-icon-button color="primary">
-        <mat-icon>rocket</mat-icon><span class="emoji-number">10k</span>
-      </button>
+
+    <div class="emoji-container">
+      <div class="emoji-button">
+        <button (click)="setAmount(100_000)" class="thumb-up-btn" mat-icon-button color="primary"><mat-icon>whatshot</mat-icon><span class="emoji-number">100k</span></button>
+      </div>
+      <div class="emoji-button">
+        <button (click)="setAmount(500_000)" class="favorite-btn" mat-icon-button color="primary"><mat-icon>flash_on</mat-icon><span class="emoji-number"> 500k</span></button>
+      </div>
+      <div class="emoji-button">
+        <button (click)="setAmount(1_000_000)" class="applause-btn" mat-icon-button color="primary"><mat-icon>diamond</mat-icon><span class="emoji-number">1M</span></button>
+      </div>
     </div>
+
+    <form [formGroup]="sendZapForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Zap Amount</mat-label>
+            <input type="number" matInput formControlName="amount" [(ngModel)]="amount" placeholder="Enter Zap Amount" step="1" required />
+            <mat-error *ngIf="sendZapForm.get('amount')?.invalid">
+              <ng-container
+                [ngTemplateOutlet]="minSendable > 0 && maxSendable > 0 ? first : minSendable > 0 && maxSendable == 0 ? second : minSendable == 0 && maxSendable > 0 ? third : maxSendable > 0 ? forth : maxSendable <= 0 ? fifth : sixth"
+              >
+              </ng-container>
+
+              <ng-template #first
+                ><span>Please enter an amount between {{ minSendable }} and {{ maxSendable }}.</span></ng-template
+              >
+              <ng-template #second>The minimum amount you can send is {{ minSendable }}.</ng-template>
+              <ng-template #third>The maximum amount you can send is {{ maxSendable }}.</ng-template>
+              <ng-template #forth>The maximum amount you can send is {{ maxSendable }}.</ng-template>
+              <ng-template #fifth>The maximum amount you can send is {{ maxSendable }}.</ng-template>
+              <ng-template #sixth>Please enter a valid amount.</ng-template>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Comment</mat-label>
+            <input matInput type="text" formControlName="comment" placeholder="Enter Comment" />
+            <mat-error *ngIf="sendZapForm.get('comment')?.invalid"> Please enter a comment. </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div mat-dialog-actions class="d-flex justify-content-between">
+        <div style="margin-right: 10px">
+          <button mat-stroked-button mat-dialog-close color="primary">Cancel</button>
+        </div>
+        <div>
+          <button mat-raised-button color="primary" class="zap-button" [disabled]="sendZapForm.invalid">
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M8.8333 1.70166L1.41118 10.6082C1.12051 10.957 0.975169 11.1314 0.972948 11.2787C0.971017 11.4068 1.02808 11.5286 1.12768 11.6091C1.24226 11.7017 1.46928 11.7017 1.92333 11.7017H7.99997L7.16663 18.3683L14.5888 9.46178C14.8794 9.11297 15.0248 8.93857 15.027 8.79128C15.0289 8.66323 14.9719 8.54141 14.8723 8.46092C14.7577 8.36833 14.5307 8.36833 14.0766 8.36833H7.99997L8.8333 1.70166Z"
+                stroke="currentColor"
+                stroke-width="1.66667"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+            <span> Zap {{ sendZapForm.value.amount }}</span>
+          </button>
+        </div>
+      </div>
+
+      <mat-error *ngIf="error">
+        {{ error }}
+      </mat-error>
+    </form>
   </div>
-  
-
-
-  <form [formGroup]="sendZapForm" (ngSubmit)="onSubmit()" novalidate>
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Zap Amount</mat-label>
-          <input
-            type="number"
-            matInput
-            formControlName="amount"
-            [(ngModel)]="amount"
-            placeholder="Enter Zap Amount"
-            step="1"
-            required
-          />
-          <mat-error *ngIf="sendZapForm.get('amount')?.invalid">
-            <ng-container [ngTemplateOutlet]="minSendable > 0 && maxSendable > 0 ? first : 
-              minSendable > 0 && maxSendable == 0 ? second : 
-              minSendable == 0 && maxSendable > 0 ? third :
-              maxSendable > 0 ? forth : 
-              maxSendable <= 0 ? fifth : sixth">
-            </ng-container>
-
-            <ng-template #first><span>Please enter an amount between {{minSendable}} and {{maxSendable}}.</span></ng-template>
-            <ng-template #second>The minimum amount you can send is {{minSendable}}.</ng-template>
-            <ng-template #third>The maximum amount you can send is {{maxSendable}}.</ng-template>
-            <ng-template #forth>The maximum amount you can send is {{maxSendable}}.</ng-template>
-            <ng-template #fifth>The maximum amount you can send is {{maxSendable}}.</ng-template>
-            <ng-template #sixth>Please enter a valid amount.</ng-template>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Comment</mat-label>
-          <input
-            matInput
-            type="text"
-            formControlName="comment"
-            placeholder="Enter Comment"
-          />
-          <mat-error *ngIf="sendZapForm.get('comment')?.invalid">
-            Please enter a comment.
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-    <div mat-dialog-actions class="d-flex justify-content-between">
-      <div style="margin-right: 10px;">
-        <button mat-stroked-button mat-dialog-close color="primary">Cancel</button>
-      </div>
-      <div>
-        <button
-          mat-raised-button
-          color="primary"
-          class="zap-button"
-          [disabled]="sendZapForm.invalid"
-        >
-          <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8.8333 1.70166L1.41118 10.6082C1.12051 10.957 0.975169 11.1314 0.972948 11.2787C0.971017 11.4068 1.02808 11.5286 1.12768 11.6091C1.24226 11.7017 1.46928 11.7017 1.92333 11.7017H7.99997L7.16663 18.3683L14.5888 9.46178C14.8794 9.11297 15.0248 8.93857 15.027 8.79128C15.0289 8.66323 14.9719 8.54141 14.8723 8.46092C14.7577 8.36833 14.5307 8.36833 14.0766 8.36833H7.99997L8.8333 1.70166Z" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round">
-            </path>
-          </svg>
-          <span> Zap {{ sendZapForm.value.amount }}</span>
-        </button>
-      </div>
-    </div>
-
-    <mat-error *ngIf="error">
-      {{error}}
-    </mat-error>
-  </form>
 </div>
-

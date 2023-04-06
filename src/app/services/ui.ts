@@ -6,13 +6,14 @@ import { EventService } from './event';
 import { EmojiEnum, LoadMoreOptions, NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel, ThreadEntry } from './interfaces';
 import { OptionsService } from './options';
 import { ProfileService } from './profile';
+import { ZapService } from './zap.service';
 
 @Injectable({
   providedIn: 'root',
 })
 /** The orchestrator for UI that holds data to be rendered in different views at any given time. */
 export class UIService {
-  constructor(private eventService: EventService, private options: OptionsService) {}
+  constructor(private eventService: EventService, private options: OptionsService, private zapService: ZapService) {}
 
   #lists = {
     feedEvents: [] as NostrEventDocument[],
@@ -201,7 +202,7 @@ export class UIService {
       // this.checkExhausted();
     }
   }
-  
+
   children(parentId: string): NostrEventDocument[] {
     // if (this.events.length > 4) {
     //   console.log('PARENT ID:', parentId);
@@ -599,6 +600,26 @@ export class UIService {
         this.#eventsChanged.next(this.events);
         this.#viewEventsChanged.next(this.viewEvents);
         this.#viewReplyEventsChanged.next(this.viewReplyEvents);
+      }
+    } else if (event.kind == Kind.Zap) {
+      if (!this.options.values.enableZapping) {
+        return;
+      }
+
+      const eventId = this.eventService.lastETag(event);
+
+      if (eventId) {
+        const entry = this.getThreadEntry(eventId);
+
+        if (entry.reactionIds.includes(event.id!)) {
+          return;
+        }
+
+        entry.reactionIds.push(event.id!);
+        const parsedZap = this.zapService.parseZap(event);
+        entry.zaps != undefined ? entry.zaps.push(parsedZap) : (entry.zaps = [parsedZap]);
+
+        this.putThreadEntry(entry);
       }
     }
   }

@@ -3,10 +3,10 @@ import { FormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular
 import { NavigationService } from '../services/navigation';
 import { Location } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
-import { BlogEvent } from '../services/interfaces';
-import { Event } from 'nostr-tools';
+import { BlogEvent, NostrEvent } from '../services/interfaces';
+import { Event, Kind } from 'nostr-tools';
 import { Subscription } from 'rxjs';
-import { Utilities } from '../services/utilities';
+import { now, Utilities } from '../services/utilities';
 import { QueueService } from '../services/queue.service';
 import { ArticleService } from '../services/article';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -87,7 +87,33 @@ export class EditorComponent {
         }
       })
     );
+
+    this.subscriptions.push(
+      this.noteForm.controls.content.valueChanges.subscribe((text) => {
+        this.updateEvent(text);
+      })
+    );
   }
+
+  updateEvent(content: string | null) {
+    if (!content) {
+      this.event = undefined;
+    } else {
+      this.event = {
+        contentCut: false,
+        tagsCut: false,
+        kind: Kind.Text,
+        content: content ? content : '',
+        tags: [],
+        created_at: now(),
+        id: '',
+        sig: '',
+        pubkey: this.appState.getPublicKey(),
+      };
+    }
+  }
+
+  event?: NostrEvent;
 
   selectedArticle: string = '';
 

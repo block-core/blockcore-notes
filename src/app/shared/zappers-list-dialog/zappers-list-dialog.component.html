@@ -1,0 +1,29 @@
+<div mat-dialog-content>
+    <h2 style="text-align: center; margin-bottom: 25px">Zappers</h2>
+    <div class="profile-container" *ngFor="let zapper of zappers">
+        <div class="left" style="display: flex; align-items: center; margin-right: 40px;">
+            <div class="icon icon-small" style="flex: 0 0 auto; margin-right: 8px;">
+                <img
+                    onerror="this.src='/assets/profile.png'"
+                    *ngIf="zapper.profile?.status == 1 || profile?.status == 2"
+                    class="profile-image profile-image-follow"
+                    [matTooltip]="zapper.profile.about"
+                    matTooltipPosition="above"
+                    [src]="zapper.profile.picture"
+                />
+                <img loading="lazy" onerror="this.src='/assets/profile.png'" *ngIf="zapper.profile?.status != 1 && zapper.profile?.status != 2" class="profile-image" [matTooltip]="zapper.profile.about" matTooltipPosition="above" [src]="zapper.profile.picture" />
+            </div>
+            <div style="flex: 1 1 auto;">
+                <div class="name clickable">
+                    <span [class.muted]="zapper.profile.status == 2" [matTooltip]="zapper.profile.display_name" matTooltipPosition="above">{{ zapper.profile.display_name }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <span class="zap-amount" matTooltipPosition="above"> ⚡️ {{ zapper.zap.amount }}</span>
+        </div>
+
+    </div>
+</div>
+  
+  

@@ -58,13 +58,17 @@ export class Utilities {
       return this.defaultBackground;
     }
 
-    const url = this.sanitizeImageUrl(banner);
+    if (typeof banner === 'string') {
+      const url = this.sanitizeImageUrl(banner);
 
-    if (!url) {
-      return this.defaultBackground;
+      if (!url) {
+        return this.defaultBackground;
+      }
+
+      return `url(${url})`;
+    } else {
+      return `url(${this.bypassStyle(banner)})`;
     }
-
-    return `url(${url})`;
   }
 
   getProfileDisplayName(profile: NostrProfileDocument) {
@@ -83,6 +87,10 @@ export class Utilities {
     } else {
       return `@${profile.npub}`;
     }
+  }
+
+  millisatoshisToSatoshis(millisatoshis: number) {
+    return Math.floor(millisatoshis / 1000);
   }
 
   mapProfileEvent(event: NostrEventDocument): NostrProfileDocument | undefined {
@@ -191,7 +199,7 @@ export class Utilities {
     const buf = bech32.fromWords(decoded.words);
     return new TextDecoder().decode(Uint8Array.from(buf));
   }
-  
+
   keyToHex(publicKey: Uint8Array) {
     return secp.utils.bytesToHex(publicKey);
   }

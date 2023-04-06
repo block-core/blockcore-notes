@@ -278,11 +278,12 @@ const routes: Routes = [
   },
   {
     path: 'about',
-    component: AboutComponent,
-    canActivate: [AuthGuard],
-    resolve: {
-      data: LoadingResolverService,
-    },
+    loadChildren: () => import('./about/about.module').then(m => m.AboutModule)
+    // component: AboutComponent,
+    // canActivate: [AuthGuard],
+    // resolve: {
+    //   data: LoadingResolverService,
+    // },
   },
   {
     path: 'about/licenses',

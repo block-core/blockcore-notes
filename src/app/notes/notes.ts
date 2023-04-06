@@ -30,7 +30,7 @@ export class NotesComponent {
   }
 
   async ngOnInit() {
-    this.appState.updateTitle('Saved Notes');
+    this.appState.updateTitle('Bookmarks');
     this.appState.goBack = true;
     this.appState.actions = [];
 

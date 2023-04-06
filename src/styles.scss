@@ -201,11 +201,26 @@ h3 {
 }
 
 .no-lines {
-  border-left: 2px solid transparent !important;
+  border-left: 1px solid transparent !important;
 }
 
 .lines {
-  border-left: 2px solid rgba(255, 255, 255, 0.15) !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.25) !important;
+  // border-left: 2px solid red !important;
+}
+
+.dark .lines {
+  border-left: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+.thread-buttons {
+  border-top: 1px solid rgba(0, 0, 0, 0.25) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25) !important;
+}
+
+.dark .thread-buttons {
+  border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25) !important;
 }
 
 .image-grid {
@@ -482,6 +497,7 @@ app-profile-actions {
 }
 
 .events-header {
+  padding-top: 1em;
   gap: 0.4em;
   display: flex;
   flex-direction: row;

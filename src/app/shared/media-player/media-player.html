@@ -48,7 +48,7 @@
     </div>
   </div>
   <div class="media-info" *ngIf="media.current?.type === 'YouTube' && !miniplayer">
-    <iframe id="ytplayer" *ngIf="media.youtubeUrl" class="youtube-video" type="text/html" [src]="media.youtubeUrl" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+    <iframe sandbox="allow-scripts allow-same-origin allow-presentation" id="ytplayer" *ngIf="media.youtubeUrl" class="youtube-video" type="text/html" [src]="media.youtubeUrl" frameborder="0" allowfullscreen allow="autoplay"></iframe>
   </div>
   <div class="media-info" *ngIf="media.current?.type === 'Video' && !miniplayer">
     <video class="event-video" controls autoplay="true" preload="none">

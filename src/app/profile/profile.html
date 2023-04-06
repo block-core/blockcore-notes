@@ -1,10 +1,23 @@
-<div class="scrolling-content" infiniteScroll (scrollAction)="navigation.showMore()">
+<div class="" infiniteScroll (scrollAction)="navigation.showMore()">
   <app-profile-header></app-profile-header>
 
   <div class="page">
     <a [routerLink]="['private-threads']">Manage Private Threads</a>
     <mat-card>
       <mat-card-content *ngIf="profile">      
+        <p>
+          <button type="button" mat-stroked-button (click)="profileImageInput.click()">Pick Profile Image</button>
+          <input hidden (change)="onProfileFileSelected($event)" #profileImageInput type="file" />
+          <span class="file-name">
+            <!-- {{selectedProfileFile?.name}} -->
+          </span>
+
+          <button type="button" mat-stroked-button (click)="profileBannerInput.click()">Pick Profile Banner</button>
+          <input hidden (change)="onBannerFileSelected($event)" #profileBannerInput type="file" />
+          <span class="file-name">
+            <!-- {{selectedBannerFile?.name}} -->
+          </span>
+        </p>
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>badge</mat-icon>
@@ -26,7 +39,7 @@
             <textarea matInput type="text" [(ngModel)]="profile.about" rows="3"></textarea>
           </mat-form-field>
         </p>
-        <p>
+        <!-- <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>image</mat-icon>
             <mat-label>Profile Image</mat-label>
@@ -39,7 +52,11 @@
             <mat-label>Profile Banner</mat-label>
             <input matInput type="text" [(ngModel)]="profile.banner" />
           </mat-form-field>
-        </p>
+        </p> -->
+        <!-- <p>
+          <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
+          <input hidden (change)="onFileSelected()" #fileInput type="file" id="file" />
+        </p> -->
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>how_to_reg</mat-icon>

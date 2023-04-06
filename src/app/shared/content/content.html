@@ -20,10 +20,10 @@
         <ng-container *ngSwitchCase="'image'"><img mat-card-image class="event-image" loading="lazy" decoding="async" [matTooltip]="token.word" [alt]="token.word" [src]="token.safeWord" (click)="expandImage(token.word)" /></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
         <ng-container *ngSwitchCase="'spotify'">
-          <iframe style="border-radius: 12px" [src]="token.safeWord" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          <iframe sandbox="allow-scripts allow-same-origin" style="border-radius: 12px" [src]="token.safeWord" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </ng-container>
         <ng-container *ngSwitchCase="'tidal'">
-          <iframe style="border-radius: 12px" [src]="token.safeWord" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          <iframe sandbox="allow-scripts allow-same-origin" style="border-radius: 12px" [src]="token.safeWord" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </ng-container>
         <ng-container *ngSwitchCase="'video'"
           ><video class="event-video" controls preload="none"><source [src]="token.safeWord" /></video>
@@ -38,7 +38,7 @@
           </button>
         </ng-container>
         <ng-container *ngSwitchCase="'youtube'"
-          ><iframe id="ytplayer" class="event-video" type="text/html" [src]="token.safeWord" frameborder="0" allowfullscreen></iframe>
+          ><iframe sandbox="allow-scripts allow-same-origin allow-presentation" id="ytplayer" class="event-video" type="text/html" [src]="token.safeWord" frameborder="0" allowfullscreen></iframe>
           <button mat-icon-button matTooltip="Add to media player" (click)="enque(token.word, 'YouTube')">
             <mat-icon>add_to_queue</mat-icon>
           </button></ng-container

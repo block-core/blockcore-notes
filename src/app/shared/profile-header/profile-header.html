@@ -1,5 +1,9 @@
 <div class="profile-page" *ngIf="ui.profile$ | async as profile">
-  <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div>
+  <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
+
+  <div class="profile-banner">
+    <img class="profile-banner-image" [src]="profile.banner" />
+  </div>
 
   <div class="profile-page-header">
     <div class="profile-page-header-left">
@@ -39,18 +43,18 @@
 
         <app-profile-actions [fab]="false" [profile]="profile"></app-profile-actions>
       </div>
-      <h2 class="profile-name" [matTooltip]="profile.npub" matTooltipPosition="above">
+      <h2 class="profile-name" [matTooltip]="profile.name" matTooltipPosition="above">
         <span *ngIf="profile.display_name"> {{ profile.display_name }} </span>
         <span *ngIf="!profile.display_name">
           <span *ngIf="profile.name"> {{ profile.name }} </span>
           <span *ngIf="!profile.display_name && !profile.name"> {{ profile.npub }} </span>
         </span>
+        <span class="follows-you" *ngIf="isFollowing(profile)">Follows you</span>
       </h2>
       <div class="profile-labels">
         <div class="profile-labels-left"><mat-icon class="profile-icon">key</mat-icon></div>
         <div class="profile-labels-middle dimmed">
-          <span class="hoverable" (click)="copy(profile.npub)">@{{ profile.name }}</span>
-          <span class="follows-you" *ngIf="isFollowing(profile)">Follows you</span>
+          <span class="hoverable" (click)="copy(profile.npub)">{{ profile.npub }}</span>
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
@@ -68,7 +72,7 @@
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
-      <div class="profile-labels"  (click)="openDialog(profile)" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
+      <div class="profile-labels" (click)="openDialog(profile)" *ngIf="profile.lud06" [mtxTooltip]="tooltipTpl" [mtxTooltipPosition]="'left'">
         <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
         <div class="profile-labels-middle dimmed">
           <!-- <a class="dimmed lightning-link" (click)="toggleLn()" *ngIf="profile.lud16 && paymentVersion == 'lud16'" [href]="utilities.sanitize('lightning:' + profile.lud16)">{{ profile.lud16 }}</a> -->
@@ -76,7 +80,7 @@
         </div>
         <!-- <div class="profile-labels-right"></div> -->
       </div>
-      <div class="profile-labels"  (click)="openDialog(profile)" *ngIf="profile.lud16" [mtxTooltip]="tooltipTpl2" [mtxTooltipPosition]="'left'">
+      <div class="profile-labels" (click)="openDialog(profile)" *ngIf="profile.lud16" [mtxTooltip]="tooltipTpl2" [mtxTooltipPosition]="'left'">
         <div class="profile-labels-left"><mat-icon class="profile-icon-custom">⚡️</mat-icon></div>
         <div class="profile-labels-middle dimmed">
           <!-- <a class="dimmed lightning-link" (click)="toggleLn()" *ngIf="profile.lud16 && paymentVersion == 'lud16'" [href]="utilities.sanitize('lightning:' + profile.lud16)">{{ profile.lud16 }}</a> -->
@@ -103,8 +107,9 @@
         <p class="wrap linebreaks" *ngIf="profile.about">{{ profile.about }}</p>
       </span>
 
-      <div class="following-counts" *ngIf="profile.following">
-        <a class="following-link" [routerLink]="['/following', profile.pubkey]">{{ profile.following.length }} <span class="dimmed">Following</span></a>
+      <div class="following-counts">
+        <a class="following-link" *ngIf="profile.following" [routerLink]="['/following', profile.pubkey]">{{ profile.following.length }} <span class="dimmed">Following</span></a>
+        &nbsp;&nbsp;⚡️{{ zapUi.getProfileZapAmount(profile.pubkey) }} <span class="dimmed">Sats</span>
       </div>
 
       <div>
@@ -132,20 +137,20 @@
             <mat-icon class="action-button-icon">more_vert</mat-icon>
           </button> -->
 
-        <mat-menu #menu="matMenu">
+        <!-- <mat-menu #menu="matMenu">
           <button mat-menu-item>
             <mat-icon>notifications_off</mat-icon>
             <span>Mute</span>
           </button>
           <button mat-menu-item>
             <mat-icon>notifications_paused</mat-icon>
-            <span>Remove from Notes</span>
+            <span>Remove from Bookmarks</span>
           </button>
           <button mat-menu-item>
             <mat-icon>notifications</mat-icon>
-            <span>Remove from Notes</span>
+            <span>Remove from Bookmarks</span>
           </button>
-        </mat-menu>
+        </mat-menu> -->
       </div>
     </div>
     <!-- <div class="profile-page-header-right"> -->

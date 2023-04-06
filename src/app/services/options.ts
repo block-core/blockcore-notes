@@ -16,6 +16,7 @@ export interface Options {
   enableSpotify?: boolean;
   enableTidal?: boolean;
   enableReactions?: boolean;
+  enableZapping?: boolean;
   hideSideLabels?: boolean;
   primaryRelay?: string;
   peopleDisplayView: number;
@@ -35,7 +36,7 @@ export class OptionsService {
     this.load();
   }
 
-  values: Options = { language: 'en', dir: 'ltr', enableReactions: true, showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
+  values: Options = { mediaService: UploadService.defaultService, language: 'en', dir: 'ltr', enableReactions: true, enableZapping: true, showLines: true, peopleDisplayType: 1, peopleDisplayView: 0, peopleDisplaySort: 'name-asc' };
 
   load() {
     let options = localStorage.getItem('blockcore:notes:nostr:options');
@@ -45,6 +46,10 @@ export class OptionsService {
 
     if (this.values.enableReactions == null) {
       this.values.enableReactions = true;
+    }
+
+    if (this.values.enableZapping == null) {
+      this.values.enableZapping = true;
     }
 
     if (this.values.peopleDisplayType == null) {

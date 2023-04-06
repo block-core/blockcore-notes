@@ -4,11 +4,13 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { Kind } from 'nostr-tools';
 import { DataService } from 'src/app/services/data';
 import { EventService } from 'src/app/services/event';
+import { NotesService } from 'src/app/services/notes';
 import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
-import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
+import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
 
 @Component({
   selector: 'app-event-buttons',
@@ -32,10 +34,35 @@ export class EventButtonsComponent {
   replyOpen = false;
   publishing = false;
   error = '';
+  profile?: NostrProfileDocument;
 
   @ViewChild('replyInput') replyInput?: ElementRef;
 
-  constructor(private eventService: EventService, private dataService: DataService, public optionsService: OptionsService, private profileService: ProfileService, private utilities: Utilities, public dialog: MatDialog) {}
+  constructor(
+    private eventService: EventService,
+    private notesService: NotesService,
+    private dataService: DataService,
+    public optionsService: OptionsService,
+    private profileService: ProfileService,
+    private utilities: Utilities,
+    public dialog: MatDialog
+  ) {}
+
+  async ngAfterViewInit() {
+    let pubkey = this.event?.pubkey ? this.event?.pubkey : '';
+    this.profile = await this.profileService.getProfile(pubkey);
+  }
+
+  async saveNote() {
+    if (!this.event) {
+      return;
+    }
+
+    const note = this.event as NostrNoteDocument;
+    note.saved = Math.floor(Date.now() / 1000);
+
+    await this.notesService.putNote(note);
+  }
 
   openReply() {
     this.replyOpen = true;
@@ -126,5 +153,15 @@ export class EventButtonsComponent {
       console.log(err);
       this.publishing = false;
     }
+  }
+
+  async openDialog() {
+    this.dialog.open(ZapDialogComponent, {
+      width: '400px',
+      data: {
+        profile: this.profile,
+        event: this.event,
+      },
+    });
   }
 }

@@ -110,7 +110,14 @@
       <!-- <button mat-stroked-button type="button" disabled="disabled">Save Draft</button>&nbsp; -->
       <button mat-flat-button [disabled]="!noteForm.valid" type="submit" color="primary">Publish Note</button>
     </div>
+
   </form>
+
+  <div *ngIf="event">
+    <h2>Preview</h2>
+    <app-event [event]="event"></app-event>
+  </div>
+
   <!-- </mat-card-content>
   </mat-card> -->
 </div>

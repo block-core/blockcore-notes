@@ -21,7 +21,18 @@ interface MediaItem {
   styleUrls: ['./content.css'],
 })
 export class ContentComponent {
-  @Input() event?: NostrEventDocument;
+  // @Input() event?: NostrEventDocument;
+
+  #event?: NostrEventDocument | undefined;
+
+  @Input() set event(value: NostrEventDocument | undefined) {
+    this.#event = value;
+    this.initialize();
+  }
+  get event(): any {
+    return this.#event;
+  }
+
   @Input() displayRepliesTo: boolean = true;
 
   profileName = '';
@@ -68,7 +79,11 @@ export class ContentComponent {
     return (token as TokenKeyword).word;
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.initialize();
+  }
+
+  initialize() {
     if (!this.event) {
       return;
     }
@@ -218,6 +233,8 @@ export class ContentComponent {
 
     if (text.length < 9) {
       this.bigSize = true;
+    } else {
+      this.bigSize = false;
     }
 
     // var regex = /#\[(.*?)\]/g;

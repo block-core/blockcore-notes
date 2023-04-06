@@ -108,7 +108,6 @@ import { DevelopmentComponent } from './development/development';
 import { RelayComponent } from './shared/relay/relay';
 import { RelaysComponent } from './shared/relays/relays';
 import { LabelsComponent } from './shared/labels/labels';
-import { AboutModule } from './about/about.module';
 import { EventComponent } from './shared/event/event';
 import { NotificationsComponent } from './notifications/notifications';
 import { NotificationLabelComponent } from './shared/notification-label/notification-label';
@@ -153,6 +152,7 @@ import { TagsComponent } from './shared/tags/tags';
 import { BadgeComponent } from './badge/badge';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DragScrollModule } from 'ngx-drag-scroll';
+import { ZappersListDialogComponent } from './shared/zappers-list-dialog/zappers-list-dialog.component';
 import { Nip76MainComponent } from './nip76/nip76-main/nip76-main.component';
 import { AddChannelDialog } from './nip76/nip76-add-channel-dialog/add-channel-dialog.component';
 import { Nip76EventButtonsComponent } from './nip76/nip76-event-buttons/nip76-event-buttons.component';
@@ -258,6 +258,7 @@ import { Nip76DemoStarterComponent, Nip76DemoCreateComponent, Nip76DemoKeyCompon
     BadgeComponent,
     Nip76MainComponent,
     AddChannelDialog,
+    ZappersListDialogComponent,
     Nip76EventButtonsComponent,
     Nip76EventThreadComponent,
     Nip76ContentComponent,
@@ -271,7 +272,6 @@ import { Nip76DemoStarterComponent, Nip76DemoCreateComponent, Nip76DemoKeyCompon
     Nip76DemoStarterComponent
   ],
   imports: [
-    AboutModule,
     HttpClientModule,
     BrowserModule,
     TranslateModule.forRoot({

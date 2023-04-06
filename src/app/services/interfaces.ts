@@ -171,6 +171,29 @@ export interface ThreadEntry {
   reactions: { [key: string | symbol]: number };
   // reactions: {};
   boosts: number;
+  zaps?: ParsedZap[];
+}
+
+export interface Zapper {
+  pubkey?: string;
+  isValid: boolean;
+  content: string;
+}
+
+export interface ZappersListData {
+  zaps: ParsedZap[] | undefined;
+  event?: NostrEventDocument;
+}
+
+export interface ParsedZap {
+  id: string;
+  e?: string;
+  p: string;
+  amount: number;
+  content: string;
+  zapper?: string;
+  valid: boolean;
+  zapService: string;
 }
 
 export enum EmojiEnum {
@@ -193,8 +216,8 @@ export interface NostrNoteDocument extends NostrEventDocument {
 export interface NostrProfile {
   name: string;
   about: string;
-  picture: string;
-  banner?: string;
+  picture: string | any;
+  banner?: string | any;
 
   /** https://github.com/nostr-protocol/nips/blob/master/05.md */
   nip05: string;
