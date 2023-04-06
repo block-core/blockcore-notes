@@ -11,6 +11,7 @@ import { Utilities } from 'src/app/services/utilities';
 import { PostDocument } from '../../../../../../animiq-nip76-tools/dist/src';
 import { EventButtonsComponent } from '../../shared/event-buttons/event-buttons';
 import { Nip76Service } from '../nip76.service';
+import { NotesService } from 'src/app/services/notes';
 @Component({
   selector: 'app-nip76-event-buttons',
   templateUrl: '../../shared/event-buttons/event-buttons.html',
@@ -29,12 +30,13 @@ export class Nip76EventButtonsComponent extends EventButtonsComponent {
   constructor(
     private nip76Service: Nip76Service,
     eventService: EventService,
+    notesService: NotesService,
     dataService: DataService,
     optionsService: OptionsService,
     profileService: ProfileService,
     utilities: Utilities,
     dialog: MatDialog) {
-    super(eventService, dataService, optionsService, profileService, utilities, dialog);
+    super(eventService, notesService, dataService, optionsService, profileService, utilities, dialog);
   }
 
   override async addEmoji(e: { emoji: { native: any } }) {
