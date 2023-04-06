@@ -22,7 +22,7 @@ export class ConnectKeyComponent {
   step = 1;
   mnemonic: string = '';
 
-  constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) { }
+  constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {}
 
   setPrivateKey() {
     this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);

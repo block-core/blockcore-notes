@@ -73,7 +73,7 @@ export class CreateProfileComponent {
       // First attempt to get public key from the private key to see if it's possible:
       const encrypted = await this.security.encryptData(this.privateKeyHex, this.password);
       const decrypted = await this.security.decryptData(encrypted, this.password);
-      
+
       if (this.privateKeyHex == decrypted) {
         localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
         localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);

@@ -8,7 +8,7 @@ import { NostrEventDocument } from 'src/app/services/interfaces';
 import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
-import { PostDocument } from '../../../../../../animiq-nip76-tools/dist/src';
+import { PostDocument } from 'animiq-nip76-tools';
 import { EventButtonsComponent } from '../../shared/event-buttons/event-buttons';
 import { Nip76Service } from '../nip76.service';
 import { NotesService } from 'src/app/services/notes';

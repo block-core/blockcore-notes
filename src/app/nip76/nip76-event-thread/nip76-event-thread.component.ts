@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PostDocument } from '../../../../../../animiq-nip76-tools/dist/src';
+import { PostDocument } from 'animiq-nip76-tools';
 
 @Component({
   selector: 'app-nip76-event-thread',
