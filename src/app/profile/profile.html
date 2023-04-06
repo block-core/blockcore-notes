@@ -2,9 +2,8 @@
   <app-profile-header></app-profile-header>
 
   <div class="page">
-    <a [routerLink]="['private-threads']">Manage Private Threads</a>
     <mat-card>
-      <mat-card-content *ngIf="profile">      
+      <mat-card-content *ngIf="profile">
         <p>
           <button type="button" mat-stroked-button (click)="profileImageInput.click()">Pick Profile Image</button>
           <input hidden (change)="onProfileFileSelected($event)" #profileImageInput type="file" />

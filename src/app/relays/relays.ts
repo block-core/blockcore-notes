@@ -92,13 +92,6 @@ export class RelaysManagementComponent {
     this.wipedNotes = true;
   }
 
-  async getLocalDevRelays() {
-    const relays = {
-      'wss://nostr-dev.animiq.com' : { read: true, write: true }
-    }
-    await this.relayService.appendRelays(relays);
-  }
-
   async getDefaultRelays() {
     // Append the default relays.
     await this.relayService.appendRelays(this.nostr.defaultRelays);
