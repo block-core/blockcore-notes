@@ -50,7 +50,7 @@ export class ProfileComponent {
     private dataService: DataService,
     private activatedRoute: ActivatedRoute
   ) {}
-  
+
   async ngOnInit() {
     this.appState.updateTitle('Edit Profile');
 
