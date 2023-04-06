@@ -145,14 +145,10 @@ const routes: Routes = [
   {
     path: 'private-channels',
     component: Nip76MainComponent,
-    canActivate: [Nip76DemoService],
+    canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,
     },
-  },
-  {
-    path: 'private-channels/demo-setup',
-    component: Nip76DemoStarterComponent,
   },
   {
     path: 'private-channels/sent-rsvps',
