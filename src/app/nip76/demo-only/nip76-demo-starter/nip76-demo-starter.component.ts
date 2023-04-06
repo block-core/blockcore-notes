@@ -60,7 +60,7 @@ export class Nip76DemoKeyComponent extends ConnectKeyComponent {
     nip76DemoService: Nip76DemoService
 
   ) {
-    super(dialog, theme, router1, security, nip76DemoService);
+    super(dialog, theme, router1, security);
     this.step = 3;
   }
 
@@ -90,7 +90,7 @@ export class Nip76DemoCreateComponent extends CreateProfileComponent {
     security: SecurityService,
     nip76DemoService: Nip76DemoService
   ) {
-    super(utilities, dataService, profileService, authService, theme, router1, security, nip76DemoService)
+    super(utilities, dataService, profileService, authService, theme, router1, security)
   }
 
   override async persistKey() {
