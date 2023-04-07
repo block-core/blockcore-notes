@@ -435,3 +435,12 @@ export interface LNURLSuccessAction {
   description?: string;
   url?: string;
 }
+
+
+// export interface ProfileView {
+
+// }
+
+// export interface EventView {
+
+// }

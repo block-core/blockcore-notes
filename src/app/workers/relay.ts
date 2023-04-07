@@ -40,6 +40,7 @@ export class RelayWorker {
     // });
     pub.on('failed', (reason: any) => {
       console.log(`failed to publish to ${this.relay.url}: ${reason}`);
+      postMessage({ type: 'failure', data: reason, url: this.relay.url } as RelayResponse);
     });
   }
 

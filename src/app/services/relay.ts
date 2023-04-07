@@ -18,6 +18,8 @@ import { ArticleService } from './article';
 import { LoggerService } from './logger';
 import { BadgeService } from './badge';
 import { ZapUiService } from './zap-ui';
+import { StateService } from './state';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -57,7 +59,9 @@ export class RelayService {
     private options: OptionsService,
     private eventService: EventService,
     private appState: ApplicationState,
-    private zapUi: ZapUiService
+    private zapUi: ZapUiService,
+    private stateService: StateService,
+    private snackBar: MatSnackBar
   ) {
     // Whenever the visibility becomes visible, run connect to ensure we're connected to the relays.
     this.appState.visibility$.subscribe((visible) => {
@@ -417,6 +421,8 @@ export class RelayService {
 
     this.logger.debug('SAVE EVENT?:', event);
 
+    this.stateService.addEvent(event);
+
     if (event.kind == Kind.Zap) {
       this.zapUi.addZap(event);
     }
@@ -656,6 +662,16 @@ export class RelayService {
     const response = ev.data as RelayResponse;
 
     switch (response.type) {
+      case 'failure':
+        this.logger.debug(`Relay ${url} failure: ${response.data}.`);
+
+        this.snackBar.open(`Failure: ${response.data}. (${url})`, 'Hide', {
+          duration: 3500,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+        });
+
+        break;
       case 'timeout':
         this.logger.debug(`Relay ${url} timeout: ${response.data}.`);
         this.setRelayTimeout(url, response.data);

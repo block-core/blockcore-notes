@@ -114,6 +114,13 @@ Thoughts and ideas:
 - Validate the content of certain limit and don't render at all if content is too long, or at least cut the content and only render X length. Then allow users to manually retrieve
   that exact event upon request.
 
+Data Flow:
+
+- Event received from relays... pushed into an event processor, which pushes events into individual services based upon the type.
+- Individual services grabs existing event from StateService, if available, updates (if replaceable event or profile) or simply ignores. Maybe log "observed on relay".
+- If not available, push into the StateService and schedule a database put.
+- StateService should always keep some items in-memory: Profiles, Circles and more.
+
 ## Security
 
 There are many ways a web app can be exploited when it allow user contributed content. Any and all measurements to avoid exploits should be done, like sanitizing the input.
