@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { nip19 } from 'nostr-tools';
-import { AddressPointer } from 'nostr-tools/nip19';
 import { ApplicationState } from '../services/applicationstate';
 import { BadgeService } from '../services/badge';
 import { NavigationService } from '../services/navigation';
@@ -91,7 +90,7 @@ export class BadgeComponent implements OnInit {
           console.log(result);
 
           if (result.type == 'naddr') {
-            const data = result.data as AddressPointer;
+            const data = result.data as nip19.AddressPointer;
 
             if (data.kind == 30009) {
               this.router.navigate(['/b', data.pubkey, data.identifier]);

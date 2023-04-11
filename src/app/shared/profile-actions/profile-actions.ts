@@ -8,7 +8,6 @@ import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
-import { EventPointer } from 'nostr-tools/nip19';
 import { UIService } from 'src/app/services/ui';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { Router } from '@angular/router';
@@ -118,7 +117,7 @@ export class ProfileActionsComponent {
 
   copyNoteUrl(id: string) {
     // TODO: Copy the relays where we found this event from.
-    let eventPointer: EventPointer = { id: id };
+    let eventPointer: nip19.EventPointer = { id: id };
     this.copy(`web+nostr:nevent:${nip19.neventEncode(eventPointer)}`);
   }
 

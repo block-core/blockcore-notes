@@ -6,7 +6,6 @@ import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocume
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
-import { EventPointer } from 'nostr-tools/nip19';
 import { LabelService } from 'src/app/services/label';
 
 @Component({
@@ -97,13 +96,13 @@ export class EventActionsComponent {
 
   copyNoteEventId(id: string) {
     // TODO: Copy the relays where we found this event from.
-    let eventPointer: EventPointer = { id: id };
+    let eventPointer: nip19.EventPointer = { id: id };
     this.copy(nip19.neventEncode(eventPointer));
   }
 
   copyNoteUrl(id: string) {
     // TODO: Copy the relays where we found this event from.
-    let eventPointer: EventPointer = { id: id };
+    let eventPointer: nip19.EventPointer = { id: id };
     this.copy(`web+nostr:nevent:${nip19.neventEncode(eventPointer)}`);
   }
 

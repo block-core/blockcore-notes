@@ -10,7 +10,6 @@ import { ThreadService } from '../services/thread';
 import { NavigationService } from '../services/navigation';
 import { UIService } from '../services/ui';
 import { Kind, nip19 } from 'nostr-tools';
-import { AddressPointer } from 'nostr-tools/nip19';
 
 @Component({
   selector: 'app-article',
@@ -135,7 +134,7 @@ export class ArticleComponent {
         const result = nip19.decode(id);
 
         if (result.type == 'naddr') {
-          const data = result.data as AddressPointer;
+          const data = result.data as nip19.AddressPointer;
 
           if (data.kind == Kind.Article) {
             this.router.navigate(['/a', data.pubkey, data.identifier]);

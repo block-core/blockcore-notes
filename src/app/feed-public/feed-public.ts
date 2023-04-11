@@ -83,78 +83,78 @@ export class FeedPublicComponent {
     await this.profile.follow(pubkey, circle);
   }
 
-  onConnected(relay?: Relay) {
-    if (!relay) {
-      return;
-    }
+  // onConnected(relay?: Relay) {
+  //   if (!relay) {
+  //     return;
+  //   }
 
-    const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
+  //   const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
 
-    // Get the last 100 items.
-    this.sub = relay.sub([{ kinds: [1], limit: 100 }], {});
+  //   // Get the last 100 items.
+  //   this.sub = relay.sub([{ kinds: [1], limit: 100 }], {});
 
-    this.events = [];
+  //   this.events = [];
 
-    this.sub.on('event', (originalEvent: any) => {
-      if (this.options.values.paused) {
-        return;
-      }
+  //   this.sub.on('event', (originalEvent: any) => {
+  //     if (this.options.values.paused) {
+  //       return;
+  //     }
 
-      const event = this.processEvent(originalEvent);
+  //     const event = this.processEvent(originalEvent);
 
-      if (!event) {
-        return;
-      }
+  //     if (!event) {
+  //       return;
+  //     }
 
-      // If not initial load, we'll grab the profile.
-      // if (!this.initialLoad) {
-      // this.fetchProfiles(relay, [event.pubkey]);
-      // }
+  //     // If not initial load, we'll grab the profile.
+  //     // if (!this.initialLoad) {
+  //     // this.fetchProfiles(relay, [event.pubkey]);
+  //     // }
 
-      this.events.unshift(event);
+  //     this.events.unshift(event);
 
-      this.ngZone.run(() => {
-        this.cd.detectChanges();
-      });
+  //     this.ngZone.run(() => {
+  //       this.cd.detectChanges();
+  //     });
 
-      if (this.events.length > 100) {
-        this.events.length = 80;
-      }
-    });
+  //     if (this.events.length > 100) {
+  //       this.events.length = 80;
+  //     }
+  //   });
 
-    this.sub.on('eose', () => {
-      this.initialLoad = false;
+  //   this.sub.on('eose', () => {
+  //     this.initialLoad = false;
 
-      const pubKeys = this.events.map((e) => {
-        return e.pubkey;
-      });
+  //     const pubKeys = this.events.map((e) => {
+  //       return e.pubkey;
+  //     });
 
-      // Initial load completed, let's go fetch profiles for those initial events.
-      // this.fetchProfiles(relay, pubKeys);
+  //     // Initial load completed, let's go fetch profiles for those initial events.
+  //     // this.fetchProfiles(relay, pubKeys);
 
-      this.cd.detectChanges();
-    });
-  }
+  //     this.cd.detectChanges();
+  //   });
+  // }
 
-  processEvent(originalEvent: NostrEvent): NostrEvent | null {
-    // Validate the event:
-    let event = this.validator.validateEvent(originalEvent);
+  // processEvent(originalEvent: NostrEvent): NostrEvent | null {
+  //   // Validate the event:
+  //   let event = this.validator.validateEvent(originalEvent);
 
-    if (!event) {
-      debugger;
-      console.log('INVALID EVENT!');
-      return null;
-    }
+  //   if (!event) {
+  //     debugger;
+  //     console.log('INVALID EVENT!');
+  //     return null;
+  //   }
 
-    event = this.validator.sanitizeEvent(event);
-    // event = this.validator.filterEvent(event);
+  //   event = this.validator.sanitizeEvent(event);
+  //   // event = this.validator.filterEvent(event);
 
-    if (!event) {
-      return null;
-    }
+  //   if (!event) {
+  //     return null;
+  //   }
 
-    return event;
-  }
+  //   return event;
+  // }
 
   details = false;
 
@@ -224,7 +224,7 @@ export class FeedPublicComponent {
 
     this.relay.on('connect', () => {
       console.log(`connected to ${this.relay?.url}`);
-      this.onConnected(this.relay);
+      // this.onConnected(this.relay);
     });
 
     this.relay.on('disconnect', () => {
