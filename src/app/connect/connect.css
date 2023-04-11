@@ -44,6 +44,33 @@
   align-self: flex-end;
 }
 
+.spaces {
+  border-radius: 10px;
+  margin-left: 11em;
+  margin-right: 2em;
+  padding: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.spaces-card {
+  max-width: 274px;
+  border-radius: 15px;
+  background-color: rgba(170, 255, 85, 0.75);
+}
+
+.spaces-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.spaces-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
 .start-button {
   border-radius: 40px;
   min-width: 140px;
@@ -182,10 +209,19 @@
     margin-right: auto !important;
     margin-left: auto !important;
   }
+  .spaces {
+    max-width: 944px;
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
 }
 
 @media only screen and (min-width: 1024px) {
   .card {
+    margin-right: 11em;
+  }
+
+  .spaces {
     margin-right: 11em;
   }
 }
@@ -203,6 +239,13 @@
     margin-left: 2em;
     margin-right: 2em;
     padding: 2em;
+  }
+
+  .spaces {
+    font-size: 0.8em;
+    margin-left: 2em;
+    margin-right: 2em;
+    padding: 1em;
   }
 }
 
@@ -227,6 +270,12 @@
 
 @media only screen and (max-width: 600px) {
   .card {
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+    padding: 0;
+  }
+
+  .spaces {
     margin-left: 0.2em;
     margin-right: 0.2em;
     padding: 0;
