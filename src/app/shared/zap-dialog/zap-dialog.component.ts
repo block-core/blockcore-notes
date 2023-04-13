@@ -86,7 +86,10 @@ export class ZapDialogComponent implements OnInit {
 
   async fetchZapper(): Promise<LNURLPayRequest | null> {
     let staticPayReq = '';
-    if (this.profile.lud16) {
+    if (!this.profile.lud16 && this.profile.lud06 && this.profile.lud06.indexOf('@') > -1) {
+      const parts = this.profile.lud06.split('@');
+      staticPayReq = `https://${parts[1]}/.well-known/lnurlp/${parts[0]}`;
+    } else if (this.profile.lud16) {
       const parts = this.profile.lud16.split('@');
       staticPayReq = `https://${parts[1]}/.well-known/lnurlp/${parts[0]}`;
     } else if (this.profile.lud06 && this.profile.lud06.toLowerCase().startsWith('lnurl')) {
@@ -114,7 +117,6 @@ export class ZapDialogComponent implements OnInit {
 
   async onSubmit() {
     if (this.sendZapForm.valid) {
-      debugger;
       let comment = this.sendZapForm.get('comment')?.value;
       let amount = this.sendZapForm.get('amount')?.value;
       if (!amount || !this.payRequest) {
@@ -130,7 +132,6 @@ export class ZapDialogComponent implements OnInit {
         let zapReqEvent;
         if (this.payRequest.nostrPubkey)
           if (this.profile.pubkey) {
-            debugger;
             let note = this.event?.id ? this.event.id : null;
             zapReqEvent = await this.createZapEvent(this.profile.pubkey, note, comment);
             query.set('nostr', JSON.stringify(zapReqEvent));
