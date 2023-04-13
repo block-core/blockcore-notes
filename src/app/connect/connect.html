@@ -26,61 +26,36 @@
       <mat-card-content>
         <h1 class="centered">Spaces</h1>
         <div class="spaces-container">
-        <mat-card class="spaces-card card-background">
-          <mat-card-header>
-            <div mat-card-avatar class="spaces-header-image"></div>
-            <mat-card-title>Shiba Inu</mat-card-title>
-            <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-          </mat-card-header>
-          <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-          <mat-card-content>
-            <p>
-              The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-              A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-              bred for hunting.
-            </p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button>REMOVE</button>
-          </mat-card-actions>
-        </mat-card>
-        <mat-card class="spaces-card card-background">
-          <mat-card-header>
-            <div mat-card-avatar class="spaces-header-image"></div>
-            <mat-card-title>Shiba Inu</mat-card-title>
-            <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-          </mat-card-header>
-          <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-          <mat-card-content>
-            <p>
-              The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-              A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-              bred for hunting.
-            </p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button>REMOVE</button>
-          </mat-card-actions>
-        </mat-card>
-        <mat-card class="spaces-card card-background">
-          <mat-card-header>
-            <div mat-card-avatar class="spaces-header-image"></div>
-            <mat-card-title>Shiba Inu</mat-card-title>
-            <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-          </mat-card-header>
-          <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-          <mat-card-content>
-            <p>
-              The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-              A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-              bred for hunting.
-            </p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button>REMOVE</button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
+          <mat-card class="spaces-card card-background" *ngFor="let space of spacesService.spaces">
+            <mat-card-header>
+              <!-- <div mat-card-avatar class="spaces-header-image"></div> -->
+
+              <img mat-card-avatar [src]="space.picture" onerror="this.src='/assets/profile.png'" />
+
+              <!-- <div class="icon icon-small">
+                <a [routerLink]="['/p', space.npub]">
+                  <img onerror="this.src='/assets/profile.png'" class="profile-image profile-image-follow" [src]="space.picture" />
+                  <img loading="lazy" onerror="this.src='/assets/profile.png'" class="profile-image" />
+                </a>
+              </div> -->
+
+              <mat-card-title>{{ space.name }}</mat-card-title>
+              <mat-card-subtitle>{{ space.title }}</mat-card-subtitle>
+            </mat-card-header>
+            <img mat-card-image [src]="space.banner" />
+            <mat-card-content>
+              <p>
+                <strong>Space: {{space.comment}}</strong><br><br>
+                Relays: {{ space.relayCount }}<br />
+                Relay Sync <span *ngIf="space.relaySync">Enabled</span><span *ngIf="!space.relaySync">Disabled</span>
+              </p>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button>OPEN</button>
+              <button mat-button>REMOVE</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
       </mat-card-content>
     </mat-card>
     <mat-card class="card first-card">
@@ -126,12 +101,13 @@
         <h1>Be humble and kind</h1>
         <p>Being uncensorable and uncancellable means more responsibility is on you, you are in control and you are responsible.</p>
         <p>💛🖤</p>
-        <p class="centered" *ngIf="consent"><br>
+        <p class="centered" *ngIf="consent">
+          <br />
           <button mat-stroked-button (click)="consent=false; persist()">Withdraw consent</button>
         </p>
       </mat-card-content>
     </mat-card>
-<!-- 
+    <!-- 
     <mat-card class="card warn">
       <mat-card-content>
         <h1 *ngIf="!consent">Your approval is needed</h1>

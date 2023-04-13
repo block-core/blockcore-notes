@@ -8,6 +8,7 @@ import { RelayService } from '../services/relay';
 import { ThemeService } from '../services/theme';
 import { Utilities } from '../services/utilities';
 import { ConsentDialog } from './consent-dialog/consent-dialog';
+import { SpacesService } from '../services/spaces';
 
 @Component({
   selector: 'app-connect',
@@ -21,6 +22,7 @@ export class ConnectComponent {
   readOnlyLogin = false;
 
   constructor(
+    public spacesService: SpacesService,
     public theme: ThemeService,
     private appState: ApplicationState,
     private cd: ChangeDetectorRef,
