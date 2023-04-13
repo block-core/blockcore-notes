@@ -22,6 +22,20 @@
     </div>
   </div>
   <div class="connect-content">
+
+    <mat-card class="card first-card">
+      <mat-card-content>
+        <h1 class="centered">New ways to connect with humanity</h1>
+        <p class="centered" *ngIf="consent">
+          <button class="start-button" color="accent" routerLink="/connect/create" mat-flat-button>Create new profile</button><br /><br />
+          <button class="start-button" color="accent" routerLink="/connect/login" mat-flat-button>Log in</button><br /><br />
+        </p>
+        <p class="centered" *ngIf="!consent">
+          <button class="start-button" (click)="giveConsent()" mat-flat-button color="accent">Give consent</button>
+        </p>
+      </mat-card-content>
+    </mat-card>
+
     <mat-card class="spaces">
       <mat-card-content>
         <h1 class="centered">Spaces</h1>
@@ -45,7 +59,7 @@
             <img mat-card-image [src]="space.banner" />
             <mat-card-content>
               <p>
-                <strong>Space: {{space.comment}}</strong><br><br>
+                <strong>Space: {{space.comment}}</strong><br /><br />
                 Relays: {{ space.relayCount }}<br />
                 Relay Sync <span *ngIf="space.relaySync">Enabled</span><span *ngIf="!space.relaySync">Disabled</span>
               </p>
@@ -55,21 +69,31 @@
               <button mat-button>REMOVE</button>
             </mat-card-actions>
           </mat-card>
+
+          <div class="spaces-add">
+            <!-- <mat-card-header>
+              <mat-card-title>Spaces</mat-card-title>
+              <mat-card-subtitle>Organize multiple identities and relays</mat-card-subtitle>
+            </mat-card-header> -->
+              <p>
+                Using Spaces, you can organize multiple identities and relays, isolating them from each other. It allows you to reuse your same identity across multiple relays, but with different profiles and content, including private and
+                authenticated relays.
+              </p>
+              <p class="centered">
+                <button mat-fab color="primary">
+                  <mat-icon>add</mat-icon>
+                </button>
+
+                <!-- <button mat-fab color="primary">
+                  <mat-icon>add</mat-icon>
+                  Create new space
+                </button> -->
+              </p>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>
-    <mat-card class="card first-card">
-      <mat-card-content>
-        <h1 class="centered">New ways to connect with humanity</h1>
-        <p class="centered" *ngIf="consent">
-          <button class="start-button" color="accent" routerLink="/connect/create" mat-flat-button>Create new profile</button><br /><br />
-          <button class="start-button" color="accent" routerLink="/connect/login" mat-flat-button>Log in</button><br /><br />
-        </p>
-        <p class="centered" *ngIf="!consent">
-          <button class="start-button" (click)="giveConsent()" mat-flat-button color="accent">Give consent</button>
-        </p>
-      </mat-card-content>
-    </mat-card>
+
 
     <mat-card class="card card-image">
       <img loading="lazy" width="1079" height="776" src="/assets/blockcore-notes-screenshot.png" />
