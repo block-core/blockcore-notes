@@ -11,6 +11,7 @@ import { QueueService } from '../services/queue.service';
 import { ArticleService } from '../services/article';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProfileService } from '../services/profile';
+import { EventService } from '../services/event';
 
 export interface NoteDialogData {
   note: string;
@@ -69,7 +70,8 @@ export class EditorComponent {
     private location: Location,
     private fb: FormBuilder,
     public navigation: NavigationService,
-    public profileService: ProfileService
+    public profileService: ProfileService,
+    private eventService: EventService
   ) {}
 
   ngOnInit() {
@@ -111,9 +113,7 @@ export class EditorComponent {
         pubkey: this.appState.getPublicKey(),
       };
 
-      // Parse hashtags.
-      
-
+      this.event.tags = this.eventService.parseContentReturnTags(this.event.content);
     }
   }
 
