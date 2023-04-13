@@ -58,6 +58,12 @@
   border-radius: 15px;
 }
 
+.spaces-add {
+  max-width: 274px;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
 .spaces-container {
   display: flex;
   flex-direction: row;
@@ -66,7 +72,7 @@
 }
 
 .spaces-header-image {
-  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
   background-size: cover;
 }
 

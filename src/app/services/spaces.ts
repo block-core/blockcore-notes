@@ -56,6 +56,8 @@ export class SpacesService {
           relaySync: false,
         },
       ];
+
+      this.spaces = [];
     }
   }
 }
