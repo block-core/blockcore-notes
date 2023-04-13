@@ -93,6 +93,9 @@ export class NavigationService {
 
     let event = this.dataService.createEvent(Kind.Text, note);
 
+    // Parse hashtags:
+    
+
     // TODO: We should likely save this event locally to ensure user don't loose their posts
     // if all of the network is down.
     const signedEvent = await this.dataService.signEvent(event);

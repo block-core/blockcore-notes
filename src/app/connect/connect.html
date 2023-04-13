@@ -22,7 +22,6 @@
     </div>
   </div>
   <div class="connect-content">
-
     <mat-card class="card first-card">
       <mat-card-content>
         <h1 class="centered">New ways to connect with humanity</h1>
@@ -36,23 +35,13 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="spaces">
+    <!-- <mat-card class="spaces">
       <mat-card-content>
         <h1 class="centered">Spaces</h1>
         <div class="spaces-container">
           <mat-card class="spaces-card card-background" *ngFor="let space of spacesService.spaces">
             <mat-card-header>
-              <!-- <div mat-card-avatar class="spaces-header-image"></div> -->
-
               <img mat-card-avatar [src]="space.picture" onerror="this.src='/assets/profile.png'" />
-
-              <!-- <div class="icon icon-small">
-                <a [routerLink]="['/p', space.npub]">
-                  <img onerror="this.src='/assets/profile.png'" class="profile-image profile-image-follow" [src]="space.picture" />
-                  <img loading="lazy" onerror="this.src='/assets/profile.png'" class="profile-image" />
-                </a>
-              </div> -->
-
               <mat-card-title>{{ space.name }}</mat-card-title>
               <mat-card-subtitle>{{ space.title }}</mat-card-subtitle>
             </mat-card-header>
@@ -71,29 +60,19 @@
           </mat-card>
 
           <div class="spaces-add">
-            <!-- <mat-card-header>
-              <mat-card-title>Spaces</mat-card-title>
-              <mat-card-subtitle>Organize multiple identities and relays</mat-card-subtitle>
-            </mat-card-header> -->
-              <p>
-                Using Spaces, you can organize multiple identities and relays, isolating them from each other. It allows you to reuse your same identity across multiple relays, but with different profiles and content, including private and
-                authenticated relays.
-              </p>
-              <p class="centered">
-                <button mat-fab color="primary">
-                  <mat-icon>add</mat-icon>
-                </button>
-
-                <!-- <button mat-fab color="primary">
-                  <mat-icon>add</mat-icon>
-                  Create new space
-                </button> -->
-              </p>
+            <p>
+              Using Spaces, you can organize multiple identities and relays, isolating them from each other. It allows you to reuse your same identity across multiple relays, but with different profiles and content, including private and
+              authenticated relays.
+            </p>
+            <p class="centered">
+              <button mat-fab color="primary">
+                <mat-icon>add</mat-icon>
+              </button>
+            </p>
           </div>
         </div>
       </mat-card-content>
-    </mat-card>
-
+    </mat-card> -->
 
     <mat-card class="card card-image">
       <img loading="lazy" width="1079" height="776" src="/assets/blockcore-notes-screenshot.png" />
