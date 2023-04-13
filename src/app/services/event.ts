@@ -121,6 +121,25 @@ export class EventService {
     return this.tagsOfTypeValues(event, 't');
   }
 
+  parseContentReturnTags(content: string) {
+    // Parse the content using regular expression to get the hashtags.
+    const hashTags = this.getUniqueHashtags(content);
+
+    // Map the hashtag array to the Nostr event tag format.
+    const tags = hashTags.map((tag) => {
+      return ['t', tag.substring(1)];
+    });
+
+    return tags;
+  }
+
+  getUniqueHashtags(text: string) {
+    const regex = /#\w+/g;
+    const matches = text.match(regex);
+    const uniqueHashtags = [...new Set(matches)];
+    return uniqueHashtags;
+  }
+
   tagsOfType(event: NostrEventDocument | null, type: string) {
     if (!event) {
       return [];
