@@ -110,6 +110,10 @@ export class EditorComponent {
         sig: '',
         pubkey: this.appState.getPublicKey(),
       };
+
+      // Parse hashtags.
+      
+
     }
   }
 
