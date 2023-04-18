@@ -7,12 +7,13 @@ import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { ApplicationState } from './applicationstate';
 import { Event, Kind } from 'nostr-tools';
 import { DataService } from './data';
+import { EventService } from './event';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  constructor(private router: Router, public dialog: MatDialog, private appState: ApplicationState, private dataService: DataService) {}
+  constructor(private eventService: EventService, private router: Router, public dialog: MatDialog, private appState: ApplicationState, private dataService: DataService) {}
 
   #showMore: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
   showMore$ = this.#showMore.asObservable();
@@ -92,6 +93,9 @@ export class NavigationService {
     }
 
     let event = this.dataService.createEvent(Kind.Text, note);
+
+    // Parse hashtags:
+    event.tags = this.eventService.parseContentReturnTags(event.content);
 
     // TODO: We should likely save this event locally to ensure user don't loose their posts
     // if all of the network is down.

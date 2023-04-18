@@ -48,7 +48,7 @@
     "ngx-colors": "^3.5.0",
     "ngx-drag-scroll": "^15.0.0",
     "ngx-loading-buttons": "^15.0.1",
-    "nostr-tools": "1.7.1",
+    "nostr-tools": "1.8.2",
     "qrcode": "^1.5.1",
     "qs": "^6.11.0",
     "rxjs": "~7.8.0",

@@ -631,7 +631,8 @@ export class DataService {
     this.isFetching = true;
     let profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
 
-    profileSub.on('event', async (originalEvent: NostrEvent) => {
+    profileSub.on('event', async (event: Event) => {
+      const originalEvent = event as NostrEvent;
       const prossedEvent = this.eventService.processEvent(originalEvent);
 
       if (!prossedEvent) {
