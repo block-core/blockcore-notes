@@ -32,7 +32,7 @@
       <span *ngIf="relay.nip11.pubkey"><a [routerLink]="['/p', relay.nip11.pubkey]">{{ 'Relay.Administrator' | translate }}</a><br /></span>
       <span *ngIf="relay.nip11.contact">{{ 'Relay.Contact' | translate }}: {{ relay.nip11.contact }}<br /></span>
       NIPs: {{ relay.nip11.supported_nips }}<br />
-      Software: {{ relay.nip11.software }} ({{ relay.nip11.version }})<br />
+      {{'Relay.Software' | translate}}: {{ relay.nip11.software }} ({{ relay.nip11.version }})<br />
       <span class="wrap"> ID: {{ relay.nip11.pubkey }}</span></span
     >
   </div>

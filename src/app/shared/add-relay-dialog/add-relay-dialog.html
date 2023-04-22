@@ -1,5 +1,5 @@
 <div class="dialog">
-  <h1 mat-dialog-title>Add a relay</h1>
+  <h1 mat-dialog-title>{{ 'RelayDialog.AddARelay' | translate }}</h1>
   <div mat-dialog-content class="mat-dialog-content">
     <mat-form-field appearance="fill" class="input-full-width">
       <mat-icon class="circle" matPrefix>dns</mat-icon>
@@ -7,12 +7,12 @@
       <input matInput type="text" [(ngModel)]="data.url" />
     </mat-form-field>
 
-    <mat-slide-toggle color="primary" [(ngModel)]="data.read">Read</mat-slide-toggle>&nbsp;
-    <mat-slide-toggle color="primary" [(ngModel)]="data.write">Write</mat-slide-toggle>
+    <mat-slide-toggle color="primary" [(ngModel)]="data.read">{{ 'RelayDialog.Read' | translate }}</mat-slide-toggle>&nbsp;
+    <mat-slide-toggle color="primary" [(ngModel)]="data.write">{{ 'RelayDialog.Write' | translate }}</mat-slide-toggle>
   </div>
 
   <div mat-dialog-actions align="end">
-    <button mat-stroked-button (click)="onNoClick()">Cancel</button>
-    <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Add</button>
+    <button mat-stroked-button (click)="onNoClick()">{{ 'RelayDialog.Cancel' | translate }}</button>
+    <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>{{ 'RelayDialog.Add' | translate }}</button>
   </div>
 </div>
