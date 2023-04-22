@@ -188,7 +188,7 @@ export class AppComponent {
     console.log('INITIALIZE IS RUNNING....');
 
     // this.translate.addLangs(['ar', 'el', 'en', 'fa', 'fr', 'he', 'no', 'ru']);
-    this.translate.addLangs(['en', 'no']);
+    this.translate.addLangs(['en', 'no', 'ru']);
     this.translate.setDefaultLang('en');
 
     if (this.options.values.language) {

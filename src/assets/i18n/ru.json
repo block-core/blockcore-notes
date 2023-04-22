@@ -1,0 +1,25 @@
+{
+    "en": "English",
+    "no": "Norsk",
+    "fr": "French",
+    "el": "Greek",
+    "fa": "Persian",
+    "ar": "Arabic",
+    "he": "Hebrew",
+    "ru": "Русский",
+    "App": {
+      "Hide": "Скрыть",
+      "ConvertKey": "Преобразовать ключ"
+    },
+    "Settings": {
+      "OptionsTitle": "Параметры приложения",
+      "OptionsDescription": "Выберите важные параметры для вашего пользовательского интерфейса",
+      "Settings": "Настройки",
+      "Save": "Сохранить",
+      "DisplayLanguage": "Язык отображения",
+      "ChooseMode": "Выберите тему",
+      "Dark": "Тёмная",
+      "Light": "Светлая"
+    }
+  }
+  
