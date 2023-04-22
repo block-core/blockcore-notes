@@ -20,5 +20,17 @@
     "ChooseMode": "Choose your mode",
     "Dark": "Dark",
     "Light": "Light"
+  },
+  "Relay": {
+    "Administrator": "Administrator",
+    "Contact": "Contact",
+    "Timeouts": "Timeouts",
+    "Events": "Events",
+    "RelayOptions": "Relay Options",
+    "RelayStatus": "Relay Status",
+    "RelayStatusSubtitle": "Allows you to disable a relay locally.",
+    "RelayPrivacy": "Relay Privacy",
+    "PrimaryRelay": "Primary Relay",
+    "Delete": "Delete"
   }
 }

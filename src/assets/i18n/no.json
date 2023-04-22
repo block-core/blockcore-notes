@@ -20,5 +20,17 @@
     "ChooseMode": "Velg fargetema",
     "Dark": "Mørk",
     "Light": "Lys"
+  },
+  "Relay": {
+    "Administrator": "Administrator",
+    "Contact": "Kontakt",
+    "Timeouts": "Tidsavbrudd",
+    "Events": "Hendelser",
+    "RelayOptions": "Relay alternativ",
+    "RelayStatus": "Relay status",
+    "RelayStatusSubtitle": "Lar deg deaktivere en relay lokalt.",
+    "RelayPrivacy": "Relay personvern",
+    "PrimaryRelay": "Primær relay",
+    "Delete": "Slett"
   }
 }
