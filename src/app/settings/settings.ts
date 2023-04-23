@@ -196,6 +196,8 @@ export class SettingsComponent {
       this.appState.documentDirection = 'ltr';
       this.optionsService.values.dir = 'ltr';
     }
+
+    this.optionsService.save();
   }
 
   async exportPrivateKey() {

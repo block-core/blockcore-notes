@@ -29,21 +29,21 @@
     <h2 *ngIf="relay.nip11?.name">{{ relay.nip11?.name }}</h2>
     {{ relay.nip11.description }}<br /><br />
     <span class="dimmed">
-      <span *ngIf="relay.nip11.pubkey"><a [routerLink]="['/p', relay.nip11.pubkey]">Administrator</a><br /></span>
-      <span *ngIf="relay.nip11.contact">Contact: {{ relay.nip11.contact }}<br /></span>
+      <span *ngIf="relay.nip11.pubkey"><a [routerLink]="['/p', relay.nip11.pubkey]">{{ 'Relay.Administrator' | translate }}</a><br /></span>
+      <span *ngIf="relay.nip11.contact">{{ 'Relay.Contact' | translate }}: {{ relay.nip11.contact }}<br /></span>
       NIPs: {{ relay.nip11.supported_nips }}<br />
-      Software: {{ relay.nip11.software }} ({{ relay.nip11.version }})<br />
+      {{'Relay.Software' | translate}}: {{ relay.nip11.software }} ({{ relay.nip11.version }})<br />
       <span class="wrap"> ID: {{ relay.nip11.pubkey }}</span></span
     >
   </div>
   <br />
-  <div class="dimmed" *ngIf="relay.timeouts">Timeouts: {{ relay.timeouts }}</div>
-  <div class="dimmed" *ngIf="relay.eventcount">Events: {{ relay.eventcount }}</div>
+  <div class="dimmed" *ngIf="relay.timeouts"> {{ 'Relay.Timeouts' | translate }} {{ relay.timeouts }}</div>
+  <div class="dimmed" *ngIf="relay.eventcount"> {{ 'Relay.Events'| translate }}: {{ relay.eventcount }}</div>
   <div class="dimmed">Status: {{ relay.status }}</div>
   <!-- <div>Subscriptions Count : {{ relay.subscriptions.length }}</div> -->
   <mat-card class="relay-options mat-elevation-z8">
     <mat-card-header>
-      <mat-card-title>Relay Options</mat-card-title>
+      <mat-card-title>{{ 'Relay.RelayOptions' | translate }} </mat-card-title>
       <!-- <mat-card-subtitle>Control if this relay is used for reading, writing and if it should be part of your public relay list. Additionally you can keep the relay in your list but disable it to not use.</mat-card-subtitle> -->
     </mat-card-header>
     <mat-card-content>
@@ -65,8 +65,8 @@
 
   <mat-card class="relay-options mat-elevation-z8">
     <mat-card-header>
-      <mat-card-title>Relay Status</mat-card-title>
-      <mat-card-subtitle>Allows you to disable a relay locally.</mat-card-subtitle>
+      <mat-card-title>{{ 'Relay.RelayStatus' | translate }} </mat-card-title>
+      <mat-card-subtitle> {{'Relay.RelayStatus.Subtitle' | translate}} </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <mat-selection-list (selectionChange)="onRelayStatusChange($event)" [multiple]="false">
@@ -81,7 +81,7 @@
 
   <mat-card class="relay-options mat-elevation-z8">
     <mat-card-header>
-      <mat-card-title>Relay Privacy</mat-card-title>
+      <mat-card-title>{{ 'Relay.RelayPrivacy' | translate }} </mat-card-title>
       <!-- <mat-card-subtitle>Control if this relay is used for reading, writing and if it should be part of your public relay list. Additionally you can keep the relay in your list but disable it to not use.</mat-card-subtitle> -->
     </mat-card-header>
     <mat-card-content>
@@ -95,8 +95,8 @@
     </mat-card-content>
   </mat-card>
 
-  <button class="relay-button" [disabled]="!relay.public || optionsService.values.primaryRelay == relay.url" mat-raised-button color="primary" (click)="primaryRelay(relay)">Primary Relay</button>&nbsp;
-  <button class="relay-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">Delete</button>
+  <button class="relay-button" [disabled]="!relay.public || optionsService.values.primaryRelay == relay.url" mat-raised-button color="primary" (click)="primaryRelay(relay)">{{'Relay.PrimaryRelay' | translate }} </button>&nbsp;
+  <button class="relay-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">{{'Relay.Delete' | translate}} </button>
   <!-- <button (click)="deleteRelay(relay)" mat-icon-button matTooltip="Remove from queue" color="grey">
     <mat-icon>delete</mat-icon>
   </button> -->

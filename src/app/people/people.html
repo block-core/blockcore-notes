@@ -11,7 +11,7 @@
     <mat-accordion>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title>Options</mat-panel-title>
+          <mat-panel-title>{{ 'People.Options' | translate }}</mat-panel-title>
           <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
 
@@ -22,37 +22,37 @@
         </p> -->
 
         <mat-form-field class="options-field">
-          <mat-label>Show</mat-label>
+          <mat-label>{{ 'People.Show' | translate }}</mat-label>
           <mat-select (selectionChange)="showChanged()" [(value)]="optionsService.values.peopleDisplayType">
-            <mat-option [value]="1">Following</mat-option>
-            <mat-option [value]="2">Muted</mat-option>
-            <mat-option [value]="3">Blocked</mat-option>
-            <mat-option [value]="0">Cached</mat-option>
+            <mat-option [value]="1">{{ 'People.Following' | translate }}</mat-option>
+            <mat-option [value]="2">{{ 'People.Muted' | translate }}</mat-option>
+            <mat-option [value]="3">{{ 'People.Blocked' | translate }}</mat-option>
+            <mat-option [value]="0">{{ 'People.Cached' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field class="options-field">
-          <mat-label>Sorting</mat-label>
+          <mat-label>{{ 'People.Sorting' | translate }}</mat-label>
           <mat-select (selectionChange)="updateSorting()" [(value)]="optionsService.values.peopleDisplaySort">
-            <mat-option value="name-asc">Name (A-Z)</mat-option>
-            <mat-option value="name-desc">Name (Z-A)</mat-option>
-            <mat-option value="followed-asc">Followed (Newest)</mat-option>
-            <mat-option value="followed-desc">Followed (Oldest)</mat-option>
-            <mat-option value="created-asc">Updated (Newest)</mat-option>
-            <mat-option value="created-desc">Updated (Oldest)</mat-option>
+            <mat-option value="name-asc">{{ 'People.NameAZ' | translate }}</mat-option>
+            <mat-option value="name-desc">{{ 'People.NameZA' | translate }}</mat-option>
+            <mat-option value="followed-asc">{{ 'People.FollowedNewest' | translate }}</mat-option>
+            <mat-option value="followed-desc">{{ 'People.FollowedOldest' | translate }}</mat-option>
+            <mat-option value="created-asc">{{ 'People.UpdatedNewest' | translate }}</mat-option>
+            <mat-option value="created-desc">{{ 'People.UpdatedOldest' | translate }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field class="options-field">
-          <mat-label>View</mat-label>
+          <mat-label>{{ 'People.View' | translate }}</mat-label>
           <mat-select (selectionChange)="showChanged()" [(value)]="optionsService.values.peopleDisplayView">
-            <mat-option [value]="6">Large icons</mat-option>
-            <mat-option [value]="5">Medium icons</mat-option>
-            <mat-option [value]="4">Small icons</mat-option>
+            <mat-option [value]="6">{{ 'People.LargeIcons' | translate }}</mat-option>
+            <mat-option [value]="5">{{ 'People.MediumIcons' | translate }}</mat-option>
+            <mat-option [value]="4">{{ 'People.SmallIcons' | translate }} </mat-option>
             <!-- <mat-option [value]="3">List</mat-option> -->
-            <mat-option [value]="2">Details</mat-option>
-            <mat-option [value]="0">Tiles</mat-option>
-            <mat-option [value]="1">Content</mat-option>
+            <mat-option [value]="2">{{ 'People.Details' | translate }} </mat-option>
+            <mat-option [value]="0">{{ 'People.Tiles' | translate }}</mat-option>
+            <mat-option [value]="1">{{ 'People.Content' | translate }} </mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -61,8 +61,8 @@
 
         <p class="people-actions">
           <!-- <button mat-stroked-button (click)="importFollowList()">Import Following List</button> -->
-          <button mat-stroked-button (click)="dataService.publishContactsAndRelays()">Publish Follow (and Relays) List</button>
-          <button mat-stroked-button (click)="downloadFollowing()">Save Public Following (backup)</button>
+          <button mat-stroked-button (click)="dataService.publishContactsAndRelays()">{{ 'People.PublishFollowList' | translate }} </button>
+          <button mat-stroked-button (click)="downloadFollowing()">{{ 'People.SavePublicFollowing' | translate }} </button>
           <!-- <button mat-stroked-button (click)="dataService.save()">Save People List (backup)</button> -->
         </p>
       </mat-expansion-panel>
@@ -77,7 +77,7 @@
           <div class="events-header">
             <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
             <app-event-header [profile]="profile">
-              <small> <span class="clickable" *ngIf="profile.created">Followed {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon> </small>
+              <small> <span class="clickable" *ngIf="profile.created">{{ 'People.Followed' | translate }} {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon> </small>
             </app-event-header>
             <app-profile-actions [profile]="profile"></app-profile-actions>
           </div>
