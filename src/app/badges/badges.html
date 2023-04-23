@@ -3,12 +3,12 @@
     <mat-accordion>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title>Options</mat-panel-title>
+          <mat-panel-title>{{ 'Badges.Options' | translate }}</mat-panel-title>
           <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
 
         <div class="options-buttons">
-          <button mat-stroked-button routerLink="/editor/badges">Badge Editor</button>
+          <button mat-stroked-button routerLink="/editor/badges">{{ 'Badges.BadgeEditor' | translate }}</button>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
@@ -20,7 +20,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">verified</mat-icon>
-        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Accepted</span>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;{{ 'Badges.Accepted' | translate }}</span>
       </ng-template>
       <ng-template matTabContent>
         <div class="badges" *ngIf="profileBadgesSub.events">
@@ -45,7 +45,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">emoji_events</mat-icon>
-        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Awarded</span>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;{{ 'Badges.Awarded' | translate }}</span>
       </ng-template>
       <ng-template matTabContent>
         <div class="badges" *ngIf="receivedBadgesSub.events">
@@ -63,7 +63,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">badge</mat-icon>
-        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Created</span>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;{{ 'Badges.Created' | translate }}</span>
       </ng-template>
       <ng-template matTabContent>
         <div class="badges" *ngIf="badgeDefinitionsSub.events">

@@ -27,6 +27,66 @@
     "About": "About",
     "Logout": "Logout"
   },
+  "Badge": {
+    "CreatedBy": "Created by",
+    "IssueBadge": "ISSUE BADGE",
+    "Edit": "EDIT",
+    "PubKeyDescription": "Pub Key (hex format only, line separated, add relay comma separated at the end)",
+    "PublishBadgeReward": "Publish Badge Reward"
+  },
+  "Badges": {
+    "Options": "Options",
+    "BadgeEditor": "Badge Editor",
+    "Accepted": "Accepted",
+    "Awarded": "Awarded",
+    "Created": "Created"
+  },
+  "Circles": {
+    "Count": "Count",
+    "Public": "Public",
+    "Private": "Private",
+    "Created": "Created",
+    "Copy": "Copy",
+    "DeleteCircle": "Delete Circle",
+    "PublicKeysNpub": "Public Keys (npub)",
+    "PublicKeysHex": "Public Keys (hex)",
+    "CirclesDescription": "Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable."
+  },
+  "Create": {
+    "WhoAreYou": "Who Are You?",
+    "WhoAreYouSubtitle": "Add some (optional) basics about yourself. This information will be public.",
+    "DisplayName": "Display Name",
+    "Nickname": "Nickname",
+    "About": "About",
+    "ProfileImage": "Profile Image",
+    "EmailDomainIdentifierNIP05": "E-mail/Domain Identifier (NIP05)",
+    "Continue": "Continue",
+    "YourSecretRecoveryPhrase": "Your secret recovery phrase",
+    "Copy": "Copy",
+    "SecretRecoveryPhraseDescription": "This is your private and secret sentence. You must store it safely, if you lose it, you will lose access to your account. Nobody can recover it for you.",
+    "SecretRecoveryPhraseWarning": "Keep it safe, keep it hidden.",
+    "Back": "Back",
+    "PrivateAndPublicKeys": "Private and Public Keys",
+    "YourPersonalPrivateKey": "Your Personal Private Key",
+    "PublicKey": "Public Key",
+    "PasswordOptional": "Password (optional)",
+    "SaveAndLogIn": "Save and Log In"
+  },
+  "Key": {
+    "PrivateKeyImport": "Private Key Import",
+    "PrivateKeyImportSubtitle": "If you already have an existing private for your Nostr account, you can import it here and protect it with a password.",
+    "PrivateKeyImportDescription": "First choose if your backup is a secret recovery phrase or a private key.",
+    "SecretRecoveryPhrase": "Secret Recovery Phrase",
+    "PrivateKey": "Private Key",
+    "ScanQRCode": "Scan QR-code",
+    "SecretRecoveryPhraseImport": "Secret Recovery Phrase Import",
+    "Continue": "Continue",
+    "ProtectPrivateKeyWithPassword": "Protect Private Key with password",
+    "YourPersonalPrivateKey": "Your personal private key",
+    "Connect": "Connect",
+    "PublicKeyHex": "Public Keys (hex)",
+    "Error": "Error"
+  },
   "Settings": {
     "Options": "Options",
     "OptionsTitle": "App Options",
