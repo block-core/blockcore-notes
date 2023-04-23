@@ -106,8 +106,9 @@ export class Nip76ChannelHeaderComponent {
   }
 
   async deleteRSVP(rsvp: Rsvp) {
-    const privateKey = await this.nip76Service.passwordDialog('Delete RSVP');
-    if (privateKey) {
+    const privateKeyRequired = !this.nip76Service.extensionProvider;
+    const privateKey = privateKeyRequired ? await this.nip76Service.passwordDialog('Delete RSVP') : undefined;
+    if (privateKey || !privateKeyRequired) {
       const walletRsvp = this.wallet.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey && x.content.pointerDocIndex === rsvp.content.pointerDocIndex);
       if (await this.nip76Service.deleteDocument(rsvp, privateKey)) {
         rsvp.dkxParent.documents.splice(rsvp.dkxParent.documents.indexOf(rsvp), 1);
@@ -121,11 +122,8 @@ export class Nip76ChannelHeaderComponent {
   }
 
   async deleteInvitation(invite: Invitation) {
-    const privateKey = await this.nip76Service.passwordDialog('Delete Invitation');
-    if (privateKey) {
-      if (await this.nip76Service.deleteDocument(invite, privateKey)) {
-        invite.dkxParent.documents.splice(invite.dkxParent.documents.indexOf(invite), 1);
-      }
+    if (await this.nip76Service.deleteDocument(invite)) {
+      invite.dkxParent.documents.splice(invite.dkxParent.documents.indexOf(invite), 1);
     }
   }
 

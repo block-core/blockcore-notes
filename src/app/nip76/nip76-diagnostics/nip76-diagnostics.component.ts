@@ -87,7 +87,7 @@ export class Nip76DiagnosticsComponent {
   prettierJson(forCopy = false): SafeHtml | string {
     const keys: string[] = [];
     const ignoreKeys = ['channelSubscription', 'documents'];
-    const privateDataKeys = ['xpriv', "xpub", "wordset", "password", "signingKey", "cryptoKey"];
+    const privateDataKeys = ['xpriv', "xpub", "wordset", "password", "signingKey", "encryptKey", "signingParent", "encryptParent"];
     const replacer = (k: string, v: any) => {
       if (this.diagType === DiagType.Document && ignoreKeys.includes(k)) {
         return undefined;

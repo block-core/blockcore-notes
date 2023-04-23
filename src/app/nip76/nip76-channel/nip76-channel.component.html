@@ -81,10 +81,10 @@
                 <mat-card class="channel-items-card" *ngFor="let invite of channel.invites">
                     <a *ngIf="invite.content.password" class="label-only-anchor">
                         <span class="mat-mdc-tooltip-trigger">
-                            Password Protected {{ !invite.content.cryptoParent ? " (Suspended)" : ""}}
+                            Password Protected {{ !invite.content.encryptParent ? " (Suspended)" : ""}}
                         </span>
                     </a>
-                    <a *ngIf="!!invite.content.for && !invite.content.cryptoParent" class="label-only-anchor"
+                    <a *ngIf="!!invite.content.for && !invite.content.encryptParent" class="label-only-anchor"
                         style="left:200px;">
                         <span class="mat-mdc-tooltip-trigger">
                             (Suspended)
@@ -103,12 +103,12 @@
                                 Copy
                             </a>
                             <a class="action-link" (click)="nip76Service.resaveInvitation(channel, invite, false)"
-                                *ngIf="invite.content.cryptoParent"
+                                *ngIf="invite.content.encryptParent"
                                 matTooltip="Remove the channel keys from the invitation.">
                                 Suspend
                             </a>
                             <a class="action-link" (click)="nip76Service.resaveInvitation(channel, invite, true)"
-                                *ngIf="!invite.content.cryptoParent"
+                                *ngIf="!invite.content.encryptParent"
                                 matTooltip="Put the channel keys back into the invitaiton.">
                                 Reinstate
                             </a>

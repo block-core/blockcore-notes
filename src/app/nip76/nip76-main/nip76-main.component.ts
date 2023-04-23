@@ -77,11 +77,7 @@ export class Nip76MainComponent {
   }
 
   async initPrivateChannels() {
-    const publicKey = this.nip76Service.profile.pubkey;
-    const privateKey = await this.nip76Service.passwordDialog('Create an HD Wallet');
-    this.nip76Service.wallet = await Nip76WebWalletStorage.fromStorage({ publicKey, privateKey });
-    this.nip76Service.wallet.saveWallet(privateKey);
-    location.reload();
+    await this.nip76Service.loadWallet();
   }
 
   copyDemoInvitation(name: 'Alice') {

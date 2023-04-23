@@ -27,7 +27,8 @@ export class Nip76RsvpsSentComponent {
   }
 
   async deleteRSVP(rsvp: Rsvp) {
-    const privateKey = await this.nip76Service.passwordDialog('Delete RSVP');
+    const privateKeyRequired = !this.nip76Service.extensionProvider;
+    const privateKey = privateKeyRequired ? await this.nip76Service.passwordDialog('Delete RSVP') : undefined;
     if (privateKey) {
       const channelRsvp = rsvp.channel?.rsvps.find(x => x.content.pubkey === this.wallet.ownerPubKey && x.content.pointerDocIndex === rsvp.content.pointerDocIndex);
       if (await this.nip76Service.deleteDocument(rsvp, privateKey)) {

@@ -72,19 +72,23 @@ export class Nip76AddInvitationComponent {
   async copyInviteWithoutSave() {
     if (this.valid) {
       let pointer: string;
-      const threadPointer = {
+      const threadPointer: nip19Extension.PrivateChannelPointer = {
         type: 0,
         docIndex: -1,
         signingKey: this.data.channel.dkxPost.signingParent!.publicKey,
         signingChain: this.data.channel.dkxPost.signingParent!.chainCode,
-        cryptoKey: this.data.channel.dkxPost.cryptoParent.publicKey,
-        cryptoChain: this.data.channel.dkxPost.cryptoParent.chainCode,
+        cryptoKey: this.data.channel.dkxPost.encryptParent.publicKey,
+        cryptoChain: this.data.channel.dkxPost.encryptParent.chainCode,
       };
       if (this.data.invitationType === 'password') {
         pointer = await nip19Extension.nprivateChannelEncode(threadPointer, this.data.password!);
       } else {
-        const privateKey = await this.nip76Service.passwordDialog('Save RSVP');
-        pointer = await nip19Extension.nprivateChannelEncode(threadPointer, privateKey, this.data.validPubkey);
+        if (this.nip76Service.extensionProvider) {
+          pointer = await (globalThis as any).nostr.nip76.createInvitation(threadPointer, this.data.validPubkey);
+        } else {
+          const privateKey = await this.nip76Service.passwordDialog('Save RSVP');
+          pointer = await nip19Extension.nprivateChannelEncode(threadPointer, privateKey, this.data.validPubkey);
+        }
       }
       navigator.clipboard.writeText(pointer);
       this.snackBar.open(`The invitation is now in your clipboard.`, 'Hide', defaultSnackBarOpts);

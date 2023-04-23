@@ -3,9 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { bech32 } from '@scure/base';
 import {
-  ContentDocument, HDKey, getNowSeconds,
+  ContentDocument, HDKey, getNowSeconds, Nip76WalletConstructorArgs,
   HDKIndex, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
-  Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset
+  Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset, NostrEventDocument
 } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
 import { filter, firstValueFrom, Subject, take } from 'rxjs';
@@ -51,15 +51,46 @@ export class Nip76Service {
   ) {
     this.profileService.profile$.pipe(filter(x => !!x), take(1)).subscribe(profile => {
       this.profile = profile!;
-      Nip76WebWalletStorage.fromStorage({ publicKey: profile!.pubkey }).then(wallet => {
-        this.wallet = wallet;
-        if (this.wallet.isInSession) {
-          setTimeout(() => { this.loadDocuments(); }, 500);
-        } else if (!this.wallet.isGuest) {
-          this.login();
-        }
-      });
+      this.loadWallet();
     });
+  }
+
+  get extensionProvider(): any {
+    return (globalThis as any).nostr?.nip76;
+  }
+
+  async loadWallet() {
+    const publicKey = this.profile.pubkey;
+    if (this.extensionProvider) {
+      const args = await this.extensionProvider.getWalletArgs();
+      const rootKey = HDKey.parseExtendedKey(args.rootKey.xpriv);
+      const walletArgs: Nip76WalletConstructorArgs = {
+        publicKey: args.publicKey,
+        wordset: Uint32Array.from(Object.values(args.wordset)),
+        rootKey,
+        store: {} as Nip76WebWalletStorage,
+        isGuest: false,
+        isInSession: true,
+      };
+      this.wallet = new Nip76Wallet(walletArgs);
+      setTimeout(() => { this.loadDocuments(); }, 500);
+    } else if (localStorage.getItem(nostrPrivKeyAddress)) {
+      if (localStorage.getItem(Nip76WebWalletStorage.backupKey)) {
+        Nip76WebWalletStorage.fromStorage({ publicKey }).then(wallet => {
+          this.wallet = wallet;
+          if (this.wallet.isInSession) {
+            setTimeout(() => { this.loadDocuments(); }, 500);
+          } else if (!this.wallet.isGuest) {
+            this.login();
+          }
+        });
+      } else {
+        const privateKey = await this.passwordDialog('Create an HD Wallet');
+        this.wallet = await Nip76WebWalletStorage.fromStorage({ publicKey, privateKey });
+        this.wallet.saveWallet(privateKey);
+        location.reload();
+      }
+    }
   }
 
   async passwordDialog(actionPrompt: string): Promise<string> {
@@ -229,11 +260,11 @@ export class Nip76Service {
   }
 
   async readInvitation(invite: Invitation): Promise<PrivateChannel | undefined> {
-    if (!invite.content.signingParent && !invite.content.cryptoParent) {
+    if (!invite.content.signingParent && !invite.content.encryptParent) {
       this.snackBar.open(`Encountered a suspended invitation from ${invite.ownerPubKey}`, 'Hide', defaultSnackBarOpts);
       return undefined;
     }
-    const channelIndex = new HDKIndex(HDKIndexType.Singleton, invite.content.signingParent!, invite.content.cryptoParent!);
+    const channelIndex = new HDKIndex(HDKIndexType.Singleton, invite.content.signingParent!, invite.content.encryptParent!);
     const channelIndex$ = new Subject<NostrEvent>();
     const channelIndexSub = this.relayService.subscribe(
       [{ authors: [channelIndex.signingParent.nostrPubKey], kinds: [17761], limit: 1 }],
@@ -270,11 +301,21 @@ export class Nip76Service {
     try {
       const words = bech32.decode(channelPointer, 5000).words;
       const pointerType = Uint8Array.from(bech32.fromWords(words))[0] as nip19Extension.PointerType;
+      let pointer: nip19Extension.PrivateChannelPointer;
+
       if ((pointerType & nip19Extension.PointerType.SharedSecret) == nip19Extension.PointerType.SharedSecret) {
-        secret = await this.passwordDialog('Preview Private Invitation');
+        if (this.extensionProvider) {
+          const pointerDTO = await this.extensionProvider.readInvitation(channelPointer);
+          pointer = nip19Extension.pointerFromDTO(pointerDTO);
+        } else {
+          secret = await this.passwordDialog('Preview Private Invitation');
+          const p = await nip19Extension.decode(channelPointer, secret!);
+          pointer = p.data as nip19Extension.PrivateChannelPointer;
+        }
+      } else {
+        const p = await nip19Extension.decode(channelPointer, secret!);
+        pointer = p.data as nip19Extension.PrivateChannelPointer;
       }
-      const p = await nip19Extension.decode(channelPointer, secret!);
-      const pointer = p.data as nip19Extension.PrivateChannelPointer;
 
       if (pointer) {
         if ((pointer.type & nip19Extension.PointerType.FullKeySet) === nip19Extension.PointerType.FullKeySet) {
@@ -288,7 +329,7 @@ export class Nip76Service {
             pubkey: signingParent.nostrPubKey,
             docIndex: pointer.docIndex,
             signingParent,
-            cryptoParent
+            encryptParent: cryptoParent
           };
           invite.ready = true;
           return this.readInvitation(invite);
@@ -328,28 +369,37 @@ export class Nip76Service {
   }
 
   async saveChannel(channel: PrivateChannel, privateKey?: string) {
-    privateKey = privateKey || await this.passwordDialog('Save Channel Details');
     channel.content.created_at = channel.content.created_at || channel?.nostrEvent.created_at || getNowSeconds();
-    const ev = await this.wallet.documentsIndex.createEvent(channel, privateKey);
-    await this.dataService.publishEvent(ev);
+    let event: NostrEventDocument;
+    if (this.extensionProvider) {
+      event = await this.extensionProvider.createEvent(this.wallet.documentsIndex, channel);
+    } else {
+      privateKey = privateKey || await this.passwordDialog('Save Channel Details');
+      event = await this.wallet.documentsIndex.createEvent(channel, privateKey);
+    }
+    await this.dataService.publishEvent(event);
     return true;
   }
 
   async saveNote(channel: PrivateChannel, text: string) {
-    const privateKey = await this.passwordDialog('Save Note');
     const postDocument = new PostDocument();
     postDocument.content = {
       text,
       pubkey: this.wallet.ownerPubKey,
       kind: nostrTools.Kind.Text
     }
-    const event = await channel.dkxPost.createEvent(postDocument, privateKey);
+    let event: NostrEventDocument;
+    if (this.extensionProvider) {
+      event = await this.extensionProvider.createEvent(channel.dkxPost, postDocument);
+    } else {
+      const privateKey = await this.passwordDialog('Save Note');
+      event = await channel.dkxPost.createEvent(postDocument, privateKey);
+    }
     await this.dataService.publishEvent(event);
     return true;
   }
 
   async saveReaction(post: PostDocument, text: string, kind: nostrTools.Kind): Promise<PostDocument> {
-    const privateKey = await this.passwordDialog('Save ' + (kind === nostrTools.Kind.Reaction ? 'Reaction' : 'Reply'));
     const postDocument = new PostDocument();
     postDocument.content = {
       kind,
@@ -357,13 +407,18 @@ export class Nip76Service {
       text,
       tags: [['e', post.nostrEvent.id]]
     };
-    const event = await post.dkxParent.createEvent(postDocument, privateKey);
+    let event: NostrEventDocument;
+    if (this.extensionProvider) {
+      event = await this.extensionProvider.createEvent(post.dkxParent, postDocument);
+    } else {
+      const privateKey = await this.passwordDialog('Save ' + (kind === nostrTools.Kind.Reaction ? 'Reaction' : 'Reply'));
+      event = await post.dkxParent.createEvent(postDocument, privateKey);
+    }
     await this.dataService.publishEvent(event);
     return postDocument;
   }
 
   async saveInvitation(channel: PrivateChannel, invitation: AddInvitationDialogData): Promise<Invitation> {
-    const privateKey = await this.passwordDialog('Save Invitation');
     const invite = new Invitation();
     invite.docIndex = channel.dkxInvite.documents.length + 1;
     invite.content = {
@@ -373,46 +428,73 @@ export class Nip76Service {
       password: invitation.invitationType === 'password' ? invitation.password : undefined,
       pubkey: channel.dkxPost.signingParent.nostrPubKey,
       signingParent: channel.dkxPost.signingParent,
-      cryptoParent: channel.dkxPost.cryptoParent,
+      encryptParent: channel.dkxPost.encryptParent,
+    };
+    let event: NostrEventDocument;
+    if (this.extensionProvider) {
+      event = await this.extensionProvider.createEvent(channel.dkxInvite, invite);
+    } else {
+      const privateKey = await this.passwordDialog('Save Invitation');
+      event = await channel.dkxInvite.createEvent(invite, privateKey);
     }
-    const event = await channel.dkxInvite.createEvent(invite, privateKey);
     await this.dataService.publishEvent(event);
     return invite;
   }
 
   async resaveInvitation(channel: PrivateChannel, invite: Invitation, withKeys: boolean): Promise<Invitation> {
-    const privateKey = await this.passwordDialog('Revoke Invitation');
     invite.content.signingParent = withKeys ? channel.dkxPost.signingParent : undefined;
-    invite.content.cryptoParent = withKeys ? channel.dkxPost.cryptoParent : undefined;
-    const event = await channel.dkxInvite.createEvent(invite, privateKey);
+    invite.content.encryptParent = withKeys ? channel.dkxPost.encryptParent : undefined;
+    let event: NostrEventDocument;
+    if (this.extensionProvider) {
+      event = await this.extensionProvider.createEvent(channel.dkxInvite, invite);
+    } else {
+      const privateKey = await this.passwordDialog((withKeys ? 'Reinstate' : 'Suspend') + ' Invitation');
+      event = await channel.dkxInvite.createEvent(invite, privateKey);
+    }
     await this.dataService.publishEvent(event);
     return invite;
   }
 
   async saveRSVP(channel: PrivateChannel) {
-    const privateKey = await this.passwordDialog('Save RSVP');
     const rsvp = new Rsvp();
     rsvp.content = {
       kind: NostrKinds.PrivateChannelRSVP,
       pubkey: this.wallet.ownerPubKey,
       pointerDocIndex: channel.invitation.pointer.docIndex,
       type: channel.invitation.pointer.type,
+    };
+    let event1: NostrEventDocument;
+    let privateKey: string;
+    if (this.extensionProvider) {
+      event1 = await this.extensionProvider.createEvent(channel.dkxRsvp, rsvp);
+    } else {
+      privateKey = await this.passwordDialog('Save RSVP');
+      event1 = await channel.dkxRsvp.createEvent(rsvp, privateKey);
     }
-    const event1 = await channel.dkxRsvp.createEvent(rsvp, privateKey);
     await this.dataService.publishEvent(event1);
 
     rsvp.docIndex = channel.invitation.docIndex || (this.wallet.rsvps.length + 1 + walletRsvpDocumentsOffset);
     rsvp.content.signingKey = channel.invitation.pointer.signingKey;
     rsvp.content.cryptoKey = channel.invitation.pointer.cryptoKey;
-    const event2 = await this.wallet.documentsIndex.createEvent(rsvp, privateKey);
+    let event2: NostrEventDocument;
+    if (this.extensionProvider) {
+      event2 = await this.extensionProvider.createEvent(this.wallet.documentsIndex, rsvp);
+    } else {
+      event2 = await this.wallet.documentsIndex.createEvent(rsvp, privateKey!);
+    }
     await this.dataService.publishEvent(event2);
 
     return true;
   }
 
   async deleteDocument(doc: ContentDocument, privateKey?: string) {
-    privateKey = privateKey || await this.passwordDialog('Delete Document');
-    const event = await doc.dkxParent.createDeleteEvent(doc, privateKey);
+    let event: NostrEventDocument;
+    if (this.extensionProvider) {
+      event = await this.extensionProvider.createDeleteEvent(doc);
+    } else {
+      privateKey = privateKey || await this.passwordDialog('Delete Document');
+      event = await doc.dkxParent.createDeleteEvent(doc, privateKey);
+    }
     if (doc.nostrEvent.pubkey !== event.pubkey) {
       this.snackBar.open(`Cannot delete another user's document.`, 'Hide', defaultSnackBarOpts);
       return false;
