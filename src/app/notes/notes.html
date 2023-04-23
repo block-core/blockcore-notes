@@ -1,11 +1,11 @@
 <div class="feed-page">
   <app-labels (selectionChanged)="filterNotes($event)"></app-labels>
-  <div *ngIf="notesService.items.length === 0">Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others. You can add tags to organize your saved notes.<br /></div>
+  <div *ngIf="notesService.items.length === 0">{{ 'Notes.Title' | translate }}<br /></div>
 
   <div class="notes">
     <mat-card class="events" *ngFor="let note of notesService.filtered">
       <div class="events-header">
-        <app-event-header [pubkey]="note.pubkey">Posted: <span class="event-date">{{ note.created_at | ago }}</span>, Saved: <span class="event-date">{{ note.saved | ago }}</span> </app-event-header>
+        <app-event-header [pubkey]="note.pubkey">{{ 'Notes.Posted' | translate }}: <span class="event-date">{{ note.created_at | ago }}</span>, {{ 'Notes.Saved' | translate }}: <span class="event-date">{{ note.saved | ago }}</span> </app-event-header>
         <app-event-actions [event]="note"></app-event-actions>
       </div>
 

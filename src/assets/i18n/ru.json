@@ -9,7 +9,23 @@
   "ru": "Русский",
   "App": {
     "Hide": "Hide",
-    "ConvertKey": "Convert Key"
+    "ConvertKey": "Convert Key",
+    "Search": "Search",
+    "Home": "Home",
+    "Feed": "Feed",
+    "Notifications": "Notifications",
+    "People": "People",
+    "Circles": "Circles",
+    "Bookmarks": "Bookmarks",
+    "Relays": "Relays",
+    "Followers": "Followers",
+    "Following": "Following",
+    "ViewProfile": "View profile",
+    "EditProfile": "Edit profile",
+    "Badges": "Badges",
+    "Settings": "Settings",
+    "About": "About",
+    "Logout": "Logout"
   },
   "Settings": {
     "Options": "Options",
@@ -35,7 +51,40 @@
     "MediaWidgetsNote": "Enable this to allow the app to render music widgets when URLs linked to the services is seen in notes.",
     "EnableSpotify": "Enable Spotify",
     "EnableTidal": "Enable Tidal",
-    "OpenMediaPlayer": "Open Media Player"
+    "OpenMediaPlayer": "Open Media Player",
+    "RegisterProtocolHandlerNote": "Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.",
+    "Data": "Data",
+    "ExportPrivateKey": "Export Private Key",
+    "ExportPrivateKeyNote": "Keep this private key safe, if you loose it or share it with websites, it can be stolen and misused.",
+    "PrivateKey": "Private Key",
+    "InvalidPassword": "Invalid Password",
+    "Hide": "Hide",
+    "WipeLocalDatabase": "Wipe Local Database",
+    "AllLocalDataCacheWasCleared": "All local data cache was cleared."
+  },
+  "Home": {
+    "ActivityFeed": "Activity Feed",
+    "NoActivities": "No Activities",
+    "ViewMore": "View more...",
+    "FollowingLists": "Following Lists",
+    "FollowingListsNote": "Lists of users based upon topics you can add to your following list.",
+    "ViewProfiles": "View Profiles",
+    "Prototype": "Prototype",
+    "PrototypeTitle": "Blockcore Notes is currently in prototype quality stage. Reset the database often.",
+    "PrototypeSubtitle": "Please consider donating some Bitcoin using Geyser:",
+    "WriteANote": "Write a note",
+    "ViewFollowingNotes": "View following notes"
+  },
+  "Note": {
+    "Options": "Options",
+    "ShowLines": "Show lines",
+    "ViewThread": "View Thread",
+    "ViewParent": "View Parent"
+  },
+  "Notes": {
+    "Title": "Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others. You can add tags to organize your saved notes.",
+    "Posted": "Posted",
+    "Saved": "Saved"
   },
   "Notifications": {
     "Options": "Options",
@@ -79,6 +128,12 @@
     "LastUpdated": "Last updated",
     "Cancel": "Cancel",
     "Save": "Save"
+  },
+  "User": {
+    "YouMustFollowTheUserToAutomaticallyRenderPhotos": "You must follow the user to automatically render photos",
+    "Error": "Error",
+    "ShowMore": "Show more...",
+    "LoadingMoreEvents": "Loading more events... or there are nothing more to show..."
   },
   "Relays": {
     "Options": "Options",
