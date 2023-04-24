@@ -5,18 +5,18 @@
     <mat-accordion class="options">
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title>Options</mat-panel-title>
+          <mat-panel-title>{{ 'Note.Options' | translate }}</mat-panel-title>
           <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
         <p>
-          <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.showLines">Show lines</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.showLines">{{ 'Note.ShowLines' | translate }}</mat-slide-toggle>
         </p>
       </mat-expansion-panel>
     </mat-accordion>
   </div>
 
   <mat-card *ngIf="event.rootEventId" class="button-card">
-    <button mat-flat-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon>View Thread</button>
+    <button mat-flat-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon>{{ 'Note.ViewThread' | translate }}</button>
   </mat-card>
 
   <div class="parent-event" *ngIf="ui.parentEvent$ | async as parentEvent">
@@ -25,7 +25,7 @@
 
   <div class="current-event events2 noclick" [ngClass]="{'is-root': !event.parentEventId, 'has-root': event.parentEventId, 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
     <mat-card *ngIf="event.parentEventId" class="button-card">
-      <button mat-flat-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon>View Parent</button>
+      <button mat-flat-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon>{{ 'Note.ViewParent' | translate }}</button>
     </mat-card>
 
     <div class="events-header">

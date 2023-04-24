@@ -10,78 +10,78 @@
   <div class="connect-content">
     <mat-card class="card" *ngIf="step == 1">
       <mat-card-content>
-        <h1>Who are you?</h1>
-        <p>Add some (optional) basics about yourself. This information will be public.</p>
+        <h1>{{ 'Create.WhoAreYou' | translate }}</h1>
+        <p>{{ 'Create.WhoAreYouSubtitle' | translate }}</p>
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>badge</mat-icon>
-            <mat-label>Display Name</mat-label>
+            <mat-label>{{ 'Create.DisplayName' | translate }}</mat-label>
             <input matInput type="text" [(ngModel)]="profile.display_name" />
           </mat-form-field>
         </p>
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>alternate_email</mat-icon>
-            <mat-label>Nickname</mat-label>
+            <mat-label>{{ 'Create.Nickname' | translate }}</mat-label>
             <input matInput type="text" [(ngModel)]="profile.name" />
           </mat-form-field>
         </p>
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>help_outline</mat-icon>
-            <mat-label>About</mat-label>
+            <mat-label>{{ 'Create.About' | translate }}</mat-label>
             <textarea matInput type="text" [(ngModel)]="profile.about" rows="3"></textarea>
           </mat-form-field>
         </p>
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>image</mat-icon>
-            <mat-label>Profile Image</mat-label>
+            <mat-label>{{ 'Create.ProfileImage' | translate }}</mat-label>
             <input matInput type="text" [(ngModel)]="profile.picture" />
           </mat-form-field>
         </p>
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>how_to_reg</mat-icon>
-            <mat-label>E-mail/Domain Identifier (NIP05)</mat-label>
+            <mat-label>{{ 'Create.EmailDomainIdentifierNIP05' | translate }}</mat-label>
             <input matInput type="text" [(ngModel)]="profile.nip05" />
           </mat-form-field>
         </p>
 
         <div class="connect-action">
-          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">Continue</button>
+          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">{{ 'Create.Continue' | translate }}</button>
         </div>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="card" *ngIf="step == 2">
       <mat-card-content>
-        <h1>Your secret recovery phrase</h1>
+        <h1>{{ 'Create.YourSecretRecoveryPhrase' | translate }}</h1>
 
         <p class="recovery-phrase">{{ mnemonic }}</p>
         <br />
 
         <button color="primary" mat-fab extended [cdkCopyToClipboard]="mnemonic">
           <mat-icon>content_copy</mat-icon>
-          Copy
+          {{ 'Create.Copy' | translate }}
         </button>
         <br /><br />
 
-        <p class="dimmed">This is your private and secret sentence. You must store it safely, if you lose it, you will lose access to your account. Nobody can recover it for you.</p>
-        <p>Keep it safe, keep it hidden.</p>
+        <p class="dimmed">{{ 'Create.SecretRecoveryPhraseDescription' | translate }}</p>
+        <p>{{ 'Create.SecretRecoveryPhraseWarning' | translate }}</p>
 
         <div class="connect-action">
-          <button class="start-button" (click)="step = 1" mat-raised-button color="primary">Back</button>
-          <button class="start-button" (click)="step = 3" mat-raised-button color="primary">Continue</button>
+          <button class="start-button" (click)="step = 1" mat-raised-button color="primary">{{ 'Create.Back' | translate }}</button>
+          <button class="start-button" (click)="step = 3" mat-raised-button color="primary">{{ 'Create.Continue' | translate }}</button>
         </div>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="card" *ngIf="step == 3">
       <mat-card-content>
-        <h1>Private and Public Keys</h1>
+        <h1>{{ 'Create.PrivateAndPublicKeys' | translate }}</h1>
 
-        Your personal private key:<br />
+        {{ 'Create.YourPersonalPrivateKey' | translate }}:<br />
         <p class="wrap">{{ privateKey }}</p>
 
         <!-- <mat-form-field appearance="fill" class="input-full-width connect-input">
@@ -93,13 +93,13 @@
         <form>
           <mat-form-field appearance="fill" class="input-full-width connect-input">
             <mat-icon class="circle" matPrefix>person_add</mat-icon>
-            <mat-label>Public Key</mat-label>
+            <mat-label>{{ 'Create.PublicKey' | translate }}</mat-label>
             <input [readonly]="true" autocomplete="username" name="email" placeholder="npub..." matInput type="email" [(ngModel)]="publicKey" />
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="input-full-width connect-input">
             <mat-icon class="circle" matPrefix>password</mat-icon>
-            <mat-label>Password (optional)</mat-label>
+            <mat-label>{{ 'Create.PasswordOptional' | translate }}</mat-label>
             <input matInput type="password" autocomplete="current-password" name="password" [(ngModel)]="password" />
           </mat-form-field>
 
@@ -109,8 +109,8 @@
         <p class="dimmed">From your secret recovery phrase, your public key and private key are derived. Some Nostr clients require the private key to be imported.</p>
 
         <div class="connect-action">
-          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">Back</button>
-          <button class="start-button" (click)="persistKey()" mat-raised-button color="primary">Save and Log In</button>
+          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">{{ 'Create.Back' | translate }}</button>
+          <button class="start-button" (click)="persistKey()" mat-raised-button color="primary">{{ 'Create.SaveAndLogIn' | translate }}</button>
         </div>
       </mat-card-content>
     </mat-card>

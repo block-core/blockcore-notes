@@ -14,15 +14,15 @@
     <div class="home-left">
       <mat-card class="home-card">
         <mat-card-header>
-          <mat-card-title>Activity Feed</mat-card-title>
+          <mat-card-title>{{ 'Home.ActivityFeed' | translate }}</mat-card-title>
         </mat-card-header>
         <mat-card-content class="activity-feed" *ngIf="ui.activityFeed$ | async as activityFeed">
           <p *ngFor="let notification of activityFeed">
             <app-notification-label [notification]="notification"></app-notification-label>
           </p>
-          <p class="dimmed" *ngIf="activityFeed.length == 0">No activities</p>
+          <p class="dimmed" *ngIf="activityFeed.length == 0">{{ 'Home.NoActivities' | translate }}</p>
           <div class="centered">
-            <button mat-button routerLink="/notifications">View more</button>
+            <button mat-button routerLink="/notifications">{{ 'Home.ViewMore' | translate }}</button>
           </div>
         </mat-card-content>
       </mat-card>
@@ -82,25 +82,25 @@
 
       <mat-card class="home-card">
         <mat-card-header>
-          <mat-card-title>Following Lists</mat-card-title>
-          <mat-card-subtitle>Lists of users based upon topics you can add to your following list.</mat-card-subtitle>
+          <mat-card-title>{{ 'Home.FollowingLists' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'Home.FollowingListsNote' | translate }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
           <div class="list-selection" *ngFor="let list of lists">
             {{ list.name }}<br />
             <small>{{ list.about }}</small><br />
-            <button class="full-width" [routerLink]="['/following', list.pubkeyhex]" mat-flat-button color="primary">View profiles</button>
+            <button class="full-width" [routerLink]="['/following', list.pubkeyhex]" mat-flat-button color="primary">{{ 'Home.ViewProfiles' | translate }}</button>
           </div>
         </mat-card-content>
       </mat-card>
 
       <mat-card class="home-card">
         <mat-card-header>
-          <mat-card-title>Prototype</mat-card-title>
+          <mat-card-title>{{ 'Home.Prototype' | translate }}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p>Blockcore Notes is currently in prototype quality stage. Reset the database often.</p>
-          <p>Please consider donating some Bitcoin using Geyser:</p>
+          <p>{{ 'Home.PrototypeTitle' | translate }}</p>
+          <p>{{ 'Home.PrototypeSubtitle' | translate }}</p>
           <p>
             <a href="https://geyser.fund/project/blockcore" target="_blank">geyser.fund/blockcore</a>
           </p>
@@ -112,7 +112,7 @@
       <div class="centered">
         <button routerLink="/editor" mat-fab extended color="primary">
           <mat-icon>note_add</mat-icon>
-          Write a Note
+          {{ 'Home.WriteANote' | translate }}
         </button>
       </div>
 
@@ -151,7 +151,7 @@
       </mat-card>
 
       <p class="view-more-container">
-        <button mat-button routerLink="/feed">View following notes...</button>
+        <button mat-button routerLink="/feed">{{ 'Home.ViewFollowingNotes' | translate }}</button>
       </p>
 
       <!-- <mat-card class="home-card">

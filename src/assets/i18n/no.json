@@ -9,7 +9,83 @@
   "ru": "Русский",
   "App": {
     "Hide": "Skjul",
-    "ConvertKey": "Endre nøkkel"
+    "ConvertKey": "Endre nøkkel",
+    "Search": "Search",
+    "Home": "Home",
+    "Feed": "Feed",
+    "Notifications": "Notifications",
+    "People": "People",
+    "Circles": "Circles",
+    "Bookmarks": "Bookmarks",
+    "Relays": "Relays",
+    "Followers": "Followers",
+    "Following": "Following",
+    "ViewProfile": "View profile",
+    "EditProfile": "Edit profile",
+    "Badges": "Badges",
+    "Settings": "Settings",
+    "About": "About",
+    "Logout": "Logout"
+  },
+  "Badge": {
+    "CreatedBy": "Created by",
+    "IssueBadge": "ISSUE BADGE",
+    "Edit": "EDIT",
+    "PubKeyDescription": "Pub Key (hex format only, line separated, add relay comma separated at the end)",
+    "PublishBadgeReward": "Publish Badge Reward"
+  },
+  "Badges": {
+    "Options": "Options",
+    "BadgeEditor": "Badge Editor",
+    "Accepted": "Accepted",
+    "Awarded": "Awarded",
+    "Created": "Created"
+  },
+  "Circles": {
+    "Count": "Count",
+    "Public": "Public",
+    "Private": "Private",
+    "Created": "Created",
+    "Copy": "Copy",
+    "DeleteCircle": "Delete Circle",
+    "PublicKeysNpub": "Public Keys (npub)",
+    "PublicKeysHex": "Public Keys (hex)",
+    "CirclesDescription": "Circles is how you organize people you follow. Different circles can have different rules applied and circles is an important way to make the experience more enjoyable."
+  },
+  "Create": {
+    "WhoAreYou": "Who Are You?",
+    "WhoAreYouSubtitle": "Add some (optional) basics about yourself. This information will be public.",
+    "DisplayName": "Display Name",
+    "Nickname": "Nickname",
+    "About": "About",
+    "ProfileImage": "Profile Image",
+    "EmailDomainIdentifierNIP05": "E-mail/Domain Identifier (NIP05)",
+    "Continue": "Continue",
+    "YourSecretRecoveryPhrase": "Your secret recovery phrase",
+    "Copy": "Copy",
+    "SecretRecoveryPhraseDescription": "This is your private and secret sentence. You must store it safely, if you lose it, you will lose access to your account. Nobody can recover it for you.",
+    "SecretRecoveryPhraseWarning": "Keep it safe, keep it hidden.",
+    "Back": "Back",
+    "PrivateAndPublicKeys": "Private and Public Keys",
+    "YourPersonalPrivateKey": "Your Personal Private Key",
+    "PublicKey": "Public Key",
+    "PasswordOptional": "Password (optional)",
+    "SaveAndLogIn": "Save and Log In"
+  },
+  "Key": {
+    "PrivateKeyImport": "Private Key Import",
+    "PrivateKeyImportSubtitle": "If you already have an existing private for your Nostr account, you can import it here and protect it with a password.",
+    "PrivateKeyImportDescription": "First choose if your backup is a secret recovery phrase or a private key.",
+    "SecretRecoveryPhrase": "Secret Recovery Phrase",
+    "PrivateKey": "Private Key",
+    "ScanQRCode": "Scan QR-code",
+    "SecretRecoveryPhraseImport": "Secret Recovery Phrase Import",
+    "Continue": "Continue",
+    "ProtectPrivateKeyWithPassword": "Protect Private Key with password",
+    "YourPersonalPrivateKey": "Your personal private key",
+    "Connect": "Connect",
+    "PublicKeyHex": "Public Keys (hex)",
+    "Error": "Error"
   },
   "Settings": {
     "OptionsTitle": "Appinnstillinger",
@@ -34,7 +110,40 @@
     "MediaWidgetsNote": "Enable this to allow the app to render music widgets when URLs linked to the services is seen in notes.",
     "EnableSpotify": "Enable Spotify",
     "EnableTidal": "Enable Tidal",
-    "OpenMediaPlayer": "Open Media Player"
+    "OpenMediaPlayer": "Open Media Player",
+    "RegisterProtocolHandlerNote": "Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.",
+    "Data": "Data",
+    "ExportPrivateKey": "Export Private Key",
+    "ExportPrivateKeyNote": "Keep this private key safe, if you loose it or share it with websites, it can be stolen and misused.",
+    "PrivateKey": "Private Key",
+    "InvalidPassword": "Invalid Password",
+    "Hide": "Hide",
+    "WipeLocalDatabase": "Wipe Local Database",
+    "AllLocalDataCacheWasCleared": "All local data cache was cleared."
+  },
+  "Home": {
+    "ActivityFeed": "Activity Feed",
+    "NoActivities": "No Activities",
+    "ViewMore": "View more...",
+    "FollowingLists": "Following Lists",
+    "FollowingListsNote": "Lists of users based upon topics you can add to your following list.",
+    "ViewProfiles": "View Profiles",
+    "Prototype": "Prototype",
+    "PrototypeTitle": "Blockcore Notes is currently in prototype quality stage. Reset the database often.",
+    "PrototypeSubtitle": "Please consider donating some Bitcoin using Geyser:",
+    "WriteANote": "Write a note",
+    "ViewFollowingNotes": "View following notes"
+  },
+  "Note": {
+    "Options": "Options",
+    "ShowLines": "Show lines",
+    "ViewThread": "View Thread",
+    "ViewParent": "View Parent"
+  },
+  "Notes": {
+    "Title": "Notes are all your saved posts. These can be your own, or they can be copies of public posts made by others. You can add tags to organize your saved notes.",
+    "Posted": "Posted",
+    "Saved": "Saved"
   },
   "Notifications": {
     "Options": "Alternativ",
@@ -79,6 +188,12 @@
     "Cancel": "Cancel",
     "Save": "Save"
   },
+  "User": {
+    "YouMustFollowTheUserToAutomaticallyRenderPhotos": "You must follow the user to automatically render photos",
+    "Error": "Error",
+    "ShowMore": "Show more...",
+    "LoadingMoreEvents": "Loading more events... or there are nothing more to show..."
+  },
   "Relays": {
     "Options": "Alternativ",
     "AppendFromExtension": "Legg til fra utvidelse",
@@ -86,6 +201,13 @@
     "PublishRelay(and following)list": "Publiser relay (og følgende) liste",
     "PublishRelay(NIP-65)list": "Publiser relay (NIP-65) liste",
     "DeleteAllRelays": "Slett alle relays"
+  },
+  "RelayDialog": {
+    "AddARelay": "Add a relay",
+    "Read": "Read",
+    "Write": "Write",
+    "Cancel": "Cancel",
+    "Add": "Add"
   },
   "Relay": {
     "Administrator": "Administrator",

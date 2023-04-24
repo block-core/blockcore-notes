@@ -44,7 +44,7 @@
           <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
         </div> -->
 
-        <div *ngIf="!isFollowing" class="dimmed">You must follow the user to automatically render photos.</div>
+        <div *ngIf="!isFollowing" class="dimmed">{{ 'User.YouMustFollowTheUserToAutomaticallyRenderPhotos' | translate }}</div>
         <br />
 
         <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
@@ -71,12 +71,12 @@
         </mat-card> -->
       </ng-template>
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
-      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+      <ng-template [ngIf]="items.error">{{'User.Error' | translate }} {{ items.error }}</ng-template>
     </div>
 
     <div class="show-more centered">
-      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
-      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Loading more events... or there are nothing more to show...</button>
+      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
     </div>
   </mat-tab>
   <mat-tab label="Replies">
@@ -96,12 +96,12 @@
         </mat-card>
       </ng-template>
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
-      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+      <ng-template [ngIf]="items.error"> {{'User.Error' | translate }} {{ items.error }}</ng-template>
     </div>
 
     <div class="show-more centered">
-      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
-      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Loading more events... or there are nothing more to show...</button>
+      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
     </div>
   </mat-tab>
 </mat-tab-group>
@@ -123,12 +123,12 @@
         </mat-card>
       </ng-template>
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
-      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+      <ng-template [ngIf]="items.error">{{'User.Error' | translate }} {{ items.error }}</ng-template>
     </div>
 
     <div class="show-more centered">
-      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
-      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Loading more events... or there are nothing more to show...</button>
+      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
     </div>
   </mat-tab>
   <mat-tab label="Replies">
@@ -148,12 +148,12 @@
         </mat-card>
       </ng-template>
       <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
-      <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+      <ng-template [ngIf]="items.error">{{'User.Error' | translate }} {{ items.error }}</ng-template>
     </div>
 
     <div class="show-more centered">
-      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Show more...</button>
-      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">Loading more events... or there are nothing more to show...</button>
+      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
     </div>
   </mat-tab>
 </mat-tab-group>

@@ -10,28 +10,28 @@
   <div class="connect-content">
     <mat-card class="card" *ngIf="step == 1">
       <mat-card-content>
-        <h1>Private Key Import</h1>
-        <p>If you already have an existing private for your Nostr account, you can import it here and protect it with a password.</p>
-        <p>First choose if your backup is a secret recovery phrase or a private key.</p>
+        <h1>{{ 'Key.PrivateKeyImport' | translate }}</h1>
+        <p>{{ 'Key.PrivateKeyImportSubtitle' | translate }}</p>
+        <p>{{ 'Key.PrivateKeyImportDescription' | translate }}</p>
         <br />
-        <button class="start-button full-button" (click)="step = 2" mat-flat-button color="accent">Secret Recovery Phrase</button>
+        <button class="start-button full-button" (click)="step = 2" mat-flat-button color="accent">{{ 'Key.SecretRecoveryPhrase' | translate }}</button>
         <br /><br />
-        <button class="start-button full-button" (click)="step = 3" mat-flat-button color="accent">Private Key</button>
+        <button class="start-button full-button" (click)="step = 3" mat-flat-button color="accent">{{ 'Key.PrivateKey' | translate }}</button>
         <br /><br />
-        <button class="start-button full-button" (click)="scanQrCode()" mat-flat-button color="accent"><mat-icon>qr_code_scanner</mat-icon> Scan QR Code</button>
+        <button class="start-button full-button" (click)="scanQrCode()" mat-flat-button color="accent"><mat-icon>qr_code_scanner</mat-icon>{{ 'Key.ScanQRCode' | translate }}</button>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="card" *ngIf="step == 2">
       <mat-card-content>
-        <h1>Secret Recovery Phrase Import</h1>
+        <h1>{{ 'Key.SecretRecoveryPhraseImport' | translate }}</h1>
         <br />
         <mat-form-field class="input-full-width">
-          <mat-label>Secret Recovery Phrase</mat-label>
+          <mat-label>{{ 'Key.SecretRecoveryPhrase' | translate }}</mat-label>
           <textarea class="note-input" matInput type="text" [(ngModel)]="mnemonic" rows="2"></textarea>
         </mat-form-field>
         <br />
-        <button [disabled]="!mnemonic" class="start-button" (click)="setPrivateKey(); step = 3" mat-raised-button>Continue</button><br /><br />
+        <button [disabled]="!mnemonic" class="start-button" (click)="setPrivateKey(); step = 3" mat-raised-button>{{ 'Key.Continue' | translate }}</button><br /><br />
 
         <!-- <div><button class="skip-button" (click)="persistKey(privateKey)" color="primary" mat-raised-button>Connect (read-only)</button></div> -->
       </mat-card-content>
@@ -39,17 +39,17 @@
 
     <mat-card class="card" *ngIf="step == 3">
       <mat-card-content>
-        <h1 *ngIf="mnemonic">Protect Private Key with password</h1>
-        <h1 *ngIf="!mnemonic">Private Key Import</h1>
+        <h1 *ngIf="mnemonic">{{ 'Key.ProtectPrivateKeyWithPassword' | translate }}</h1>
+        <h1 *ngIf="!mnemonic">{{ 'Key.PrivateKeyImport' | translate }}</h1>
         <p *ngIf="!mnemonic">If you already have an existing private for your Nostr account, you can import it here and protect it with a password.</p>
         <p>Having a strong password (we allow empty) is adviced, as this will be used to protect your private key using encryption when you are not using Blockcore Notes.</p>
         <br />
 
-        <p class="wrap" *ngIf="mnemonic">Your personal private key:<br>{{ privateKey }}</p>
+        <p class="wrap" *ngIf="mnemonic">{{ 'Key.YourPersonalPrivateKey' | translate }}:<br>{{ privateKey }}</p>
         <div *ngIf="!mnemonic">
           <mat-form-field appearance="fill" class="input-full-width connect-input">
             <mat-icon class="circle" matPrefix>person_add</mat-icon>
-            <mat-label>Private Key</mat-label>
+            <mat-label>{{ 'Key.PrivateKey' | translate }}</mat-label>
             <input (keyup)="updatePublicKey()" placeholder="nsec..." matInput type="password" [(ngModel)]="privateKey" />
           </mat-form-field>
         </div>
@@ -57,22 +57,22 @@
         <form>
           <mat-form-field appearance="fill" class="input-full-width connect-input">
             <mat-icon class="circle" matPrefix>person_add</mat-icon>
-            <mat-label>Public Key</mat-label>
+            <mat-label>{{ 'Key.PublicKey' | translate }}</mat-label>
             <input [readonly]="true" autocomplete="username" name="email" placeholder="npub..." matInput type="email" [(ngModel)]="publicKey" />
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="input-full-width connect-input">
             <mat-icon class="circle" matPrefix>password</mat-icon>
-            <mat-label>Password (optional)</mat-label>
+            <mat-label>{{ 'Create.PasswordOptional' | translate }}</mat-label>
             <input matInput type="password" autocomplete="current-password" name="password" [(ngModel)]="password" />
           </mat-form-field>
 
           <br />
-          <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-raised-button>Connect</button><br /><br />
+          <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-raised-button>{{ 'Key.Connect' | translate }}</button><br /><br />
         </form>
 
-        <p *ngIf="!error" class="public-key dimmed"><strong>Public Key (hex)</strong>: {{ publicKeyHex }}</p>
-        <p *ngIf="error" class="error">Error: {{ error }}</p>
+        <p *ngIf="!error" class="public-key dimmed"><strong>{{ 'Key.PublicKeyHex' | translate }}</strong>: {{ publicKeyHex }}</p>
+        <p *ngIf="error" class="error">{{ 'Key.Error' | translate }}: {{ error }}</p>
         <p class="dimmed">Remember that Blockcore cannot change or reset your password. Make sure you have a separate backup of your <strong>private key</strong> in case you loose your password.</p>
         <p class="dimmed">You will be asked to enter password (if supplied) when Notes need to sign events on your behalf.</p>
 

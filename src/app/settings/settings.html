@@ -122,9 +122,9 @@
 
           <mat-card>
             <mat-card-content>
-              <button mat-stroked-button (click)="registerHandler('web+nostr', 'nostr')">Register Protocol Handler</button>
+              <button mat-stroked-button (click)="registerHandler('web+nostr', 'nostr')">{{ 'Settings.RegisterProtocolHandler' | translate }}</button>
               <br /><br />
-              <div class="dimmed">Click the button to make Blockcore Notes handle links on websites for npub, nevent and nprofile.</div>
+              <div class="dimmed">{{ 'Settings.RegisterProtocolHandlerNote' | translate }}</div>
             </mat-card-content>
           </mat-card>
         </div>
@@ -134,19 +134,19 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="example-tab-icon">inventory_2</mat-icon>
-        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;Data</span>
+        <span *ngIf="(appState.displayLabels$ | async) === false">&nbsp;{{ 'Settings.Data' | translate }}</span>
       </ng-template>
       <ng-template matTabContent>
         <div class="page">
           <mat-card *ngIf="hasPrivateKey">
             <mat-card-header>
-              <mat-card-title>Export Private Key</mat-card-title>
-              <mat-card-subtitle>Keep this private key safe, if you loose it or share it with websites, it can be stolen and misused.</mat-card-subtitle>
+              <mat-card-title>{{ 'Settings.ExportPrivateKey' | translate }}</mat-card-title>
+              <mat-card-subtitle>{{ 'Settings.ExportPrivateKeyNote' | translate }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-              <button class="signup-button" mat-stroked-button (click)="exportPrivateKey()">Export Private Key</button>
+              <button class="signup-button" mat-stroked-button (click)="exportPrivateKey()">{{ 'Settings.ExportPrivateKey' | translate }}</button>
               <div class="selectable wrap" *ngIf="verifiedWalletPassword === true">
-                <br />Private key:
+                <br />{{ 'Settings.PrivateKey' | translate }}:
                 <p>
                   {{ privateKey }}<button class="copy-button" mat-icon-button [cdkCopyToClipboard]="privateKey!">
                     <mat-icon>content_copy</mat-icon>
@@ -156,8 +156,8 @@
                   <img [src]="qrCodePrivateKey" class="qr-code" />
                 </p>
               </div>
-              <div *ngIf="verifiedWalletPassword === false">Invalid Password</div>
-              <button *ngIf="verifiedWalletPassword === true" class="signup-button" mat-flat-button color="warn" (click)="resetPrivateKey()">Hide</button>
+              <div *ngIf="verifiedWalletPassword === false">{{ 'Settings.InvalidPassword' | translate }}</div>
+              <button *ngIf="verifiedWalletPassword === true" class="signup-button" mat-flat-button color="warn" (click)="resetPrivateKey()">{{ 'Settings.Hide' | translate }}</button>
             </mat-card-content>
           </mat-card>
 
@@ -172,9 +172,9 @@
         <p *ngIf="wipedNotes">All cached notes data was cleared.</p> -->
           <br />
           <p>
-            <button mat-flat-button color="warn" (click)="db.clearAndReload()">Wipe Local Database</button>
+            <button mat-flat-button color="warn" (click)="db.clearAndReload()">{{ 'Settings.WipeLocalDatabase' | translate }}</button>
           </p>
-          <p *ngIf="wiped">All local data cache was cleared.</p>
+          <p *ngIf="wiped">{{ 'Settings.AllLocalDataCacheWasCleared' | translate }}</p>
         </div>
       </ng-template>
     </mat-tab>
