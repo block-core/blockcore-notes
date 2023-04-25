@@ -4,8 +4,9 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { bech32 } from '@scure/base';
 import {
   ContentDocument, HDKey, getNowSeconds, Nip76WalletConstructorArgs,
-  HDKIndex, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
-  Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset, NostrEventDocument
+  HDKIndex, HDKIndexDTO, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
+  Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset, NostrEventDocument,
+  SequentialKeysetDTO
 } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
 import { filter, firstValueFrom, Subject, take } from 'rxjs';
@@ -63,11 +64,14 @@ export class Nip76Service {
     const publicKey = this.profile.pubkey;
     if (this.extensionProvider) {
       const args = await this.extensionProvider.getWalletArgs();
-      const rootKey = HDKey.parseExtendedKey(args.rootKey.xpriv);
+      const rootKey = HDKey.parseExtendedKey(args.rootKey);
+      const wordset = Uint32Array.from(args.wordset);
+      const documentsIndex: HDKIndex = HDKIndex.fromJSON(args.documentsIndex);
       const walletArgs: Nip76WalletConstructorArgs = {
         publicKey: args.publicKey,
-        wordset: Uint32Array.from(Object.values(args.wordset)),
+        wordset,
         rootKey,
+        documentsIndex,
         store: {} as Nip76WebWalletStorage,
         isGuest: false,
         isInSession: true,
@@ -142,22 +146,26 @@ export class Nip76Service {
     this.wallet = await Nip76WebWalletStorage.fromStorage({ publicKey: this.wallet.ownerPubKey });
   }
 
-  loadDocuments(start = 1, length = 20) {
-    const channelPubkeys = this.wallet.documentsIndex.getDocKeys(start, length);
-    const invitePubkeys = this.wallet.documentsIndex.getDocKeys(start + walletRsvpDocumentsOffset, length);
+  loadDocuments(start = 0) {
+    const channelPubkeys = this.wallet.documentsIndex.getSequentialKeyset(0, 0);
+    const invitePubkeys = this.wallet.documentsIndex.getSequentialKeyset(walletRsvpDocumentsOffset, 0);
     if (this.documentsSubscription) {
       this.relayService.unsubscribe(this.documentsSubscription.id);
     }
-    const privateNotes$ = new Subject<NostrEvent>();
-    privateNotes$.subscribe(async nostrEvent => {
-      let docIndex = channelPubkeys.findIndex(x => x === nostrEvent.pubkey) + start;
-      if (docIndex) {
+    const privateDoc$ = new Subject<NostrEvent>();
+    privateDoc$.subscribe(async nostrEvent => {
+      let docIndex = channelPubkeys.keys.findIndex(x => x.signingKey?.nostrPubKey === nostrEvent.pubkey) + start;
+      if (docIndex > -1) {
         const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex) as PrivateChannel;
+        if(this.extensionProvider) {
+          const dkxInviteDTO = await this.extensionProvider.getInvitationIndex(docIndex);
+          doc.dkxInvite = HDKIndex.fromJSON(dkxInviteDTO);
+        }
         if (doc) {
           this.loadChannel(doc);
         }
       } else {
-        docIndex = invitePubkeys.findIndex(x => x === nostrEvent.pubkey) + start + walletRsvpDocumentsOffset;
+        docIndex = invitePubkeys.keys.findIndex(x => x.signingKey?.nostrPubKey === nostrEvent.pubkey) + start + walletRsvpDocumentsOffset;
         const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex);
         if (doc && doc instanceof Rsvp) {
           const pointer: nip19Extension.PrivateChannelPointer = {
@@ -173,15 +181,15 @@ export class Nip76Service {
       }
     });
     const filters = [
-      { authors: channelPubkeys, kinds: [17761], limit: length },
-      { authors: invitePubkeys, kinds: [17761], limit: length }
+      { authors: channelPubkeys.keys.map(x => x.signingKey?.nostrPubKey!), kinds: [17761], limit: channelPubkeys.keys.length },
+      { authors: invitePubkeys.keys.map(x => x.signingKey?.nostrPubKey!), kinds: [17761], limit: invitePubkeys.keys.length }
     ];
     this.documentsSubscription = this.relayService.subscribe(filters,
-      `nip76Service.loadDocuments.${start}-${length}`, 'Replaceable', privateNotes$);
+      `nip76Service.loadDocuments.${start}-${length}`, 'Replaceable', privateDoc$);
   }
 
-  loadChannel(channel: PrivateChannelWithRelaySub, start = 1, length = 20) {
-    const invitePubs = channel.dkxInvite?.getDocKeys(start, length);
+  loadChannel(channel: PrivateChannelWithRelaySub, start = 0) {
+    const invitePubs = channel.dkxInvite?.getSequentialKeyset(0, 0);
     if (channel.channelSubscription) {
       this.relayService.unsubscribe(channel.channelSubscription.id);
     }
@@ -192,16 +200,16 @@ export class Nip76Service {
       } else if (channel.dkxRsvp.eventTag === nostrEvent.tags[0][1]) {
         const rsvp = await channel.dkxRsvp.readEvent(nostrEvent);
       } else if (invitePubs) {
-        const docIndex = invitePubs.findIndex(x => x === nostrEvent.pubkey) + start;
+        const docIndex = invitePubs.keys.findIndex(x => x.signingKey?.nostrPubKey === nostrEvent.pubkey) + start;
         const invite = await channel.dkxInvite.readEvent(nostrEvent, docIndex);
       }
     });
     const filters: nostrTools.Filter[] = [
-      { '#e': [channel.dkxPost.eventTag], kinds: [17761], limit: length },
-      { '#e': [channel.dkxRsvp.eventTag], kinds: [17761], limit: length },
+      { '#e': [channel.dkxPost.eventTag], kinds: [17761], limit: 100 },
+      { '#e': [channel.dkxRsvp.eventTag], kinds: [17761], limit: 100 },
     ];
     if (invitePubs) {
-      filters.push({ authors: invitePubs, kinds: [17761], limit: 100 })
+      filters.push({ authors: invitePubs.keys.map(x => x.signingKey?.nostrPubKey!), kinds: [17761], limit: invitePubs.keys.length })
     }
     channel.channelSubscription = this.relayService.subscribe(
       filters,

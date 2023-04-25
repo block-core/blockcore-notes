@@ -76,7 +76,7 @@ export class Nip76ChannelHeaderComponent {
   }
 
   get isOwner(): boolean {
-    return !!this.channel.dkxPost.signingParent.privateKey;
+    return !!this.channel.dkxInvite;
   }
 
   async updateProfileDetails() {
