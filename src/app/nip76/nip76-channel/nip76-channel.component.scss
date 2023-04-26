@@ -1,0 +1,121 @@
+:host {
+  flex-grow: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.flex {
+  display: flex;
+}
+
+.icon-large .profile-image {
+  width: 256px;
+  height: 256px;
+}
+
+.icon-medium .profile-image {
+  object-fit: cover;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+}
+
+.icon-thumbnail .profile-image {
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border-width: 2px;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+
+.icon-small .profile-image {
+  object-fit: cover;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border-width: 2px;
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+}
+
+.content-items div {
+  word-wrap: break-word;
+  line-break: anywhere;
+}
+
+.byline {
+  font-size: 12px;
+
+  .about {
+    font-style: italic;
+  }
+}
+
+.byline .profile-image {
+  object-fit: cover;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border-width: 1px;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-bottom: 1px;
+  position: relative;
+  top: 8px;
+}
+
+.rounded-button {
+  border-radius: 16px;
+  margin-top: 0.24em;
+  margin-right: 0.5em;
+  margin-bottom: 12px;
+}
+
+.channel-items-list {
+  height: 240px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start
+}
+
+.channel-items-card {
+  margin: 0px 10px 10px 0px;
+  border-radius: 10px !important;
+  width: 400px;
+  display: flex;
+}
+
+.main {
+  min-height: 140px;
+  // flex-grow: 1;
+}
+
+.field-label {
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.label-only-anchor {
+  position: relative;
+  left: 66px;
+  top: 22px;
+  width: 300px;
+}
+
+.action-icon {
+  margin-right: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline;
+}
+
+.action-link {
+  cursor: pointer;
+  margin: 2px 8px 2px 0px;
+}

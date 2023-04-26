@@ -1,0 +1,172 @@
+<app-nip76-diagnostics [doc]="channel"></app-nip76-diagnostics>
+<div class="event-header" [ngClass]="['event-header-' + listType]">
+    <div class="icon" [ngClass]="['icon-' + iconSize]">
+        <a [routerLink]="['/private-channels', pubkey, 'notes']">
+            <img loading="lazy" onerror="this.src='/assets/profile.png'" class="profile-image"
+                [matTooltip]="channel.content.about || channel.content.name!" matTooltipPosition="below"
+                [src]="imagePath" />
+        </a>
+    </div>
+    <div *ngIf="displayName" class="name clickable">
+        <a [routerLink]="['/private-channels', pubkey, 'notes']">
+            <span [matTooltip]="channel.content.about || channel.content.name!" matTooltipPosition="below">
+                {{ channel.content.name }}
+            </span>
+        </a>
+    </div>
+    <div *ngIf="profile" class="date clickable">
+        <div class="byline">
+            Channel Created By
+            <a [routerLink]="['/p', profile!.pubkey!]">
+                <span [matTooltip]="profile!.name!" matTooltipPosition="above">
+                    <!-- <img loading="lazy" onerror="this.src='/assets/profile.png'" class="profile-image"
+                        [src]="profile!.picture" /> -->
+                    {{ profile!.display_name }}
+                </span>
+            </a>
+            On
+            {{ (channel.content.created_at || channel.nostrEvent.created_at) *1000 | date: 'yyyy-MM-dd HH:mm:ss' }}
+        </div>
+    </div>
+</div>
+<div style="width:600px;" [style.display]="showDisplayOptions ? 'flex' : 'none'">
+    <div mat-dialog-actions class="mat-dialog-actions">
+        <button class="tablike-button" mat-flat-button (click)="displayType = DisplayType.Summary"
+            [color]="displayType === DisplayType.Summary ? 'primary' : 'secondary'"> Summary </button>
+        <button class="tablike-button" mat-flat-button (click)="displayType = DisplayType.Edit"
+            [color]="displayType === DisplayType.Edit ? 'primary' : 'secondary'" *ngIf="isOwner"> Edit </button>
+        <button class="tablike-button" mat-flat-button (click)="displayType = DisplayType.Invitations"
+            [color]="displayType === DisplayType.Invitations ? 'primary' : 'secondary'" *ngIf="isOwner">
+            Invitations
+        </button>
+        <button class="tablike-button" mat-flat-button (click)="displayType = DisplayType.RSVPs"
+            [color]="displayType === DisplayType.RSVPs ? 'primary' : 'secondary'"> RSVPs </button>
+        <button class="tablike-button" mat-flat-button (click)="viewNotes()"
+            [color]="displayType === DisplayType.Notes ? 'primary' : 'secondary'"> Notes </button>
+    </div>
+</div>
+
+<div [ngSwitch]="displayType" class="main" style="display: flex; flex-grow: 1; width: 100%;">
+    <div *ngSwitchCase="DisplayType.Summary">
+        <div class="field-label">Name</div>
+        <div>{{channel.content.name}}</div>
+        <div class="field-label">About</div>
+        <div>{{channel.content.about}}&nbsp;</div>
+    </div>
+    <div *ngSwitchCase="DisplayType.Edit">
+        <mat-form-field class="input-full-width">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" [(ngModel)]="channel.content.name" />
+        </mat-form-field>
+        <mat-form-field class="input-full-width">
+            <mat-label>About</mat-label>
+            <input matInput type="text" [(ngModel)]="channel.content.about" />
+        </mat-form-field>
+        <mat-form-field class="input-full-width">
+            <mat-label>Picture</mat-label>
+            <input matInput type="text" [(ngModel)]="channel.content.picture" />
+        </mat-form-field>
+        <button class="rounded-button" mat-flat-button color="primary" (click)="saveChannel()"
+            style="float:right;">Save</button>
+        <button class="rounded-button" mat-flat-button color="secondary" (click)="cancelAdd()"
+            *ngIf="!channel.nostrEvent.id" style="float:right;">Cancel</button>
+    </div>
+    <div *ngSwitchCase="DisplayType.Invitations">
+        <div *ngIf="isOwner" style="display: flex; flex-direction: column;">
+            <div>
+                <button class="rounded-button" mat-flat-button color="primary" style="float: right;"
+                    (click)="nip76Service.addInvitation(channel)">Add Invitation</button>
+            </div>
+            <div class="channel-items-list">
+                <mat-card class="channel-items-card" *ngFor="let invite of channel.invites">
+                    <a *ngIf="invite.content.password" class="label-only-anchor">
+                        <span class="mat-mdc-tooltip-trigger">
+                            Password Protected {{ !invite.content.encryptParent ? " (Suspended)" : ""}}
+                        </span>
+                    </a>
+                    <a *ngIf="!!invite.content.for && !invite.content.encryptParent" class="label-only-anchor"
+                        style="left:200px;">
+                        <span class="mat-mdc-tooltip-trigger">
+                            (Suspended)
+                        </span>
+                    </a>
+                    <div class="events-header">
+                        <app-event-header [pubkey]="invite.content.for||''" [displayName]="!!invite.content.for">
+                            <div class="byline">
+                                <mat-icon *ngIf="!invite.content.password && invite.rsvps.length"
+                                    matTooltip="RSVP Received" class="action-icon"
+                                    style="color:green;">verified_user</mat-icon>
+                                {{ invite.nostrEvent.created_at *1000 | date: 'yyyy-MM-dd HH:mm:ss' }}
+                            </div>
+                            <a class="action-link" (click)="copyKeys(invite)"
+                                matTooltip="Copy the invitation string to your clipboard.">
+                                Copy
+                            </a>
+                            <a class="action-link" (click)="nip76Service.resaveInvitation(channel, invite, false)"
+                                *ngIf="invite.content.encryptParent"
+                                matTooltip="Remove the channel keys from the invitation.">
+                                Suspend
+                            </a>
+                            <a class="action-link" (click)="nip76Service.resaveInvitation(channel, invite, true)"
+                                *ngIf="!invite.content.encryptParent"
+                                matTooltip="Put the channel keys back into the invitaiton.">
+                                Reinstate
+                            </a>
+                            <a class="action-link" (click)="deleteInvitation(invite)" *ngIf="invite.rsvps.length === 0"
+                                matTooltip="Delete the invitation.">
+                                Delete
+                            </a>
+                        </app-event-header>
+                        <app-nip76-diagnostics [doc]="invite"></app-nip76-diagnostics>
+                    </div>
+                    <div *ngIf="invite.content.password && invite.rsvps.length">
+                        <div *ngFor="let rsvp of invite.rsvps" style="padding-left: 1em;">
+                            <div class="events-header">
+                                <app-event-header [pubkey]="rsvp.content.pubkey">
+                                    <div class="byline">
+                                        <mat-icon matTooltip="RSVP Received" class="action-icon"
+                                            style="color:green;margin-right: 0px;">verified_user</mat-icon>
+                                        RSVP'd Received
+                                        {{ invite.nostrEvent.created_at *1000 | date: 'yyyy-MM-dd HH:mm:ss' }}
+                                    </div>
+                                </app-event-header>
+                                <app-nip76-diagnostics [doc]="rsvp"></app-nip76-diagnostics>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="DisplayType.RSVPs">
+        <div class="channel-items-list">
+            <div *ngIf="channel.rsvps.length === 0">No RSVPs Received yet.</div>
+            <div *ngIf="channel.rsvps.length > 0">
+                <mat-card class="channel-items-card" *ngFor="let rsvp of channel.rsvps">
+                    <div class="events-header">
+                        <app-event-header [pubkey]="rsvp.content.pubkey">
+                            <div class="byline">
+                                {{ rsvp.nostrEvent.created_at *1000 | date: 'yyyy-MM-dd HH:mm:ss' }}
+                            </div>
+                            <a class="action-link" (click)="deleteRSVP(rsvp)"
+                                *ngIf="rsvp.ownerPubKey === wallet.ownerPubKey"
+                                matTooltip="Delete the RSVP to this channel.">
+                                Delete
+                            </a>
+                        </app-event-header>
+                        <app-nip76-diagnostics [doc]="rsvp"></app-nip76-diagnostics>
+                    </div>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="DisplayType.Notes" style="display: flex; flex-grow: 1; width: 100%;">
+        <app-nip76-channel-notes [channel]="channel"></app-nip76-channel-notes>
+    </div>
+</div>
+<!--
+<div class="scrolling-content" infiniteScroll (scrollAction)="navigation.showMore()">
+    <div class="page">
+    </div>
+</div>
+-->

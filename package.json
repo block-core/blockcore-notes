@@ -38,6 +38,7 @@
     "@twogate/ngx-photo-gallery": "^1.4.0",
     "@types/sharedworker": "^0.0.91",
     "angularx-qrcode": "^15.0.1",
+    "animiq-nip76-tools": "file:../../animiq-nip76-tools/dist",
     "dexie": "^3.2.3",
     "html5-qrcode": "^2.3.7",
     "idb": "^7.1.1",

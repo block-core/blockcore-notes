@@ -33,6 +33,9 @@ import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
+import { Nip76MainComponent } from './nip76/nip76-main/nip76-main.component';
+import { Nip76DemoService } from './nip76/demo-only/nip76-demo.service';
+import { Nip76DemoStarterComponent } from './nip76/demo-only/nip76-demo-starter/nip76-demo-starter.component';
 
 const routes: Routes = [
   {
@@ -135,6 +138,32 @@ const routes: Routes = [
     path: 'profile',
     component: ProfileComponent,
     canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'private-channels',
+    component: Nip76MainComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'private-channels/sent-rsvps',
+    component: Nip76MainComponent,
+    canActivate: [AuthGuard],
+    data: { tabIndex: 1 },
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },  
+  {
+    path: 'private-channels/:channelPubKey/notes',
+    component: Nip76MainComponent,
+    canActivate: [AuthGuard],
+    data: { tabIndex: 3 },
     resolve: {
       data: LoadingResolverService,
     },

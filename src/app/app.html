@@ -175,6 +175,10 @@
           <mat-icon>badge</mat-icon>
           <span>{{ 'App.Badges' | translate }}</span>
         </a>
+        <a [routerLink]="['/private-channels']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>key</mat-icon>
+          <span>Private Channels</span>
+        </a>
         <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>settings</mat-icon>
           <span>{{ 'App.Settings' | translate }}</span>

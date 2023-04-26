@@ -1,0 +1,45 @@
+<div class="dialog">
+    <h1 mat-dialog-title>Make a Channel Invitation</h1>
+    <div mat-dialog-content class="mat-dialog-content">
+        <form>
+            <mat-form-field class="input-full-width">
+                <mat-select [(value)]="data.invitationType" (click)="clearForm()">
+                    <mat-option [value]="'pubkey'">By Public Key</mat-option>
+                    <mat-option [value]="'password'">By Password</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div *ngIf="data.invitationType == 'pubkey'">
+                <mat-form-field appearance="fill" class="input-full-width connect-input">
+                    <mat-icon class="circle" matPrefix>person_add</mat-icon>
+                    <mat-label>Public Key</mat-label>
+                    <input autocomplete="username" name="email" placeholder="npub..." matInput type="email"
+                        [(ngModel)]="data.pubkey" (change)="updatePubkey()" (keyup)="updatePubkey()" />
+                </mat-form-field>
+                <app-event-header *ngIf="data.validPubkey" [pubkey]="data.validPubkey"></app-event-header>
+            </div>
+            <div *ngIf="data.invitationType == 'password'">
+                <mat-form-field appearance="fill" class="input-full-width">
+                    <mat-icon class="circle" matPrefix>password</mat-icon>
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" name="password" [(ngModel)]="data.password"
+                        (change)="updatePassword()" (keyup)="updatePassword()" />
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="input-full-width">
+                    <mat-icon class="circle" matPrefix>password</mat-icon>
+                    <mat-label>Confirm Password</mat-label>
+                    <input matInput type="password" name="password2" [(ngModel)]="data.password2"
+                        (change)="updatePassword()" (keyup)="updatePassword()" />
+                </mat-form-field>
+            </div>
+        </form>
+        <p *ngIf="error" class="error">Error: {{ error }}</p>
+    </div>
+
+    <div mat-dialog-actions align="end">
+        <button mat-stroked-button (click)="copyInviteWithoutSave()" style="margin-right: 20px;" [disabled]="!valid" 
+            matTooltip="Creates an invitation without a record.  See NIP 76.">Copy Without Saving</button>
+        <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+        <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial
+            [disabled]="!valid">Save</button>
+    </div>
+</div>
