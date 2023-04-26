@@ -1,28 +1,28 @@
 <div class="top-menu" *ngIf="wallet">
     <div mat-dialog-actions class="top-menu-left">
-        <button *ngIf="wallet.isInSession && displayType !== DisplayType.ChannelList" class="rounded-button"
+        <button *ngIf="wallet.isReady && displayType !== DisplayType.ChannelList" class="rounded-button"
             mat-flat-button color="primary" (click)="listChannels()" style="display: block;">
             &lt; Channel List
         </button>
-        <button *ngIf="wallet.isInSession && displayType === DisplayType.ChannelList" class="rounded-button"
+        <button *ngIf="wallet.isReady && displayType === DisplayType.ChannelList" class="rounded-button"
             mat-flat-button color="secondary" (click)="createChannel()">
             Create Channel
         </button>
-        <button *ngIf="wallet.isInSession && displayType !== DisplayType.SentRSVPs" class="rounded-button"
+        <button *ngIf="wallet.isReady && displayType !== DisplayType.SentRSVPs" class="rounded-button"
             mat-flat-button color="secondary" (click)="readInvitation()">
             Read Invitation
         </button>
-        <button *ngIf="wallet.isInSession && displayType !== DisplayType.SentRSVPs" class="rounded-button"
+        <button *ngIf="wallet.isReady && displayType !== DisplayType.SentRSVPs" class="rounded-button"
             mat-flat-button color="secondary" (click)="sentRvps()" style="display: block;">
             View Sent RSVPs
         </button>
     </div>
     <div mat-dialog-actions class="top-menu-right">
-        <button *ngIf="!wallet.isGuest && !wallet.isInSession" class="rounded-button" mat-flat-button color="primary"
+        <button *ngIf="!wallet.isGuest && !wallet.isReady" class="rounded-button" mat-flat-button color="primary"
             (click)="nip76Service.login()">
             Start Secure Session
         </button>
-        <button *ngIf="wallet.isInSession" class="rounded-button" mat-flat-button color="primary"
+        <button *ngIf="wallet.isReady" class="rounded-button" mat-flat-button color="primary"
             (click)="nip76Service.logout()">
             End Secure Session
         </button>
@@ -38,7 +38,7 @@
             <p>NIP 76 Private Channels are not initialized for this profile yet.</p>
         </div>
         <div *ngSwitchCase="DisplayType.ChannelList">
-            <div *ngIf="wallet.isInSession">
+            <div *ngIf="wallet.isReady">
                 <mat-card class="intro" *ngIf="showHelp">
                     <b>Thanks for coming to checkout the Nip76 Private Channels Demo.</b>
                     <p>

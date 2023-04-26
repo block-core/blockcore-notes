@@ -84,7 +84,7 @@ export class Nip76AddInvitationComponent {
         pointer = await nip19Extension.nprivateChannelEncode(threadPointer, this.data.password!);
       } else {
         if (this.nip76Service.extensionProvider) {
-          pointer = await (globalThis as any).nostr.nip76.createInvitation(threadPointer, this.data.validPubkey);
+          pointer = await this.nip76Service.extensionProvider.createInvitation(threadPointer, this.data.validPubkey!);
         } else {
           const privateKey = await this.nip76Service.passwordDialog('Save RSVP');
           pointer = await nip19Extension.nprivateChannelEncode(threadPointer, privateKey, this.data.validPubkey);

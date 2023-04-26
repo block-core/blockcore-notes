@@ -38,7 +38,7 @@ export class Nip76MainComponent {
       this.activeChannelId = params.get('channelPubKey');
     });
     setTimeout(() => {
-      this.showHelp = this.wallet?.isInSession && this.wallet?.channels?.length === 0;
+      this.showHelp = this.wallet?.isReady && this.wallet?.channels?.length === 0;
     }, 3000);
   }
 
@@ -65,7 +65,7 @@ export class Nip76MainComponent {
 
   get activeChannel(): PrivateChannel | undefined {
     if (this.activeChannelId) {
-      if (!this.wallet.isGuest && this.wallet.isInSession) {
+      if (!this.wallet.isGuest && this.wallet.isReady) {
         const channel = this.nip76Service.findChannel(this.activeChannelId);
         if (channel) {
           return channel;

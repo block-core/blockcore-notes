@@ -3,10 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { bech32 } from '@scure/base';
 import {
-  ContentDocument, HDKey, getNowSeconds, Nip76WalletConstructorArgs,
-  HDKIndex, HDKIndexDTO, HDKIndexType, Invitation, nip19Extension, Nip76Wallet,
-  Nip76WebWalletStorage, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset, NostrEventDocument,
-  SequentialKeysetDTO
+  ContentDocument, getNowSeconds, HDKey, HDKIndex, HDKIndexType, Invitation, nip19Extension, Nip76Wallet, INostrNip76Provider,
+  Nip76WebWalletStorage, NostrEventDocument, NostrKinds, PostDocument, PrivateChannel, Rsvp, Versions, walletRsvpDocumentsOffset
 } from 'animiq-nip76-tools';
 import * as nostrTools from 'nostr-tools';
 import { filter, firstValueFrom, Subject, take } from 'rxjs';
@@ -56,33 +54,21 @@ export class Nip76Service {
     });
   }
 
-  get extensionProvider(): any {
+  get extensionProvider(): INostrNip76Provider {
     return (globalThis as any).nostr?.nip76;
   }
 
   async loadWallet() {
     const publicKey = this.profile.pubkey;
     if (this.extensionProvider) {
-      const args = await this.extensionProvider.getWalletArgs();
-      const rootKey = HDKey.parseExtendedKey(args.rootKey);
-      const wordset = Uint32Array.from(args.wordset);
-      const documentsIndex: HDKIndex = HDKIndex.fromJSON(args.documentsIndex);
-      const walletArgs: Nip76WalletConstructorArgs = {
-        publicKey: args.publicKey,
-        wordset,
-        rootKey,
-        documentsIndex,
-        store: {} as Nip76WebWalletStorage,
-        isGuest: false,
-        isInSession: true,
-      };
-      this.wallet = new Nip76Wallet(walletArgs);
+      const documentsIndex: HDKIndex = await this.extensionProvider.getIndex();
+      this.wallet = new Nip76Wallet({ publicKey, documentsIndex });
       setTimeout(() => { this.loadDocuments(); }, 500);
     } else if (localStorage.getItem(nostrPrivKeyAddress)) {
       if (localStorage.getItem(Nip76WebWalletStorage.backupKey)) {
         Nip76WebWalletStorage.fromStorage({ publicKey }).then(wallet => {
           this.wallet = wallet;
-          if (this.wallet.isInSession) {
+          if (this.wallet.isReady) {
             setTimeout(() => { this.loadDocuments(); }, 500);
           } else if (!this.wallet.isGuest) {
             this.login();
@@ -130,10 +116,10 @@ export class Nip76Service {
   async login(): Promise<boolean> {
     const privateKey = await this.passwordDialog('Load Private Channel Keys');
     this.wallet = await Nip76WebWalletStorage.fromStorage({ privateKey });
-    if (this.wallet.isInSession) {
+    if (this.wallet.isReady) {
       this.loadDocuments();
     }
-    return this.wallet.isInSession;
+    return this.wallet.isReady;
   }
 
   async logout() {
@@ -147,8 +133,8 @@ export class Nip76Service {
   }
 
   loadDocuments(start = 0) {
-    const channelPubkeys = this.wallet.documentsIndex.getSequentialKeyset(0, 0);
-    const invitePubkeys = this.wallet.documentsIndex.getSequentialKeyset(walletRsvpDocumentsOffset, 0);
+    const channelPubkeys = this.wallet.documentsIndex!.getSequentialKeyset(0, 0);
+    const invitePubkeys = this.wallet.documentsIndex!.getSequentialKeyset(walletRsvpDocumentsOffset, 0);
     if (this.documentsSubscription) {
       this.relayService.unsubscribe(this.documentsSubscription.id);
     }
@@ -156,18 +142,18 @@ export class Nip76Service {
     privateDoc$.subscribe(async nostrEvent => {
       let docIndex = channelPubkeys.keys.findIndex(x => x.signingKey?.nostrPubKey === nostrEvent.pubkey) + start;
       if (docIndex > -1) {
-        const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex) as PrivateChannel;
-        if(this.extensionProvider) {
-          const dkxInviteDTO = await this.extensionProvider.getInvitationIndex(docIndex);
-          doc.dkxInvite = HDKIndex.fromJSON(dkxInviteDTO);
+        const doc = await this.wallet.documentsIndex!.readEvent(nostrEvent, docIndex) as PrivateChannel;
+        if (this.extensionProvider) {
+          doc.dkxInvite = await this.extensionProvider.getIndex(docIndex);
         }
+        doc.dkxInvite.parentDocument = doc;
         if (doc) {
           this.loadChannel(doc);
         }
       } else {
         docIndex = invitePubkeys.keys.findIndex(x => x.signingKey?.nostrPubKey === nostrEvent.pubkey) + start + walletRsvpDocumentsOffset;
-        const doc = await this.wallet.documentsIndex.readEvent(nostrEvent, docIndex);
-        if (doc && doc instanceof Rsvp) {
+        const doc = await this.wallet.documentsIndex!.readEvent(nostrEvent, docIndex) as Rsvp;
+        if (doc) {
           const pointer: nip19Extension.PrivateChannelPointer = {
             type: doc.content.type,
             docIndex: doc.content.pointerDocIndex,
@@ -284,15 +270,15 @@ export class Nip76Service {
       const channel = await channelIndex.readEvent(nostrEvent) as PrivateChannel;
       if (channel) {
         channel.invitation = invite;
-        const exisitng = this.wallet.documentsIndex.documents.find(x => x.nostrEvent.id === nostrEvent.id) as PrivateChannel;
+        const exisitng = this.wallet.documentsIndex!.documents.find(x => x.nostrEvent.id === nostrEvent.id) as PrivateChannel;
         if (exisitng) {
           channel.dkxPost.documents = exisitng.dkxPost.documents;
           channel.dkxRsvp.documents = exisitng.dkxRsvp.documents;
           channel.dkxInvite = exisitng.dkxInvite;
-          const index = this.wallet.documentsIndex.documents.findIndex(x => x.nostrEvent.id === nostrEvent.id);
-          this.wallet.documentsIndex.documents[index] = channel;
+          const index = this.wallet.documentsIndex!.documents.findIndex(x => x.nostrEvent.id === nostrEvent.id);
+          this.wallet.documentsIndex!.documents[index] = channel;
         } else {
-          this.wallet.documentsIndex.documents.push(channel);
+          this.wallet.documentsIndex!.documents.push(channel);
         }
         this.loadChannel(channel);
         return channel;
@@ -313,8 +299,7 @@ export class Nip76Service {
 
       if ((pointerType & nip19Extension.PointerType.SharedSecret) == nip19Extension.PointerType.SharedSecret) {
         if (this.extensionProvider) {
-          const pointerDTO = await this.extensionProvider.readInvitation(channelPointer);
-          pointer = nip19Extension.pointerFromDTO(pointerDTO);
+          pointer = await this.extensionProvider.readInvitation(channelPointer);
         } else {
           secret = await this.passwordDialog('Preview Private Invitation');
           const p = await nip19Extension.decode(channelPointer, secret!);
@@ -377,13 +362,14 @@ export class Nip76Service {
   }
 
   async saveChannel(channel: PrivateChannel, privateKey?: string) {
+    channel.dkxParent = this.wallet.documentsIndex!;
     channel.content.created_at = channel.content.created_at || channel?.nostrEvent.created_at || getNowSeconds();
     let event: NostrEventDocument;
     if (this.extensionProvider) {
-      event = await this.extensionProvider.createEvent(this.wallet.documentsIndex, channel);
+      event = await this.extensionProvider.createEvent(channel);
     } else {
       privateKey = privateKey || await this.passwordDialog('Save Channel Details');
-      event = await this.wallet.documentsIndex.createEvent(channel, privateKey);
+      event = await this.wallet.documentsIndex!.createEvent(channel, privateKey);
     }
     await this.dataService.publishEvent(event);
     return true;
@@ -391,6 +377,7 @@ export class Nip76Service {
 
   async saveNote(channel: PrivateChannel, text: string) {
     const postDocument = new PostDocument();
+    postDocument.dkxParent = channel.dkxPost;
     postDocument.content = {
       text,
       pubkey: this.wallet.ownerPubKey,
@@ -398,7 +385,7 @@ export class Nip76Service {
     }
     let event: NostrEventDocument;
     if (this.extensionProvider) {
-      event = await this.extensionProvider.createEvent(channel.dkxPost, postDocument);
+      event = await this.extensionProvider.createEvent(postDocument);
     } else {
       const privateKey = await this.passwordDialog('Save Note');
       event = await channel.dkxPost.createEvent(postDocument, privateKey);
@@ -409,6 +396,7 @@ export class Nip76Service {
 
   async saveReaction(post: PostDocument, text: string, kind: nostrTools.Kind): Promise<PostDocument> {
     const postDocument = new PostDocument();
+    postDocument.dkxParent = post.dkxParent;
     postDocument.content = {
       kind,
       pubkey: this.wallet.ownerPubKey,
@@ -417,7 +405,7 @@ export class Nip76Service {
     };
     let event: NostrEventDocument;
     if (this.extensionProvider) {
-      event = await this.extensionProvider.createEvent(post.dkxParent, postDocument);
+      event = await this.extensionProvider.createEvent(postDocument);
     } else {
       const privateKey = await this.passwordDialog('Save ' + (kind === nostrTools.Kind.Reaction ? 'Reaction' : 'Reply'));
       event = await post.dkxParent.createEvent(postDocument, privateKey);
@@ -428,6 +416,7 @@ export class Nip76Service {
 
   async saveInvitation(channel: PrivateChannel, invitation: AddInvitationDialogData): Promise<Invitation> {
     const invite = new Invitation();
+    invite.dkxParent = channel.dkxInvite;
     invite.docIndex = channel.dkxInvite.documents.length + 1;
     invite.content = {
       kind: NostrKinds.PrivateChannelInvitation,
@@ -440,7 +429,7 @@ export class Nip76Service {
     };
     let event: NostrEventDocument;
     if (this.extensionProvider) {
-      event = await this.extensionProvider.createEvent(channel.dkxInvite, invite);
+      event = await this.extensionProvider.createEvent(invite);
     } else {
       const privateKey = await this.passwordDialog('Save Invitation');
       event = await channel.dkxInvite.createEvent(invite, privateKey);
@@ -450,11 +439,12 @@ export class Nip76Service {
   }
 
   async resaveInvitation(channel: PrivateChannel, invite: Invitation, withKeys: boolean): Promise<Invitation> {
+    invite.dkxParent = channel.dkxInvite;
     invite.content.signingParent = withKeys ? channel.dkxPost.signingParent : undefined;
     invite.content.encryptParent = withKeys ? channel.dkxPost.encryptParent : undefined;
     let event: NostrEventDocument;
     if (this.extensionProvider) {
-      event = await this.extensionProvider.createEvent(channel.dkxInvite, invite);
+      event = await this.extensionProvider.createEvent(invite);
     } else {
       const privateKey = await this.passwordDialog((withKeys ? 'Reinstate' : 'Suspend') + ' Invitation');
       event = await channel.dkxInvite.createEvent(invite, privateKey);
@@ -465,6 +455,7 @@ export class Nip76Service {
 
   async saveRSVP(channel: PrivateChannel) {
     const rsvp = new Rsvp();
+    rsvp.dkxParent = channel.dkxRsvp;
     rsvp.content = {
       kind: NostrKinds.PrivateChannelRSVP,
       pubkey: this.wallet.ownerPubKey,
@@ -474,21 +465,22 @@ export class Nip76Service {
     let event1: NostrEventDocument;
     let privateKey: string;
     if (this.extensionProvider) {
-      event1 = await this.extensionProvider.createEvent(channel.dkxRsvp, rsvp);
+      event1 = await this.extensionProvider.createEvent(rsvp);
     } else {
       privateKey = await this.passwordDialog('Save RSVP');
       event1 = await channel.dkxRsvp.createEvent(rsvp, privateKey);
     }
     await this.dataService.publishEvent(event1);
 
+    rsvp.dkxParent = this.wallet.documentsIndex!;
     rsvp.docIndex = channel.invitation.docIndex || (this.wallet.rsvps.length + 1 + walletRsvpDocumentsOffset);
     rsvp.content.signingKey = channel.invitation.pointer.signingKey;
     rsvp.content.cryptoKey = channel.invitation.pointer.cryptoKey;
     let event2: NostrEventDocument;
     if (this.extensionProvider) {
-      event2 = await this.extensionProvider.createEvent(this.wallet.documentsIndex, rsvp);
+      event2 = await this.extensionProvider.createEvent(rsvp);
     } else {
-      event2 = await this.wallet.documentsIndex.createEvent(rsvp, privateKey!);
+      event2 = await this.wallet.documentsIndex!.createEvent(rsvp, privateKey!);
     }
     await this.dataService.publishEvent(event2);
 

@@ -96,12 +96,24 @@ export class Nip76ChannelHeaderComponent {
   }
 
   cancelAdd() {
-    const index = this.wallet.documentsIndex.documents.findIndex(x => this.channel);
-    this.wallet.documentsIndex.documents.splice(index, 1);
+    const index = this.wallet.documentsIndex!.documents.findIndex(x => this.channel);
+    this.wallet.documentsIndex!.documents.splice(index, 1);
   }
 
   async copyKeys(invite: Invitation) {
-    navigator.clipboard.writeText(await invite.getPointer());
+    let invitation: string;
+    if (this.nip76Service.extensionProvider && invite.content.for) {
+      const keyset = invite.dkxParent.getDocumentKeyset(invite.docIndex);
+      invitation = await this.nip76Service.extensionProvider.createInvitation({
+        type: 0,
+        docIndex: invite.docIndex,
+        signingKey: keyset.signingKey!.publicKey,
+        cryptoKey: keyset.encryptKey!.publicKey,
+      }, invite.content.for);
+    } else {
+      invitation = await invite.getPointer();
+    }
+    navigator.clipboard.writeText(invitation);
     this.snackBar.open(`The invitation is now in your clipboard.`, 'Hide', defaultSnackBarOpts);
   }
 
