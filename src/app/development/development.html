@@ -1,4 +1,21 @@
 <div class="page">
+  <h1>State Service Management</h1>
+
+  <mat-list >
+    <div mat-subheader>Metadata</div>
+    <mat-list-item *ngFor="let state of state.events.metadata | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  State as JSON:<br>
+  {{ state | json }}
+
+  <br /><br />
+
   <p>This page act as examples for more specialized implementation details of the app.</p>
 
   <button mat-stroked-button (click)="downloadProfile()">Enque Profile Download</button>

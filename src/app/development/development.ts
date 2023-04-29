@@ -5,6 +5,7 @@ import { NostrService } from '../services/nostr';
 import { RelayService } from '../services/relay';
 import { RelayType } from '../types/relay';
 import { Storage } from '../types/storage';
+import { State, StateService } from '../services/state';
 
 @Component({
   selector: 'app-development',
@@ -15,10 +16,13 @@ export class DevelopmentComponent {
   worker?: Worker;
   storage?: Storage;
 
-  constructor(private nostr: NostrService, private dataService: DataService, private appState: ApplicationState, public relayService: RelayService) {}
+  constructor(
+    public state: State,
+    private nostr: NostrService, private dataService: DataService, private appState: ApplicationState, public relayService: RelayService) {}
 
   ngOnInit() {
     this.appState.updateTitle('Development & Debug');
+
   }
 
   async database() {

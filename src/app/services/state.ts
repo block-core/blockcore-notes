@@ -10,14 +10,14 @@ export class StateService {
 
   addEvent(event: NostrEvent) {
     // TODO: Temporarily removed to avoid building massive in-memory state.
-    // switch (event.kind) {
-    //   case Kind.Metadata:
-    //     this.addIfNewer(event, this.state.events.shortTextNote);
-    //     break;
-    //   case Kind.Text:
-    //     this.addIfMissing(event, this.state.events.shortTextNote);
-    //     break;
-    // }
+    switch (event.kind) {
+      case Kind.Metadata:
+        this.addIfNewer(event, event.pubkey, this.state.events.metadata);
+        break;
+      case Kind.Text:
+        this.addIfMissing(event, this.state.events.shortTextNote);
+        break;
+    }
   }
 
   addIfMissing(event: NostrEvent, map: Map<string, NostrEvent>) {
@@ -28,17 +28,17 @@ export class StateService {
     map.set(event.id, event);
   }
 
-  addIfNewer(event: NostrEvent, map: Map<string, NostrEvent>) {
-    if (!map.has(event.id)) {
-      map.set(event.id, event);
+  addIfNewer(event: NostrEvent, identifier: string, map: Map<string, NostrEvent>) {
+    if (!map.has(identifier)) {
+      map.set(identifier, event);
     } else {
-      const existing = map.get(event.id);
+      const existing = map.get(identifier);
 
-      if (existing!.created_at > event.created_at) {
+      if (existing!.created_at >= event.created_at) {
         return;
       }
 
-      map.set(event.id, event);
+      map.set(identifier, event);
     }
   }
 }

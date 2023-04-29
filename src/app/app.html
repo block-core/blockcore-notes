@@ -107,10 +107,10 @@
           <mat-icon>bookmarks</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Bookmarks' | translate }}</span>
         </a>
-        <!-- <a [routerLink]="['/development']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a [routerLink]="['/development']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>construction</mat-icon>
           <span *ngIf="displayLabels">Development</span>
-        </a> -->
+        </a>
         <a [routerLink]="['/relays']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>dns</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Relays' | translate }}</span>
