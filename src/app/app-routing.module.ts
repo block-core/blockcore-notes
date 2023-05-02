@@ -33,6 +33,7 @@ import { LoginComponent } from './connect/login/login';
 import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
+import { ExampleComponent } from './example/example';
 
 const routes: Routes = [
   {
@@ -245,7 +246,7 @@ const routes: Routes = [
   },
   {
     path: 'about',
-    loadChildren: () => import('./about/about.module').then(m => m.AboutModule)
+    loadChildren: () => import('./about/about.module').then((m) => m.AboutModule),
     // component: AboutComponent,
     // canActivate: [AuthGuard],
     // resolve: {
@@ -279,6 +280,14 @@ const routes: Routes = [
   {
     path: 'development',
     component: DevelopmentComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'example',
+    component: ExampleComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,
