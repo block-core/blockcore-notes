@@ -17,6 +17,11 @@ export class StateService {
       case Kind.Text:
         this.addIfMissing(event, this.state.events.shortTextNote);
         break;
+      case Kind.Contacts:
+        this.addIfNewer(event, event.pubkey, this.state.events.contacts);
+        break;
+      case Kind.Reaction:
+        this.addIfNewer(event, event.content, this.state.events.reaction)
     }
   }
 

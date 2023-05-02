@@ -11,6 +11,38 @@
     <mat-divider></mat-divider>
   </mat-list>
 
+  <mat-list >
+    <div mat-subheader>Text</div>
+    <mat-list-item *ngFor="let state of state.events.shortTextNote | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Contacts</div>
+    <mat-list-item *ngFor="let state of state.events.contacts | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Reactions</div>
+    <mat-list-item *ngFor="let state of state.events.reaction | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  
+
   State as JSON:<br>
   {{ state | json }}
 
