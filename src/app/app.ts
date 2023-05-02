@@ -28,6 +28,7 @@ import { LabelService } from './services/label';
 import { TranslateService } from '@ngx-translate/core';
 import { BadgeService } from './services/badge';
 import { State } from './services/state';
+import { EventService } from './services/event';
 
 @Component({
   selector: 'app-root',
@@ -68,7 +69,8 @@ export class AppComponent {
     private bottomSheet: MatBottomSheet,
     public searchService: SearchService,
     public theme: ThemeService,
-    private state: State
+    private state: State,
+    private eventService: EventService
   ) {
     if (!this.visibilityHandler) {
       this.visibilityHandler = addEventListener('visibilitychange', (event) => {

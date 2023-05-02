@@ -10,7 +10,7 @@ export class StateService {
 
   addEvent(event: NostrEvent) {
     // TODO: Temporarily removed to avoid building massive in-memory state.
-    switch (event.kind) {
+    switch (event.kind as any) {
       case Kind.Metadata:
         this.addIfNewer(event, event.pubkey, this.state.events.metadata);
         if (this.state.pubkey == event.pubkey) {
@@ -24,9 +24,41 @@ export class StateService {
         this.addIfNewer(event, event.pubkey, this.state.events.contacts);
         break;
       case Kind.Reaction:
-        this.addIfNewer(event, event.content, this.state.events.reaction);
+        this.addIfMissing(event, this.state.events.reaction);
+        break;
+      case 6:
+        this.addIfMissing(event, this.state.events.reposts);
+        break;
+      case Kind.Zap:
+        this.addIfMissing(event, this.state.events.zap);
+        break;
+      case Kind.ZapRequest:
+        this.addIfMissing(event, this.state.events.zapRequest);
+        break;
+      case Kind.Article:
+        const slug = this.firstDTag(event); 
+        this.addIfNewer(event, slug!, this.state.events.longFormContent);
         break;
     }
+  }
+
+  tagsOfType(event: NostrEvent | null, type: string) {
+    if (!event) {
+      return [];
+    }
+
+    const tags = event.tags.filter((t) => t[0] === type);
+    return tags;
+  }
+
+  firstDTag(event: NostrEvent | null | any) {
+    const tags = this.tagsOfType(event, 'd');
+
+    if (tags.length == 0) {
+      return undefined;
+    }
+
+    return tags[0][1];
   }
 
   addIfMissing(event: NostrEvent, map: Map<string, NostrEvent>) {
