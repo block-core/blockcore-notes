@@ -27,6 +27,7 @@ import { OptionsService } from './services/options';
 import { LabelService } from './services/label';
 import { TranslateService } from '@ngx-translate/core';
 import { BadgeService } from './services/badge';
+import { State } from './services/state';
 
 @Component({
   selector: 'app-root',
@@ -66,7 +67,8 @@ export class AppComponent {
     public ui: UIService,
     private bottomSheet: MatBottomSheet,
     public searchService: SearchService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    private state: State
   ) {
     if (!this.visibilityHandler) {
       this.visibilityHandler = addEventListener('visibilitychange', (event) => {
@@ -96,7 +98,8 @@ export class AppComponent {
     }
 
     this.authService.authInfo$.subscribe(async (auth) => {
-      auth.publicKeyHex;
+      this.state.pubkey = auth.publicKeyHex;
+
 
       this.authenticated = auth.authenticated();
 

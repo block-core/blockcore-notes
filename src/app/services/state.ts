@@ -13,6 +13,9 @@ export class StateService {
     switch (event.kind) {
       case Kind.Metadata:
         this.addIfNewer(event, event.pubkey, this.state.events.metadata);
+        if (this.state.pubkey == event.pubkey) {
+          this.state.metadata = event;
+        }
         break;
       case Kind.Text:
         this.addIfMissing(event, this.state.events.shortTextNote);
@@ -21,7 +24,8 @@ export class StateService {
         this.addIfNewer(event, event.pubkey, this.state.events.contacts);
         break;
       case Kind.Reaction:
-        this.addIfNewer(event, event.content, this.state.events.reaction)
+        this.addIfNewer(event, event.content, this.state.events.reaction);
+        break;
     }
   }
 
@@ -55,6 +59,10 @@ export class State {
   profiles: NostrProfileDocument[] = [];
 
   circles: Circle[] = [];
+
+  metadata?: NostrEvent;
+
+  pubkey?: String;
 
   events: EventsState = {
     metadata: new Map(),
