@@ -100,7 +100,7 @@ export class PeopleComponent {
       });
     } else if (sorting === 'followed-desc') {
       this.sortedItems = this.items.sort((a, b) => {
-        return a.followed! < b.followed! ? -1 : 1;
+        return a.followed! > b.followed! ? 1 : -1;
       });
     } else if (sorting === 'created-asc') {
       this.sortedItems = this.items.sort((a, b) => {
