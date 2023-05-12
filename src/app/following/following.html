@@ -7,7 +7,8 @@
     <!-- <div *ngIf="profileService.item$ | async as profile">
     {{ profile.name }}
   </div> -->
-
+  
+  <div class="page">
     <ng-container *ngIf="ui.profile$ | async as profile">
       <!-- <div class="tab-panel-viewport" cdkVirtualScrollingElement>
         <cdk-virtual-scroll-viewport scrollWindow itemSize="1">
@@ -23,6 +24,7 @@
         </div>
       </div>
     </ng-container>
+  </div>
 
     <!-- <div class="page" *ngIf="ui.profile$ | async as profile">
     <app-profile-widget *ngFor="let pubkey of virtualList.view" [pubkey]="pubkey"></app-profile-widget>
