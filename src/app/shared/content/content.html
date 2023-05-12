@@ -15,11 +15,17 @@
     <ng-container *ngFor="let token of dynamicText">
       <ng-template [ngIf]="isString(token)">{{ token }}</ng-template>
       <ng-template [ngIf]="!isString(token) && isFollowing" [ngSwitch]="token.token">
+
+        <ng-container *ngSwitchCase="'npub'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
+        <ng-container *ngSwitchCase="'nprofile'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
+        <ng-container *ngSwitchCase="'note'"><a class="reply-link" [routerLink]="['/e', token.word]">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'nevent'"><a class="reply-link" [routerLink]="['/e', token.word]">{{ token.word }}</a></ng-container>
+        
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'image'"><img mat-card-image class="event-image" loading="lazy" decoding="async" [matTooltip]="token.word" [alt]="token.word" [src]="token.safeWord" (click)="expandImage(token.word)" /></ng-container>
         <ng-container *ngSwitchCase="'linebreak'"><br /></ng-container>
-        <ng-container *ngSwitchCase="'spotify'">
+        <ng-container *ngSwitchCase="'spotify'">1
           <iframe sandbox="allow-scripts allow-same-origin" style="border-radius: 12px" [src]="token.safeWord" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </ng-container>
         <ng-container *ngSwitchCase="'tidal'">
@@ -47,6 +53,12 @@
       </ng-template>
 
       <ng-template [ngIf]="!isString(token) && !isFollowing" [ngSwitch]="token.token">
+
+        <ng-container *ngSwitchCase="'npub'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
+        <ng-container *ngSwitchCase="'nprofile'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
+        <ng-container *ngSwitchCase="'note'"><a class="reply-link" [routerLink]="['/e', token.word]">{{ token.word }}</a></ng-container>
+        <ng-container *ngSwitchCase="'nevent'"><a class="reply-link" [routerLink]="['/e', token.word]">{{ token.word }}</a></ng-container>
+
         <ng-container *ngSwitchCase="'username'"><a class="reply-link" [routerLink]="['/p', token.word]">@{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'link'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
         <ng-container *ngSwitchCase="'image'"><a [href]="[token.word]" target="_blank">{{ token.word }}</a></ng-container>
