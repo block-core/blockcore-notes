@@ -71,6 +71,7 @@ A goal of Blockcore Notes is to be feature rich and have functionality that goes
 - [x] [NIP-23: Long-form Content](https://github.com/nostr-protocol/nips/blob/master/23.md)
 - [x] [NIP-25: Reactions](https://github.com/nostr-protocol/nips/blob/master/25.md)
 - [ ] [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)
+- [x] [NIP-27: Text Note References](https://github.com/nostr-protocol/nips/blob/master/27.md)
 - [ ] [NIP-28: Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
 - [ ] [NIP-36: Sensitive Content](https://github.com/nostr-protocol/nips/blob/master/36.md)
 - [ ] [NIP-40: Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
