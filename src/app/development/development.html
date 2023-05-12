@@ -1,4 +1,93 @@
 <div class="page">
+  <h1>State Service Management</h1>
+
+  <mat-list >
+    <div mat-subheader>Metadata</div>
+    <mat-list-item *ngFor="let state of state.events.metadata | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Text</div>
+    <mat-list-item *ngFor="let state of state.events.shortTextNote | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Contacts</div>
+    <mat-list-item *ngFor="let state of state.events.contacts | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Reactions</div>
+    <mat-list-item *ngFor="let state of state.events.reaction | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+  
+  <mat-list >
+    <div mat-subheader>Reposts</div>
+    <mat-list-item *ngFor="let state of state.events.reposts| keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Zap</div>
+    <mat-list-item *ngFor="let state of state.events.zap | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Zap Request</div>
+    <mat-list-item *ngFor="let state of state.events.zapRequest| keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  <mat-list >
+    <div mat-subheader>Article</div>
+    <mat-list-item *ngFor="let state of state.events.longFormContent | keyvalue">
+      <mat-icon matListItemIcon>folder</mat-icon>
+      <div matListItemTitle>{{state.key}}</div>
+      <div matListItemLine>{{state.value.content}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list>
+
+  
+
+  State as JSON:<br>
+  {{ state | json }}
+
+  <br /><br />
+
   <p>This page act as examples for more specialized implementation details of the app.</p>
 
   <button mat-stroked-button (click)="downloadProfile()">Enque Profile Download</button>

@@ -153,6 +153,7 @@ import { BadgeComponent } from './badge/badge';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DragScrollModule } from 'ngx-drag-scroll';
 import { ZappersListDialogComponent } from './shared/zappers-list-dialog/zappers-list-dialog.component';
+import { ExampleComponent } from './example/example';
 @NgModule({
   declarations: [
     AppComponent,
@@ -244,6 +245,7 @@ import { ZappersListDialogComponent } from './shared/zappers-list-dialog/zappers
     TagsComponent,
     BadgeComponent,
     ZappersListDialogComponent,
+    ExampleComponent
   ],
   imports: [
     HttpClientModule,

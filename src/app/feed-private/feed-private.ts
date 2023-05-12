@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from '../services/storage';
 import { dexieToRx } from '../shared/utilities';
 import { UIService } from '../services/ui';
+import { CircleService } from '../services/circle';
 
 @Component({
   selector: 'app-feed-private',
@@ -42,6 +43,7 @@ export class FeedPrivateComponent {
   // }
 
   constructor(
+    public circleService: CircleService,
     public ui: UIService,
     private activatedRoute: ActivatedRoute,
     public db: StorageService,

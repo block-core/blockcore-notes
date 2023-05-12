@@ -9,15 +9,58 @@ export class StateService {
   constructor(private state: State) {}
 
   addEvent(event: NostrEvent) {
+    return;
+
     // TODO: Temporarily removed to avoid building massive in-memory state.
-    // switch (event.kind) {
-    //   case Kind.Metadata:
-    //     this.addIfNewer(event, this.state.events.shortTextNote);
-    //     break;
-    //   case Kind.Text:
-    //     this.addIfMissing(event, this.state.events.shortTextNote);
-    //     break;
-    // }
+    switch (event.kind as any) {
+      case Kind.Metadata:
+        this.addIfNewer(event, event.pubkey, this.state.events.metadata);
+        if (this.state.pubkey == event.pubkey) {
+          this.state.metadata = event;
+        }
+        break;
+      case Kind.Text:
+        this.addIfMissing(event, this.state.events.shortTextNote);
+        break;
+      case Kind.Contacts:
+        this.addIfNewer(event, event.pubkey, this.state.events.contacts);
+        break;
+      case Kind.Reaction:
+        this.addIfMissing(event, this.state.events.reaction);
+        break;
+      case 6:
+        this.addIfMissing(event, this.state.events.reposts);
+        break;
+      case Kind.Zap:
+        this.addIfMissing(event, this.state.events.zap);
+        break;
+      case Kind.ZapRequest:
+        this.addIfMissing(event, this.state.events.zapRequest);
+        break;
+      case Kind.Article:
+        const slug = this.firstDTag(event); 
+        this.addIfNewer(event, slug!, this.state.events.longFormContent);
+        break;
+    }
+  }
+
+  tagsOfType(event: NostrEvent | null, type: string) {
+    if (!event) {
+      return [];
+    }
+
+    const tags = event.tags.filter((t) => t[0] === type);
+    return tags;
+  }
+
+  firstDTag(event: NostrEvent | null | any) {
+    const tags = this.tagsOfType(event, 'd');
+
+    if (tags.length == 0) {
+      return undefined;
+    }
+
+    return tags[0][1];
   }
 
   addIfMissing(event: NostrEvent, map: Map<string, NostrEvent>) {
@@ -28,17 +71,17 @@ export class StateService {
     map.set(event.id, event);
   }
 
-  addIfNewer(event: NostrEvent, map: Map<string, NostrEvent>) {
-    if (!map.has(event.id)) {
-      map.set(event.id, event);
+  addIfNewer(event: NostrEvent, identifier: string, map: Map<string, NostrEvent>) {
+    if (!map.has(identifier)) {
+      map.set(identifier, event);
     } else {
-      const existing = map.get(event.id);
+      const existing = map.get(identifier);
 
-      if (existing!.created_at > event.created_at) {
+      if (existing!.created_at >= event.created_at) {
         return;
       }
 
-      map.set(event.id, event);
+      map.set(identifier, event);
     }
   }
 }
@@ -50,6 +93,10 @@ export class State {
   profiles: NostrProfileDocument[] = [];
 
   circles: Circle[] = [];
+
+  metadata?: NostrEvent;
+
+  pubkey?: String;
 
   events: EventsState = {
     metadata: new Map(),

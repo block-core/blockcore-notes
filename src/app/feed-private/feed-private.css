@@ -1,4 +1,3 @@
-
 .loading-container {
   text-align: center;
 }
@@ -7,3 +6,6 @@
   margin: auto;
 }
 
+.circle-selection {
+  margin-bottom: 1em;
+}

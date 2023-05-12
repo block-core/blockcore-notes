@@ -12,6 +12,13 @@
   </div> -->
 
   <div class="feed-page">
+
+    <mat-button-toggle-group class="circle-selection" name="ingredients">
+      <mat-button-toggle [routerLink]="['/feed', circle.id]" [matTooltip]="circle.name" value="flour" *ngFor="let circle of circleService.circles">
+        <mat-icon matListItemIcon [style.color]="circle.color">trip_origin</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
     <mat-accordion class="options">
       <mat-expansion-panel>
         <mat-expansion-panel-header>
