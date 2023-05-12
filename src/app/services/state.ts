@@ -9,6 +9,8 @@ export class StateService {
   constructor(private state: State) {}
 
   addEvent(event: NostrEvent) {
+    return;
+
     // TODO: Temporarily removed to avoid building massive in-memory state.
     switch (event.kind as any) {
       case Kind.Metadata:
