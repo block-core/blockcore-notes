@@ -2,14 +2,16 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { findIndex } from 'rxjs';
-import { MediaItem } from './interfaces';
+import { MediaItem, OnInitialized } from './interfaces';
 import { OptionsService } from './options';
 import { Utilities } from './utilities';
+import { StorageService } from './storage';
+import { ApplicationState } from './applicationstate';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MediaService {
+export class MediaService implements OnInitialized {
   media: MediaItem[] = [];
   audio?: HTMLAudioElement;
   current?: MediaItem;
@@ -27,7 +29,7 @@ export class MediaService {
     return this.index < this.media.length - 1;
   }
 
-  constructor(private options: OptionsService, private snackBar: MatSnackBar, private utilities: Utilities) {
+  constructor(private options: OptionsService, private snackBar: MatSnackBar, private utilities: Utilities, private storageService: StorageService, private appState: ApplicationState) {
     navigator.mediaSession.setActionHandler('play', async () => {
       if (!this.audio) {
         return;
@@ -66,6 +68,16 @@ export class MediaService {
         this.next();
       }
     });
+    this.appState.initialized$.subscribe(() => {
+      this.initialize();
+    }) 
+  }
+
+  initialize(): void {
+    if (this.storageService.state.mediaQueue == null) {
+      return
+    }
+    this.media = this.storageService.state.mediaQueue;
   }
 
   exit() {
@@ -100,6 +112,7 @@ export class MediaService {
     //   horizontalPosition: 'center',
     //   verticalPosition: 'bottom',
     // });
+    this.save ()
   }
 
   dequeue(file: MediaItem) {
@@ -108,6 +121,12 @@ export class MediaService {
       return;
     }
     this.media.splice(index, 1);
+    this.save ()
+  }
+
+  async save() {
+    this.storageService.state.mediaQueue = this.media;
+    await this.storageService.saveState();
   }
 
   youtubeUrl?: SafeResourceUrl;

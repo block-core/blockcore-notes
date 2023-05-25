@@ -27,6 +27,7 @@ export class StorageService {
       state = {
         id: 1,
         since: timeAgo,
+        mediaQueue: []
       };
     }
 
@@ -41,7 +42,7 @@ export class StorageService {
       const timeAgo = moment().subtract(10, 'minutes').unix();
       this.state.since = timeAgo;
 
-      await this.storage.putState(this.state);
+      await this.saveState();
     }, 60 * 1000);
 
     // TODO: Remove, old code.
@@ -63,6 +64,10 @@ export class StorageService {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  async saveState() {
+    await this.storage.putState(this.state);
   }
 
   close() {

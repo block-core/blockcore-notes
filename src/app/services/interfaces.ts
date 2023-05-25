@@ -89,6 +89,7 @@ export interface StateDocument {
   id: number;
   since: number;
   modified?: number;
+  mediaQueue: MediaItem [];
 }
 
 export interface NostrRelayDocument {
@@ -434,6 +435,10 @@ export interface LNURLInvoice {
 export interface LNURLSuccessAction {
   description?: string;
   url?: string;
+}
+
+export declare interface OnInitialized {
+  initialize() : void;
 }
 
 
