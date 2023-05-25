@@ -113,7 +113,7 @@
       <!-- <button matTooltip="Zen mode" mat-icon-button (click)="minimize()">
         <mat-icon>self_improvement</mat-icon>
       </button> -->
-      <button routerLink="/queue" class="hide-small" mat-icon-button>
+      <button matTooltip="Queue" routerLink="/queue" class="hide-small" mat-icon-button>
         <mat-icon>queue_music</mat-icon>
       </button>
       <button matTooltip="Exit Media Player" (click)="media.exit()" mat-icon-button>
@@ -132,7 +132,7 @@
       <!-- <button matTooltip="Zen mode" mat-icon-button (click)="minimize()">
         <mat-icon>self_improvement</mat-icon>
       </button> -->
-      <button *ngIf="!miniplayer" routerLink="/queue" class="hide-small" mat-icon-button>
+      <button matTooltip="Queue" *ngIf="!miniplayer" routerLink="/queue" class="hide-small" mat-icon-button>
         <mat-icon>queue_music</mat-icon>
       </button>
       <button *ngIf="!miniplayer" matTooltip="Exit Media Player" (click)="media.exit()" mat-icon-button>
