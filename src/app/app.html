@@ -179,6 +179,10 @@
           <mat-icon>badge</mat-icon>
           <span>{{ 'App.Badges' | translate }}</span>
         </a>
+        <a mat-menu-item (click)="toggleProfileMenu(); openMediaPlayer()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>play_circle</mat-icon>
+          <span>{{ 'App.MediaPlayer' | translate }}</span>
+        </a>
         <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>settings</mat-icon>
           <span>{{ 'App.Settings' | translate }}</span>

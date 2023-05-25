@@ -70,7 +70,8 @@ export class AppComponent {
     public searchService: SearchService,
     public theme: ThemeService,
     private state: State,
-    private eventService: EventService
+    private eventService: EventService,
+    private optionService: OptionsService
   ) {
     if (!this.visibilityHandler) {
       this.visibilityHandler = addEventListener('visibilitychange', (event) => {
@@ -186,6 +187,10 @@ export class AppComponent {
 
   toggleProfileMenu() {
     this.draweraccount.toggle();
+  }
+
+  openMediaPlayer() {
+    this.optionService.values.showMediaPlayer = true;
   }
 
   /** Run initialize whenever user has been authenticated. */
