@@ -2,7 +2,7 @@
   <!-- <button mat-flat-button class="wipe-button" (click)="db.clearAndReload()">Issues? Wipe Local Database</button> -->
 
   <div class="profile-line">
-    <drag-scroll [scrollbar-hidden]="true" [drag-scroll-y-disabled]="true">
+    <drag-scroll>
       <app-event-header [listType]="'icon'" [iconSize]="'thumbnail'" [displayName]="false" [displayContent]="false" *ngFor="let profile of profiles" [profile]="profile"></app-event-header>
       <button mat-icon-button routerLink="/people" class="profile-line-more-button">
         <mat-icon>more_horiz</mat-icon>
