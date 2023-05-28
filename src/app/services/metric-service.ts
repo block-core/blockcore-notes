@@ -29,6 +29,12 @@ export class MetricService {
   }
 
   get(pubKey: string) {
-    return this.users[pubKey];
+    let value = this.users[pubKey];
+
+    if (!value) {
+      return 0;
+    }
+
+    return value;
   }
 }
