@@ -17,6 +17,7 @@ import { NotesService } from '../services/notes';
 import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
 import { StorageService } from '../services/storage';
+import { MetricService } from '../services/metric-service';
 
 @Component({
   selector: 'app-user',
@@ -132,7 +133,8 @@ export class UserComponent {
     private utilities: Utilities,
     public notesService: NotesService,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private metricService: MetricService
   ) {
     this.subscriptions.push(
       this.ui.profile$.subscribe(async (profile) => {
@@ -156,6 +158,11 @@ export class UserComponent {
         }
 
         this.isFollowing = this.profiles.isFollowing(profile.pubkey);
+
+        // Only store metrics for profiles we're following.
+        if (this.isFollowing) {
+          this.metricService.increase(1, this.ui.profile!.pubkey);
+        }
 
         // TODO: Increase this, made low during development.
         const timeAgo = moment().subtract(5, 'minutes').unix();
