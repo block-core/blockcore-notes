@@ -4,9 +4,9 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class MetricService {
-  users!: {
-        [pubKey: string]: number;
-    };
+  users: {
+    [pubKey: string]: number;
+  } = {};
 
   increase(value: number, pubKey: string) {
     let existingMetric = this.users[pubKey];
