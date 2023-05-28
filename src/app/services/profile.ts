@@ -10,6 +10,7 @@ import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { DataService } from './data';
 import { Event, Kind } from 'nostr-tools';
+import { MetricService } from './metric-service';
 
 @Injectable({
   providedIn: 'root',
@@ -181,7 +182,7 @@ export class ProfileService {
     this.#profilesChangedSubject.next(undefined);
   }
 
-  constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private appState: ApplicationState, private utilities: Utilities) {
+  constructor(private db: StorageService, private ui: UIService, private queueService: QueueService, private appState: ApplicationState, private utilities: Utilities, private metricService: MetricService) {
     // this.ui.profile$.subscribe((profile) => {
     // });
     // this.ui.pubkey$.subscribe(async (pubkey) => {
@@ -577,6 +578,7 @@ export class ProfileService {
       created: Math.floor(Date.now() / 1000),
       verifications: [],
       pubkey: pubkey,
+      interesting: MetricService.arguments,
     };
   }
 

@@ -17,6 +17,7 @@ import { ImportFollowDialog, ImportFollowDialogData } from './import-follow-dial
 import { DataService } from '../services/data';
 import { CircleService } from '../services/circle';
 import { OptionsService } from '../services/options';
+import { MetricService } from '../services/metric-service';
 
 @Component({
   selector: 'app-people',
@@ -73,7 +74,8 @@ export class PeopleComponent {
     public utilities: Utilities,
     private router: Router,
     private snackBar: MatSnackBar,
-    public optionsService: OptionsService
+    public optionsService: OptionsService,
+    private metricService: MetricService
   ) {}
 
   // async clearBlocked() {
@@ -109,6 +111,14 @@ export class PeopleComponent {
     } else if (sorting === 'created-desc') {
       this.sortedItems = this.items.sort((a, b) => {
         return a.created_at! < b.created_at! ? 1 : -1;
+      });
+    } else if (sorting === 'interesting-asc') {
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.interesting < b.interesting ? 1 : -1;
+      });
+    } else if (sorting === 'interesting-desc') {
+      this.sortedItems = this.items.sort((a, b) => {
+        return a.interesting > b.interesting ? 1 : -1;
       });
     }
   }
