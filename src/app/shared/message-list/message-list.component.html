@@ -1,0 +1,35 @@
+<mat-nav-list>
+
+  <div class="search">
+    <mat-form-field appearance="fill" class="input-full-width">
+      <input matInput type="text" placeholder="Search...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <ng-container *ngFor="let chat of chatService.chats$ | async; let lastItem = last">
+    <app-chat-item [routerLink]="['/m', chat.id]" [chat]="chat"></app-chat-item>
+    <mat-divider *ngIf="!lastItem"></mat-divider>
+  </ng-container>
+
+  <!-- <ng-container *ngFor="let event of chatService.chats2$ | async; let lastItem = last">
+    <app-chat-item [routerLink]="['/m', '5f432a9f39b58ff132fc0a4c8af10d42efd917d8076f68bb7f2f91ed7d4f6a41']" [event]="event"></app-chat-item>
+    <mat-divider *ngIf="!lastItem"></mat-divider>
+  </ng-container> -->
+</mat-nav-list>
+
+<div *ngFor="let chat of chatService.chats3">{{ chat.pubkey }} : {{ chat.content }}</div>
+
+<!-- <div *ngIf="chatService.uniqueChats$ | async as chats">
+  <div *ngFor="let chat of chats">{{ chat.pubkey }} : {{ chat.content }}</div>
+</div> -->
+
+<!-- <div *ngIf="chats$ | async as chats">
+  <div *ngFor="let chat of chats">{{ chat.id }} : {{ chat.name }}</div>
+</div> -->
+
+<button (click)="add()">Add</button>
+
+<button (click)="reset()">Reset</button>
+
+<button (click)="chatService.download()">Download</button>

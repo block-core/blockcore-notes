@@ -582,7 +582,6 @@ export class DataService {
   downloadFromRelay(filters: Filter[], relay: NostrRelay, requestTimeout = 10000): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
       const sub = relay.sub([...filters], {}) as NostrSubscription;
-      // relay.subscriptions.push(sub);
 
       sub.on('event', (originalEvent: any) => {
         const event = this.eventService.processEvent(originalEvent);
@@ -599,8 +598,6 @@ export class DataService {
       });
 
       return () => {
-        // console.log('downloadFromRelay:finished:unsub');
-        // When the observable is finished, this return function is called.
         sub.unsub();
       };
     }).pipe(
@@ -608,7 +605,7 @@ export class DataService {
       catchError((error) => {
         console.warn('The observable was timed out.');
         return of();
-      }) // Simply return undefined when the timeout is reached.
+      })
     );
   }
 

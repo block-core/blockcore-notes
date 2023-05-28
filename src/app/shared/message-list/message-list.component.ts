@@ -8,17 +8,18 @@ interface ChatModel {
 }
 
 @Component({
-  selector: 'app-chat-list',
-  templateUrl: './chat-list.component.html',
-  styleUrls: ['./chat-list.component.scss'],
+  selector: 'app-message-list',
+  templateUrl: './message-list.component.html',
+  styleUrls: ['./message-list.component.scss'],
 })
-export class ChatListComponent implements OnInit {
+export class MessageListComponent implements OnInit {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();
 
   constructor(public chatService: ChatService) {}
 
   ngOnInit() {
-    // this.chatService.download();
+    this.chatService.download();
+
     // this.chatService.uniqueChats$.subscribe((data) => {
     //   console.log('YEEH!', data);
     // });

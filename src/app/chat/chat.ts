@@ -1,6 +1,10 @@
 import { Component, ChangeDetectorRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ApplicationState } from '../services/applicationstate';
+import { ChatService } from '../services/chat.service';
+import { RelayService } from '../services/relay';
+import { Kind } from 'nostr-tools';
+import { UIService } from '../services/ui';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.html',
@@ -10,7 +14,10 @@ import { ApplicationState } from '../services/applicationstate';
 export class ChatComponent {
   @ViewChild('chatSidebar', { static: false }) chatSidebar!: MatSidenav;
   @ViewChild('userSidebar', { static: false }) userSidebar!: MatSidenav;
-  constructor(private appState: ApplicationState) {}
+
+  subscription: any;
+
+  constructor(private appState: ApplicationState, private chatService: ChatService, private relayService: RelayService, public ui: UIService) {}
   sidebarTitles = {
     user: '',
     chat: '',
@@ -29,8 +36,13 @@ export class ChatComponent {
   };
 
   async ngOnInit() {
+    this.ui.clearChats();
+
     this.appState.updateTitle('Chat');
     this.appState.goBack = true;
     this.appState.actions = [];
+
+    this.subscription = this.relayService.subscribe([{ kinds: [Kind.ChannelCreation, Kind.ChannelMetadata], limit: 10 }]).id;
+    // this.chatService.downloadChatRooms();
   }
 }

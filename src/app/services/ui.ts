@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Kind } from 'nostr-tools';
 import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single, takeWhile, from, of } from 'rxjs';
 import { EventService } from './event';
-import { EmojiEnum, LoadMoreOptions, NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel, ThreadEntry } from './interfaces';
+import { EmojiEnum, LoadMoreOptions, NostrEvent, NostrEventChat, NostrEventDocument, NostrProfileDocument, NotificationModel, ThreadEntry } from './interfaces';
 import { OptionsService } from './options';
 import { ProfileService } from './profile';
 import { ZapService } from './zap.service';
@@ -26,6 +26,7 @@ export class UIService {
     rootEventsView: [] as NostrEventDocument[],
     replyEventsView: [] as NostrEventDocument[],
     reactions: new Map<string, ThreadEntry>(),
+    chats: [] as NostrEventChat[],
   };
 
   viewCounts = {
@@ -156,6 +157,14 @@ export class UIService {
     // return this.#eventsChanged.asObservable().pipe(map((data) => data.sort((a, b) => (a.created_at > b.created_at ? -1 : 1))));
   }
 
+  chats: NostrEventChat[] = [];
+
+  #chatsChanged: BehaviorSubject<NostrEventChat[]> = new BehaviorSubject<NostrEventChat[]>(this.chats);
+
+  get chats$(): Observable<NostrEventChat[]> {
+    return this.#chatsChanged.asObservable();
+  }
+
   #loadMore: BehaviorSubject<LoadMoreOptions | undefined> = new BehaviorSubject<LoadMoreOptions | undefined>(undefined);
 
   get loadMore$(): Observable<LoadMoreOptions | undefined> {
@@ -283,6 +292,69 @@ export class UIService {
     this.#activityFeed = this.#notifications.slice(0, 5);
 
     this.triggerUnreadNotifications();
+  }
+
+  putChat(event: NostrEvent) {
+    const index = this.chats.findIndex((n) => n.id == event.id);
+
+    if (index == -1) {
+      const chat = event as NostrEventChat;
+      const parsed = JSON.parse(chat.content);
+
+      chat.picture = parsed.picture;
+      chat.name = parsed.name;
+      chat.about = parsed.about;
+
+      this.chats.push(chat);
+      this.#chatsChanged.next(this.chats);
+    }
+
+    // if (index == -1) {
+    //   this.#notifications.unshift(notification);
+
+    //   this.#notifications = this.#notifications.sort((a, b) => {
+    //     return a.created < b.created ? 1 : -1;
+    //   });
+    // } else {
+    //   this.#notifications[index] = notification;
+    // }
+
+    // this.#activityFeed = this.#notifications.slice(0, 5);
+    // this.triggerUnreadNotifications();
+  }
+
+  putChatMetadata(event: NostrEvent) {
+    const channelId = this.eventService.lastETag(event);
+
+    if (!channelId) {
+      console.debug('This channel metadata does not have eTag:', event);
+      return;
+    }
+
+    // Find the existing chat creation, but verify both channel ID and the public key.
+    const index = this.chats.findIndex((n) => n.id == channelId && n.pubkey == event.pubkey);
+
+    // TODO: We are subscribing to both 40 and 41 at the same time and we are receiving 41 (metadata updates)
+    // before some of the 40 (create) events, meaning we'll never show the latest metadata for certain chats.
+    if (index == -1) {
+      return;
+    }
+
+    this.chats[index].content = event.content;
+    this.#chatsChanged.next(this.chats);
+
+    // if (index == -1) {
+    //   this.#notifications.unshift(notification);
+
+    //   this.#notifications = this.#notifications.sort((a, b) => {
+    //     return a.created < b.created ? 1 : -1;
+    //   });
+    // } else {
+    //   this.#notifications[index] = notification;
+    // }
+
+    // this.#activityFeed = this.#notifications.slice(0, 5);
+    // this.triggerUnreadNotifications();
   }
 
   viewEventsStart = 0;
@@ -709,6 +781,7 @@ export class UIService {
     this.#lists.followingEventsView = [];
 
     this.#lists.reactions = new Map<string, ThreadEntry>();
+    this.#lists.chats = [];
 
     this.#notifications = [];
     this.#activityFeed = [];
@@ -764,6 +837,10 @@ export class UIService {
     this.#feedEvents.next(this.#lists.feedEvents);
     this.#feedEventsView.next(this.#lists.feedEventsView);
     this.previousFeedSinceValue = 0;
+  }
+
+  clearChats() {
+    this.#lists.chats = [];
   }
 
   // #parentEventId: string | undefined = undefined;

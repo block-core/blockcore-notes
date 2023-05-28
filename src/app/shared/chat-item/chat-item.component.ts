@@ -9,7 +9,7 @@ import { ChatModel, NostrEventDocument } from 'src/app/services/interfaces';
 })
 export class ChatItemComponent {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();
-  @Input() chat!: ChatModel;
+  @Input() chat!: ChatModel | any;
   @Input() event!: NostrEventDocument;
 
   constructor(private service: ChatService) {}

@@ -331,6 +331,12 @@ export interface CustomObjectModel {
   formatted?: string;
 }
 
+export interface NostrEventChat extends NostrEvent {
+  about: string;
+  name: string;
+  picture: string;
+}
+
 export class ChatModel {
   'id': number;
   'targetUserId': number;

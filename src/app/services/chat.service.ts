@@ -51,6 +51,42 @@ export class ChatService {
 
   subscriptions: Subscription[] = [];
 
+  downloadChatRooms() {
+    debugger;
+    // this.chats2 = [];
+    this.#chats = [];
+
+    this.dataService
+      .downloadEventsByQuery([{ kinds: [40, 41] }], 3000)
+      .pipe(
+        finalize(async () => {
+          debugger;
+          for (let index = 0; index < this.#chats.length; index++) {
+            const event = this.#chats[index];
+            const content = await this.nostr.decrypt(event.pubkey, event.content);
+            event.content = content;
+            console.log('DECRYPTED EVENT:', event);
+          }
+        })
+      )
+      .subscribe(async (event) => {
+        if (this.#chats.findIndex((e) => e.id === event.id) > -1) {
+          return;
+        }
+
+        // const gt = globalThis as any;
+        // const content = await gt.nostr.nip04.decrypt(event.pubkey, event.content);
+        // event.content = content;
+
+        this.#chats.unshift(event);
+
+        // this.chats2.push(event);
+        // this.#chatsChanged2.next(this.chats2);
+      });
+
+    // this.subscriptions.push(this.dataService.downloadEventsByQuery([{}]));
+  }
+
   download() {
     // this.chats2 = [];
     this.#chats = [];
