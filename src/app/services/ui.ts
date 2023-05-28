@@ -299,14 +299,19 @@ export class UIService {
 
     if (index == -1) {
       const chat = event as NostrEventChat;
-      const parsed = JSON.parse(chat.content);
 
-      chat.picture = parsed.picture;
-      chat.name = parsed.name;
-      chat.about = parsed.about;
+      try {
+        const parsed = JSON.parse(chat.content);
 
-      this.chats.push(chat);
-      this.#chatsChanged.next(this.chats);
+        chat.picture = parsed.picture;
+        chat.name = parsed.name;
+        chat.about = parsed.about;
+
+        this.chats.push(chat);
+        this.#chatsChanged.next(this.chats);
+      } catch (err) {
+        console.debug('Failed to parse: ', chat.content);
+      }
     }
 
     // if (index == -1) {

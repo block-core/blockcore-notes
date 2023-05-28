@@ -9,8 +9,9 @@
   <ng-container *ngFor="let chat of ui.chats$ | async; let lastItem = last">
     <mat-list-item>
       <img alt="" matListItemAvatar [src]="chat.picture" />
-      <h4 mat-line>{{ chat.name }}</h4>
-      <p mat-line class="last-message">{{ chat.about }}</p>
+      <span matListItemTitle>{{ chat.name }}</span>
+      <span matListItemLine class="last-message">{{ chat.about }}</span>
+      <span matListItemLine><app-profile-name [pubkey]="chat.pubkey"></app-profile-name></span>
       <!-- <span *ngIf="chat.lastMessageLength" [matBadge]="chat.lastMessageLength" matBadgeOverlap="false" matBadgePosition="above before" matBadgeColor="warn"></span> -->
     </mat-list-item>
     <!-- <app-chat-item [routerLink]="['/m', chat.id]" [chat]="chat"></app-chat-item> -->
