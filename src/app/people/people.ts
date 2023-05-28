@@ -114,11 +114,11 @@ export class PeopleComponent {
       });
     } else if (sorting === 'interesting-asc') {
       this.sortedItems = this.items.sort((a, b) => {
-        return a.interesting < b.interesting ? 1 : -1;
+        return this.metricService.get(a.pubkey) < this.metricService.get(b.pubkey) ? 1 : -1;
       });
     } else if (sorting === 'interesting-desc') {
       this.sortedItems = this.items.sort((a, b) => {
-        return a.interesting > b.interesting ? 1 : -1;
+        return this.metricService.get(a.pubkey) > this.metricService.get(b.pubkey) ? 1 : -1;
       });
     }
   }

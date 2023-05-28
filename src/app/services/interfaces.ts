@@ -288,8 +288,6 @@ export interface NostrProfileDocument extends NostrProfile {
 
   following?: string[];
 
-  interesting: number;
-
   relays?: any;
 }
 

@@ -577,8 +577,7 @@ export class ProfileService {
       website: '',
       created: Math.floor(Date.now() / 1000),
       verifications: [],
-      pubkey: pubkey,
-      interesting: MetricService.arguments,
+      pubkey: pubkey
     };
   }
 
