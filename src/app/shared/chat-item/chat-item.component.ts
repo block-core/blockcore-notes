@@ -15,7 +15,7 @@ export class ChatItemComponent {
   constructor(private service: ChatService) {}
 
   showMessageDetail() {
-    this.openChatSidebar.emit(this.chat.username);
+    this.openChatSidebar.emit(this.chat.id);
     // this.service.chat.next(this.chat);
   }
 }

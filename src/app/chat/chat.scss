@@ -29,35 +29,3 @@
 .spacer {
   flex: 1;
 }
-
-
-.form {
-  padding: 16px 16px 0 16px;
-}
-
-.input-full-width {
-  position: relative;
-  margin: auto;
-}
-
-.search {
-  position: sticky;
-  top: 0;
-  padding: 10px;
-  z-index: 999;
-}
-
-
-.last-message {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  width: 90%;
-  white-space: nowrap;
-}
-.user-avatar{
-  height: 50px;
-  width: 50px;
-}
-mat-list-item{
-  height: 90px !important;
-}

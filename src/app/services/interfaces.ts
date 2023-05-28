@@ -319,11 +319,11 @@ export interface UserModel {
   bio: string;
 }
 
-export interface MessageModel {
-  id: number;
-  cover: string;
-  message: string;
-}
+// export interface MessageModel {
+//   id: number;
+//   cover: string;
+//   message: string;
+// }
 
 export interface CustomObjectModel {
   tmpl: string;
@@ -344,7 +344,7 @@ export class ChatModel {
   'cover': string;
   'lastMessage': string;
   'lastMessageLength': string | number;
-  'chat': Array<MessageModel>;
+  // 'chat': Array<MessageModel>;
 }
 
 export interface LabelModel {

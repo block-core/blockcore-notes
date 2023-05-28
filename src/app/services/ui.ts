@@ -27,6 +27,7 @@ export class UIService {
     replyEventsView: [] as NostrEventDocument[],
     reactions: new Map<string, ThreadEntry>(),
     chats: [] as NostrEventChat[],
+    chatMessages: [] as NostrEventChat[],
   };
 
   viewCounts = {
@@ -163,6 +164,14 @@ export class UIService {
 
   get chats$(): Observable<NostrEventChat[]> {
     return this.#chatsChanged.asObservable();
+  }
+
+  chatMessage: NostrEvent[] = [];
+
+  #chatMessageChanged: BehaviorSubject<NostrEvent[]> = new BehaviorSubject<NostrEvent[]>(this.chatMessage);
+
+  get chatMessage$(): Observable<NostrEvent[]> {
+    return this.#chatMessageChanged.asObservable();
   }
 
   #loadMore: BehaviorSubject<LoadMoreOptions | undefined> = new BehaviorSubject<LoadMoreOptions | undefined>(undefined);
@@ -347,6 +356,34 @@ export class UIService {
 
     this.chats[index].content = event.content;
     this.#chatsChanged.next(this.chats);
+
+    // if (index == -1) {
+    //   this.#notifications.unshift(notification);
+
+    //   this.#notifications = this.#notifications.sort((a, b) => {
+    //     return a.created < b.created ? 1 : -1;
+    //   });
+    // } else {
+    //   this.#notifications[index] = notification;
+    // }
+
+    // this.#activityFeed = this.#notifications.slice(0, 5);
+    // this.triggerUnreadNotifications();
+  }
+
+  putChatMessage(event: NostrEvent) {
+    const index = this.chatMessage.findIndex((n) => n.id == event.id);
+
+    if (index == -1) {
+      const chat = event as NostrEvent;
+
+      try {
+        this.chatMessage.push(chat);
+        this.#chatMessageChanged.next(this.chatMessage);
+      } catch (err) {
+        console.debug('Failed to parse: ', chat.content);
+      }
+    }
 
     // if (index == -1) {
     //   this.#notifications.unshift(notification);
@@ -787,6 +824,7 @@ export class UIService {
 
     this.#lists.reactions = new Map<string, ThreadEntry>();
     this.#lists.chats = [];
+    this.#lists.chatMessages = [];
 
     this.#notifications = [];
     this.#activityFeed = [];
@@ -846,6 +884,14 @@ export class UIService {
 
   clearChats() {
     this.#lists.chats = [];
+    this.chats = [];
+    this.#chatsChanged.next(this.chats);
+  }
+
+  clearChatMessages() {
+    this.#lists.chatMessages = [];
+    this.chatMessage = [];
+    this.#chatMessageChanged.next(this.chatMessage);
   }
 
   // #parentEventId: string | undefined = undefined;

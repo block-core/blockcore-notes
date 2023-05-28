@@ -1,10 +1,9 @@
 import { Component, ChangeDetectorRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ApplicationState } from '../services/applicationstate';
-import { ChatService } from '../services/chat.service';
+import { UIService } from '../services/ui';
 import { RelayService } from '../services/relay';
 import { Kind } from 'nostr-tools';
-import { UIService } from '../services/ui';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.html',
@@ -14,10 +13,9 @@ import { UIService } from '../services/ui';
 export class ChatComponent {
   @ViewChild('chatSidebar', { static: false }) chatSidebar!: MatSidenav;
   @ViewChild('userSidebar', { static: false }) userSidebar!: MatSidenav;
+  subscription?: string;
 
-  subscription: any;
-
-  constructor(private appState: ApplicationState, private chatService: ChatService, private relayService: RelayService, public ui: UIService) {}
+  constructor(private appState: ApplicationState, private relayService: RelayService, public ui: UIService) {}
   sidebarTitles = {
     user: '',
     chat: '',
@@ -29,6 +27,7 @@ export class ChatComponent {
       this.me.sidebarTitles.user = title;
     },
     chatSideBar: function (title: string = '') {
+      debugger;
       this.me.chatSidebar.open();
       this.me.userSidebar.close();
       this.me.sidebarTitles.chat = title;
@@ -37,12 +36,15 @@ export class ChatComponent {
 
   async ngOnInit() {
     this.ui.clearChats();
+    this.subscription = this.relayService.subscribe([{ kinds: [Kind.ChannelCreation, Kind.ChannelMetadata], limit: 10 }]).id;
 
     this.appState.updateTitle('Chat');
     this.appState.goBack = true;
     this.appState.actions = [];
+  }
 
-    this.subscription = this.relayService.subscribe([{ kinds: [Kind.ChannelCreation, Kind.ChannelMetadata], limit: 10 }]).id;
-    // this.chatService.downloadChatRooms();
+  ngOnDestroy() {
+    // this.relayService.unsubscribe(this.subscription!);
+    // this.ui.clearChats();
   }
 }

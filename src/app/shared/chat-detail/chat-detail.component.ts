@@ -1,10 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
+import { ActivatedRoute } from '@angular/router';
+import { Kind } from 'nostr-tools';
 import { Subscription } from 'rxjs';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatModel } from 'src/app/services/interfaces';
 import { MessageControlService } from 'src/app/services/message-control.service';
+import { RelayService } from 'src/app/services/relay';
+import { UIService } from 'src/app/services/ui';
+import { Utilities } from 'src/app/services/utilities';
 
 @Component({
   selector: 'app-chat-detail',
@@ -16,16 +21,45 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
   @ViewChild('picker') picker: unknown;
 
   isEmojiPickerVisible: boolean | undefined;
-  subscription!: Subscription;
   chat!: ChatModel;
   sending: boolean = false;
   message: any;
   displayList = true;
 
-  constructor(private service: ChatService, private control: MessageControlService, private appState: ApplicationState) { }
+  constructor(private relayService: RelayService, public ui: UIService, private service: ChatService, private activatedRoute: ActivatedRoute, private utilities: Utilities, private control: MessageControlService, private appState: ApplicationState) {}
   @ViewChild('drawer') drawer!: MatSidenav;
+  subscription?: string;
+  subscriptions: Subscription[] = [];
 
   ngOnInit() {
+    this.subscriptions.push(
+      this.activatedRoute.paramMap.subscribe(async (params) => {
+        const id: any = params.get('id');
+
+        this.ui.clearChatMessages();
+        this.relayService.unsubscribe(this.subscription!);
+        this.subscription = this.relayService.subscribe([{ kinds: [Kind.ChannelMessage, Kind.ChannelMuteUser, Kind.ChannelHideMessage], ['#e']: [id], limit: 500 }]).id;
+
+        // this.ui.clearFeed();
+
+        // if (circle != null) {
+        //   this.circle = Number(circle);
+        //   this.ui.setFeedCircle(this.circle);
+        // } else {
+        //   this.circle = -1;
+        //   this.ui.setFeedCircle(this.circle);
+        // }
+
+        // this.subscriptions.push(
+        //   this.navigation.showMore$.subscribe(() => {
+        //     this.showMore();
+        //   })
+        // );
+      })
+    );
+
+    // debugger;
+    // this.subscription = this.relayService.subscribe([{ kinds: [Kind.ChannelMessage, Kind.ChannelMuteUser, Kind.ChannelHideMessage], ['#e']: [this.pubkey], limit: 500 }]).id;
 
     // this.subscription = this.service.chat.subscribe((messages) => {
     //   this.chat = messages;
@@ -72,6 +106,7 @@ export class ChatDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+    this.relayService.unsubscribe(this.subscription!);
+    this.utilities.unsubscribe(this.subscriptions);
   }
 }

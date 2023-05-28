@@ -32,7 +32,7 @@ export class MessageComponent {
   };
 
   async ngOnInit() {
-    this.appState.updateTitle('@Milad');
+    this.appState.updateTitle('');
     this.appState.goBack = true;
     this.appState.showBackButton = true;
     this.appState.actions = [];

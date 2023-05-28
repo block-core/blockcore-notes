@@ -435,6 +435,10 @@ export class RelayService {
       this.ui.putChatMetadata(event);
     }
 
+    if (event.kind == Kind.ChannelMessage) {
+      this.ui.putChatMessage(event);
+    }
+
     if (response.subscription) {
       const sub = this.subs.get(response.subscription);
       if (sub) {
