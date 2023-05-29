@@ -95,7 +95,7 @@
 .profile-banner-image {
   object-fit: cover;
   width: 100%;
-  max-height: 320px;
+  height: 320px;
 }
 
 @media only screen and (max-width: 599px) {
