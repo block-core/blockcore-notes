@@ -18,6 +18,7 @@ import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { dexieToRx } from '../shared/utilities';
 import { UIService } from '../services/ui';
+import { MetricService } from '../services/metric-service';
 
 interface DefaultProfile {
   pubkey: string;
@@ -119,7 +120,8 @@ export class HomeComponent {
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private ngZone: NgZone,
-    private formBuilder: UntypedFormBuilder
+    private formBuilder: UntypedFormBuilder,
+    private metricService: MetricService
   ) {
     console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
@@ -258,7 +260,11 @@ export class HomeComponent {
       this.profileService.following$.subscribe((profiles) => {
         // this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
         this.profileCount = 75;
-        this.profiles = profiles.slice(0, this.profileCount);
+        let slized = profiles.slice(0, this.profileCount);
+        let sorted = slized.sort((a, b) => {
+          return this.metricService.get(a.pubkey) < this.metricService.get(b.pubkey) ? 1 : -1;
+        });
+        this.profiles = sorted;
       })
     );
 
