@@ -3,7 +3,6 @@ import { Circle } from './interfaces';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { StorageService } from './storage';
 import { Utilities } from './utilities';
-import { dexieToRx } from '../shared/utilities';
 
 @Injectable({
   providedIn: 'root',

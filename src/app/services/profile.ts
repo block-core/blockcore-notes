@@ -5,7 +5,6 @@ import { ApplicationState } from './applicationstate';
 import { Utilities } from './utilities';
 import { StorageService } from './storage';
 import { CacheService } from './cache';
-import { dexieToRx } from '../shared/utilities';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { DataService } from './data';

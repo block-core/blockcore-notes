@@ -11,7 +11,6 @@ import { OptionsService } from '../services/options';
 import { NavigationService } from '../services/navigation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from '../services/storage';
-import { dexieToRx } from '../shared/utilities';
 import { UIService } from '../services/ui';
 import { CircleService } from '../services/circle';
 
