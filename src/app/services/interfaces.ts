@@ -90,6 +90,7 @@ export interface StateDocument {
   since: number;
   modified?: number;
   mediaQueue: MediaItem [];
+  metrics: { users: any }
 }
 
 export interface NostrRelayDocument {

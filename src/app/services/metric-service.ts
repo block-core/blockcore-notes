@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
+import { StorageService } from './storage';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MetricService {
-  users: {
-    [pubKey: string]: number;
-  } = {};
+  constructor(private storage: StorageService) {}
+
+  get users(): { [pubKey: string]: number } {
+    if (!this.storage.state?.metrics?.users) {
+      this.storage.state.metrics = { users: {} };
+    }
+
+    return this.storage.state.metrics.users;
+  }
 
   increase(value: number, pubKey: string) {
     let existingMetric = this.users[pubKey];
