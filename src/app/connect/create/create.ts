@@ -20,7 +20,9 @@ export class CreateProfileComponent {
   publicKeyHex: string = '';
   password: string = '';
   error: string = '';
-  profile: any = {};
+  profile: any = {
+    picture : '',
+  };
   step = 1;
   mnemonic = '';
 
@@ -141,6 +143,17 @@ export class CreateProfileComponent {
       this.publicKey = nip19.npubEncode(this.publicKeyHex);
     } catch (err: any) {
       this.error = err.message;
+    }
+  }
+
+  handleFileInput(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.profile.picture = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 }

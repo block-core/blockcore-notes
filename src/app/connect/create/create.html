@@ -33,13 +33,15 @@
             <textarea matInput type="text" [(ngModel)]="profile.about" rows="3"></textarea>
           </mat-form-field>
         </p>
-        <p>
-          <mat-form-field class="input-full-width">
+        <div class="image-uploader">
+          <label for="file-upload" class="custom-file-upload">
             <mat-icon matPrefix>image</mat-icon>
-            <mat-label>{{ 'Create.ProfileImage' | translate }}</mat-label>
-            <input matInput type="text" [(ngModel)]="profile.picture" />
-          </mat-form-field>
-        </p>
+            <span>{{ 'Create.ProfileImage' | translate }}</span>
+          </label>
+          <input id="file-upload" type="file" (change)="handleFileInput($event)" />
+          <img *ngIf="profile.picture" [src]="profile.picture" alt="Uploaded Image" />
+        </div>
+
         <p>
           <mat-form-field class="input-full-width">
             <mat-icon matPrefix>how_to_reg</mat-icon>
