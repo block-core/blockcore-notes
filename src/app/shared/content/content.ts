@@ -298,6 +298,16 @@ export class ContentComponent {
         } else {
           i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token.substring(6), token: decoded.type });
         }
+      } else if (token.startsWith('@')) {
+        const username = token.substring(1);
+        const npub = this.profileService.following.find((follower) => follower.name === username)?.npub;
+        if (npub) {
+          const decoded = nip19.decode(npub);
+          const val = decoded.data as any;
+          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val, token: decoded.type });
+        } else {
+          res[i] += token;
+        }
       } else if (token.startsWith('http://') || token.startsWith('https://')) {
         if (this.isImage(token)) {
           i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token, token: 'image' });
