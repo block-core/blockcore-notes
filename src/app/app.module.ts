@@ -29,6 +29,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MentionModule } from 'angular-mentions';
 import { AuthGuardService } from './services/auth-guard';
 import { ConnectComponent } from './connect/connect';
 import { LogoutComponent } from './logout/logout';
@@ -294,6 +295,7 @@ import { ExampleComponent } from './example/example';
     MatPaginatorModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
+    MentionModule,
     PickerModule,
     FormsModule,
     ReactiveFormsModule,
