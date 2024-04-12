@@ -7,6 +7,10 @@ import { ThemeService } from '../../services/theme';
 import { ProfileService } from '../../services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
+import axios from 'axios';
+import FormData  from 'form-data';
+import dotenv from 'dotenv';
+dotenv.config();
 
 @Component({
   selector: 'app-create',
@@ -146,14 +150,51 @@ export class CreateProfileComponent {
     }
   }
 
-  handleFileInput(event: any) {
+  async handleFileInput(event: any) {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.profile.picture = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      console.log(file);
+
+      const pinataMetadata = JSON.stringify({
+        name: 'profile-image',
+      });
+      formData.append('pinataMetadata', pinataMetadata);
+
+      const pinataOptions = JSON.stringify({
+        cidVersion: 0,
+      });
+      formData.append('pinataOptions', pinataOptions);
+
+      try {
+        const response = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Beared ${process.env[`PINATA_API_KEY`]}`
+          }
+        });
+
+        console.log(response.data);
+
+        const ipfsHash = response.data.IpfsHash;
+
+        console.log('IPFS Hash:', ipfsHash);
+
+        const imageURL = `http://127.0.0.1:8080/ipfs/${ipfsHash}`;
+
+        console.log('Image URL:', imageURL);
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.profile.picture = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('An error occurred while uploading file to IPFS:', error);
+      }
     }
   }
+
 }
