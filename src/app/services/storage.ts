@@ -27,7 +27,8 @@ export class StorageService {
       state = {
         id: 1,
         since: timeAgo,
-        mediaQueue: []
+        mediaQueue: [],
+        metrics: { users: {} },
       };
     }
 
