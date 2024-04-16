@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { NotesService } from 'src/app/services/notes';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
-import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../../services/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
@@ -44,16 +44,23 @@ export class EventActionsComponent {
   async follow(circle?: number) {
     console.log('FOLLOW:', this.profile);
 
+    if(circle==null){
+      circle=0;
+    }
+
     if (!this.profile) {
       return;
     }
 
     // If not already following, add a full follow and download recent:
     if (this.profile.status != 1) {
+      this.profile.circle = circle;
+      this.profile.status = 1;
       await this.profileService.follow(this.profile.pubkey, circle);
       // this.feedService.downloadRecent([this.profile.pubkey]);
     } else {
       // If we already follow but just change the circle, do a smaller operation.
+      this.profile.circle = circle;
       await this.profileService.setCircle(this.profile.pubkey, circle);
     }
   }
@@ -141,7 +148,7 @@ export class EventActionsComponent {
     if (!this.profile) {
       return;
     }
-
+    this.profile.status = 0;
     await this.profileService.unfollow(this.profile.pubkey);
   }
 
@@ -184,9 +191,10 @@ export class EventActionsComponent {
 
     if (this.event) {
       this.pubkey = this.event.pubkey;
-      // this.profile = await this.profileService.getProfile(this.pubkey);
+      this.profile = await this.profileService.getProfile(this.pubkey);
     } else if (this.profile) {
       this.pubkey = this.profile.pubkey;
+      this.profile = await this.profileService.getProfile(this.pubkey);
     } else {
       // this.profile = await this.profileService.getProfile(this.pubkey);
     }

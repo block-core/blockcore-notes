@@ -7,6 +7,16 @@
 </button>
 
 <mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="follow()" *ngIf="profile?.status == 0">
+    <mat-icon>person_add</mat-icon>
+    <span>Follow</span>
+  </button>
+
+  <button mat-menu-item (click)="unfollow()" *ngIf="profile?.status == 1">
+    <mat-icon>person_remove</mat-icon>
+    <span>Unfollow</span>
+  </button>
+
   <button mat-menu-item (click)="saveNote()" *ngIf="event && !event.saved" [matMenuTriggerFor]="labelMenu">
     <mat-icon>bookmark_add</mat-icon>
     <span>Bookmark</span>
