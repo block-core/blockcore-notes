@@ -33,3 +33,37 @@
   font-size: 1.4em;
   word-spacing: 0.8em;
 }
+
+.image-uploader {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.icon {
+  margin-right: 5px;
+}
+
+#file-upload {
+  display: none;
+}
+
+img {
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+.uploaded-image {
+  max-width: 100px;
+  max-height: 100px;
+}
