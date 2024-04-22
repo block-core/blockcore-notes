@@ -2,8 +2,9 @@
   <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
 
   <div class="profile-banner">
-    <img class="profile-banner-image" [src]="profile.banner" />
-  </div>
+    <img class="profile-banner-image" [src]="profile.banner || 'https://i.pinimg.com/564x/0b/a3/d6/0ba3d60362c7e6d256cfc1f37156bad9.jpg'" />
+</div>
+
 
   <div class="profile-page-header">
     <div class="profile-page-header-left">
