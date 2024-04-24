@@ -14,7 +14,7 @@
 
 .default-card {
   display: inline-block;
-  /* margin-bottom: 1em; */
+  margin-bottom: 1em;
   width: 300px;
   height: 160px;
   margin-right: 1em;
@@ -90,21 +90,34 @@
 
 .home {
   display: flex;
+  /* flex-wrap: nowrap; */
+  justify-content: space-between;
   gap: 1.5em;
-  max-width: 1360px;
+  max-width: 1100px;
   align-self: center;
+  /* flex-direction: row; */
+  
 }
 
 .home-left {
-  flex: 1 1 0;
-  min-width: 240px;
+  /* flex: 1 1 0;
+  min-width: 240px; */
+  display: flex;
+  flex-wrap: nowrap;  
+  justify-content: space-around;  
+
 }
 
 .home-right {
-  flex: 3 1 0;
+  /* flex: 3 1 0; */
+  display: flex;
+  justify-content:space-between;
+  /* flex-wrap: nowrap; */
 }
 
 .home-card {
+  margin: 15px;
+  flex-grow: 1;
   border-radius: 15px;
   margin-bottom: 1.8em;
   width: 100%;
@@ -123,10 +136,15 @@
 }
 
 .page {
+ 
   box-sizing: border-box;
   display: flex;
   width: 100%;
+  justify-content: space-between;
   flex-direction: column;
+  
+  /* flex-direction: row; */
+  /* flex-direction: row-reverse; */
 }
 
 @media only screen and (max-width: 599px) {
@@ -155,6 +173,8 @@
   display: flex;
   flex-direction: row;
   margin-bottom: 0.2em;
+  /* align-items: center; */
+  
 }
 
 .profile-line::-webkit-scrollbar-thumb {
