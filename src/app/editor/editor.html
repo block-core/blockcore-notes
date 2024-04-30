@@ -75,7 +75,7 @@
     <div mat-dialog-content class="mat-dialog-content">
       <mat-form-field class="input-full-width">
         <mat-label>What's on your mind?</mat-label>
-        <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2"></textarea>
+        <textarea appContentEditor appAutoInputHeight #noteContent class="note-input noscrollbars" matInput type="text" formControlName="content" rows="2" [mention]="followingUsers"></textarea>
       </mat-form-field>
 
       <!-- <mat-autocomplete #auto="matAutocomplete">

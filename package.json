@@ -37,6 +37,7 @@
     "@scure/bip39": "^1.1.1",
     "@twogate/ngx-photo-gallery": "^1.4.0",
     "@types/sharedworker": "^0.0.91",
+    "angular-mentions": "^1.5.0",
     "angularx-qrcode": "^15.0.1",
     "html5-qrcode": "^2.3.7",
     "idb": "^7.1.1",
