@@ -1,6 +1,11 @@
 <mat-list-item (click)="showMessageDetail()">
-  <img alt="" matListItemAvatar [src]="chat.cover" />
+  <img alt="" matListItemAvatar [src]="chat.picture" />
+  <span matListItemTitle>{{ chat.name }}</span>
+  <span matListItemLine class="last-message">{{ chat.about }}</span>
+  <span matListItemLine><app-profile-name [pubkey]="chat.pubkey"></app-profile-name></span>
+
+  <!-- <img alt="" matListItemAvatar [src]="chat.cover" />
   <h4 mat-line>{{ chat.username }}</h4>
-  <p mat-line class="last-message">{{ chat.lastMessage }}</p>
-  <span *ngIf="chat.lastMessageLength" [matBadge]="chat.lastMessageLength" matBadgeOverlap="false" matBadgePosition="above before" matBadgeColor="warn"></span>
+  <p mat-line class="last-message">{{ chat.lastMessage }}</p> -->
+  <!-- <span *ngIf="chat.lastMessageLength" [matBadge]="chat.lastMessageLength" matBadgeOverlap="false" matBadgePosition="above before" matBadgeColor="warn"></span> -->
 </mat-list-item>

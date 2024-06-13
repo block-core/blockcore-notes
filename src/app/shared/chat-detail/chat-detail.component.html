@@ -1,5 +1,3 @@
-
-
 <mat-drawer-container class="chat-detail-container" autosize>
   <mat-drawer #drawer class="chat-detail-sidenav list-hide-small" opened mode="side">
     <app-chat-list></app-chat-list>
@@ -8,8 +6,9 @@
   <div class="chat-detail-sidenav-content">
     <div class="messages-list-container">
       <div #scrollable class="scrollable">
-        <ng-container *ngIf="chat">
-          <ng-container *ngFor="let message of chat.chat">
+        <ng-container>
+          <ng-container *ngFor="let message of ui.chatMessage$ | async">
+            <!-- {{ message | json }} -->
             <app-message-bubble [message]="message"></app-message-bubble>
           </ng-container>
         </ng-container>
@@ -17,15 +16,14 @@
       </div>
 
       <div class="message-send">
-        <emoji-mart class="emoji-picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false"
-          (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
+        <emoji-mart class="emoji-picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
 
-          <button type="button" class="list-hide-small" style="margin: 5px;" mat-icon-button (click)="toggle()">
-            <mat-icon *ngIf="displayList">chevron_left</mat-icon>
-            <mat-icon *ngIf="!displayList">chevron_right</mat-icon>
-          </button>
+        <button type="button" class="list-hide-small" style="margin: 5px" mat-icon-button (click)="toggle()">
+          <mat-icon *ngIf="displayList">chevron_left</mat-icon>
+          <mat-icon *ngIf="!displayList">chevron_right</mat-icon>
+        </button>
 
-            <mat-form-field class="input-full-width">
+        <mat-form-field class="input-full-width">
           <mat-icon class="toolbar-icon" [matMenuTriggerFor]="menu" matPrefix>attach_file_add</mat-icon>
           <mat-menu #menu="matMenu">
             <button mat-menu-item>
@@ -41,11 +39,9 @@
               <span>Document</span>
             </button>
           </mat-menu>
-          <input type="text" matInput placeholder="Write a message" [(ngModel)]="message"
-            (keypress)="saveMessage($event)">
-          <mat-hint align="end" class="hint">Length : {{message?.length}}</mat-hint>
-          <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible;"
-            matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
+          <input type="text" matInput placeholder="Write a message" [(ngModel)]="message" (keypress)="saveMessage($event)" />
+          <mat-hint align="end" class="hint">Length : {{ message?.length }}</mat-hint>
+          <mat-icon class="toolbar-icon" matSuffix (click)="isEmojiPickerVisible = !isEmojiPickerVisible" matTooltip="Insert emoji">sentiment_satisfied</mat-icon>
           <mat-icon class="toolbar-icon" matSuffix>mic</mat-icon>
 
           <mat-icon class="toolbar-icon" (click)="send(message)" matSuffix>send</mat-icon>
@@ -53,10 +49,4 @@
       </div>
     </div>
   </div>
-
 </mat-drawer-container>
-
-
-
-
-
