@@ -6,7 +6,6 @@ import { AppComponent } from './app';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { MtxTooltipModule } from '@ng-matero/extensions/tooltip';
-import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';

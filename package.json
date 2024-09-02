@@ -34,7 +34,6 @@
     "@noble/secp256k1": "1.7.1",
     "@scure/base": "^1.1.1",
     "@scure/bip39": "^1.1.1",
-    "@twogate/ngx-photo-gallery": "^1.4.0",
     "@types/sharedworker": "^0.0.91",
     "angularx-qrcode": "^15.0.1",
     "html5-qrcode": "^2.3.7",
