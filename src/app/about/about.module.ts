@@ -4,7 +4,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AboutComponent } from './about';
 import { LicensesComponent } from './licenses/licenses';
-import { HttpClientModule } from '@angular/common/http';
+import {} from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from '../services/auth-guard';
 import { LoadingResolverService } from '../services/loading-resolver';
