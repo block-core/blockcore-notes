@@ -141,7 +141,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
 }
 import { ZapDialogComponent } from './shared/zap-dialog/zap-dialog.component';
-import { QRCodeModule } from 'angularx-qrcode';
 import { ZapQrCodeComponent } from './shared/zap-qr-code/zap-qr-code.component';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeCardComponent } from './shared/badge-card/badge-card';
@@ -295,7 +294,6 @@ import { ExampleComponent } from './example/example';
     ReactiveFormsModule,
     LayoutModule,
     MatBottomSheetModule,
-    NgxLoadingButtonsModule,
     MatSliderModule,
     MatSnackBarModule,
     MatProgressBarModule,
@@ -303,11 +301,8 @@ import { ExampleComponent } from './example/example';
     MatDatepickerModule,
     MatButtonToggleModule,
     ScrollingModule,
-    PhotoGalleryModule,
     ClipboardModule,
     NgxColorsModule,
-    QRCodeModule,
-    DragScrollModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // enabled: true,
