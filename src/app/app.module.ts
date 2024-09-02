@@ -79,8 +79,7 @@ import { EventThreadComponent } from './shared/event-thread/event-thread';
 import { EventReactionsComponent } from './shared/event-reactions/event-reactions';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 import { ContentPhotosComponent } from './shared/content-photos/content-photos';
-import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FollowingComponent } from './following/following';
 import { FollowersComponent } from './followers/followers';
 import { ProfileWidgetComponent } from './shared/profile-widget/profile-widget';
@@ -309,9 +308,6 @@ import { ExampleComponent } from './example/example';
     ScrollingModule,
     PhotoGalleryModule,
     ClipboardModule,
-    NgxMatDatetimePickerModule,
-    NgxMatNativeDateModule,
-    NgxMatTimepickerModule,
     NgxColorsModule,
     QRCodeModule,
     DragScrollModule,
