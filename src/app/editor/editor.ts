@@ -61,6 +61,8 @@ export class EditorComponent {
 
   subscriptions: Subscription[] = [];
 
+  followingUsers : string [] = this.profileService.following.map(follower => follower.name);
+
   constructor(
     private snackBar: MatSnackBar,
     public articleService: ArticleService,
