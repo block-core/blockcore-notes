@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
-import { NostrProfile } from '../../services/interfaces';
+import { NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
   selector: 'app-profile-widget',
@@ -13,8 +13,13 @@ export class ProfileWidgetComponent {
 
   profileName = '';
   tooltip = '';
+  profile!: NostrProfileDocument;
 
   constructor(private profiles: ProfileService, private utilities: Utilities) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    if(this.pubkey){
+      this.profile = await this.profiles.getProfile(this.pubkey)
+    }
+  }
 }
