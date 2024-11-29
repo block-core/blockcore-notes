@@ -427,6 +427,18 @@ export class RelayService {
       this.zapUi.addZap(event);
     }
 
+    if (event.kind == Kind.ChannelCreation) {
+      this.ui.putChat(event);
+    }
+
+    if (event.kind == Kind.ChannelMetadata) {
+      this.ui.putChatMetadata(event);
+    }
+
+    if (event.kind == Kind.ChannelMessage) {
+      this.ui.putChatMessage(event);
+    }
+
     if (response.subscription) {
       const sub = this.subs.get(response.subscription);
       if (sub) {

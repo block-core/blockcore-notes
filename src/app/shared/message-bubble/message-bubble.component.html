@@ -1,10 +1,11 @@
-<div class="bubble" [class.me]="message.id==0">
+<div class="bubble" [class.me]="message.pubkey == me">
   <div class="bubble cover">
-    <img class="bubble picture" [src]="message.cover" alt="">
+    <!-- <img class="bubble picture" [src]="message.cover" alt="" /> -->
+    <app-profile-image class="bubble picture" [publicKey]="message.pubkey"></app-profile-image>
   </div>
   <div class="bubble container">
     <mat-card class="bubble card">
-      {{message.message}}
+      {{ message.content }}
     </mat-card>
   </div>
 </div>

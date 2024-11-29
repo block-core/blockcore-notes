@@ -1,9 +1,9 @@
 <mat-sidenav-container class="drawer-container" autosize>
   <mat-tab-group mat-align-tabs="center">
-    <mat-tab label="Messages">
+    <mat-tab label="Subscribed">
       <app-chat-list (openChatSidebar)="open.chatSideBar($event)"></app-chat-list>
     </mat-tab>
-    <mat-tab label="Users">
+    <mat-tab label="Public">
       <app-user-list (openUserSidebar)="open.userSideBar($event)"></app-user-list>
     </mat-tab>
   </mat-tab-group>

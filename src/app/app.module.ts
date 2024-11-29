@@ -155,6 +155,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DragScrollModule } from 'ngx-drag-scroll';
 import { ZappersListDialogComponent } from './shared/zappers-list-dialog/zappers-list-dialog.component';
 import { ExampleComponent } from './example/example';
+import { MessageListComponent } from './shared/message-list/message-list.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -246,7 +247,8 @@ import { ExampleComponent } from './example/example';
     TagsComponent,
     BadgeComponent,
     ZappersListDialogComponent,
-    ExampleComponent
+    ExampleComponent,
+    MessageListComponent
   ],
   imports: [
     HttpClientModule,
