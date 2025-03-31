@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Event, getEventHash, kinds, UnsignedEvent, validateEvent, verifyEvent } from 'nostr-tools';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { RelayService } from 'src/app/services/relay';
@@ -11,6 +11,13 @@ import { DataService } from 'src/app/services/data';
 import { ZapQrCodeComponent } from '../zap-qr-code/zap-qr-code.component';
 import { NostrProfileDocument, LNURLPayRequest, LNURLInvoice, NostrEventDocument, NostrRelayDocument } from 'src/app/services/interfaces';
 import { StorageService } from 'src/app/services/storage';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 
 export interface ZapDialogData {
   profile: NostrProfileDocument;
@@ -21,7 +28,18 @@ export interface ZapDialogData {
     selector: 'app-zap-dialog',
     templateUrl: './zap-dialog.component.html',
     styleUrls: ['./zap-dialog.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      ReactiveFormsModule,
+      MatDialogModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatButtonModule,
+      MatProgressSpinnerModule,
+      MatTooltipModule,
+      MatIconModule
+    ]
 })
 export class ZapDialogComponent implements OnInit {
   sendZapForm!: UntypedFormGroup;
