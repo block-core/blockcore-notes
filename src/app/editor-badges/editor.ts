@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import { NavigationService } from '../services/navigation';
 import { Location } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
@@ -16,6 +16,11 @@ import { EventService } from '../services/event';
 import { CommonModule } from '@angular/common';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { TagsComponent } from '../shared/tags/tags';
+import { BadgeCardComponent } from '../shared/badge-card/badge-card';
 
 export interface NoteDialogData {
   note: string;
@@ -24,7 +29,7 @@ export interface NoteDialogData {
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, ReactiveFormsModule],
+  imports: [CommonModule, MatFormFieldModule, FormsModule, MatButtonToggleModule, TagsComponent, BadgeCardComponent, MatSelectModule, MatSnackBarModule, ReactiveFormsModule],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
 })
