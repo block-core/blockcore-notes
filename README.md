@@ -6,24 +6,20 @@
     Blockcore Notes
   </h1>
   <p align="center">
-    Notes app for decentralized infrastructures (Nostr and Web5)
+    Notes app for decentralized infrastructures (Nostr)
   </p>
   <p align="center">
       <a href="https://github.com/block-core/blockcore-notes/actions"><img src="https://github.com/block-core/blockcore-notes/workflows/Build%20and%20Publish%20Web%20Site/badge.svg" /></a>
   </p>
 </p>
 
-Blockcore Notes is an app for your public and personal notes. It is built to support the Nostr and Web5 (coming in the future).
+Blockcore Notes is an app for your public and personal notes. It is built to support the Nostr.
 
 ![](/src/assets/blockcore-notes-screenshot.png)
 
 ## Nostr
 
 The Nostr support for Blockcore Notes relies on using your Nostr identity (public key) and uses a set of relays to publish and store your notes. You can run your own personal relay to always keep a backup of your notes.
-
-## Web5
-
-The Web5 support for Blockcore Notes relies on using your DID and use your DWN (Decentralized Web Nodes) to publish and store your notes. The Blockcore Wallet already supports and hosts an internal DWN within the extension, this can be used to store a local copy of all your notes.
 
 ## Connect using extension
 
