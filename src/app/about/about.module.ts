@@ -30,7 +30,6 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AboutComponent, LicensesComponent],
   imports: [RouterModule.forChild(routes), MatExpansionModule, MatSnackBarModule],
   exports: [],
   providers: [],

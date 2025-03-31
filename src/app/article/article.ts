@@ -9,13 +9,26 @@ import { OptionsService } from '../services/options';
 import { ThreadService } from '../services/thread';
 import { NavigationService } from '../services/navigation';
 import { UIService } from '../services/ui';
-import { Kind, nip19 } from 'nostr-tools';
+import { kinds, nip19 } from 'nostr-tools';
 import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { EventComponent } from '../shared/event/event';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventReactionsComponent } from '../shared/event-reactions/event-reactions';
+import { EventButtonsComponent } from '../shared/event-buttons/event-buttons';
+import { EventThreadComponent } from '../shared/event-thread/event-thread';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { DateComponent } from '../shared/date/date';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatCardModule, EventComponent, EventHeaderComponent, EventReactionsComponent, EventButtonsComponent, EventThreadComponent, EventActionsComponent, DateComponent, MatIconModule, MatSliderModule, MatDividerModule, MatExpansionModule, MatSlideToggleModule],
   templateUrl: 'article.html',
   styleUrls: ['article.css'],
 })
@@ -139,7 +152,7 @@ export class ArticleComponent {
         if (result.type == 'naddr') {
           const data = result.data as nip19.AddressPointer;
 
-          if (data.kind == Kind.Article) {
+          if (data.kind == kinds.LongFormArticle) {
             this.router.navigate(['/a', data.pubkey, data.identifier]);
             return;
           }
