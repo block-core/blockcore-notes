@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-relay',
@@ -29,6 +30,7 @@ import { RouterModule } from '@angular/router';
       MatTooltipModule,
       MatExpansionModule,
       RouterModule,
+      TranslateModule
     ]
 })
 export class RelayComponent {
