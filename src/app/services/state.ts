@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Kind } from 'nostr-tools';
+import { kinds } from 'nostr-tools';
 import { Circle, NostrEvent, NostrProfileDocument } from './interfaces';
 
 @Injectable({
@@ -13,31 +13,31 @@ export class StateService {
 
     // TODO: Temporarily removed to avoid building massive in-memory state.
     switch (event.kind as any) {
-      case Kind.Metadata:
+      case kinds.Metadata:
         this.addIfNewer(event, event.pubkey, this.state.events.metadata);
         if (this.state.pubkey == event.pubkey) {
           this.state.metadata = event;
         }
         break;
-      case Kind.Text:
+      case kinds.ShortTextNote:
         this.addIfMissing(event, this.state.events.shortTextNote);
         break;
-      case Kind.Contacts:
+      case kinds.Contacts:
         this.addIfNewer(event, event.pubkey, this.state.events.contacts);
         break;
-      case Kind.Reaction:
+      case kinds.Reaction:
         this.addIfMissing(event, this.state.events.reaction);
         break;
       case 6:
         this.addIfMissing(event, this.state.events.reposts);
         break;
-      case Kind.Zap:
+      case kinds.Zap:
         this.addIfMissing(event, this.state.events.zap);
         break;
-      case Kind.ZapRequest:
+      case kinds.ZapRequest:
         this.addIfMissing(event, this.state.events.zapRequest);
         break;
-      case Kind.Article:
+      case kinds.LongFormArticle:
         const slug = this.firstDTag(event); 
         this.addIfNewer(event, slug!, this.state.events.longFormContent);
         break;

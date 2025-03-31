@@ -3,7 +3,6 @@ import { EmojiEnum, NostrEventDocument, ThreadEntry, ThreadEntryChild } from './
 import { Observable, BehaviorSubject, map, ReplaySubject, filter, combineLatest } from 'rxjs';
 import { ProfileService } from './profile';
 import { EventService } from './event';
-import { Kind } from 'nostr-tools';
 import { DataService } from './data';
 import { NavigationService } from './navigation';
 import { RelayService } from './relay';

@@ -145,7 +145,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
 }
 import { ZapDialogComponent } from './shared/zap-dialog/zap-dialog.component';
-import { QRCodeModule } from 'angularx-qrcode';
+import { QRCodeComponent } from 'angularx-qrcode';
 import { ZapQrCodeComponent } from './shared/zap-qr-code/zap-qr-code.component';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeCardComponent } from './shared/badge-card/badge-card';
@@ -310,7 +310,7 @@ import { ExampleComponent } from './example/example';
         NgxMatNativeDateModule,
         NgxMatTimepickerModule,
         NgxColorsModule,
-        QRCodeModule,
+        QRCodeComponent,
         DragScrollModule,
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: !isDevMode(),

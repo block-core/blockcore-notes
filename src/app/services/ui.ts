@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Kind } from 'nostr-tools';
+import { kinds } from 'nostr-tools';
 import { BehaviorSubject, map, Observable, filter, flatMap, mergeMap, concatMap, tap, take, single, takeWhile, from, of } from 'rxjs';
 import { EventService } from './event';
 import { EmojiEnum, LoadMoreOptions, NostrEvent, NostrEventDocument, NostrProfileDocument, NotificationModel, ThreadEntry } from './interfaces';
@@ -416,7 +416,7 @@ export class UIService {
   }
 
   putFeedEvent(event: NostrEventDocument) {
-    if (event.kind == Kind.Text) {
+    if (event.kind == kinds.ShortTextNote) {
       event = this.calculateFields(event);
 
       const index = this.#lists.feedEvents.findIndex((e) => e.id == event.id);
@@ -437,7 +437,7 @@ export class UIService {
     //   return;
     // }
 
-    if (event.kind == Kind.Reaction) {
+    if (event.kind == kinds.Reaction) {
       if (!this.options.values.enableReactions) {
         return;
       }
@@ -490,7 +490,7 @@ export class UIService {
         entry.reactionIds.push(event.id!);
         this.putThreadEntry(entry);
       }
-    } else if (event.kind == Kind.Text) {
+    } else if (event.kind == kinds.ShortTextNote) {
       event = this.calculateFields(event);
 
       if (this.pubkey) {
@@ -601,7 +601,7 @@ export class UIService {
         this.#viewEventsChanged.next(this.viewEvents);
         this.#viewReplyEventsChanged.next(this.viewReplyEvents);
       }
-    } else if (event.kind == Kind.Zap) {
+    } else if (event.kind == kinds.Zap) {
       if (!this.options.values.enableZapping) {
         return;
       }
@@ -635,7 +635,7 @@ export class UIService {
 
   putEvents(events: NostrEventDocument[]) {
     // For now, filter out only text.
-    this.events = events.filter((e) => e.kind == Kind.Text);
+    this.events = events.filter((e) => e.kind == kinds.ShortTextNote);
     this.viewEvents = [];
 
     this.events = this.events.map((e) => this.calculateFields(e));

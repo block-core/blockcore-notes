@@ -2,8 +2,7 @@ import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
+import { Relay } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -224,21 +223,21 @@ export class FeedPublicComponent {
     }
 
     // const relay = relayInit('wss://relay.nostr.info');
-    this.relay = relayInit('wss://nostr-pub.wellorder.net');
+    this.relay = await Relay.connect('wss://nostr-pub.wellorder.net');
 
-    this.relay.on('connect', () => {
-      console.log(`connected to ${this.relay?.url}`);
-      // this.onConnected(this.relay);
-    });
+    // this.relay.on('connect', () => {
+    //   console.log(`connected to ${this.relay?.url}`);
+    //   // this.onConnected(this.relay);
+    // });
 
-    this.relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${this.relay?.url}`);
-    });
+    // this.relay.on('disconnect', () => {
+    //   console.log(`DISCONNECTED! ${this.relay?.url}`);
+    // });
 
-    this.relay.on('notice', (msg: any) => {
-      console.log(`NOTICE FROM ${this.relay?.url}: ${msg}`);
-    });
+    // this.relay.on('notice', (msg: any) => {
+    //   console.log(`NOTICE FROM ${this.relay?.url}: ${msg}`);
+    // });
 
-    this.relay.connect();
+    // this.relay.connect();
   }
 }

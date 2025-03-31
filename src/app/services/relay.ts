@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LoadMoreOptions, NostrRelay, NostrRelayDocument, NostrRelaySubscription, QueryJob } from './interfaces';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Event, Filter, Kind } from 'nostr-tools';
+import { Event, Filter, kinds } from 'nostr-tools';
 import { EventService } from './event';
 import { OptionsService } from './options';
 import { ApplicationState } from './applicationstate';
@@ -90,13 +90,13 @@ export class RelayService {
         this.unsubscribe(this.profileEventSubscription);
 
         // Then create a new subscription:
-        const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+        const kindsList = this.options.values.enableReactions ? [kinds.ShortTextNote, kinds.Reaction, 6] : [Kind.Text, 6];
 
         if (this.options.values.enableZapping) {
-          kinds.push(Kind.Zap);
+          kindsList.push(kinds.Zap);
         }
 
-        this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: kinds, until: options.until, limit: 100 }]).id;
+        this.profileEventSubscription = this.subscribe([{ authors: [this.ui.profile!.pubkey], kinds: kindsList, until: options.until, limit: 100 }]).id;
       } else if (options.type == 'feed') {
         // If there are no subscription yet, just skip load more.
         if (!this.circleEventSubscription) {
@@ -118,13 +118,13 @@ export class RelayService {
         }
 
         // Then create a new subscription:
-        const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+        const kindsList = this.options.values.enableReactions ? [kinds.ShortTextNote, kinds.Reaction, 6] : [kinds.ShortTextNote, 6];
 
         if (this.options.values.enableZapping) {
-          kinds.push(Kind.Zap);
+          kindsList.push(kinds.Zap);
         }
 
-        this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, until: options.until, limit: 100 }], 'feed').id;
+        this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kindsList, until: options.until, limit: 100 }], 'feed').id;
       }
     });
 
@@ -147,13 +147,13 @@ export class RelayService {
         this.circleEventSubscription = undefined;
       }
 
-      const kinds = this.options.values.enableReactions ? [Kind.Text, Kind.Reaction, 6] : [Kind.Text, 6];
+      const kindsList = this.options.values.enableReactions ? [kinds.ShortTextNote, kinds.Reaction, 6] : [kinds.ShortTextNote, 6];
 
       if (this.options.values.enableZapping) {
-        kinds.push(Kind.Zap);
+        kindsList.push(kinds.Zap);
       }
 
-      this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kinds, limit: 100 }], 'feed').id;
+      this.circleEventSubscription = this.subscribe([{ authors: pubkeys, kinds: kindsList, limit: 100 }], 'feed').id;
     });
 
     // Whenever the pubkey changes, we'll load the profile and start loading the user's events.
@@ -181,8 +181,8 @@ export class RelayService {
       // }
       // Subscribe to events and zaps (received) for the current user profile.
       this.profileEventSubscription = this.subscribe([
-        { ['#p']: [id], kinds: [Kind.Zap] },
-        { authors: [id], kinds: [Kind.Text, Kind.Reaction, 6], limit: 100 },
+        { ['#p']: [id], kinds: [kinds.Zap] },
+        { authors: [id], kinds: [kinds.ShortTextNote, kinds.Reaction, 6], limit: 100 },
       ]).id;
     });
 
@@ -423,7 +423,7 @@ export class RelayService {
 
     this.stateService.addEvent(event);
 
-    if (event.kind == Kind.Zap) {
+    if (event.kind == kinds.Zap) {
       this.zapUi.addZap(event);
     }
 
@@ -484,7 +484,7 @@ export class RelayService {
       if (!notification) {
         let msg = '';
 
-        if (event.kind == Kind.Reaction) {
+        if (event.kind == kinds.Reaction) {
           let content = event.content;
 
           if (content === '+' || content === '') {
@@ -494,9 +494,9 @@ export class RelayService {
           }
 
           msg = content;
-        } else if (event.kind == Kind.Text) {
+        } else if (event.kind == kinds.ShortTextNote) {
           msg = `replied to your note.`;
-        } else if (event.kind == Kind.Contacts) {
+        } else if (event.kind == kinds.Contacts) {
           msg = `started following you.`;
 
           // People can get spammed with "following" you, so we'll only store a single pr public key.
@@ -533,9 +533,9 @@ export class RelayService {
 
     if ((event.kind as number) == 30009) {
       await this.badgeService.putDefinition(event);
-    } else if (event.kind == Kind.Article) {
+    } else if (event.kind == kinds.LongFormArticle) {
       this.articleService.put(event);
-    } else if (event.kind == Kind.Metadata) {
+    } else if (event.kind == kinds.Metadata) {
       // This is a profile event, store it.
       const nostrProfileDocument = this.utilities.mapProfileEvent(event);
 
@@ -546,7 +546,7 @@ export class RelayService {
           this.ui.setProfile(profile);
         }
       }
-    } else if (event.kind == Kind.Contacts) {
+    } else if (event.kind == kinds.Contacts) {
       const pubkey = this.appState.getPublicKey();
 
       // If the event is for logged on user...
@@ -830,7 +830,7 @@ export class RelayService {
   }
 
   connectedRelays() {
-    return this.relays.filter((r) => r.status === 1);
+    return this.relays.filter((r) => r.connected);
   }
 
   /** Queues up subscription that will be activated whenever the relay is connected. */

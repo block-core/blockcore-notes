@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Kind } from 'nostr-tools';
+import { kinds } from 'nostr-tools';
 import { DataValidation } from './data-validation';
 import { NostrEvent, NostrEventDocument } from './interfaces';
 
@@ -21,7 +21,7 @@ export class EventService {
     //   console.log(originalEvent);
     // }
 
-    if (originalEvent.kind == Kind.Contacts) {
+    if (originalEvent.kind == kinds.Contacts) {
       // Validate the contacts:
       event = this.validator.validateContacts(originalEvent);
     } else {

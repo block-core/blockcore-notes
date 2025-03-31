@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as secp from '@noble/secp256k1';
+import { bytesToHex } from '@noble/hashes/utils';
 import { OptionsService } from './options';
 
 class VoidCat {
@@ -22,7 +23,7 @@ class VoidCat {
         'V-Strip-Metadata': 'true',
         'V-Filename': filename,
         'V-Content-Type': file.type,
-        'V-Full-Digest': secp.utils.bytesToHex(new Uint8Array(digest)),
+        'V-Full-Digest': bytesToHex(new Uint8Array(digest)),
         'V-Description': 'Upload from https://notes.blockcore.net',
       },
       body: buffer,

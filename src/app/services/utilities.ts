@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { copyToClipboard } from '../shared/utilities';
 import { DataValidation } from './data-validation';
 import { NostrProfileDocument, NostrProfile, NostrEvent, NostrEventDocument, NostrBadgeDefinition } from './interfaces';
+import { bytesToHex , hexToBytes} from '@noble/hashes/utils';
+
 
 export function sleep(durationInMillisecond: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, durationInMillisecond));
@@ -174,34 +176,37 @@ export class Utilities {
   }
 
   private hexToArray(value: string) {
-    return secp.utils.hexToBytes(value);
+    return hexToBytes(value);
   }
 
   arrayToHex(value: Uint8Array) {
-    return secp.utils.bytesToHex(value);
+    return bytesToHex(value);
   }
 
-  convertFromBech32(address: string) {
+  // TODO: Figure out if bech32 works anymore.  
+  convertFromBech32(address: string | any) {
     const decoded = bech32.decode(address);
     const key = bech32.fromWords(decoded.words);
 
     return key;
   }
 
-  convertFromBech32ToHex(address: string) {
+  // TODO: Figure out if bech32 works anymore.
+  convertFromBech32ToHex(address: string | any) {
     const decoded = bech32.decode(address);
     const key = bech32.fromWords(decoded.words);
     return this.arrayToHex(key);
   }
 
-  convertBech32ToText(str: string) {
+  // TODO: Figure out if bech32 works anymore.
+  convertBech32ToText(str: string | any) {
     const decoded = bech32.decode(str, 1000);
     const buf = bech32.fromWords(decoded.words);
     return new TextDecoder().decode(Uint8Array.from(buf));
   }
 
   keyToHex(publicKey: Uint8Array) {
-    return secp.utils.bytesToHex(publicKey);
+    return bytesToHex(publicKey);
   }
 
   sanitizeLUD06(url?: string) {
