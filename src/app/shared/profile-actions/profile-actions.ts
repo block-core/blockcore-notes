@@ -11,11 +11,14 @@ import { nip19 } from 'nostr-tools';
 import { UIService } from 'src/app/services/ui';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-profile-actions',
   templateUrl: './profile-actions.html',
   styleUrls: ['./profile-actions.css'],
+  imports: [MatIconModule, MatMenuModule],
 })
 export class ProfileActionsComponent {
   @Input() fab: boolean = false;

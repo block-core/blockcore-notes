@@ -1,5 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { MatSelectionListChange } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
+import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { NostrRelayDocument } from 'src/app/services/interfaces';
 import { OptionsService } from 'src/app/services/options';
 import { RelayService } from 'src/app/services/relay';
@@ -9,6 +15,7 @@ import { RelayService } from 'src/app/services/relay';
   templateUrl: './relay.html',
   styleUrls: ['./relay.css'],
   inputs: ['relay'],
+  imports: [MatExpansionModule, CommonModule, MatIconModule, RouterModule, TranslateModule, MatCardModule, MatListModule],
 })
 export class RelayComponent {
   relay!: NostrRelayDocument;
