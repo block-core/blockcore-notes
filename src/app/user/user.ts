@@ -3,7 +3,6 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -165,7 +164,7 @@ export class UserComponent {
         }
 
         // TODO: Increase this, made low during development.
-        const timeAgo = moment().subtract(5, 'minutes').unix();
+        const timeAgo = Math.floor(new Date().getTime() / 1000) - (5 * 60);
 
         // If following is nothing and it's been a while since we retrieved the profile,
         // go grab the contacts list.

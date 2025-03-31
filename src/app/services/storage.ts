@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ApplicationState } from './applicationstate';
 import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, StateDocument } from './interfaces';
 import { Storage } from '../types/storage';
-import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +21,7 @@ export class StorageService {
 
     if (!state) {
       // The initial since we will use is two days past.
-      const timeAgo = moment().subtract(2, 'days').unix();
+      const timeAgo = Math.floor(new Date().getTime() / 1000) - (2 * 24 * 60 * 60);
 
       state = {
         id: 1,
@@ -40,7 +39,7 @@ export class StorageService {
 
       // The since will always be set slightly back in time to counteract difference in clocks
       // for different event creators on the nostr network.
-      const timeAgo = moment().subtract(10, 'minutes').unix();
+      const timeAgo = Math.floor(new Date().getTime() / 1000) - (10 * 60);
       this.state.since = timeAgo;
 
       await this.saveState();
