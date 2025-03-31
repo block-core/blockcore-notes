@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface InvoiceQrCodeDialogData {
   invoice: LNURLInvoice,
@@ -23,7 +24,8 @@ export interface InvoiceQrCodeDialogData {
       MatButtonModule,
       QRCodeComponent,
       MatCardModule,
-      MatIconModule
+      MatIconModule,
+      MatTooltipModule
     ]
 })
 export class ZapQrCodeComponent implements OnInit {
