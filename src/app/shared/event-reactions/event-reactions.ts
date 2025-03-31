@@ -7,11 +7,13 @@ import { UIService } from 'src/app/services/ui';
 import { ProfileService } from 'src/app/services/profile';
 import { MatDialog } from '@angular/material/dialog';
 import { ZappersListDialogComponent } from '../zappers-list-dialog/zappers-list-dialog.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-event-reactions',
   templateUrl: './event-reactions.html',
   styleUrls: ['./event-reactions.css'],
+  imports: [CommonModule],
 })
 export class EventReactionsComponent {
   // @Input() threadEntry?: ThreadEntry | undefined;

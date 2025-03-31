@@ -7,10 +7,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
 import { LabelService } from 'src/app/services/label';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-event-actions',
   templateUrl: './event-actions.html',
+  imports: [MatIconModule, MatMenuModule],
 })
 export class EventActionsComponent {
   @Input() fab: boolean = false;

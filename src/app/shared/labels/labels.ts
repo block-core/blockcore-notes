@@ -1,11 +1,17 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { MatChipListboxChange } from '@angular/material/chips';
 import { LabelService } from 'src/app/services/label';
+import {MatChipsModule} from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-labels',
   templateUrl: 'labels.html',
   styleUrls: ['labels.css'],
+  imports: [MatChipsModule, MatFormFieldModule, MatIcon, FormsModule, CommonModule],
 })
 export class LabelsComponent {
   showNewLabel?: boolean;

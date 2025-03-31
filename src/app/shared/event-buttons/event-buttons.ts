@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { Kind } from 'nostr-tools';
+import { kinds } from 'nostr-tools';
 import { DataService } from 'src/app/services/data';
 import { EventService } from 'src/app/services/event';
 import { NotesService } from 'src/app/services/notes';
@@ -11,11 +11,20 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 
 @Component({
   selector: 'app-event-buttons',
   templateUrl: './event-buttons.html',
   styleUrls: ['./event-buttons.css'],
+  imports: [MatIconModule,
+    NgxLoadingButtonsModule ,
+    CommonModule, PickerComponent, MatFormFieldModule, FormsModule],
 })
 export class EventButtonsComponent {
   @Input() event?: NostrEventDocument;
@@ -95,7 +104,7 @@ export class EventButtonsComponent {
     // this.data.note = `${this.data.note}${event.emoji.native}`;
     this.isEmojiPickerVisible = false;
 
-    let reactionEvent = this.dataService.createEvent(Kind.Reaction, e.emoji.native);
+    let reactionEvent = this.dataService.createEvent(kinds.Reaction, e.emoji.native);
 
     if (!this.event) {
       console.warn('Event is empty on reaction.');
@@ -127,7 +136,7 @@ export class EventButtonsComponent {
   async addReply() {
     this.publishing = true;
 
-    let replyEvent = this.dataService.createEvent(Kind.Text, this.note);
+    let replyEvent = this.dataService.createEvent(kinds.ShortTextNote, this.note);
 
     if (!this.event) {
       console.warn('Event is empty on reply.');
