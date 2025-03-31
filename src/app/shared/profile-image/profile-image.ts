@@ -1,19 +1,21 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject, signal, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile';
 import { NostrProfile } from '../../services/interfaces';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-profile-image',
     templateUrl: './profile-image.html',
-    standalone: false
+    standalone: true,
+    imports: [MatTooltipModule],
 })
-export class ProfileImageComponent {
+export class ProfileImageComponent implements OnInit {
   @Input() publicKey: string = '';
 
-  imagePath = '/assets/profile.png';
-  tooltip = '';
-
-  constructor(private profiles: ProfileService) {}
+  imagePath = signal<string>('/assets/profile.png');
+  tooltip = signal<string>('');
+  
+  private profiles = inject(ProfileService);
 
   ngOnInit() {
     // const profile = this.profiles.profiles[this.publicKey] as NostrProfile;
