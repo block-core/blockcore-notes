@@ -10,6 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-relay',
@@ -24,7 +26,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
       MatButtonModule,
       MatListModule,
       MatMenuModule,
-      MatTooltipModule
+      MatTooltipModule,
+      MatExpansionModule,
+      RouterModule,
     ]
 })
 export class RelayComponent {
