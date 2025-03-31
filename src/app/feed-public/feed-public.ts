@@ -12,11 +12,22 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
 import { CommonModule } from '@angular/common';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ContentComponent } from '../shared/content/content';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { AgoPipe } from '../shared/ago.pipe';
 
 @Component({
   selector: 'app-feed-public',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MatSnackBarModule, MatProgressBarModule, MatExpansionModule, MatSlideToggleModule, FormsModule, MatCardModule, EventHeaderComponent, EventActionsComponent, MatTooltipModule, ContentComponent, DirectoryIconComponent, AgoPipe],
   templateUrl: './feed-public.html',
 })
 export class FeedPublicComponent {
