@@ -64,7 +64,9 @@ export class NostrService {
             return;
           }
 
-          const pubkey = getPublicKey(prvkey);
+          const prvKeyArray = new TextEncoder().encode(prvkey);
+
+          const pubkey = getPublicKey(prvKeyArray);
 
           if (event.pubkey != pubkey) {
             reject('The event public key is not correct for this private key');
