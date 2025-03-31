@@ -9,16 +9,20 @@ import { ChatListComponent } from '../chat-list/chat-list.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormField } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MessageBubbleComponent } from '../message-bubble/message-bubble.component';
 import { FormsModule } from '@angular/forms';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
+import { CommonModule } from '@angular/common';
+import {MatFormFieldModule} from '@angular/material/form-field';
 @Component({
   selector: 'app-chat-detail',
   templateUrl: './chat-detail.component.html',
   styleUrls: ['./chat-detail.component.scss'],
-  imports: [ChatListComponent, PickerModule, MatProgressSpinnerModule, MatIconModule, MatFormField, MatMenuModule, MessageBubbleComponent, FormsModule],
+  imports: [ChatListComponent, 
+    MatSidenavModule,
+    CommonModule,
+    PickerModule, MatProgressSpinnerModule, MatIconModule, MatFormFieldModule, MatMenuModule, MessageBubbleComponent, FormsModule],
 })
 export class ChatDetailComponent implements OnInit, OnDestroy {
   @ViewChild('scrollable', { static: false }) scrollable!: { nativeElement: { scrollTop: any; scrollHeight: any } };
