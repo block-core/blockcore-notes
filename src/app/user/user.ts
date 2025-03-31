@@ -29,6 +29,8 @@ import { ContentComponent } from '../shared/content/content';
 import { TranslateModule } from '@ngx-translate/core';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 import { AgoPipe } from '../shared/ago.pipe';
+import { CommonModule } from '@angular/common';
+import { WithStatusPipe } from '../shared/loading.pipe';
 
 @Component({
   selector: 'app-user',
@@ -40,6 +42,8 @@ import { AgoPipe } from '../shared/ago.pipe';
     MatCardModule,
     EventHeaderComponent,
     AgoPipe,
+    CommonModule,
+    WithStatusPipe,
     EventActionsComponent,
     ContentComponent,
     TranslateModule,
