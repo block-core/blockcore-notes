@@ -92,7 +92,7 @@ export class CreateProfileComponent {
 
         // Create and sign the profile event.
         const profileContent = this.utilities.reduceProfile(this.profile!);
-        let unsignedEvent = this.dataService.createEventWithPubkey(Kind.Metadata, JSON.stringify(profileContent), this.publicKeyHex);
+        let unsignedEvent = this.dataService.createEventWithPubkey(kinds.Metadata, JSON.stringify(profileContent), this.publicKeyHex);
         let signedEvent = unsignedEvent as Event;
         signedEvent.id = await getEventHash(unsignedEvent);
 

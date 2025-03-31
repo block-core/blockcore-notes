@@ -4,11 +4,20 @@ import { Observable, Subscription, tap } from 'rxjs';
 import { ApplicationState } from '../services/applicationstate';
 import { NostrNoteDocument } from '../services/interfaces';
 import { NotesService } from '../services/notes';
+import { LabelsComponent } from '../shared/labels/labels';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { MatCardModule } from '@angular/material/card';
+import { ContentComponent } from '../shared/content/content';
+import { LabelComponent } from '../shared/label/label';
+import { TranslateModule } from '@ngx-translate/core';
+import { AgoPipe } from '../shared/ago.pipe';
 
 @Component({
   selector: 'app-notes',
   templateUrl: 'notes.html',
   styleUrls: ['notes.css'],
+  imports: [LabelsComponent, EventHeaderComponent, EventActionsComponent, MatCardModule, ContentComponent, LabelComponent, TranslateModule, AgoPipe],
 })
 export class NotesComponent {
   details = false;
