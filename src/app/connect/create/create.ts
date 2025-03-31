@@ -1,17 +1,26 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06, Kind, getEventHash, validateEvent, signEvent } from 'nostr-tools';
+import { Relay, Event, utils, getPublicKey, nip19, nip06, kinds, getEventHash, validateEvent, signEvent } from 'nostr-tools';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 import { ProfileService } from '../../services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { TranslateModule } from '@ngx-translate/core';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.html',
   styleUrls: ['../connect.css', './create.css'],
+  imports: [MatIconModule, 
+    ClipboardModule,
+    MatCardModule, FormsModule, MatInputModule, TranslateModule]
 })
 export class CreateProfileComponent {
   privateKey: string = '';

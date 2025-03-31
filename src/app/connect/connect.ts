@@ -12,11 +12,18 @@ import { ConsentDialog } from './consent-dialog/consent-dialog';
 import { SpacesService } from '../services/spaces';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-connect',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatSnackBarModule],
+  imports: [
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    CommonModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './connect.html',
   styleUrls: ['./connect.css'],
 })

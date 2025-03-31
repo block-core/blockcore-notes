@@ -8,12 +8,13 @@ import { EventService } from 'src/app/services/event';
 import { NostrService } from 'src/app/services/nostr';
 import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
-import { ZapQrCodeComponent } from '../zap-qr-code/zap-qr-code.component';
 import { NostrProfileDocument, LNURLPayRequest, LNURLInvoice, NostrEventDocument, NostrRelayDocument } from 'src/app/services/interfaces';
 import { StorageService } from 'src/app/services/storage';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ZapQrCodeComponent } from '../zap-qr-code/zap-qr-code.component';
 
 export interface ZapDialogData {
   profile: NostrProfileDocument;
@@ -24,7 +25,11 @@ export interface ZapDialogData {
   selector: 'app-zap-dialog',
   templateUrl: './zap-dialog.component.html',
   styleUrls: ['./zap-dialog.component.scss'],
-  imports: [CommonModule, ZapQrCodeComponent, MatIconModule, FormsModule, MatFormField, ReactiveFormsModule, MatInputModule],
+  imports: [
+    CommonModule, 
+MatTooltipModule,
+    
+    MatIconModule, FormsModule, MatFormField, ReactiveFormsModule, MatInputModule],
 })
 export class ZapDialogComponent implements OnInit {
   sendZapForm!: UntypedFormGroup;

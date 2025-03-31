@@ -17,11 +17,24 @@ import { NavigationService } from '../services/navigation';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatCardModule } from '@angular/material/card';
+import { CircleStylePipe } from '../shared/circle-style';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { AgoPipe } from '../shared/ago.pipe';
 
 @Component({
   selector: 'app-circles',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatSnackBarModule],
+  imports: [CommonModule, 
+    TranslateModule,
+    MatCardModule,
+    CircleStylePipe,
+    AgoPipe,
+    MatMenuModule,
+    MatIconModule,
+    MatDialogModule, MatSnackBarModule],
   templateUrl: './circles.html',
   styleUrls: ['./circles.css'],
 })

@@ -1,11 +1,15 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, Input } from '@angular/core';
-import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
+import { FormsModule } from '@angular/forms';
+import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-tags',
   templateUrl: 'tags.html',
   styleUrls: ['tags.css'],
+  imports: [FormsModule, MatFormFieldModule, MatChipsModule, MatIconModule],
 })
 export class TagsComponent {
   addOnBlur = true;
