@@ -1,43 +1,37 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CircleService } from 'src/app/services/circle';
 import { NotesService } from 'src/app/services/notes';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../../services/interfaces';
-import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { copyToClipboard } from '../utilities';
 import { nip19 } from 'nostr-tools';
 import { UIService } from 'src/app/services/ui';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-profile-actions',
     templateUrl: './profile-actions.html',
     styleUrls: ['./profile-actions.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatButtonModule,
+      MatIconModule,
+      MatMenuModule
+    ]
 })
 export class ProfileActionsComponent {
   @Input() fab: boolean = false;
-  // @Input() showFollow: boolean = false;
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
   @Input() event?: NostrNoteDocument | NostrEventDocument | any;
-
-  // get showFollowBack() {
-  //   if (!this.profile) {
-  //     return false;
-  //   }
-
-  //   const pubKey = this.appState.getPublicKey();
-
-  //   if (this.profile.following) {
-  //     return this.profile.following.includes(pubKey);
-  //   }
-
-  //   return false;
-  // }
 
   constructor(
     private appState: ApplicationState,
@@ -96,13 +90,6 @@ export class ProfileActionsComponent {
       }
     }
   }
-
-  // updateProfile(pubkey: string) {
-  //   this.profileService.getProfile(pubkey).subscribe((profile) => {
-  //     this.profile = profile;
-  //     this.profileService.setItem(profile);
-  //   });
-  // }
 
   getNpub(hex: string) {
     return this.utilities.getNostrIdentifier(hex);
@@ -171,7 +158,6 @@ export class ProfileActionsComponent {
     this.profile.circle = undefined;
 
     this.profile = await this.profileService.unfollow(this.profile.pubkey);
-    // this.updateProfile(this.profile.pubkey);
   }
 
   async mute() {
@@ -180,7 +166,6 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.mute(this.profile.pubkey);
-    // this.updateProfile(this.profile.pubkey);
   }
 
   async unmute() {
@@ -189,7 +174,6 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.unmute(this.profile.pubkey);
-    // this.updateProfile(this.profile.pubkey);
   }
 
   async block() {
@@ -198,7 +182,6 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.block(this.profile.pubkey);
-    // this.updateProfile(this.profile.pubkey);
   }
 
   async unblock() {
@@ -207,7 +190,6 @@ export class ProfileActionsComponent {
     }
 
     await this.profileService.unblock(this.profile.pubkey);
-    // this.updateProfile(this.profile.pubkey);
   }
 
   shareProfile(profile?: NostrProfileDocument) {

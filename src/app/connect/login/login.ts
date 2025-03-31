@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
+import { Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';

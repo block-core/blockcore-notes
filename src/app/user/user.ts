@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone, signal, 
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities, now } from '../services/utilities';
-import { relayInit, Relay } from 'nostr-tools';
+import { Relay } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -25,9 +25,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
-import { ProfileHeaderComponent } from '../components/profile-header/profile-header.component';
-import { ProfileActionsComponent } from '../components/profile-actions/profile-actions.component';
-import { EventComponent } from '../components/event/event.component';
+import { ProfileHeaderComponent } from '../shared/profile-header/profile-header';
+import { ProfileActionsComponent } from '../shared/profile-actions/profile-actions';
+import { EventComponent } from '../shared/event/event';
 
 @Component({
     selector: 'app-user',

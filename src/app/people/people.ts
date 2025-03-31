@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { nip05, relayInit } from 'nostr-tools';
+import { nip05 } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';

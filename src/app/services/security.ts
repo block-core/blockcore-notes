@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
+import { Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
 
 const enc = new TextEncoder();
 const dec = new TextDecoder();

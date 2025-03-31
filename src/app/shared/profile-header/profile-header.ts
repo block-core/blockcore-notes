@@ -12,12 +12,25 @@ import { ApplicationState } from 'src/app/services/applicationstate';
 import { nip05 } from 'nostr-tools';
 import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
 import { ZapUiService } from 'src/app/services/zap-ui';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-profile-header',
     templateUrl: './profile-header.html',
     styleUrls: ['./profile-header.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        // Add any other components used in your template
+    ]
 })
 export class ProfileHeaderComponent {
   @Input() pubkey: string = '';

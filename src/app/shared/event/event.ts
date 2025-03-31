@@ -6,12 +6,18 @@ import { ThreadService } from 'src/app/services/thread';
 import { UIService } from 'src/app/services/ui';
 import { Utilities } from 'src/app/services/utilities';
 import { Circle, NostrEventDocument, ThreadEntry } from '../../services/interfaces';
+import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-event',
     templateUrl: './event.html',
     styleUrls: ['./event.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatTooltipModule
+    ]
 })
 export class EventComponent {
   @Input() threadEntry?: ThreadEntry | undefined;

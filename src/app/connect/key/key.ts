@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
+import { Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 import { QrScanDialog } from './qr-scan-dialog/qr-scan';
