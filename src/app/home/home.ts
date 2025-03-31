@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, NgZone, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { relayInit, Relay, Event } from 'nostr-tools';
@@ -18,6 +18,15 @@ import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UIService } from '../services/ui';
 import { MetricService } from '../services/metric-service';
+import { DragScrollComponent } from 'ngx-drag-scroll';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatCardModule } from '@angular/material/card';
+import { ContentComponent } from '../shared/content/content';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { NotificationLabelComponent } from '../shared/notification-label/notification-label';
+import { CommonModule } from '@angular/common';
 
 interface DefaultProfile {
   pubkey: string;
@@ -32,6 +41,7 @@ interface DefaultProfile {
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
+  imports: [DragScrollComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
   // animations: [
   //   trigger('fade', [
   //     transition('void => active', [
