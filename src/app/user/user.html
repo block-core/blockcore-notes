@@ -1,6 +1,6 @@
 <app-profile-header></app-profile-header>
 
-@if (layout == 5) {
+<ng-template [ngIf]="layout == 5">
   <app-content-music></app-content-music>
   <!-- <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
     <ng-template [ngIf]="items.value && items.value.length > 0">
@@ -9,9 +9,9 @@
     <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
     <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
   </div> -->
-}
+</ng-template>
 
-@if (layout == 6) {
+<ng-template [ngIf]="layout == 6">
   <app-content-podcast></app-content-podcast>
   <!-- <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
     <ng-template [ngIf]="items.value && items.value.length > 0">
@@ -20,9 +20,9 @@
     <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
     <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
   </div> -->
-}
+</ng-template>
 
-@if (layout == 2) {
+<ng-template [ngIf]="layout == 2">
   <!-- <div *ngIf="rootEvents$ | withStatus | async as items" class="feed-page">
     <ng-template [ngIf]="items.value && items.value.length > 0">
       <app-content-photos [events]="items.value"> </app-content-photos>
@@ -30,183 +30,130 @@
     <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
     <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
   </div> -->
-}
+</ng-template>
 
 <!-- <div *ngIf="rootEvents$ | withStatus | async as items">
   <div *ngFor="let event of items.value; trackBy: trackByFn">{{event.id}}</div>
 </div> -->
 
-@if (layout == 3) {
-  <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
-    <mat-tab label="Notes">
-      @let (items = ui.rootEventsView$ | withStatus) {
-        <div class="feed-page">
-          @if (items.value) {
-            <!-- <div class="page" *ngIf="items.value.length === 0">
-              <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
-            </div> -->
+<mat-tab-group *ngIf="layout == 3" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
+  <mat-tab label="Notes">
+    <div *ngIf="ui.rootEventsView$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
+        </div> -->
 
-            @if (!isFollowing) {
-              <div class="dimmed">{{ 'User.YouMustFollowTheUserToAutomaticallyRenderPhotos' | translate }}</div>
-              <br />
-            }
+        <div *ngIf="!isFollowing" class="dimmed">{{ 'User.YouMustFollowTheUserToAutomaticallyRenderPhotos' | translate }}</div>
+        <br />
 
-            <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
-              @for (event of items.value; track trackByFn(event)) {
-                @if (parseToImage(event) as images) {
-                  @if (isFollowing) {
-                    @for (image of images; track image) {
-                      <div class="image-grid-item" [photoGallery]="image"><img loading="lazy" [src]="image" /></div>
-                    }
-                  } @else {
-                    @for (image of images; track image) {
-                      <div class="image-grid-item">{{ image }}</div>
-                    }
-                  }
-                }
-              }
-            </div>
-
-            <!-- <app-content-photos [events]="items.value"></app-content-photos> -->
-
-            <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
-              <div class="events-header">
-                <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
-                <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-              </div>
-              <app-content [event]="event"></app-content>
-            </mat-card> -->
-          }
-          @if (items.loading) {
-            <mat-spinner class="loading"></mat-spinner>
-          }
-          @if (items.error) {
-            {{'User.Error' | translate }} {{ items.error }}
-          }
+        <div class="image-grid" [photoGalleryGroup]="{ arrowEl: true, indexIndicatorSep: ' - ' }">
+          <span *ngFor="let event of items.value; trackBy: trackByFn">
+            <span *ngIf="parseToImage(event) as images">
+              <ng-template [ngIf]="isFollowing">
+                <div class="image-grid-item" *ngFor="let image of images" [photoGallery]="image"><img loading="lazy" [src]="image" /></div>
+              </ng-template>
+              <ng-template [ngIf]="!isFollowing">
+                <div class="image-grid-item" *ngFor="let image of images">{{ image }}</div>
+              </ng-template>
+            </span>
+          </span>
         </div>
-      }
 
-      <div class="show-more centered">
-        @if (!ui.viewCounts.rootEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
-        }
-        @if (ui.viewCounts.replyEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
-        }
-      </div>
-    </mat-tab>
-    <mat-tab label="Replies">
-      @let (items = ui.replyEventsView$ | withStatus) {
-        <div class="feed-page">
-          @if (items.value) {
-            <!-- <div class="page" *ngIf="items.value.length === 0">
-              <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
-            </div> -->
+        <!-- <app-content-photos [events]="items.value"></app-content-photos> -->
 
-            @for (event of items.value; track trackByFn(event)) {
-              <mat-card class="events clickable" (click)="navigation.openEvent($event, event)">
-                <div class="events-header">
-                  <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
-                  <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-                </div>
-                <app-content [event]="event"></app-content>
-              </mat-card>
-            }
-          }
-          @if (items.loading) {
-            <mat-spinner class="loading"></mat-spinner>
-          }
-          @if (items.error) {
-            {{'User.Error' | translate }} {{ items.error }}
-          }
-        </div>
-      }
+        <!-- <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
+          <app-content [event]="event"></app-content>
+        </mat-card> -->
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error">{{'User.Error' | translate }} {{ items.error }}</ng-template>
+    </div>
 
-      <div class="show-more centered">
-        @if (!ui.viewCounts.replyEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
-        }
-        @if (ui.viewCounts.replyEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
-        }
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-}
+    <div class="show-more centered">
+      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
+    </div>
+  </mat-tab>
+  <mat-tab label="Replies">
+    <div *ngIf="ui.replyEventsView$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
+        </div> -->
 
-@if (layout == 1) {
-  <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
-    <mat-tab label="Notes">
-      @let (items = ui.rootEventsView$ | withStatus) {
-        <div class="feed-page">
-          @if (items.value) {
-            <!-- <div class="page" *ngIf="items.value.length === 0">
-              <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
-            </div> -->
+        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
 
-            @for (event of items.value; track trackByFn(event)) {
-              <mat-card class="events clickable" (click)="navigation.openEvent($event, event)">
-                <div class="events-header">
-                  <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
-                  <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-                </div>
-                <app-content [event]="event"></app-content>
-              </mat-card>
-            }
-          }
-          @if (items.loading) {
-            <mat-spinner class="loading"></mat-spinner>
-          }
-          @if (items.error) {
-            {{'User.Error' | translate }} {{ items.error }}
-          }
-        </div>
-      }
+          <app-content [event]="event"></app-content>
+        </mat-card>
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error"> {{'User.Error' | translate }} {{ items.error }}</ng-template>
+    </div>
 
-      <div class="show-more centered">
-        @if (!ui.viewCounts.rootEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
-        }
-        @if (ui.viewCounts.replyEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
-        }
-      </div>
-    </mat-tab>
-    <mat-tab label="Replies">
-      @let (items = ui.replyEventsView$ | withStatus) {
-        <div class="feed-page">
-          @if (items.value) {
-            <!-- <div class="page" *ngIf="items.value.length === 0">
-              <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
-            </div> -->
+    <div class="show-more centered">
+      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
+    </div>
+  </mat-tab>
+</mat-tab-group>
 
-            @for (event of items.value; track trackByFn(event)) {
-              <mat-card class="events clickable" (click)="navigation.openEvent($event, event)">
-                <div class="events-header">
-                  <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
-                  <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
-                </div>
-                <app-content [event]="event"></app-content>
-              </mat-card>
-            }
-          }
-          @if (items.loading) {
-            <mat-spinner class="loading"></mat-spinner>
-          }
-          @if (items.error) {
-            {{'User.Error' | translate }} {{ items.error }}
-          }
-        </div>
-      }
+<mat-tab-group *ngIf="layout == 1" [selectedIndex]="tabIndex" (selectedTabChange)="onTabChanged($event)">
+  <mat-tab label="Notes">
+    <div *ngIf="ui.rootEventsView$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted.</h3>
+        </div> -->
 
-      <div class="show-more centered">
-        @if (!ui.viewCounts.replyEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
-        }
-        @if (ui.viewCounts.replyEventsViewCountExhausted) {
-          <button mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
-        }
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-}
+        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
+          <app-content [event]="event"></app-content>
+        </mat-card>
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error">{{'User.Error' | translate }} {{ items.error }}</ng-template>
+    </div>
+
+    <div class="show-more centered">
+      <button *ngIf="!ui.viewCounts.rootEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
+    </div>
+  </mat-tab>
+  <mat-tab label="Replies">
+    <div *ngIf="ui.replyEventsView$ | withStatus | async as items" class="feed-page">
+      <ng-template [ngIf]="items.value">
+        <!-- <div class="page" *ngIf="items.value.length === 0">
+          <h3 class="marginless">Looks a bit lonely here? This is probably because it's been a while since @{{ ui.profile?.name }} has posted or maybe they have not posted anything on your current relays.</h3>
+        </div> -->
+
+        <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of items.value; trackBy: trackByFn">
+          <div class="events-header">
+            <app-event-header [pubkey]="event.pubkey"><span class="event-date clickable">{{ event.created_at | ago }}</span> <app-directory-icon [pubkey]="event.pubkey"></app-directory-icon></app-event-header>
+            <app-event-actions [event]="event" [pubkey]="event.pubkey"></app-event-actions>
+          </div>
+
+          <app-content [event]="event"></app-content>
+        </mat-card>
+      </ng-template>
+      <ng-template [ngIf]="items.loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+      <ng-template [ngIf]="items.error">{{'User.Error' | translate }} {{ items.error }}</ng-template>
+    </div>
+
+    <div class="show-more centered">
+      <button *ngIf="!ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.ShowMore' | translate }}</button>
+      <button *ngIf="ui.viewCounts.replyEventsViewCountExhausted" mat-button (click)="showMore()">{{ 'User.LoadingMoreEvents' | translate }}</button>
+    </div>
+  </mat-tab>
+</mat-tab-group>

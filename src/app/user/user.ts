@@ -30,6 +30,13 @@ import { ProfileActionsComponent } from '../shared/profile-actions/profile-actio
 import { EventComponent } from '../shared/event/event';
 import { ContentMusicComponent } from '../shared/content-music/content-music';
 import { ContentPodcastComponent } from '../shared/content-podcast/content-podcast';
+import { WithStatusPipe } from '../shared/loading.pipe';
+import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery'
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { ContentComponent } from '../shared/content/content';
+import { AgoPipe } from '../shared/ago.pipe';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 
 @Component({
     selector: 'app-user',
@@ -50,7 +57,14 @@ import { ContentPodcastComponent } from '../shared/content-podcast/content-podca
         ProfileActionsComponent,
         EventComponent,
         ContentMusicComponent,
-        ContentPodcastComponent
+        ContentPodcastComponent,
+        WithStatusPipe,
+        PhotoGalleryModule,
+        EventHeaderComponent,
+        EventActionsComponent,
+        ContentComponent,
+        AgoPipe,
+        DirectoryIconComponent
     ]
 })
 export class UserComponent {

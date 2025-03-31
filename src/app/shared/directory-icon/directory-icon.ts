@@ -1,13 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile';
 import { NostrProfileDocument } from '../../services/interfaces';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-directory-icon',
     templateUrl: './directory-icon.html',
-    standalone: false
+    standalone: true,
+    imports: [CommonModule]
 })
-export class DirectoryIconComponent {
+export class DirectoryIconComponent implements OnInit {
   @Input() pubkey: string = '';
   @Input() profile?: NostrProfileDocument;
 
