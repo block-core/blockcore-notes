@@ -15,7 +15,7 @@
     <ng-container *ngFor="let token of dynamicText">
       <ng-template [ngIf]="isString(token)">{{ token }}</ng-template>
       <ng-template [ngIf]="!isString(token) && isFollowing" [ngSwitch]="token.token">
-
+        
         <ng-container *ngSwitchCase="'npub'"><a class="reply-link" [routerLink]="['/p', token.word]">&#64;{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'nprofile'"><a class="reply-link" [routerLink]="['/p', token.word]">&#64;{{ getDisplayName(token.word) }}</a></ng-container>
         <ng-container *ngSwitchCase="'note'"><a class="reply-link" [routerLink]="['/e', token.word]">{{ token.word }}</a></ng-container>

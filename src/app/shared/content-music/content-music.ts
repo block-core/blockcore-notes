@@ -5,12 +5,15 @@ import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { MatCardModule } from '@angular/material/card';
+import { EventActionsComponent } from '../event-actions/event-actions';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 
 @Component({
   selector: 'app-content-music',
   templateUrl: './content-music.html',
   styleUrls: ['./content-music.css'],
+  imports: [MatCardModule, EventActionsComponent],
 })
 export class ContentMusicComponent {
   // @Input() event?: NostrEventDocument;

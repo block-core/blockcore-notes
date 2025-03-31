@@ -10,6 +10,12 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument, TokenKeyword } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 import { nip19 } from 'nostr-tools';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { ReplyListComponent } from '../reply-list/reply-list';
+import { MatChipsModule } from '@angular/material/chips';
 
 interface MediaItem {
   url: SafeResourceUrl;
@@ -20,6 +26,7 @@ interface MediaItem {
   selector: 'app-content',
   templateUrl: './content.html',
   styleUrls: ['./content.css'],
+  imports: [ReplyListComponent, MatChipsModule, RouterModule, CommonModule, MatTooltipModule, MatIconModule],
 })
 export class ContentComponent {
   // @Input() event?: NostrEventDocument;
