@@ -15,9 +15,10 @@ import { NavigationService } from '../services/navigation';
 import { UploadService } from '../services/upload';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: 'profile.html',
-  styleUrls: ['profile.css'],
+    selector: 'app-profile',
+    templateUrl: 'profile.html',
+    styleUrls: ['profile.css'],
+    standalone: false
 })
 export class ProfileComponent {
   pubkey?: string;

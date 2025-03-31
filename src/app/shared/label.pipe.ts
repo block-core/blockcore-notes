@@ -1,7 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { LabelService } from '../services/label';
 
-@Pipe({ name: 'label' })
+@Pipe({
+    name: 'label',
+    standalone: false
+})
 export class LabelPipe implements PipeTransform {
   constructor(private labelService: LabelService) {}
 

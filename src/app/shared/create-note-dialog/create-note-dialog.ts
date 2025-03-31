@@ -7,9 +7,10 @@ export interface NoteDialogData {
 }
 
 @Component({
-  selector: 'create-note-dialog',
-  templateUrl: 'create-note-dialog.html',
-  styleUrls: ['create-note-dialog.scss'],
+    selector: 'create-note-dialog',
+    templateUrl: 'create-note-dialog.html',
+    styleUrls: ['create-note-dialog.scss'],
+    standalone: false
 })
 export class NoteDialog {
   @ViewChild('picker') picker: unknown;

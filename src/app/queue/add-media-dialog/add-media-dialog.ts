@@ -6,9 +6,10 @@ export interface AddMediaDialogData {
 }
 
 @Component({
-  selector: 'add-media-dialog',
-  templateUrl: 'add-media-dialog.html',
-  styleUrls: ['add-media-dialog.css'],
+    selector: 'add-media-dialog',
+    templateUrl: 'add-media-dialog.html',
+    styleUrls: ['add-media-dialog.css'],
+    standalone: false
 })
 export class AddMediaDialog {
   constructor(public dialogRef: MatDialogRef<AddMediaDialogData>, @Inject(MAT_DIALOG_DATA) public data: AddMediaDialogData) {}

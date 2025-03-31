@@ -5,10 +5,11 @@ import { OptionsService } from 'src/app/services/options';
 import { RelayService } from 'src/app/services/relay';
 
 @Component({
-  selector: 'app-relay',
-  templateUrl: './relay.html',
-  styleUrls: ['./relay.css'],
-  inputs: ['relay'],
+    selector: 'app-relay',
+    templateUrl: './relay.html',
+    styleUrls: ['./relay.css'],
+    inputs: ['relay'],
+    standalone: false
 })
 export class RelayComponent {
   relay!: NostrRelayDocument;

@@ -29,19 +29,10 @@ interface DefaultProfile {
 }
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.html',
-  styleUrls: ['./home.css'],
-  // animations: [
-  //   trigger('fade', [
-  //     transition('void => active', [
-  //       // using status here for transition
-  //       style({ opacity: 0 }),
-  //       animate(250, style({ opacity: 1 })),
-  //     ]),
-  //     transition('* => void', [animate(250, style({ opacity: 0 }))]),
-  //   ]),
-  // ],
+    selector: 'app-home',
+    templateUrl: './home.html',
+    styleUrls: ['./home.css'],
+    standalone: false
 })
 export class HomeComponent {
   publicKey?: string | null;

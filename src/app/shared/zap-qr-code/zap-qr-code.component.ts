@@ -9,9 +9,10 @@ export interface InvoiceQrCodeDialogData {
 }
 
 @Component({
-  selector: 'app-zap-qr-code',
-  templateUrl: './zap-qr-code.component.html',
-  styleUrls: ['./zap-qr-code.component.scss']
+    selector: 'app-zap-qr-code',
+    templateUrl: './zap-qr-code.component.html',
+    styleUrls: ['./zap-qr-code.component.scss'],
+    standalone: false
 })
 export class ZapQrCodeComponent implements OnInit {
   invoice: LNURLInvoice = {

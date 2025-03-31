@@ -6,9 +6,10 @@ import { ApplicationState } from '../../services/applicationstate';
 import { AddRelayDialog, AddRelayDialogData } from '../../shared/add-relay-dialog/add-relay-dialog';
 
 @Component({
-  selector: 'app-licenses',
-  templateUrl: './licenses.html',
-  styleUrls: ['./licenses.css'],
+    selector: 'app-licenses',
+    templateUrl: './licenses.html',
+    styleUrls: ['./licenses.css'],
+    standalone: false
 })
 export class LicensesComponent {
   licenses?: string;

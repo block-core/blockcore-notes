@@ -8,9 +8,10 @@ import { Utilities } from 'src/app/services/utilities';
 import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
-  selector: 'app-event-header',
-  templateUrl: './event-header.html',
-  styleUrls: ['./event-header.css'],
+    selector: 'app-event-header',
+    templateUrl: './event-header.html',
+    styleUrls: ['./event-header.css'],
+    standalone: false
 })
 export class EventHeaderComponent implements OnChanges {
   // @Input() pubkey: string = '';

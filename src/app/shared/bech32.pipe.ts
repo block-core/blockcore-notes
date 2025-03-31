@@ -2,7 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import * as moment from 'moment';
 import { Utilities } from '../services/utilities';
 
-@Pipe({ name: 'bech32' })
+@Pipe({
+    name: 'bech32',
+    standalone: false
+})
 export class Bech32Pipe implements PipeTransform {
   constructor(private utilities: Utilities) {}
 

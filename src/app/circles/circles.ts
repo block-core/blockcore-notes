@@ -16,9 +16,10 @@ import { DataService } from '../services/data';
 import { NavigationService } from '../services/navigation';
 
 @Component({
-  selector: 'app-circles',
-  templateUrl: './circles.html',
-  styleUrls: ['./circles.css'],
+    selector: 'app-circles',
+    templateUrl: './circles.html',
+    styleUrls: ['./circles.css'],
+    standalone: false
 })
 export class CirclesComponent {
   publicKey?: string | null;

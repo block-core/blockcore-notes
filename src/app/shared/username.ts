@@ -2,7 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ProfileService } from '../services/profile';
 import { Utilities } from '../services/utilities';
 
-@Pipe({ name: 'username' })
+@Pipe({
+    name: 'username',
+    standalone: false
+})
 export class UsernamePipe implements PipeTransform {
   constructor(private profileService: ProfileService, private utilities: Utilities) {}
 

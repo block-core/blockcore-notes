@@ -8,9 +8,10 @@ import { Storage } from '../types/storage';
 import { State, StateService } from '../services/state';
 
 @Component({
-  selector: 'app-development',
-  templateUrl: './development.html',
-  styleUrls: ['./development.css'],
+    selector: 'app-development',
+    templateUrl: './development.html',
+    styleUrls: ['./development.css'],
+    standalone: false
 })
 export class DevelopmentComponent {
   worker?: Worker;

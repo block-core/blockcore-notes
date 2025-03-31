@@ -11,7 +11,8 @@ export interface Viewport {
 export type InfiniteScrollContext = 'self' | 'document';
 
 @Directive({
-  selector: '[infiniteScroll]',
+    selector: '[infiniteScroll]',
+    standalone: false
 })
 export class InfiniteScrollDirective implements OnInit {
   el: any;

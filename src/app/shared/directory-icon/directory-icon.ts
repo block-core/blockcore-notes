@@ -3,8 +3,9 @@ import { ProfileService } from 'src/app/services/profile';
 import { NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
-  selector: 'app-directory-icon',
-  templateUrl: './directory-icon.html',
+    selector: 'app-directory-icon',
+    templateUrl: './directory-icon.html',
+    standalone: false
 })
 export class DirectoryIconComponent {
   @Input() pubkey: string = '';

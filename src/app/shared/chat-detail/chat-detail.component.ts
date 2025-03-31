@@ -7,9 +7,10 @@ import { ChatModel } from 'src/app/services/interfaces';
 import { MessageControlService } from 'src/app/services/message-control.service';
 
 @Component({
-  selector: 'app-chat-detail',
-  templateUrl: './chat-detail.component.html',
-  styleUrls: ['./chat-detail.component.scss'],
+    selector: 'app-chat-detail',
+    templateUrl: './chat-detail.component.html',
+    styleUrls: ['./chat-detail.component.scss'],
+    standalone: false
 })
 export class ChatDetailComponent implements OnInit, OnDestroy {
   @ViewChild('scrollable', { static: false }) scrollable!: { nativeElement: { scrollTop: any; scrollHeight: any } };

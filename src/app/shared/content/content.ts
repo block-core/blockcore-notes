@@ -17,9 +17,10 @@ interface MediaItem {
 }
 
 @Component({
-  selector: 'app-content',
-  templateUrl: './content.html',
-  styleUrls: ['./content.css'],
+    selector: 'app-content',
+    templateUrl: './content.html',
+    styleUrls: ['./content.css'],
+    standalone: false
 })
 export class ContentComponent {
   // @Input() event?: NostrEventDocument;

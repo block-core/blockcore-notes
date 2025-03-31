@@ -9,9 +9,10 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'qr-scan-dialog',
-  templateUrl: 'qr-scan.html',
-  styleUrls: ['qr-scan.css'],
+    selector: 'qr-scan-dialog',
+    templateUrl: 'qr-scan.html',
+    styleUrls: ['qr-scan.css'],
+    standalone: false
 })
 export class QrScanDialog implements OnInit {
   private html5QrCode!: Html5Qrcode;

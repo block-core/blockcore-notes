@@ -3,10 +3,10 @@ import { ApplicationState } from '../services/applicationstate';
 import { State } from '../services/state';
 
 @Component({
-  selector: 'app-example',
-  templateUrl: 'example.html',
-  styleUrls: ['example.css'],
-  //   changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-example',
+    templateUrl: 'example.html',
+    styleUrls: ['example.css'],
+    standalone: false
 })
 export class ExampleComponent implements OnInit {
   @ViewChild('scrollViewport')

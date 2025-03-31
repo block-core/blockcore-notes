@@ -9,9 +9,10 @@ import { Utilities } from '../services/utilities';
 import { AddMediaDialog, AddMediaDialogData } from './add-media-dialog/add-media-dialog';
 
 @Component({
-  selector: 'app-queue',
-  templateUrl: './queue.html',
-  styleUrls: ['./queue.css'],
+    selector: 'app-queue',
+    templateUrl: './queue.html',
+    styleUrls: ['./queue.css'],
+    standalone: false
 })
 export class QueueComponent {
   constructor(private contentService: ContentService, public dialog: MatDialog, private appState: ApplicationState, public optionsService: OptionsService, public media: MediaService, public utilities: Utilities) {}

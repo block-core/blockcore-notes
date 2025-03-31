@@ -6,9 +6,10 @@ export interface FollowDialogData {
 }
 
 @Component({
-  selector: 'create-follow-dialog',
-  templateUrl: 'create-follow-dialog.html',
-  styleUrls: ['create-follow-dialog.scss'],
+    selector: 'create-follow-dialog',
+    templateUrl: 'create-follow-dialog.html',
+    styleUrls: ['create-follow-dialog.scss'],
+    standalone: false
 })
 export class FollowDialog {
   constructor(public dialogRef: MatDialogRef<FollowDialogData>, @Inject(MAT_DIALOG_DATA) public data: FollowDialogData) {}

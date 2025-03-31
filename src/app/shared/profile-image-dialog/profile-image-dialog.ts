@@ -6,9 +6,10 @@ export interface ProfileImageDialogData {
 }
 
 @Component({
-  selector: 'profile-image-dialog',
-  templateUrl: 'profile-image-dialog.html',
-  styleUrls: ['profile-image-dialog.scss'],
+    selector: 'profile-image-dialog',
+    templateUrl: 'profile-image-dialog.html',
+    styleUrls: ['profile-image-dialog.scss'],
+    standalone: false
 })
 export class ProfileImageDialog {
   constructor(public dialogRef: MatDialogRef<ProfileImageDialogData>, @Inject(MAT_DIALOG_DATA) public data: ProfileImageDialogData) {}

@@ -7,8 +7,9 @@ import { StorageService } from '../services/storage';
 import { UIService } from '../services/ui';
 
 @Component({
-  selector: 'app-logout',
-  templateUrl: './logout.html',
+    selector: 'app-logout',
+    templateUrl: './logout.html',
+    standalone: false
 })
 export class LogoutComponent {
   constructor(private relayService: RelayService, private ui: UIService, private appState: ApplicationState, private db: StorageService, private authService: AuthenticationService, private router: Router) {}

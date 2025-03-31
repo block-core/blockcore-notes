@@ -1,7 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import * as moment from 'moment';
 
-@Pipe({ name: 'ago' })
+@Pipe({
+    name: 'ago',
+    standalone: false
+})
 export class AgoPipe implements PipeTransform {
   transform(value?: number): string {
     if (!value) {

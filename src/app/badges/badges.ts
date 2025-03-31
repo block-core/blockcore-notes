@@ -11,9 +11,10 @@ import { Sub } from 'nostr-tools';
 import { EventService } from '../services/event';
 
 @Component({
-  selector: 'app-badges',
-  templateUrl: 'badges.html',
-  styleUrls: ['badges.css'],
+    selector: 'app-badges',
+    templateUrl: 'badges.html',
+    styleUrls: ['badges.css'],
+    standalone: false
 })
 export class BadgesComponent implements OnInit {
   tabIndex?: number;

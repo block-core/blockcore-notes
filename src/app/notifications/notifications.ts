@@ -8,9 +8,10 @@ import { Utilities } from '../services/utilities';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-notifications',
-  templateUrl: './notifications.html',
-  styleUrls: ['./notifications.css'],
+    selector: 'app-notifications',
+    templateUrl: './notifications.html',
+    styleUrls: ['./notifications.css'],
+    standalone: false
 })
 export class NotificationsComponent {
   constructor(public navigation: NavigationService, private utilities: Utilities, private db: StorageService, private relayService: RelayService, public ui: UIService, private appState: ApplicationState) {}

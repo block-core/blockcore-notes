@@ -7,10 +7,10 @@ import { ApplicationState } from '../services/applicationstate';
 import { UIService } from '../services/ui';
 
 @Component({
-  selector: 'app-followers',
-  templateUrl: './followers.html',
-  styleUrls: ['./followers.css'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-followers',
+    templateUrl: './followers.html',
+    styleUrls: ['./followers.css'],
+    standalone: false
 })
 export class FollowersComponent {
   // pubkey?: string;

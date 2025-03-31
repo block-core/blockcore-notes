@@ -8,9 +8,10 @@ export interface AddRelayDialogData {
 }
 
 @Component({
-  selector: 'add-relay-dialog',
-  templateUrl: 'add-relay-dialog.html',
-  styleUrls: ['add-relay-dialog.css'],
+    selector: 'add-relay-dialog',
+    templateUrl: 'add-relay-dialog.html',
+    styleUrls: ['add-relay-dialog.css'],
+    standalone: false
 })
 export class AddRelayDialog {
   constructor(public dialogRef: MatDialogRef<AddRelayDialogData>, @Inject(MAT_DIALOG_DATA) public data: AddRelayDialogData) {}

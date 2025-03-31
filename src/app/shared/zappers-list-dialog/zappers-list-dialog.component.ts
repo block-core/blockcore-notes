@@ -6,9 +6,10 @@ import { NostrProfileDocument, LNURLPayRequest, LNURLInvoice, NostrEventDocument
 import { ProfileService } from 'src/app/services/profile';
 
 @Component({
-  selector: 'app-zappers-list-dialog',
-  templateUrl: './zappers-list-dialog.component.html',
-  styleUrls: ['./zappers-list-dialog.component.scss'],
+    selector: 'app-zappers-list-dialog',
+    templateUrl: './zappers-list-dialog.component.html',
+    styleUrls: ['./zappers-list-dialog.component.scss'],
+    standalone: false
 })
 export class ZappersListDialogComponent {
   sendZapForm!: UntypedFormGroup;

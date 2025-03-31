@@ -4,9 +4,10 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 
 @Component({
-  selector: 'app-profile-widget',
-  templateUrl: './profile-widget.html',
-  styleUrls: ['./profile-widget.css'],
+    selector: 'app-profile-widget',
+    templateUrl: './profile-widget.html',
+    styleUrls: ['./profile-widget.css'],
+    standalone: false
 })
 export class ProfileWidgetComponent {
   @Input() pubkey: string = '';

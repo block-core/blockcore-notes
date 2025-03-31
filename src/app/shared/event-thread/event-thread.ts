@@ -8,9 +8,10 @@ import { Utilities } from 'src/app/services/utilities';
 import { Circle, NostrEventDocument, ThreadEntry } from '../../services/interfaces';
 
 @Component({
-  selector: 'app-event-thread',
-  templateUrl: './event-thread.html',
-  styleUrls: ['./event-thread.css'],
+    selector: 'app-event-thread',
+    templateUrl: './event-thread.html',
+    styleUrls: ['./event-thread.css'],
+    standalone: false
 })
 export class EventThreadComponent {
   @Input() event?: NostrEventDocument | undefined;

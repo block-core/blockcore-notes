@@ -13,9 +13,10 @@ import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog
 import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
 
 @Component({
-  selector: 'app-event-buttons',
-  templateUrl: './event-buttons.html',
-  styleUrls: ['./event-buttons.css'],
+    selector: 'app-event-buttons',
+    templateUrl: './event-buttons.html',
+    styleUrls: ['./event-buttons.css'],
+    standalone: false
 })
 export class EventButtonsComponent {
   @Input() event?: NostrEventDocument;

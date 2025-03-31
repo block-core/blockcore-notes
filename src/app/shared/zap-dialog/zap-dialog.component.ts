@@ -18,9 +18,10 @@ export interface ZapDialogData {
 }
 
 @Component({
-  selector: 'app-zap-dialog',
-  templateUrl: './zap-dialog.component.html',
-  styleUrls: ['./zap-dialog.component.scss'],
+    selector: 'app-zap-dialog',
+    templateUrl: './zap-dialog.component.html',
+    styleUrls: ['./zap-dialog.component.scss'],
+    standalone: false
 })
 export class ZapDialogComponent implements OnInit {
   sendZapForm!: UntypedFormGroup;

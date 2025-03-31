@@ -10,9 +10,10 @@ import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
 
 @Component({
-  selector: 'app-following',
-  templateUrl: './following.html',
-  styleUrls: ['./following.css'],
+    selector: 'app-following',
+    templateUrl: './following.html',
+    styleUrls: ['./following.css'],
+    standalone: false
 })
 export class FollowingComponent {
   subscriptions: Subscription[] = [];

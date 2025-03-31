@@ -20,10 +20,10 @@ import { StorageService } from '../services/storage';
 import { MetricService } from '../services/metric-service';
 
 @Component({
-  selector: 'app-user',
-  templateUrl: './user.html',
-  styleUrls: ['./user.css'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-user',
+    templateUrl: './user.html',
+    styleUrls: ['./user.css'],
+    standalone: false
 })
 export class UserComponent {
   // pubkey?: string | null;

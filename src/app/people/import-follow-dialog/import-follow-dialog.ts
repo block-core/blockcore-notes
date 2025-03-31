@@ -10,9 +10,10 @@ export interface ImportFollowDialogData {
 }
 
 @Component({
-  selector: 'import-follow-dialog',
-  templateUrl: 'import-follow-dialog.html',
-  styleUrls: ['import-follow-dialog.scss'],
+    selector: 'import-follow-dialog',
+    templateUrl: 'import-follow-dialog.html',
+    styleUrls: ['import-follow-dialog.scss'],
+    standalone: false
 })
 export class ImportFollowDialog {
   constructor(private eventService: EventService, public dialogRef: MatDialogRef<ImportFollowDialogData>, @Inject(MAT_DIALOG_DATA) public data: ImportFollowDialogData) {}

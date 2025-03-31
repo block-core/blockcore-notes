@@ -18,9 +18,10 @@ export interface NoteDialogData {
 }
 
 @Component({
-  selector: 'app-editor',
-  templateUrl: 'editor.html',
-  styleUrls: ['editor.css'],
+    selector: 'app-editor',
+    templateUrl: 'editor.html',
+    styleUrls: ['editor.css'],
+    standalone: false
 })
 export class EditorComponent {
   @ViewChild('picker') picker: unknown;

@@ -15,9 +15,10 @@ import { UIService } from '../services/ui';
 import { CircleService } from '../services/circle';
 
 @Component({
-  selector: 'app-feed-private',
-  templateUrl: './feed-private.html',
-  styleUrls: ['./feed-private.css'],
+    selector: 'app-feed-private',
+    templateUrl: './feed-private.html',
+    styleUrls: ['./feed-private.css'],
+    standalone: false
 })
 export class FeedPrivateComponent {
   publicKey?: string | null;

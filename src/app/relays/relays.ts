@@ -17,9 +17,10 @@ import { NostrService } from '../services/nostr';
 import { UploadService } from '../services/upload';
 
 @Component({
-  selector: 'app-relays-management',
-  templateUrl: './relays.html',
-  styleUrls: ['./relays.css'],
+    selector: 'app-relays-management',
+    templateUrl: './relays.html',
+    styleUrls: ['./relays.css'],
+    standalone: false
 })
 export class RelaysManagementComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;

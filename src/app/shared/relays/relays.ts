@@ -5,7 +5,8 @@ import { NostrRelayDocument } from "src/app/services/interfaces";
     selector: 'app-relays',
     templateUrl: './relays.html',
     styleUrls: ['./relays.css'],
-    inputs: ['relays']
+    inputs: ['relays'],
+    standalone: false
 })
 export class RelaysComponent {
     relays?: NostrRelayDocument[];

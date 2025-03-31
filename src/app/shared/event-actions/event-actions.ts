@@ -9,8 +9,9 @@ import { nip19 } from 'nostr-tools';
 import { LabelService } from 'src/app/services/label';
 
 @Component({
-  selector: 'app-event-actions',
-  templateUrl: './event-actions.html',
+    selector: 'app-event-actions',
+    templateUrl: './event-actions.html',
+    standalone: false
 })
 export class EventActionsComponent {
   @Input() fab: boolean = false;

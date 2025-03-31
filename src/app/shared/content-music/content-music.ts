@@ -8,9 +8,10 @@ import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../se
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 
 @Component({
-  selector: 'app-content-music',
-  templateUrl: './content-music.html',
-  styleUrls: ['./content-music.css'],
+    selector: 'app-content-music',
+    templateUrl: './content-music.html',
+    styleUrls: ['./content-music.css'],
+    standalone: false
 })
 export class ContentMusicComponent {
   // @Input() event?: NostrEventDocument;

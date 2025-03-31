@@ -5,8 +5,9 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrProfile } from '../../services/interfaces';
 
 @Component({
-  selector: 'app-profile-name',
-  templateUrl: './profile-name.html',
+    selector: 'app-profile-name',
+    templateUrl: './profile-name.html',
+    standalone: false
 })
 export class ProfileNameComponent {
   @Input() pubkey: string = '';

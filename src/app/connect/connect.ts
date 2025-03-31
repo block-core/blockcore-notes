@@ -11,9 +11,10 @@ import { ConsentDialog } from './consent-dialog/consent-dialog';
 import { SpacesService } from '../services/spaces';
 
 @Component({
-  selector: 'app-connect',
-  templateUrl: './connect.html',
-  styleUrls: ['./connect.css'],
+    selector: 'app-connect',
+    templateUrl: './connect.html',
+    styleUrls: ['./connect.css'],
+    standalone: false
 })
 export class ConnectComponent {
   extensionDiscovered = false;

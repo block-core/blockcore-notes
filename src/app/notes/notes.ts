@@ -6,9 +6,10 @@ import { NostrNoteDocument } from '../services/interfaces';
 import { NotesService } from '../services/notes';
 
 @Component({
-  selector: 'app-notes',
-  templateUrl: 'notes.html',
-  styleUrls: ['notes.css'],
+    selector: 'app-notes',
+    templateUrl: 'notes.html',
+    styleUrls: ['notes.css'],
+    standalone: false
 })
 export class NotesComponent {
   details = false;

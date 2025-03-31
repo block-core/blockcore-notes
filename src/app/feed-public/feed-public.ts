@@ -13,8 +13,9 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
 
 @Component({
-  selector: 'app-feed-public',
-  templateUrl: './feed-public.html',
+    selector: 'app-feed-public',
+    templateUrl: './feed-public.html',
+    standalone: false
 })
 export class FeedPublicComponent {
   publicKey?: string | null;

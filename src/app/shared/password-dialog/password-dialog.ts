@@ -8,9 +8,10 @@ export interface PasswordDialogData {
 }
 
 @Component({
-  selector: 'password-dialog',
-  templateUrl: 'password-dialog.html',
-  styleUrls: ['password-dialog.css'],
+    selector: 'password-dialog',
+    templateUrl: 'password-dialog.html',
+    styleUrls: ['password-dialog.css'],
+    standalone: false
 })
 export class PasswordDialog {
   publicKey?: string;

@@ -4,9 +4,10 @@ import { BadgeDefinitionEvent, NostrBadgeDefinition, NostrEventDocument } from '
 import { Utilities } from 'src/app/services/utilities';
 
 @Component({
-  selector: 'app-badge-card',
-  templateUrl: 'badge-card.html',
-  styleUrls: ['badge-card.css'],
+    selector: 'app-badge-card',
+    templateUrl: 'badge-card.html',
+    styleUrls: ['badge-card.css'],
+    standalone: false
 })
 export class BadgeCardComponent implements OnInit {
   #badge: BadgeDefinitionEvent | NostrBadgeDefinition | any;

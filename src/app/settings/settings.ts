@@ -21,9 +21,10 @@ import * as QRCode from 'qrcode';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.html',
-  styleUrls: ['./settings.css'],
+    selector: 'app-settings',
+    templateUrl: './settings.html',
+    styleUrls: ['./settings.css'],
+    standalone: false
 })
 export class SettingsComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;

@@ -5,10 +5,11 @@ import { ApplicationState } from '../services/applicationstate';
 import { QueueService } from '../services/queue.service';
 import { RelayService } from '../services/relay';
 @Component({
-  selector: 'app-messages',
-  templateUrl: './messages.html',
-  styleUrls: ['./messages.css'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-messages',
+    templateUrl: './messages.html',
+    styleUrls: ['./messages.css'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class MessagesComponent {
   @ViewChild('chatSidebar', { static: false }) chatSidebar!: MatSidenav;

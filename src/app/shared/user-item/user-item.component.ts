@@ -4,9 +4,10 @@ import { UserService } from 'src/app/services/user.service';
 
 
 @Component({
-  selector: 'app-user-item',
-  templateUrl: './user-item.component.html',
-  styleUrls: ['./user-item.component.scss']
+    selector: 'app-user-item',
+    templateUrl: './user-item.component.html',
+    styleUrls: ['./user-item.component.scss'],
+    standalone: false
 })
 export class UserItemComponent {
   @Output() openSidebar: EventEmitter<string> = new EventEmitter();

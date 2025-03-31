@@ -13,9 +13,10 @@ import { ApplicationState } from 'src/app/services/applicationstate';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-profile-actions',
-  templateUrl: './profile-actions.html',
-  styleUrls: ['./profile-actions.css'],
+    selector: 'app-profile-actions',
+    templateUrl: './profile-actions.html',
+    styleUrls: ['./profile-actions.css'],
+    standalone: false
 })
 export class ProfileActionsComponent {
   @Input() fab: boolean = false;

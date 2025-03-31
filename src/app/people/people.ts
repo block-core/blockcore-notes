@@ -20,9 +20,10 @@ import { OptionsService } from '../services/options';
 import { MetricService } from '../services/metric-service';
 
 @Component({
-  selector: 'app-people',
-  templateUrl: './people.html',
-  styleUrls: ['./people.css'],
+    selector: 'app-people',
+    templateUrl: './people.html',
+    styleUrls: ['./people.css'],
+    standalone: false
 })
 export class PeopleComponent {
   publicKey?: string | null;

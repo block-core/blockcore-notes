@@ -12,9 +12,10 @@ import { UIService } from '../services/ui';
 import { Kind, nip19 } from 'nostr-tools';
 
 @Component({
-  selector: 'app-article',
-  templateUrl: 'article.html',
-  styleUrls: ['article.css'],
+    selector: 'app-article',
+    templateUrl: 'article.html',
+    styleUrls: ['article.css'],
+    standalone: false
 })
 export class ArticleComponent {
   // id?: string | null;

@@ -7,9 +7,10 @@ import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../se
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 
 @Component({
-  selector: 'app-content-photos',
-  templateUrl: './content-photos.html',
-  styleUrls: ['./content-photos.css'],
+    selector: 'app-content-photos',
+    templateUrl: './content-photos.html',
+    styleUrls: ['./content-photos.css'],
+    standalone: false
 })
 export class ContentPhotosComponent {
   // @Input() event?: NostrEventDocument;

@@ -11,9 +11,10 @@ import { NavigationService } from '../services/navigation';
 import { UIService } from '../services/ui';
 
 @Component({
-  selector: 'app-note',
-  templateUrl: './note.html',
-  styleUrls: ['./note.css'],
+    selector: 'app-note',
+    templateUrl: './note.html',
+    styleUrls: ['./note.css'],
+    standalone: false
 })
 export class NoteComponent {
   // id?: string | null;

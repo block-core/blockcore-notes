@@ -3,9 +3,10 @@ import { Component, Input } from '@angular/core';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
-  selector: 'app-tags',
-  templateUrl: 'tags.html',
-  styleUrls: ['tags.css'],
+    selector: 'app-tags',
+    templateUrl: 'tags.html',
+    styleUrls: ['tags.css'],
+    standalone: false
 })
 export class TagsComponent {
   addOnBlur = true;

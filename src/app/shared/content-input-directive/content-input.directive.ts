@@ -1,7 +1,8 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
-  selector: '[appContentEditor]',
+    selector: '[appContentEditor]',
+    standalone: false
 })
 export class ContentEditorDirective {
   @HostListener('input')

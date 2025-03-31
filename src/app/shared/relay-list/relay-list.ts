@@ -2,8 +2,9 @@ import { Component, Input } from '@angular/core';
 import { Utilities } from 'src/app/services/utilities';
 
 @Component({
-  selector: 'app-relay-list',
-  templateUrl: './relay-list.html',
+    selector: 'app-relay-list',
+    templateUrl: './relay-list.html',
+    standalone: false
 })
 export class RelayListComponent {
   @Input() relays: any;

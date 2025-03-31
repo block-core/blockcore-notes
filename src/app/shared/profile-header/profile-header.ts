@@ -14,9 +14,10 @@ import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
 import { ZapUiService } from 'src/app/services/zap-ui';
 
 @Component({
-  selector: 'app-profile-header',
-  templateUrl: './profile-header.html',
-  styleUrls: ['./profile-header.css'],
+    selector: 'app-profile-header',
+    templateUrl: './profile-header.html',
+    styleUrls: ['./profile-header.css'],
+    standalone: false
 })
 export class ProfileHeaderComponent {
   @Input() pubkey: string = '';

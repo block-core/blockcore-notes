@@ -3,7 +3,10 @@ import * as moment from 'moment';
 import { Utilities } from '../services/utilities';
 import { circleStyles } from './defaults';
 
-@Pipe({ name: 'circlestyle' })
+@Pipe({
+    name: 'circlestyle',
+    standalone: false
+})
 export class CircleStylePipe implements PipeTransform {
   constructor() {}
 

@@ -4,9 +4,10 @@ import { ApplicationState } from '../services/applicationstate';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
 
 @Component({
-  selector: 'app-about',
-  templateUrl: './about.html',
-  styleUrls: ['./about.css'],
+    selector: 'app-about',
+    templateUrl: './about.html',
+    styleUrls: ['./about.css'],
+    standalone: false
 })
 export class AboutComponent {
   constructor(private appState: ApplicationState) {}

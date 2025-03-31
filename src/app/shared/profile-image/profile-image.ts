@@ -3,8 +3,9 @@ import { ProfileService } from 'src/app/services/profile';
 import { NostrProfile } from '../../services/interfaces';
 
 @Component({
-  selector: 'app-profile-image',
-  templateUrl: './profile-image.html',
+    selector: 'app-profile-image',
+    templateUrl: './profile-image.html',
+    standalone: false
 })
 export class ProfileImageComponent {
   @Input() publicKey: string = '';

@@ -1,7 +1,8 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
-  selector: '[appAutoInputHeight]',
+    selector: '[appAutoInputHeight]',
+    standalone: false
 })
 export class ContentInputHeightDirective {
   @HostListener('input')

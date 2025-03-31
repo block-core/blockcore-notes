@@ -7,9 +7,10 @@ import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.html',
-  styleUrls: ['../connect.css', './login.css'],
+    selector: 'app-login',
+    templateUrl: './login.html',
+    styleUrls: ['../connect.css', './login.css'],
+    standalone: false
 })
 export class LoginComponent {
   privateKey: string = '';

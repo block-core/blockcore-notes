@@ -9,9 +9,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ZappersListDialogComponent } from '../zappers-list-dialog/zappers-list-dialog.component';
 
 @Component({
-  selector: 'app-event-reactions',
-  templateUrl: './event-reactions.html',
-  styleUrls: ['./event-reactions.css'],
+    selector: 'app-event-reactions',
+    templateUrl: './event-reactions.html',
+    styleUrls: ['./event-reactions.css'],
+    standalone: false
 })
 export class EventReactionsComponent {
   // @Input() threadEntry?: ThreadEntry | undefined;

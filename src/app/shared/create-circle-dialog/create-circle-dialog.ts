@@ -6,9 +6,10 @@ import { Circle } from 'src/app/services/interfaces';
 import { circleStyles } from '../defaults';
 
 @Component({
-  selector: 'create-circle-dialog',
-  templateUrl: 'create-circle-dialog.html',
-  styleUrls: ['create-circle-dialog.scss'],
+    selector: 'create-circle-dialog',
+    templateUrl: 'create-circle-dialog.html',
+    styleUrls: ['create-circle-dialog.scss'],
+    standalone: false
 })
 export class CircleDialog {
   styles = circleStyles;

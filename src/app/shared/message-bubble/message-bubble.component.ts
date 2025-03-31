@@ -3,9 +3,10 @@ import { MessageModel } from 'src/app/services/interfaces';
 
 
 @Component({
-  selector: 'app-message-bubble',
-  templateUrl: './message-bubble.component.html',
-  styleUrls: ['./message-bubble.component.scss']
+    selector: 'app-message-bubble',
+    templateUrl: './message-bubble.component.html',
+    styleUrls: ['./message-bubble.component.scss'],
+    standalone: false
 })
 export class MessageBubbleComponent {
   @Input() message!: MessageModel;

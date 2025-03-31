@@ -9,9 +9,10 @@ import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
 
 @Component({
-  selector: 'app-create',
-  templateUrl: './create.html',
-  styleUrls: ['../connect.css', './create.css'],
+    selector: 'app-create',
+    templateUrl: './create.html',
+    styleUrls: ['../connect.css', './create.css'],
+    standalone: false
 })
 export class CreateProfileComponent {
   privateKey: string = '';

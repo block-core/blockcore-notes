@@ -11,7 +11,8 @@ export interface WithStatusResult<T> {
 const defaultError = 'Whopsidaisy, something unexpected happened.';
 
 @Pipe({
-  name: 'withStatus',
+    name: 'withStatus',
+    standalone: false
 })
 export class WithStatusPipe implements PipeTransform {
   transform<T = any>(val: Observable<T>): Observable<WithStatusResult<T>> {

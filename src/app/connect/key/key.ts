@@ -8,9 +8,10 @@ import { ThemeService } from '../../services/theme';
 import { QrScanDialog } from './qr-scan-dialog/qr-scan';
 
 @Component({
-  selector: 'app-key',
-  templateUrl: './key.html',
-  styleUrls: ['../connect.css', './key.css'],
+    selector: 'app-key',
+    templateUrl: './key.html',
+    styleUrls: ['../connect.css', './key.css'],
+    standalone: false
 })
 export class ConnectKeyComponent {
   privateKey: string = '';

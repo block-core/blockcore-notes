@@ -3,9 +3,10 @@ import { ChatService } from 'src/app/services/chat.service';
 import { ChatModel, NostrEventDocument } from 'src/app/services/interfaces';
 
 @Component({
-  selector: 'app-chat-item',
-  templateUrl: './chat-item.component.html',
-  styleUrls: ['./chat-item.component.scss'],
+    selector: 'app-chat-item',
+    templateUrl: './chat-item.component.html',
+    styleUrls: ['./chat-item.component.scss'],
+    standalone: false
 })
 export class ChatItemComponent {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();

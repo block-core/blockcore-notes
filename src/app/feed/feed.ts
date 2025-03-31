@@ -13,8 +13,9 @@ import { AuthenticationService } from '../services/authentication';
 import { NavigationService } from '../services/navigation';
 
 @Component({
-  selector: 'app-feed',
-  templateUrl: './feed.html',
+    selector: 'app-feed',
+    templateUrl: './feed.html',
+    standalone: false
 })
 export class FeedComponent {
   publicKey?: string | null;

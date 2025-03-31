@@ -9,9 +9,10 @@ import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../se
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 
 @Component({
-  selector: 'app-content-podcast',
-  templateUrl: './content-podcast.html',
-  styleUrls: ['./content-podcast.css'],
+    selector: 'app-content-podcast',
+    templateUrl: './content-podcast.html',
+    styleUrls: ['./content-podcast.css'],
+    standalone: false
 })
 export class ContentPodcastComponent {
   // @Input() event?: NostrEventDocument;

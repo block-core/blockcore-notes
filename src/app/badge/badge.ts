@@ -10,9 +10,10 @@ import { Utilities } from '../services/utilities';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-badge',
-  templateUrl: 'badge.html',
-  styleUrls: ['badge.css'],
+    selector: 'app-badge',
+    templateUrl: 'badge.html',
+    styleUrls: ['badge.css'],
+    standalone: false
 })
 export class BadgeComponent implements OnInit {
   showIssuing: boolean = false;

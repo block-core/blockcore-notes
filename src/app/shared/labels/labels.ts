@@ -3,9 +3,10 @@ import { MatChipListboxChange } from '@angular/material/chips';
 import { LabelService } from 'src/app/services/label';
 
 @Component({
-  selector: 'app-labels',
-  templateUrl: 'labels.html',
-  styleUrls: ['labels.css'],
+    selector: 'app-labels',
+    templateUrl: 'labels.html',
+    styleUrls: ['labels.css'],
+    standalone: false
 })
 export class LabelsComponent {
   showNewLabel?: boolean;

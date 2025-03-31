@@ -7,9 +7,10 @@ import { Utilities } from 'src/app/services/utilities';
 import { TimePipe } from '../time.pipe';
 
 @Component({
-  selector: 'app-media-player',
-  templateUrl: './media-player.html',
-  styleUrls: ['./media-player.css'],
+    selector: 'app-media-player',
+    templateUrl: './media-player.html',
+    styleUrls: ['./media-player.css'],
+    standalone: false
 })
 export class MediaPlayerComponent {
   @Input() miniplayer = false;

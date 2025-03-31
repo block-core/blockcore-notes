@@ -31,9 +31,10 @@ import { State } from './services/state';
 import { EventService } from './services/event';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.html',
-  styleUrls: ['./app.css'],
+    selector: 'app-root',
+    templateUrl: './app.html',
+    styleUrls: ['./app.css'],
+    standalone: false
 })
 export class AppComponent {
   @ViewChild('drawer') drawer!: MatSidenav;
