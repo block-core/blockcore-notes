@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone, signal, inject } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
-import { Utilities } from '../services/utilities';
+import { Utilities, now } from '../services/utilities';
 import { relayInit, Relay } from 'nostr-tools';
 import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
@@ -165,7 +165,7 @@ export class UserComponent {
         }
 
         // TODO: Increase this, made low during development.
-        const timeAgo = moment().subtract(5, 'minutes').unix();
+        const timeAgo = Math.floor(Date.now() / 1000) - (5 * 60); // 5 minutes in seconds
 
         // If following is nothing and it's been a while since we retrieved the profile,
         // go grab the contacts list.
