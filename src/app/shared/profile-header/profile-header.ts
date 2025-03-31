@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
+import { ProfileActionsComponent } from '../profile-actions/profile-actions';
 
 @Component({
     selector: 'app-profile-header',
@@ -29,7 +30,7 @@ import { RouterModule } from '@angular/router';
         MatButtonModule,
         MatIconModule,
         MatTooltipModule,
-        // Add any other components used in your template
+        ProfileActionsComponent
     ]
 })
 export class ProfileHeaderComponent {
