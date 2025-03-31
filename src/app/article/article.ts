@@ -24,11 +24,14 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { ContentComponent } from '../shared/content/content';
 
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [CommonModule, MatCardModule, EventComponent, EventHeaderComponent, EventReactionsComponent, EventButtonsComponent, EventThreadComponent, EventActionsComponent, DateComponent, MatIconModule, MatSliderModule, MatDividerModule, MatExpansionModule, MatSlideToggleModule],
+  imports: [CommonModule, ContentComponent, FormsModule, DirectoryIconComponent, MatCardModule, EventComponent, EventHeaderComponent, EventReactionsComponent, EventButtonsComponent, EventThreadComponent, EventActionsComponent, DateComponent, MatIconModule, MatSliderModule, MatDividerModule, MatExpansionModule, MatSlideToggleModule],
   templateUrl: 'article.html',
   styleUrls: ['article.css'],
 })
