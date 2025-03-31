@@ -4,11 +4,12 @@ import { ApplicationState } from '../services/applicationstate';
 import { AddRelayDialog, AddRelayDialogData } from '../shared/add-relay-dialog/add-relay-dialog';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule, MatDialogModule, MatExpansionModule],
   templateUrl: './about.html',
   styleUrls: ['./about.css'],
 })
