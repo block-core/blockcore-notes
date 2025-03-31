@@ -1,12 +1,17 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { InvoiceQrCodeDialogData, LNURLInvoice, NostrProfileDocument } from '../../services/interfaces';
+import { LNURLInvoice, NostrProfileDocument } from '../../services/interfaces';
 import { Utilities } from '../../services/utilities';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { QRCodeModule } from 'angularx-qrcode';
+import { QRCodeComponent } from 'angularx-qrcode';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+
+export interface InvoiceQrCodeDialogData {
+  invoice: LNURLInvoice,
+  profile: NostrProfileDocument
+}
 
 @Component({
     selector: 'app-zap-qr-code',
@@ -16,7 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
     imports: [
       CommonModule,
       MatButtonModule,
-      QRCodeModule,
+      QRCodeComponent,
       MatCardModule,
       MatIconModule
     ]
