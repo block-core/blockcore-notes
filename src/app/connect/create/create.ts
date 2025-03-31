@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-create',
@@ -20,6 +21,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
   styleUrls: ['../connect.css', './create.css'],
   imports: [MatIconModule, 
     ClipboardModule,
+    CommonModule,
     MatCardModule, FormsModule, MatInputModule, TranslateModule]
 })
 export class CreateProfileComponent {

@@ -12,12 +12,13 @@ import { ContentComponent } from '../shared/content/content';
 import { LabelComponent } from '../shared/label/label';
 import { TranslateModule } from '@ngx-translate/core';
 import { AgoPipe } from '../shared/ago.pipe';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-notes',
   templateUrl: 'notes.html',
   styleUrls: ['notes.css'],
-  imports: [LabelsComponent, EventHeaderComponent, EventActionsComponent, MatCardModule, ContentComponent, LabelComponent, TranslateModule, AgoPipe],
+  imports: [LabelsComponent, CommonModule, EventHeaderComponent, EventActionsComponent, MatCardModule, ContentComponent, LabelComponent, TranslateModule, AgoPipe],
 })
 export class NotesComponent {
   details = false;
