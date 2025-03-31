@@ -246,12 +246,11 @@ const routes: Routes = [
   },
   {
     path: 'about',
-    loadChildren: () => import('./about/about.module').then((m) => m.AboutModule),
-    // component: AboutComponent,
-    // canActivate: [AuthGuard],
-    // resolve: {
-    //   data: LoadingResolverService,
-    // },
+    component: AboutComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
   },
   {
     path: 'about/licenses',
