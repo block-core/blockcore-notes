@@ -1,4 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatListModule } from '@angular/material/list';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatModel, NostrEventDocument } from 'src/app/services/interfaces';
 
@@ -6,6 +9,7 @@ import { ChatModel, NostrEventDocument } from 'src/app/services/interfaces';
   selector: 'app-chat-item',
   templateUrl: './chat-item.component.html',
   styleUrls: ['./chat-item.component.scss'],
+  imports: [MatListModule, MatBadgeModule, CommonModule],
 })
 export class ChatItemComponent {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();

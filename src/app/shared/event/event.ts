@@ -4,13 +4,25 @@ import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { ThreadService } from 'src/app/services/thread';
 import { UIService } from 'src/app/services/ui';
-import { Utilities } from 'src/app/services/utilities';
 import { Circle, NostrEventDocument, ThreadEntry } from '../../services/interfaces';
+import { CommonModule } from '@angular/common';
+import { EventHeaderComponent } from '../event-header/event-header';
+import { EventActionsComponent } from '../event-actions/event-actions';
+import { EventReactionsComponent } from '../event-reactions/event-reactions';
+import { EventButtonsComponent } from '../event-buttons/event-buttons';
+import { AgoPipe } from '../ago.pipe';
+import { DirectoryIconComponent } from '../directory-icon/directory-icon';
+import { ContentComponent } from '../content/content';
 
 @Component({
   selector: 'app-event',
   templateUrl: './event.html',
   styleUrls: ['./event.css'],
+  imports: [CommonModule, 
+    AgoPipe,
+    DirectoryIconComponent,
+    ContentComponent,
+    EventHeaderComponent, EventActionsComponent, EventReactionsComponent, EventButtonsComponent],
 })
 export class EventComponent {
   @Input() threadEntry?: ThreadEntry | undefined;
