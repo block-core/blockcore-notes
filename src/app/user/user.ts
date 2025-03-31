@@ -28,6 +28,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ProfileHeaderComponent } from '../shared/profile-header/profile-header';
 import { ProfileActionsComponent } from '../shared/profile-actions/profile-actions';
 import { EventComponent } from '../shared/event/event';
+import { ContentMusicComponent } from '../shared/content-music/content-music';
+import { ContentPodcastComponent } from '../shared/content-podcast/content-podcast';
 
 @Component({
     selector: 'app-user',
@@ -46,7 +48,9 @@ import { EventComponent } from '../shared/event/event';
         MatMenuModule,
         ProfileHeaderComponent,
         ProfileActionsComponent,
-        EventComponent
+        EventComponent,
+        ContentMusicComponent,
+        ContentPodcastComponent
     ]
 })
 export class UserComponent {
