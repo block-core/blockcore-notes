@@ -9,11 +9,17 @@ import { OptionsService } from '../services/options';
 import { ThreadService } from '../services/thread';
 import { NavigationService } from '../services/navigation';
 import { UIService } from '../services/ui';
+import { CommonModule } from '@angular/common';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { EventComponent } from '../shared/event/event';
 
 @Component({
   selector: 'app-note',
   templateUrl: './note.html',
   styleUrls: ['./note.css'],
+  imports: [CommonModule, MatExpansionModule, MatSlideToggleModule, MatCardModule, EventComponent],
 })
 export class NoteComponent {
   // id?: string | null;

@@ -17,11 +17,23 @@ import { DataService } from '../services/data';
 import { CircleService } from '../services/circle';
 import { OptionsService } from '../services/options';
 import { MetricService } from '../services/metric-service';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { ProfileActionsComponent } from '../shared/profile-actions/profile-actions';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { AgoPipe } from '../shared/ago.pipe';
 
 @Component({
   selector: 'app-people',
   templateUrl: './people.html',
   styleUrls: ['./people.css'],
+  imports: [MatExpansionModule, TranslateModule, MatFormFieldModule, MatSelectModule, MatCardModule, CommonModule, EventHeaderComponent, ProfileActionsComponent, MatProgressSpinnerModule, DirectoryIconComponent, AgoPipe],
 })
 export class PeopleComponent {
   publicKey?: string | null;

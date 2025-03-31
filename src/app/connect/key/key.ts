@@ -2,15 +2,22 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
+import { Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 import { QrScanDialog } from './qr-scan-dialog/qr-scan';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-key',
   templateUrl: './key.html',
   styleUrls: ['../connect.css', './key.css'],
+  imports: [CommonModule, MatIconModule, MatCardModule, TranslateModule, MatFormFieldModule, FormsModule],
 })
 export class ConnectKeyComponent {
   privateKey: string = '';

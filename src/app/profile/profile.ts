@@ -11,11 +11,19 @@ import { DataService } from '../services/data';
 import { UIService } from '../services/ui';
 import { NavigationService } from '../services/navigation';
 import { UploadService } from '../services/upload';
+import { ProfileHeaderComponent } from '../shared/profile-header/profile-header';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { AgoPipe } from '../shared/ago.pipe';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
   templateUrl: 'profile.html',
   styleUrls: ['profile.css'],
+  imports: [ProfileHeaderComponent, CommonModule, MatCardModule, MatFormFieldModule, TranslateModule, FormsModule, AgoPipe],
 })
 export class ProfileComponent {
   pubkey?: string;
