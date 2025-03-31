@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService } from 'src/app/services/content';
@@ -10,6 +10,13 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument, TokenKeyword } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 import { nip19 } from 'nostr-tools';
+import { NgClass, NgFor, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ReplyListComponent } from '../reply-list/reply-list';
+import { MatChipsModule } from '@angular/material/chips';
+import { RouterModule } from '@angular/router';
 
 interface MediaItem {
   url: SafeResourceUrl;
@@ -20,10 +27,20 @@ interface MediaItem {
   selector: 'app-content',
   templateUrl: './content.html',
   styleUrls: ['./content.css'],
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    NgClass,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    ReplyListComponent,
+    MatChipsModule,
+    RouterModule
+  ]
 })
 export class ContentComponent {
-  // @Input() event?: NostrEventDocument;
-
   #event?: NostrEventDocument | undefined;
 
   @Input() set event(value: NostrEventDocument | undefined) {
@@ -40,17 +57,15 @@ export class ContentComponent {
   tooltip = '';
 
   profiles: NostrProfileDocument[] = [];
-  // content?: string;
 
-  constructor(
-    private eventService: EventService,
-    private contentService: ContentService,
-    private mediaService: MediaService,
-    public optionsService: OptionsService,
-    private profileService: ProfileService,
-    private utilities: Utilities,
-    public dialog: MatDialog
-  ) {}
+  // Using inject for dependency injection (modern Angular approach)
+  private eventService = inject(EventService);
+  private contentService = inject(ContentService);
+  private mediaService = inject(MediaService);
+  public optionsService = inject(OptionsService);
+  private profileService = inject(ProfileService);
+  private utilities = inject(Utilities);
+  public dialog = inject(MatDialog);
 
   enque(url: string, type: any) {
     this.mediaService.enque({ artist: '', artwork: '/assets/logos/youtube.png', title: url, source: url, type: type });
@@ -239,24 +254,12 @@ export class ContentComponent {
       this.bigSize = false;
     }
 
-    // var regex = /#\[(.*?)\]/g;
-    // var matches = text.match(regex);
-    // console.log(matches); // ["#[hello]", "#[bye]"]
-
-    // var str = '#[hello] world #[bye]';
-    // var regex = /#\[(.*?)\]/g;
-    // var match;
-    // while ((match = regex.exec(str))) {
-    //   console.log(match[1]); // "hello", "bye"
-    // }
-
     const res: (string | TokenKeyword)[] = [];
     const lines = text.split(/\r?\n/);
     const tokens = [];
 
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
-      //let lineTokens = line.split(/\s+/);
       let lineTokens = line.split(/(\s|,|#\[[^\]]*\])/);
 
       lineTokens = lineTokens.filter((entry) => entry != '');
@@ -276,7 +279,6 @@ export class ContentComponent {
           if (tags.length > index) {
             keyword.word = tags[index][1];
           } else {
-            // If we cannot find the pubkey..
             keyword.word = token;
             debugger;
           }
@@ -325,7 +327,6 @@ export class ContentComponent {
         } else if (this.isSpotify(token)) {
           i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypassFrame(token.replace('open.spotify.com/', 'open.spotify.com/embed/')), word: token, token: 'spotify' });
         } else if (this.isTidal(token)) {
-          // TODO: Need to improve this, but for now we do a very basic replacement for single tracks only.
           if (token.startsWith('https://tidal.com/browse/track/')) {
             const embedUrl = token.replace('tidal.com/browse/track/', 'embed.tidal.com/tracks/');
             i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypassFrame(embedUrl), word: token, token: 'tidal' });

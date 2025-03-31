@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { NgFor, NgIf, CommonModule } from '@angular/common';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 
@@ -11,7 +12,8 @@ export interface ReplyEntry {
     selector: 'app-reply-list',
     templateUrl: 'reply-list.html',
     styleUrls: ['reply-list.css'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, NgFor, NgIf]
 })
 export class ReplyListComponent {
   @Input() keys: string[] = [];
