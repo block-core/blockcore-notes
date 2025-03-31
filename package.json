@@ -43,7 +43,6 @@
     "idb": "^7.1.1",
     "joi": "^17.8.3",
     "light-bolt11-decoder": "^3.0.0",
-    "moment": "^2.29.4",
     "ngx-colors": "^3.5.0",
     "ngx-drag-scroll": "^15.0.0",
     "ngx-loading-buttons": "^15.0.1",

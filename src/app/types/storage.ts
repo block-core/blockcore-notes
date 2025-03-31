@@ -7,6 +7,11 @@ export function now() {
   return Math.floor(Date.now() / 1000);
 }
 
+export function formatDate(timestamp: number): string {
+  const date = new Date(timestamp * 1000);
+  return date.toISOString();
+}
+
 interface NotesDB extends DBSchema {
   state: {
     value: StateDocument;

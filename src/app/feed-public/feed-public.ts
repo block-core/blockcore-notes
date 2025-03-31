@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -89,7 +88,7 @@ export class FeedPublicComponent {
   //     return;
   //   }
 
-  //   const fiveMinutesAgo = moment().subtract(5, 'minutes').unix();
+  //   const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 300; // 5 minutes in seconds
 
   //   // Get the last 100 items.
   //   this.sub = relay.sub([{ kinds: [1], limit: 100 }], {});

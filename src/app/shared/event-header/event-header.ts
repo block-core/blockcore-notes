@@ -14,8 +14,6 @@ import { Circle, NostrProfile, NostrProfileDocument } from '../../services/inter
     standalone: false
 })
 export class EventHeaderComponent implements OnChanges {
-  // @Input() pubkey: string = '';
-  // @Input() profile?: NostrProfileDocument;
   @Input() displayName: boolean = true;
   @Input() displayContent: boolean = true;
   @Input() iconSize: string = 'small';
@@ -59,49 +57,9 @@ export class EventHeaderComponent implements OnChanges {
     this.utilities.unsubscribe(this.subscriptions);
   }
 
-  ngOnChanges(changes: { [propName: string]: SimpleChange }) {
-    // if (changes['input'] && changes['input'].currentValue !== changes['input'].previousValue) {
-    //   // this.currentNumber = this.data.someOtherNumber + this.input.numberIneed;
-    // }
-  }
+  ngOnChanges(changes: { [propName: string]: SimpleChange }) {}
 
-  async ngOnInit() {
-    // if (!this.profile) {
-    //   this.profileName = this.utilities.getNostrIdentifier(this.pubkey);
-    //   this.profile = await this.profiles.getProfile(this.pubkey);
-    //   // this.profile = this.profiles.getCachedProfile(this.pubkey);
-    //   // // For performance optimization, we don't want to hit the database on this custom component,
-    //   // // but if we can't get profile from cache, we should schedule a download.
-    //   // if (!this.profile) {
-    //   //   this.subscriptions.push(
-    //   //     this.profiles.profilesChanged$.subscribe(() => {
-    //   //       if (!this.profile) {
-    //   //         this.profile = this.profiles.getCachedProfile(this.pubkey);
-    //   //         if (this.profile) {
-    //   //           this.utilities.unsubscribe(this.subscriptions);
-    //   //         } else {
-    //   //           debugger;
-    //   //         }
-    //   //       }
-    //   //     })
-    //   //   );
-    //   //   this.queueService.enqueProfile(this.pubkey);
-    //   // }
-    //   // if (!this.profile)
-    //   // {
-    //   //   this.queueService.enqueProfile(pubkey);
-    //   // }
-    //   // if (!this.profile) {
-    //   //   this.profile = await this.profiles.getProfile(this.pubkey);
-    //   // }
-    //   await this.updateProfileDetails();
-    //   // this.profile = await this.profiles.getLocalProfile(this.pubkey);
-    // } else {
-    //   this.pubkey = this.profile.pubkey;
-    //   // this.profileName = this.utilities.getNostrIdentifier(this.profile.pubkey);
-    //   await this.updateProfileDetails();
-    // }
-  }
+  async ngOnInit() {}
 
   async updateProfileDetails() {
     if (!this.profile) {
@@ -115,7 +73,6 @@ export class EventHeaderComponent implements OnChanges {
     this.tooltip = this.profile.about;
     this.tooltipName = this.profileName;
 
-    // Set profile name to display_name, or name, or re-use existing profilename (should be npub)
     this.profileName = this.profile.display_name || this.profile.name || this.profileName;
 
     this.circle = await this.circleService.get(this.profile.circle);

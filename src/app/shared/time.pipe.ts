@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import * as moment from 'moment';
 import { Utilities } from '../services/utilities';
 
 @Pipe({
@@ -18,10 +17,9 @@ export class TimePipe implements PipeTransform {
   }
 
   static time(value: number) {
-    var hours = Math.floor(value / 60 / 60);
-    var minutes = Math.floor(value / 60) - hours * 60;
-    var seconds = value % 60;
-    var formatted = hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-    return formatted;
+    const hours = Math.floor(value / 60 / 60);
+    const minutes = Math.floor(value / 60) - hours * 60;
+    const seconds = value % 60;
+    return hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
   }
 }
