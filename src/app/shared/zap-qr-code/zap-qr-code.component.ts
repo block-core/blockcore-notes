@@ -16,7 +16,7 @@ export interface InvoiceQrCodeDialogData {
 @Component({
   selector: 'app-zap-qr-code',
   standalone: true,
-  imports: [CommonModule, MatTooltipModule, MatButtonModule, MatIconModule, AsyncPipe, QRCodeComponent],
+  imports: [CommonModule, MatTooltipModule, MatButtonModule, MatIconModule, QRCodeComponent],
   templateUrl: './zap-qr-code.component.html',
   styleUrls: ['./zap-qr-code.component.scss']
 })

@@ -5,12 +5,13 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrProfileDocument, LNURLPayRequest, LNURLInvoice, NostrEventDocument, ParsedZap, ZappersListData } from 'src/app/services/interfaces';
 import { ProfileService } from 'src/app/services/profile';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-zappers-list-dialog',
   templateUrl: './zappers-list-dialog.component.html',
   styleUrls: ['./zappers-list-dialog.component.scss'],
-  imports: [MatTooltipModule],
+  imports: [MatTooltipModule, CommonModule],
 })
 export class ZappersListDialogComponent {
   sendZapForm!: UntypedFormGroup;
