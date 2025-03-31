@@ -14,12 +14,24 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { EventComponent } from '../shared/event/event';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { EventReactionsComponent } from '../shared/event-reactions/event-reactions';
+import { EventButtonsComponent } from '../shared/event-buttons/event-buttons';
+import { EventThreadComponent } from '../shared/event-thread/event-thread';
+import { DateComponent } from '../shared/date/date';
+import { MatDividerModule } from '@angular/material/divider';
+import { FormsModule } from '@angular/forms';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { ContentComponent } from '../shared/content/content';
 
 @Component({
   selector: 'app-note',
   templateUrl: './note.html',
   styleUrls: ['./note.css'],
-  imports: [CommonModule, MatExpansionModule, MatSlideToggleModule, MatCardModule, EventComponent],
+  imports: [CommonModule, TranslateModule, MatIconModule, EventHeaderComponent, EventActionsComponent, EventReactionsComponent, EventButtonsComponent, EventThreadComponent, DateComponent, MatDividerModule, FormsModule, DirectoryIconComponent, ContentComponent, MatExpansionModule, MatSlideToggleModule, MatCardModule, EventComponent],
 })
 export class NoteComponent {
   // id?: string | null;

@@ -7,16 +7,22 @@ import { QueueService } from '../services/queue.service';
 import { Subscription } from 'rxjs';
 import { Utilities } from '../services/utilities';
 import { RelayService } from '../services/relay';
-import { Sub } from 'nostr-tools';
 import { EventService } from '../services/event';
 import { CommonModule } from '@angular/common';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TranslateModule } from '@ngx-translate/core';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { MatIconModule } from '@angular/material/icon';
+import { BadgeCardComponent } from '../shared/badge-card/badge-card';
+import { ProfileNameComponent } from '../shared/profile-name/profile-name';
+import { DateComponent } from '../shared/date/date';
 
 @Component({
   selector: 'app-badges',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatTabsModule],
+  imports: [CommonModule, MatSnackBarModule, MatTabsModule, MatExpansionModule, TranslateModule, EventHeaderComponent, MatIconModule, BadgeCardComponent, ProfileNameComponent, DateComponent],
   templateUrl: 'badges.html',
   styleUrls: ['badges.css'],
 })
