@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import { NavigationService } from '../services/navigation';
 import { Location, CommonModule } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
@@ -13,6 +13,13 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProfileService } from '../services/profile';
 import { EventService } from '../services/event';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EventComponent } from '../shared/event/event';
+import { ContentEditorDirective } from '../shared/content-input-directive/content-input.directive';
 
 export interface NoteDialogData {
   note: string;
@@ -21,7 +28,7 @@ export interface NoteDialogData {
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, ReactiveFormsModule],
+  imports: [CommonModule, MatSnackBarModule, PickerModule, EventComponent, ContentEditorDirective, ReactiveFormsModule, FormsModule, MatButtonToggleModule, MatFormFieldModule, MatSelectModule, MatIconModule],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
 })
