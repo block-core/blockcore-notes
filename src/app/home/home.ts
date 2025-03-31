@@ -18,7 +18,7 @@ import { StorageService } from '../services/storage';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UIService } from '../services/ui';
 import { MetricService } from '../services/metric-service';
-import { DragScrollComponent } from 'ngx-drag-scroll';
+import { DragScrollComponent, DragScrollItemDirective } from 'ngx-drag-scroll';
 import { EventHeaderComponent } from '../shared/event-header/event-header';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
@@ -43,7 +43,7 @@ interface DefaultProfile {
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
-  imports: [DragScrollComponent, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
+  imports: [DragScrollComponent, DragScrollItemDirective, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
   // animations: [
   //   trigger('fade', [
   //     transition('void => active', [

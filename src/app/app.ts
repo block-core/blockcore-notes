@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ApplicationState } from './services/applicationstate';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Router, TitleStrategy } from '@angular/router';
+import { Router, RouterModule, TitleStrategy } from '@angular/router';
 import { AuthenticationService } from './services/authentication';
 import { AppUpdateService } from './services/app-update';
 import { CheckForUpdateService } from './services/check-for-update';
@@ -18,14 +18,14 @@ import { NostrProfileDocument } from './services/interfaces';
 import { ThemeService } from './services/theme';
 import { NostrProtocolRequest } from './common/NostrProtocolRequest';
 import { SearchService } from './services/search';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CircleService } from './services/circle';
 import { StorageService } from './services/storage';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UIService } from './services/ui';
 import { OptionsService } from './services/options';
 import { LabelService } from './services/label';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BadgeService } from './services/badge';
 import { State } from './services/state';
 import { EventService } from './services/event';
@@ -60,13 +60,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatRippleModule } from '@angular/material/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSliderModule } from '@angular/material/slider';
+import { MediaPlayerComponent } from './shared/media-player/media-player';
+import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 
 @Component({
   selector: 'app-root',
@@ -104,13 +105,19 @@ import { MatSliderModule } from '@angular/material/slider';
     MatButtonToggleModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatMomentDateModule,
     MatRippleModule,
     MatSortModule,
     MatDividerModule,
     MatFormFieldModule,
     MatOptionModule,
     MatSliderModule,
+    RouterModule, 
+    MediaPlayerComponent,
+    TranslateModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxLoadingButtonsModule,
+
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
