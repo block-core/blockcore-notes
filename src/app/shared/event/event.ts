@@ -8,6 +8,12 @@ import { Utilities } from 'src/app/services/utilities';
 import { Circle, NostrEventDocument, ThreadEntry } from '../../services/interfaces';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { EventHeaderComponent } from '../event-header/event-header';
+import { EventActionsComponent } from '../event-actions/event-actions';
+import { EventReactionsComponent } from '../event-reactions/event-reactions';
+import { EventButtonsComponent } from '../event-buttons/event-buttons';
+import { AgoPipe } from '../ago.pipe';
+import { DirectoryIconComponent } from '../directory-icon/directory-icon';
 
 @Component({
     selector: 'app-event',
@@ -16,7 +22,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     standalone: true,
     imports: [
       CommonModule,
-      MatTooltipModule
+      MatTooltipModule,
+      EventHeaderComponent,
+      EventActionsComponent,
+      EventReactionsComponent,
+      EventButtonsComponent,
+      AgoPipe,
+      DirectoryIconComponent
     ]
 })
 export class EventComponent {

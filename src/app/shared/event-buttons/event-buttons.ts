@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, ViewChild, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { Kind } from 'nostr-tools';
@@ -11,12 +11,28 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
     selector: 'app-event-buttons',
     templateUrl: './event-buttons.html',
     styleUrls: ['./event-buttons.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      FormsModule,
+      MatButtonModule,
+      MatIconModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatCardModule,
+    ]
 })
 export class EventButtonsComponent {
   @Input() event?: NostrEventDocument;
@@ -27,15 +43,15 @@ export class EventButtonsComponent {
     this.hideReply();
   }
 
-  isEmojiPickerVisible: boolean | undefined;
-  isEmojiPickerTextVisible: boolean | undefined;
+  isEmojiPickerVisible = signal<boolean | undefined>(undefined);
+  isEmojiPickerTextVisible = signal<boolean | undefined>(undefined);
 
   note?: string;
 
-  replyOpen = false;
-  publishing = false;
-  error = '';
-  profile?: NostrProfileDocument;
+  replyOpen = signal(false);
+  publishing = signal(false);
+  error = signal('');
+  profile = signal<NostrProfileDocument | undefined>(undefined);
 
   @ViewChild('replyInput') replyInput?: ElementRef;
 
@@ -51,7 +67,7 @@ export class EventButtonsComponent {
 
   async ngAfterViewInit() {
     let pubkey = this.event?.pubkey ? this.event?.pubkey : '';
-    this.profile = await this.profileService.getProfile(pubkey);
+    this.profile.set(await this.profileService.getProfile(pubkey));
   }
 
   async saveNote() {
@@ -66,10 +82,10 @@ export class EventButtonsComponent {
   }
 
   openReply() {
-    this.replyOpen = true;
-    this.publishing = false;
+    this.replyOpen.set(true);
+    this.publishing.set(false);
     this.note = '';
-    this.error = '';
+    this.error.set('');
 
     setTimeout(() => {
       console.log(this.replyInput);
@@ -78,23 +94,19 @@ export class EventButtonsComponent {
   }
 
   hideReply() {
-    this.replyOpen = false;
-    this.publishing = false;
+    this.replyOpen.set(false);
+    this.publishing.set(false);
     this.note = '';
-    this.error = '';
+    this.error.set('');
   }
 
   async addEmojiInText(e: { emoji: { native: any } }) {
-    // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
-    // this.data.note = `${this.data.note}${event.emoji.native}`;
-    this.isEmojiPickerTextVisible = false;
+    this.isEmojiPickerTextVisible.set(false);
     this.note = `${this.note}${e.emoji.native}`;
   }
 
   async addEmoji(e: { emoji: { native: any } }) {
-    // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
-    // this.data.note = `${this.data.note}${event.emoji.native}`;
-    this.isEmojiPickerVisible = false;
+    this.isEmojiPickerVisible.set(false);
 
     let reactionEvent = this.dataService.createEvent(Kind.Reaction, e.emoji.native);
 
@@ -103,16 +115,10 @@ export class EventButtonsComponent {
       return;
     }
 
-    // const rootEventId = this.eventService.rootEventId(this.event);
-    // const replyEventId = this.eventService.replyEventId(this.event);
-
-    // Clone the existing tags.
     reactionEvent.tags = Object.assign([], this.event.tags);
 
-    // Add the public key of who we are reacting to.
     reactionEvent.tags.push(['p', this.event.pubkey]);
 
-    // Add the event Id of who we are reacting to.
     reactionEvent.tags.push(['e', this.event.id!]);
 
     const signedEvent = await this.dataService.signEvent(reactionEvent);
@@ -121,12 +127,11 @@ export class EventButtonsComponent {
 
     await this.dataService.publishEvent(signedEvent);
 
-    // Replace tags on the local copy of the event.
     this.event.tags = reactionEvent.tags;
   }
 
   async addReply() {
-    this.publishing = true;
+    this.publishing.set(true);
 
     let replyEvent = this.dataService.createEvent(Kind.Text, this.note);
 
@@ -135,13 +140,10 @@ export class EventButtonsComponent {
       return;
     }
 
-    // Clone the existing e and p tags.
     replyEvent.tags = Object.assign([], this.eventService.getPublicKeyAndEventTags(this.event.tags));
 
-    // Add the public key of who we are reacting to.
     replyEvent.tags.push(['p', this.event.pubkey]);
 
-    // Add the event Id of who we are reacting to.
     replyEvent.tags.push(['e', this.event.id!]);
 
     try {
@@ -150,9 +152,9 @@ export class EventButtonsComponent {
       await this.dataService.publishEvent(signedEvent);
       this.hideReply();
     } catch (err: any) {
-      this.error = err.toString();
+      this.error.set(err.toString());
       console.log(err);
-      this.publishing = false;
+      this.publishing.set(false);
     }
   }
 
@@ -160,7 +162,7 @@ export class EventButtonsComponent {
     this.dialog.open(ZapDialogComponent, {
       width: '400px',
       data: {
-        profile: this.profile,
+        profile: this.profile(),
         event: this.event,
       },
     });
