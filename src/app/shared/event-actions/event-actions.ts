@@ -9,11 +9,12 @@ import { nip19 } from 'nostr-tools';
 import { LabelService } from 'src/app/services/label';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-event-actions',
   templateUrl: './event-actions.html',
-  imports: [MatIconModule, MatMenuModule],
+  imports: [MatIconModule, MatMenuModule, CommonModule],
 })
 export class EventActionsComponent {
   @Input() fab: boolean = false;

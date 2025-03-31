@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, HostListener, Output, EventEmitter, Input, ElementRef, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -10,7 +11,7 @@ import { Utilities } from 'src/app/services/utilities';
   selector: 'app-badge-card',
   templateUrl: 'badge-card.html',
   styleUrls: ['badge-card.css'],
-  imports: [MatCardModule, RouterModule, MatChipsModule],
+  imports: [MatCardModule, RouterModule, MatChipsModule, CommonModule],
 })
 export class BadgeCardComponent implements OnInit {
   #badge: BadgeDefinitionEvent | NostrBadgeDefinition | any;
