@@ -7,11 +7,15 @@ import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-content-podcast',
   templateUrl: './content-podcast.html',
   styleUrls: ['./content-podcast.css'],
+  imports: [ProfileImageDialog, MatCardModule, MatIconModule, MatMenuModule],
 })
 export class ContentPodcastComponent {
   // @Input() event?: NostrEventDocument;
