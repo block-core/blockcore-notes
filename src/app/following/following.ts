@@ -8,9 +8,13 @@ import { NostrEventDocument, NostrProfileDocument } from '../services/interfaces
 import { ProfileService } from '../services/profile';
 import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-following',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule],
   templateUrl: './following.html',
   styleUrls: ['./following.css'],
 })

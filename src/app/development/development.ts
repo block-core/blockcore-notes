@@ -6,9 +6,13 @@ import { RelayService } from '../services/relay';
 import { RelayType } from '../types/relay';
 import { Storage } from '../types/storage';
 import { State, StateService } from '../services/state';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-development',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule],
   templateUrl: './development.html',
   styleUrls: ['./development.css'],
 })

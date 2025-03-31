@@ -1,9 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApplicationState } from '../services/applicationstate';
 import { State } from '../services/state';
+import { CommonModule } from '@angular/common';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-example',
+  standalone: true,
+  imports: [CommonModule, CdkVirtualScrollViewport],
   templateUrl: 'example.html',
   styleUrls: ['example.css'],
   //   changeDetection: ChangeDetectionStrategy.OnPush,

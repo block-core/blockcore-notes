@@ -13,6 +13,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProfileService } from '../services/profile';
 import { BadgeService } from '../services/badge';
 import { EventService } from '../services/event';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ReactiveFormsModule } from '@angular/forms';
 
 export interface NoteDialogData {
   note: string;
@@ -20,6 +23,8 @@ export interface NoteDialogData {
 
 @Component({
   selector: 'app-editor',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule, ReactiveFormsModule],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
 })

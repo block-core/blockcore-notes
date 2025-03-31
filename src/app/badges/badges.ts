@@ -9,9 +9,14 @@ import { Utilities } from '../services/utilities';
 import { RelayService } from '../services/relay';
 import { Sub } from 'nostr-tools';
 import { EventService } from '../services/event';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-badges',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule, MatTabsModule],
   templateUrl: 'badges.html',
   styleUrls: ['badges.css'],
 })

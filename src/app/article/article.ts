@@ -10,9 +10,12 @@ import { ThreadService } from '../services/thread';
 import { NavigationService } from '../services/navigation';
 import { UIService } from '../services/ui';
 import { Kind, nip19 } from 'nostr-tools';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-article',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: 'article.html',
   styleUrls: ['article.css'],
 })

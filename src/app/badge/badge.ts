@@ -8,9 +8,13 @@ import { NavigationService } from '../services/navigation';
 import { RelayService } from '../services/relay';
 import { Utilities } from '../services/utilities';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-badge',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule],
   templateUrl: 'badge.html',
   styleUrls: ['badge.css'],
 })
