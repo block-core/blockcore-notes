@@ -106,7 +106,7 @@
         <p>💛🖤</p>
         <p class="centered" *ngIf="consent">
           <br />
-          <button mat-stroked-button (click)="consent=false; persist()">Withdraw consent</button>
+          <button mat-stroked-button (click)="consent.set(false); persist()">Withdraw consent</button>
         </p>
       </mat-card-content>
     </mat-card>

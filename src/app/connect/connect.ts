@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-connect',
@@ -29,6 +30,7 @@ import { FormsModule } from '@angular/forms';
       MatInputModule,
       MatIconModule,
       MatCheckboxModule,
+      MatProgressSpinnerModule,
       FormsModule
     ]
 })
@@ -40,6 +42,9 @@ export class ConnectComponent {
   publicKey = signal<string | undefined>(undefined);
   error = signal<string>('');
   openIndentity = signal<any>(undefined);
+  showInstallLink = signal<boolean>(false);
+  consent = signal<boolean>(false);
+  readOnlyLogin = signal<boolean>(false);
   
   constructor(
     private spacesService: SpacesService,
@@ -104,5 +109,15 @@ export class ConnectComponent {
 
   onSubmit() {
     this.connect();
+  }
+  
+  giveConsent() {
+    this.consent.set(true);
+    this.persist();
+  }
+  
+  persist() {
+    // Handle consent persistence logic
+    // This method would be called when consent checkbox changes
   }
 }
