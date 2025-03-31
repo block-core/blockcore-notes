@@ -68,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "blockcore-notes:build:production"
+              "buildTarget": "blockcore-notes:build:production"
             },
             "development": {
-              "browserTarget": "blockcore-notes:build:development"
+              "buildTarget": "blockcore-notes:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "blockcore-notes:build"
+            "buildTarget": "blockcore-notes:build"
           }
         },
         "test": {
