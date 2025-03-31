@@ -15,12 +15,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "allowedCommonJsDependencies": ["sanitize-html", "moment", "browser-level", "qrcode", "qs", "photoswipe", "photoswipe/dist/photoswipe-ui-default", "@scure/bip39", "@scure/bip39/wordlists/english.js"],
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": ["zone.js", "src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -33,9 +34,9 @@
             ],
             "styles": ["./node_modules/ngx-loading-buttons/src/styles.css", "src/styles.scss", "node_modules/@ctrl/ngx-emoji-mart/picker.css"],
             "scripts": [],
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json",
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "serviceWorker": "ngsw-config.json",
+            "webWorkerTsConfig": "tsconfig.worker.json",
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -54,9 +55,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
