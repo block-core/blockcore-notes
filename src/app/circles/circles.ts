@@ -14,9 +14,14 @@ import { copyToClipboard } from '../shared/utilities';
 import { Subscription, tap } from 'rxjs';
 import { DataService } from '../services/data';
 import { NavigationService } from '../services/navigation';
+import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-circles',
+  standalone: true,
+  imports: [CommonModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './circles.html',
   styleUrls: ['./circles.css'],
 })

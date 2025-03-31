@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NavigationService } from '../services/navigation';
-import { Location } from '@angular/common';
+import { Location, CommonModule } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
 import { BlogEvent, NostrEvent } from '../services/interfaces';
 import { Event, Kind } from 'nostr-tools';
@@ -9,9 +9,10 @@ import { Subscription } from 'rxjs';
 import { now, Utilities } from '../services/utilities';
 import { QueueService } from '../services/queue.service';
 import { ArticleService } from '../services/article';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProfileService } from '../services/profile';
 import { EventService } from '../services/event';
+import { ReactiveFormsModule } from '@angular/forms';
 
 export interface NoteDialogData {
   note: string;
@@ -19,6 +20,8 @@ export interface NoteDialogData {
 
 @Component({
   selector: 'app-editor',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule, ReactiveFormsModule],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
 })

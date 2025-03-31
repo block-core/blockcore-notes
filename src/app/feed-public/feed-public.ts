@@ -11,9 +11,13 @@ import { NotesService } from '../services/notes';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-feed-public',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule],
   templateUrl: './feed-public.html',
 })
 export class FeedPublicComponent {
@@ -187,7 +191,7 @@ export class FeedPublicComponent {
       if (!this.options.values.privateFeed) {
         this.options.values.publicFeed = true;
       } else {
-        this.options.values.publicFeed = false;
+        this.options.values.privateFeed = false;
       }
     }
   }

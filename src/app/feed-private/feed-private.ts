@@ -13,9 +13,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from '../services/storage';
 import { UIService } from '../services/ui';
 import { CircleService } from '../services/circle';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-feed-private',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule],
   templateUrl: './feed-private.html',
   styleUrls: ['./feed-private.css'],
 })

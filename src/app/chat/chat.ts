@@ -1,8 +1,13 @@
 import { Component, ChangeDetectorRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ApplicationState } from '../services/applicationstate';
+import { CommonModule } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
+
 @Component({
   selector: 'app-chat',
+  standalone: true,
+  imports: [CommonModule, MatSidenavModule],
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss'],
   encapsulation: ViewEncapsulation.None,

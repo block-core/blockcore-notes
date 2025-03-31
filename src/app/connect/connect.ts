@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, NgZone } from '@angular/core';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { AuthenticationService } from '../services/authentication';
@@ -9,9 +10,13 @@ import { ThemeService } from '../services/theme';
 import { Utilities } from '../services/utilities';
 import { ConsentDialog } from './consent-dialog/consent-dialog';
 import { SpacesService } from '../services/spaces';
+import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-connect',
+  standalone: true,
+  imports: [CommonModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './connect.html',
   styleUrls: ['./connect.css'],
 })

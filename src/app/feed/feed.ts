@@ -11,9 +11,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { OptionsService } from '../services/options';
 import { AuthenticationService } from '../services/authentication';
 import { NavigationService } from '../services/navigation';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-feed',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule],
   templateUrl: './feed.html',
 })
 export class FeedComponent {

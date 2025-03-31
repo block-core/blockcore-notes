@@ -5,9 +5,13 @@ import { Subscription } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ApplicationState } from '../services/applicationstate';
 import { UIService } from '../services/ui';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-followers',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule],
   templateUrl: './followers.html',
   styleUrls: ['./followers.css'],
   // changeDetection: ChangeDetectionStrategy.OnPush,
