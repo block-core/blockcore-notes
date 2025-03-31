@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { ProfileService } from '../services/profile';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ApplicationState } from '../services/applicationstate';
 import { UIService } from '../services/ui';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-followers',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MatSnackBarModule, RouterModule, MatTabsModule],
   templateUrl: './followers.html',
   styleUrls: ['./followers.css'],
   // changeDetection: ChangeDetectionStrategy.OnPush,

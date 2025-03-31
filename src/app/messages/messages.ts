@@ -1,14 +1,17 @@
 import { Component, ChangeDetectorRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Kind, nip04 } from 'nostr-tools';
+import { kinds, nip04 } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate';
 import { QueueService } from '../services/queue.service';
 import { RelayService } from '../services/relay';
+import { ChatListComponent } from '../shared/chat-list/chat-list.component';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.html',
   styleUrls: ['./messages.css'],
   encapsulation: ViewEncapsulation.None,
+  imports: [ChatListComponent, CommonModule],
 })
 export class MessagesComponent {
   @ViewChild('chatSidebar', { static: false }) chatSidebar!: MatSidenav;
@@ -47,6 +50,6 @@ export class MessagesComponent {
     this.appState.actions = [];
 
     // this.relayService.subscribe([{  }])
-    this.sub = this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], kinds: [Kind.EncryptedDirectMessage] }], 'messages');
+    this.sub = this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], kinds: [kinds.EncryptedDirectMessage] }], 'messages');
   }
 }
