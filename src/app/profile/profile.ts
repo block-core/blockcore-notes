@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay, Event, getEventHash, Kind } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
-import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
+import { NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
@@ -12,12 +11,28 @@ import { DataService } from '../services/data';
 import { UIService } from '../services/ui';
 import { NavigationService } from '../services/navigation';
 import { UploadService } from '../services/upload';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
     selector: 'app-profile',
     templateUrl: 'profile.html',
     styleUrls: ['profile.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatCardModule,
+      MatButtonModule,
+      MatInputModule,
+      FormsModule,
+      MatIconModule,
+      MatTabsModule
+    ]
 })
 export class ProfileComponent {
   pubkey?: string;

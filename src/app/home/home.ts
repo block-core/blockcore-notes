@@ -1,12 +1,10 @@
-import { ChangeDetectorRef, Component, NgZone, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectorRef, Component, NgZone, ViewChild, signal, effect } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay, Event } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrEventDocument, NostrNoteDocument, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
-import { map, Observable, shareReplay, Subscription, debounceTime, fromEvent } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { OptionsService } from '../services/options';
@@ -15,9 +13,20 @@ import { NavigationService } from '../services/navigation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from '../services/data';
 import { StorageService } from '../services/storage';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UIService } from '../services/ui';
 import { MetricService } from '../services/metric-service';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
+import { EventComponent } from '../shared/event/event';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ProfileImageComponent } from '../shared/profile-image/profile-image';
+import { ProfileNameComponent } from '../shared/profile-name/profile-name';
+import { MatInputModule } from '@angular/material/input';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 interface DefaultProfile {
   pubkey: string;
@@ -32,23 +41,45 @@ interface DefaultProfile {
     selector: 'app-home',
     templateUrl: './home.html',
     styleUrls: ['./home.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      RouterModule,
+      MatCardModule,
+      MatButtonModule,
+      MatIconModule,
+      MatTabsModule,
+      EventComponent,
+      MatCheckboxModule,
+      FormsModule,
+      ReactiveFormsModule,
+      ProfileImageComponent,
+      ProfileNameComponent,
+      MatInputModule,
+      PickerModule
+    ]
 })
 export class HomeComponent {
-  publicKey?: string | null;
-  subscriptions: Subscription[] = [];
+  publicKey = signal<string | null | undefined>(undefined);
+  subscriptions = signal<Subscription[]>([]);
+
+  // Signal for profile data
+  profiles = signal<NostrProfileDocument[]>([]);
+  
+  // Use signals for UI state
+  isEmojiPickerVisible = signal<boolean | undefined>(undefined);
+  note = signal<string | undefined>(undefined);
+  details = signal<boolean>(false);
+
+  @ViewChild('picker') picker: unknown;
+
+  formGroup!: UntypedFormGroup;
 
   lists = [
     { name: 'Nostr', about: 'Influencial nostr developers and community people', pubkey: 'npub15xrwvftyzynahpl5fmpuv9wtkg9q52j8q73saw59u8tmx63ktx8sfclgss', pubkeyhex: 'a186e625641127db87f44ec3c615cbb20a0a2a4707a30eba85e1d7b36a36598f' },
     { name: 'Bitcoin', about: 'Influencial Bitcoin people', pubkey: 'npub175ag9cus82a0zzpkheaglnudpvsc8q046z82cyz9gmauzlve6r2s4k9fpm', pubkeyhex: 'f53a82e3903abaf10836be7a8fcf8d0b218381f5d08eac104546fbc17d99d0d5' },
     { name: 'Blockcore', about: 'Follow the Blockcore developers', pubkey: 'npub1zfy0r7x8s3xukajewkmmzxjj3wpfan7apj5y7szz7y740wtf6p5q3tdyy9', pubkeyhex: '1248f1f8c7844dcb765975b7b11a528b829ecfdd0ca84f4042f13d57b969d068' },
   ];
-
-  @ViewChild('picker') picker: unknown;
-
-  isEmojiPickerVisible: boolean | undefined;
-
-  formGroup!: UntypedFormGroup;
 
   defaults: DefaultProfile[] = [
     {
@@ -113,23 +144,30 @@ export class HomeComponent {
     private formBuilder: UntypedFormBuilder,
     private metricService: MetricService
   ) {
-    console.log('HOME constructor!!'); // Hm.. called twice, why?
+    // Effect to track profile changes
+    effect(() => {
+      const currentProfiles = this.profileService.following;
+      this.profileCount = 75;
+      const sliced = currentProfiles.slice(0, this.profileCount);
+      const sorted = sliced.sort((a, b) => {
+        return this.metricService.get(a.pubkey) < this.metricService.get(b.pubkey) ? 1 : -1;
+      });
+      this.profiles.set(sorted);
+    });
   }
 
-  note?: string;
-
   public addEmoji(event: { emoji: { native: any } }) {
-    // this.dateControl.setValue(this.dateControl.value + event.emoji.native);
-    this.note = `${this.note}${event.emoji.native}`;
-    this.isEmojiPickerVisible = false;
+    const currentNote = this.note() || '';
+    this.note.set(`${currentNote}${event.emoji.native}`);
+    this.isEmojiPickerVisible.set(false);
   }
 
   onCancel() {
-    this.note = '';
+    this.note.set('');
   }
 
   postNote() {
-    this.navigation.saveNote(this.note);
+    this.navigation.saveNote(this.note() || '');
   }
 
   async follow(profile: DefaultProfile) {
@@ -150,49 +188,34 @@ export class HomeComponent {
     return item.id;
   }
 
-  latestItems: NostrEventDocument[] = []; // = dexieToRx(liveQuery(() => this.db.events.orderBy('created_at').reverse().limit(7).toArray()));
-
+  latestItems: NostrEventDocument[] = [];
   sub: any;
   relay?: Relay;
   initialLoad = true;
-  details = false;
 
   toggleDetails() {
-    this.details = !this.details;
+    this.details.update(value => !value);
   }
 
   import(pubkey: string) {
     this.dataService.enque({
       identifier: pubkey,
-      type: 'Contacts',
-      // TODO: MIGRATE LOGIC!!!
-      // callback: (data: NostrEventDocument) => {
-      //   console.log('DATA RECEIVED', data);
-
-      //   const following = data.tags.map((t) => t[1]);
-
-      //   for (let i = 0; i < following.length; i++) {
-      //     const publicKey = following[i];
-      //     this.profileService.follow(publicKey);
-      //   }
-      // },
+      type: 'Contacts'
     });
   }
 
   ngOnDestroy() {
-    this.utilities.unsubscribe(this.subscriptions);
+    this.utilities.unsubscribe(this.subscriptions());
   }
 
   feedChanged($event: any, type: string) {
     if (type === 'public') {
-      // If user choose public and set the value to values, we'll turn on the private.
       if (!this.options.values.publicFeed) {
         this.options.values.privateFeed = true;
       } else {
         this.options.values.privateFeed = false;
       }
     } else {
-      // If user choose private and set the value to values, we'll turn on the public.
       if (!this.options.values.privateFeed) {
         this.options.values.publicFeed = true;
       } else {
@@ -228,9 +251,6 @@ export class HomeComponent {
       dateControl: [],
     });
 
-    // useReactiveContext // New construct in Angular 14 for subscription.
-    // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
-
     this.appState.updateTitle('Blockcore Notes');
     this.appState.showBackButton = false;
     this.appState.showLogo = true;
@@ -246,31 +266,19 @@ export class HomeComponent {
 
     this.latestItems = await this.db.storage.getEventsByCreatedAndKind(7, 1);
 
-    this.subscriptions.push(
-      this.profileService.following$.subscribe((profiles) => {
-        // this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
-        this.profileCount = 75;
-        let slized = profiles.slice(0, this.profileCount);
-        let sorted = slized.sort((a, b) => {
-          return this.metricService.get(a.pubkey) < this.metricService.get(b.pubkey) ? 1 : -1;
-        });
-        this.profiles = sorted;
-      })
-    );
-
-    // this.resizeObservable$ = fromEvent(window, 'resize');
-
-    // this.resizeSubscription$ = this.resizeObservable$.pipe(debounceTime(100)).subscribe((evt) => {
-    //   this.profileCount = Math.floor(window.innerWidth / this.profileThumbnailWidth);
-    //   this.profiles = this.profileService.following.slice(0, this.profileCount);
-    // });
+    // Subscription management with signals
+    const sub = this.profileService.following$.subscribe((profiles) => {
+      this.profileCount = 75;
+      const sliced = profiles.slice(0, this.profileCount);
+      const sorted = sliced.sort((a, b) => {
+        return this.metricService.get(a.pubkey) < this.metricService.get(b.pubkey) ? 1 : -1;
+      });
+      this.profiles.set(sorted);
+    });
+    
+    this.subscriptions.update(subs => [...subs, sub]);
   }
 
   profileThumbnailWidth = 72;
   profileCount = 1;
-  resizeObservable$!: Observable<globalThis.Event>;
-  resizeSubscription$!: Subscription;
-
-  /** Profiles that are shown on the home screen, limited set of profiles. */
-  profiles: NostrProfileDocument[] = [];
 }

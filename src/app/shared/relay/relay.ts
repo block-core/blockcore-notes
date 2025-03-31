@@ -1,21 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { OptionsService } from '../../services/options';
+import { RelayService } from '../../services/relay';
+import { NostrRelayDocument } from '../../services/interfaces';
 import { MatSelectionListChange } from '@angular/material/list';
-import { NostrRelayDocument } from 'src/app/services/interfaces';
-import { OptionsService } from 'src/app/services/options';
-import { RelayService } from 'src/app/services/relay';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-relay',
     templateUrl: './relay.html',
     styleUrls: ['./relay.css'],
     inputs: ['relay'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatCardModule,
+      MatIconModule,
+      MatButtonModule,
+      MatListModule,
+      MatMenuModule,
+      MatTooltipModule
+    ]
 })
 export class RelayComponent {
   relay!: NostrRelayDocument;
-
-  //   relayType = 1;
-  //   relayPrivacy = 0;
 
   selectedRelayType: any;
   selectedRelayPublic: any;

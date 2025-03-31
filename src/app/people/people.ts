@@ -17,12 +17,40 @@ import { DataService } from '../services/data';
 import { CircleService } from '../services/circle';
 import { OptionsService } from '../services/options';
 import { MetricService } from '../services/metric-service';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ProfileImageComponent } from '../shared/profile-image/profile-image';
+import { ProfileNameComponent } from '../shared/profile-name/profile-name';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 
 @Component({
     selector: 'app-people',
     templateUrl: './people.html',
     styleUrls: ['./people.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatCardModule,
+      MatButtonModule,
+      MatIconModule,
+      MatInputModule,
+      FormsModule,
+      MatSelectModule,
+      MatCheckboxModule,
+      MatProgressSpinnerModule,
+      MatTabsModule,
+      ProfileImageComponent,
+      ProfileNameComponent,
+      DirectoryIconComponent
+    ]
 })
 export class PeopleComponent {
   publicKey?: string | null;
@@ -35,30 +63,6 @@ export class PeopleComponent {
   following: NostrProfileDocument[] = [];
   items: NostrProfileDocument[] = [];
   sortedItems: NostrProfileDocument[] = [];
-  // items$ = this.profileService.items$;
-
-  // sortedItems$ = this.items$.pipe(
-  //   map((data) => {
-  //     data.sort((a, b) => {
-  //       // if (a.name && !b.name) {
-  //       //   return -1;
-  //       // }
-
-  //       // if (b.name && !a.name) {
-  //       //   return 1;
-  //       // }
-
-  //       // if (!a.name && !b.name) {
-  //       //   return 0;
-  //       // }
-
-  //       return a.name?.toLowerCase() < b.name?.toLowerCase() ? -1 : 1;
-  //     });
-
-  //     return data;
-  //   })
-  // );
-
   selected = 'name-asc';
   searchTerm: any;
 
@@ -77,12 +81,6 @@ export class PeopleComponent {
     public optionsService: OptionsService,
     private metricService: MetricService
   ) {}
-
-  // async clearBlocked() {
-  //   await this.profileService.clearBlocked();
-  //   this.profiles = [];
-  //   await this.load();
-  // }
 
   updateSorting() {
     this.optionsService.save();
@@ -128,21 +126,6 @@ export class PeopleComponent {
     this.optionsService.save();
   }
 
-  // optionsUpdated($event: any, type: any) {
-  //   if (type == 1) {
-  //     this.showCached = false;
-  //     this.showMuted = false;
-  //   } else if (type == 2) {
-  //     this.showCached = false;
-  //     this.showBlocked = false;
-  //   } else if (type == 3) {
-  //     this.showBlocked = false;
-  //     this.showMuted = false;
-  //   }
-
-  //   this.load();
-  // }
-
   ngOnDestroy() {
     this.utilities.unsubscribe(this.subscriptions);
   }
@@ -186,8 +169,6 @@ export class PeopleComponent {
       })
     );
 
-    // TODO: Until we changed to using observable (DataService) for all data,
-    // we have this basic observable whenever the profiles changes.
     this.subscriptions.push(
       this.profileService.profilesChanged$.subscribe(async () => {
         console.log('profileService.profilesChanged$!!');
@@ -197,18 +178,6 @@ export class PeopleComponent {
   }
 
   subscriptions: Subscription[] = [];
-
-  // async search() {
-  //   const text: string = this.searchTerm;
-
-  //   // First load the current list.
-  //   await this.load();
-
-  //   if (text == 'undefined' || text == null || text == '') {
-  //   } else {
-  //     this.profiles = this.profiles.filter((item: NostrProfileDocument) => item.name?.indexOf(text) > -1 || item.pubkey?.indexOf(text) > -1 || item.about?.indexOf(text) > -1 || item.nip05?.indexOf(text) > -1);
-  //   }
-  // }
 
   getFollowingInCircle(id?: number) {
     if (id == null) {
@@ -246,7 +215,6 @@ export class PeopleComponent {
 
     pubkey = this.utilities.ensureHexIdentifier(pubkey);
     await this.profileService.follow(pubkey);
-    // this.feedService.downloadRecent([pubkey]);
   }
 
   createFollow(): void {
@@ -272,7 +240,6 @@ export class PeopleComponent {
         }
 
         if (pubkeys[i].indexOf('.') > -1) {
-          // If the user enters a root account with only @, we'll have to replace it for the NIP query to work.
           if (pubkeys[i].startsWith('@')) {
             pubkeys[i] = pubkeys[i].substring(1);
           }
@@ -359,65 +326,6 @@ export class PeopleComponent {
           await this.profileService.follow(followKey);
         }
       }
-
-      // let pubkey = this.utilities.ensureHexIdentifier(result.pubkey);
-
-      // Queue download for import.
-      // this.dataService.enque({ type: 'Contacts', identifier: pubkey });
-
-      // this.dataService.downloadNewestContactsEvents([pubkey]).subscribe((event) => {
-      //   debugger;
-      //   const nostrEvent = event as NostrEventDocument;
-      //   const publicKeys = nostrEvent.tags.map((t) => t[1]);
-
-      //   for (let i = 0; i < publicKeys.length; i++) {
-      //     const publicKey = publicKeys[i];
-
-      //     this.profileService.follow(publicKey);
-
-      //     // const profile = await this.profile.getProfile(publicKey);
-
-      //     // // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-      //     // if (profile) {
-      //     //   await this.profile.follow(publicKeys[i], profile.circle);
-      //     // } else {
-      //     //   await this.profile.follow(publicKeys[i]);
-      //     // }
-      //   }
-
-      //   // await this.load();
-
-      //   // this.ngZone.run(() => {
-      //   //   this.cd.detectChanges();
-      //   // });
-      // });
-
-      // TODO: Add ability to slowly query one after one relay, we don't want to receive multiple
-      // follow lists and having to process everything multiple times. Just query one by one until
-      // we find the list. Until then, we simply grab the first relay only.
-      // this.subscriptions.push(
-      //   this.feedService.downloadContacts(pubkey).subscribe(async (contacts) => {
-      //     const publicKeys = contacts.tags.map((t) => t[1]);
-
-      //     for (let i = 0; i < publicKeys.length; i++) {
-      //       const publicKey = publicKeys[i];
-      //       const profile = await this.profile.getProfile(publicKey);
-
-      //       // If the user already exists in our database of profiles, make sure we keep their previous circle (if unfollowed before).
-      //       if (profile) {
-      //         await this.profile.follow(publicKeys[i], profile.circle);
-      //       } else {
-      //         await this.profile.follow(publicKeys[i]);
-      //       }
-      //     }
-
-      //     await this.load();
-
-      //     this.ngZone.run(() => {
-      //       this.cd.detectChanges();
-      //     });
-      //   })
-      // );
     });
   }
 }

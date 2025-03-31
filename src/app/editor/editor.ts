@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, ViewChild, signal, effect } from '@angular/core';
+import { FormBuilder, FormControl, UntypedFormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NavigationService } from '../services/navigation';
 import { Location } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
@@ -12,23 +12,57 @@ import { ArticleService } from '../services/article';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProfileService } from '../services/profile';
 import { EventService } from '../services/event';
-
-export interface NoteDialogData {
-  note: string;
-}
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ContentEditorDirective } from '../shared/content-input-directive/content-input.directive';
+import { ContentInputHeightDirective } from '../shared/content-input-directive/content-input-height.directive';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 @Component({
     selector: 'app-editor',
     templateUrl: 'editor.html',
     styleUrls: ['editor.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      ReactiveFormsModule,
+      FormsModule,
+      MatCardModule,
+      MatButtonModule,
+      MatInputModule,
+      MatIconModule,
+      MatButtonToggleModule,
+      MatSelectModule,
+      MatTabsModule,
+      MatDatepickerModule,
+      MatNativeDateModule,
+      ContentEditorDirective,
+      ContentInputHeightDirective,
+      PickerModule
+    ]
 })
 export class EditorComponent {
   @ViewChild('picker') picker: unknown;
   @ViewChild('noteContent') noteContent?: FormControl;
   @ViewChild('articleContent') articleContent?: FormControl;
 
-  isEmojiPickerVisible: boolean | undefined;
+  isEmojiPickerVisible = signal<boolean | undefined>(undefined);
+  note = signal<string>('');
+  eventType = signal<string>('text');
+  blog = signal<BlogEvent>({ title: '', content: '', tags: '' });
+  event = signal<NostrEvent | undefined>(undefined);
+  selectedArticle = signal<string>('');
+  minDate = signal<number | undefined>(undefined);
+  followingUsers = signal<string[]>([]);
+  subscriptions = signal<Subscription[]>([]);
 
   noteForm = this.fb.group({
     content: ['', Validators.required],
@@ -46,23 +80,7 @@ export class EditorComponent {
     published_at: [''],
   });
 
-  note: string = '';
-
-  blog?: BlogEvent = { title: '', content: '', tags: '' };
-
-  title = '';
-
-  summary = '';
-
-  minDate?: number;
-
-  eventType: string = 'text';
-
   public dateControl = new FormControl(null);
-
-  subscriptions: Subscription[] = [];
-
-  followingUsers : string [] = this.profileService.following.map(follower => follower.name);
 
   constructor(
     private snackBar: MatSnackBar,
@@ -75,7 +93,16 @@ export class EditorComponent {
     public navigation: NavigationService,
     public profileService: ProfileService,
     private eventService: EventService
-  ) {}
+  ) {
+    // Set following users using signal
+    this.followingUsers.set(this.profileService.following.map(follower => follower.name));
+    
+    // Create an effect to update the event when content changes
+    effect(() => {
+      const content = this.noteForm.get('content')?.value;
+      this.updateEvent(content);
+    });
+  }
 
   ngOnInit() {
     this.appState.updateTitle(`Write a note`);
@@ -83,98 +110,54 @@ export class EditorComponent {
     this.appState.showLogo = true;
     this.appState.actions = [];
 
-    this.minDate = Date.now();
+    this.minDate.set(Date.now());
 
-    this.subscriptions.push(
-      this.articleForm.controls.title.valueChanges.subscribe((text) => {
-        if (text) {
-          this.articleForm.controls.slug.setValue(this.createSlug(text));
-        }
-      })
-    );
-
-    this.subscriptions.push(
-      this.noteForm.controls.content.valueChanges.subscribe((text) => {
-        this.updateEvent(text);
-      })
-    );
+    const titleSub = this.articleForm.controls.title.valueChanges.subscribe((text) => {
+      if (text) {
+        this.articleForm.controls.slug.setValue(this.createSlug(text));
+      }
+    });
+    
+    const contentSub = this.noteForm.controls.content.valueChanges.subscribe((text) => {
+      this.updateEvent(text);
+    });
+    
+    this.subscriptions.update(subs => [...subs, titleSub, contentSub]);
   }
 
   updateEvent(content: string | null) {
     if (!content) {
-      this.event = undefined;
-    } else {
-      this.event = {
-        contentCut: false,
-        tagsCut: false,
-        kind: Kind.Text,
-        content: content ? content : '',
-        tags: [],
-        created_at: now(),
-        id: '',
-        sig: '',
-        pubkey: this.appState.getPublicKey(),
-      };
-
-      this.event.tags = this.eventService.parseContentReturnTags(this.event.content);
-    }
-  }
-
-  event?: NostrEvent;
-
-  selectedArticle: string = '';
-
-  changedArticle() {
-    const article = this.articleService.get(this.selectedArticle!);
-
-    if (!article) {
-      this.articleForm.reset();
-
+      this.event.set(undefined);
       return;
     }
+    
+    const newEvent: NostrEvent = {
+      contentCut: false,
+      tagsCut: false,
+      kind: Kind.Text,
+      content: content,
+      tags: [],
+      created_at: now(),
+      id: '',
+      sig: '',
+      pubkey: this.appState.getPublicKey(),
+    };
 
-    if (article.summary == null) {
-      article.summary = '';
-    }
-
-    if (article.image == null) {
-      article.image = '';
-    }
-
-    if (article.title == null) {
-      article.title = '';
-    }
-
-    this.articleForm.setValue({
-      content: article.content,
-      title: article.title,
-      summary: article.summary,
-      image: article.image,
-      slug: article.slug ? article.slug : '',
-      tags: article.metatags ? article.metatags.toString() : '',
-      published_at: article.published_at ? article.published_at.toString() : '',
-    });
-  }
-
-  ngOnDestroy() {
-    this.utilities.unsubscribe(this.subscriptions);
+    newEvent.tags = this.eventService.parseContentReturnTags(newEvent.content);
+    this.event.set(newEvent);
   }
 
   noteTypeChanged() {
     // Load all articles for the user when toggling.
-    if (this.eventType == 'article') {
+    if (this.eventType() === 'article') {
       this.queueService.enque(this.appState.getPublicKey(), 'Article');
     }
   }
 
   createSlug(input: string) {
-    // convert input to lowercase
     input = input.toLowerCase();
-    // replace spaces and punctuation with hyphens
     input = input.replace(/[\s\W]+/g, '-');
-    // remove duplicate or trailing hyphens
     input = input.replace(/^-+|-+$/g, '');
-    // return the slug
     return input;
   }
 
@@ -184,12 +167,10 @@ export class EditorComponent {
 
     let parsedValue = value?.substring(0, startPos) + event.emoji.native + value?.substring(startPos, value.length);
     this.noteForm.controls.content.setValue(parsedValue);
-    this.isEmojiPickerVisible = false;
+    this.isEmojiPickerVisible.set(false);
 
     (<any>this.noteContent).nativeElement.focus();
   }
-
-  items: string[] = ['Noah', 'Liam', 'Mason', 'Jacob'];
 
   public addEmojiArticle(event: { emoji: { native: any } }) {
     let startPos = (<any>this.articleContent).nativeElement.selectionStart;
@@ -197,15 +178,38 @@ export class EditorComponent {
 
     let parsedValue = value?.substring(0, startPos) + event.emoji.native + value?.substring(startPos, value.length);
     this.articleForm.controls.content.setValue(parsedValue);
-    this.isEmojiPickerVisible = false;
+    this.isEmojiPickerVisible.set(false);
 
     (<any>this.articleContent).nativeElement.focus();
+  }
+  
+  changedArticle() {
+    const article = this.articleService.get(this.selectedArticle()!);
+
+    if (!article) {
+      this.articleForm.reset();
+      return;
+    }
+
+    const summary = article.summary ?? '';
+    const image = article.image ?? '';
+    const title = article.title ?? '';
+
+    this.articleForm.setValue({
+      content: article.content,
+      title: title,
+      summary: summary,
+      image: image,
+      slug: article.slug ? article.slug : '',
+      tags: article.metatags ? article.metatags.toString() : '',
+      published_at: article.published_at ? article.published_at.toString() : '',
+    });
   }
 
   formatSlug() {
     this.articleForm.controls.slug.setValue(this.createSlug(this.articleForm.controls.slug.value!));
   }
-
+  
   async onSubmitArticle() {
     const controls = this.articleForm.controls;
 
@@ -236,20 +240,15 @@ export class EditorComponent {
   }
 
   postNote() {
-    this.navigation.saveNote(this.note);
+    this.navigation.saveNote(this.note());
   }
 
   onCancel() {
-    this.note = '';
+    this.note.set('');
     this.location.back();
   }
 
-  // public addLink() {
-  //   if (this.data.note == '') {
-  //     this.data.note = `${this.data.note}${"[title](url)"}`;
-  //   }
-  //   else {
-  //     this.data.note = `${this.data.note}${" [title](url)"}`;
-  //   }
-  // }
+  ngOnDestroy() {
+    this.utilities.unsubscribe(this.subscriptions());
+  }
 }

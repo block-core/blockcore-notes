@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectorRef, Component, NgZone, signal, effect } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { Relay } from 'nostr-tools';
@@ -7,17 +7,38 @@ import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { NotesService } from '../services/notes';
-import { map, Observable, shareReplay, Subscription } from 'rxjs';
+import { map, Observable, shareReplay } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { EventComponent } from '../shared/event/event';
 
 @Component({
     selector: 'app-feed-public',
     templateUrl: './feed-public.html',
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      RouterModule,
+      MatCardModule,
+      MatButtonModule,
+      MatSlideToggleModule,
+      FormsModule,
+      MatIconModule,
+      MatToolbarModule,
+      EventComponent
+    ]
 })
 export class FeedPublicComponent {
-  publicKey?: string | null;
+  publicKey = signal<string | null | undefined>(undefined);
+  events = signal<NostrEvent[]>([]);
+  details = signal<boolean>(false);
 
   constructor(
     public appState: ApplicationState,
@@ -30,22 +51,11 @@ export class FeedPublicComponent {
     private breakpointObserver: BreakpointObserver,
     private cd: ChangeDetectorRef,
     private ngZone: NgZone
-  ) {
-    console.log('HOME constructor!!'); // Hm.. called twice, why?
-  }
-
-  ngAfterViewInit() {
-    console.log('ngAfterViewInit');
-  }
-
-  ngAfterContentInit() {
-    console.log('ngAfterContentInit');
-  }
+  ) {}
 
   optionsUpdated() {
-    // this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
     // Parse existing content.
-    this.events = this.validator.filterEvents(this.events);
+    this.events.update(events => this.validator.filterEvents(events));
   }
 
   activeOptions() {
@@ -74,92 +84,12 @@ export class FeedPublicComponent {
     return item.id;
   }
 
-  events: NostrEvent[] = [];
-  sub: any;
-  relay?: Relay;
-  initialLoad = true;
-
   async follow(pubkey: string, circle?: number) {
     await this.profile.follow(pubkey, circle);
   }
 
-  // onConnected(relay?: Relay) {
-  //   if (!relay) {
-  //     return;
-  //   }
-
-  //   const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 300; // 5 minutes in seconds
-
-  //   // Get the last 100 items.
-  //   this.sub = relay.sub([{ kinds: [1], limit: 100 }], {});
-
-  //   this.events = [];
-
-  //   this.sub.on('event', (originalEvent: any) => {
-  //     if (this.options.values.paused) {
-  //       return;
-  //     }
-
-  //     const event = this.processEvent(originalEvent);
-
-  //     if (!event) {
-  //       return;
-  //     }
-
-  //     // If not initial load, we'll grab the profile.
-  //     // if (!this.initialLoad) {
-  //     // this.fetchProfiles(relay, [event.pubkey]);
-  //     // }
-
-  //     this.events.unshift(event);
-
-  //     this.ngZone.run(() => {
-  //       this.cd.detectChanges();
-  //     });
-
-  //     if (this.events.length > 100) {
-  //       this.events.length = 80;
-  //     }
-  //   });
-
-  //   this.sub.on('eose', () => {
-  //     this.initialLoad = false;
-
-  //     const pubKeys = this.events.map((e) => {
-  //       return e.pubkey;
-  //     });
-
-  //     // Initial load completed, let's go fetch profiles for those initial events.
-  //     // this.fetchProfiles(relay, pubKeys);
-
-  //     this.cd.detectChanges();
-  //   });
-  // }
-
-  // processEvent(originalEvent: NostrEvent): NostrEvent | null {
-  //   // Validate the event:
-  //   let event = this.validator.validateEvent(originalEvent);
-
-  //   if (!event) {
-  //     debugger;
-  //     console.log('INVALID EVENT!');
-  //     return null;
-  //   }
-
-  //   event = this.validator.sanitizeEvent(event);
-  //   // event = this.validator.filterEvent(event);
-
-  //   if (!event) {
-  //     return null;
-  //   }
-
-  //   return event;
-  // }
-
-  details = false;
-
   toggleDetails() {
-    this.details = !this.details;
+    this.details.update(value => !value);
   }
 
   ngOnDestroy() {
@@ -170,20 +100,16 @@ export class FeedPublicComponent {
     if (this.relay) {
       this.relay.close();
     }
-
-    console.log('PUBLIC FEED DESTROYED!');
   }
 
   feedChanged($event: any, type: string) {
     if (type === 'public') {
-      // If user choose public and set the value to values, we'll turn on the private.
       if (!this.options.values.publicFeed) {
         this.options.values.privateFeed = true;
       } else {
         this.options.values.privateFeed = false;
       }
     } else {
-      // If user choose private and set the value to values, we'll turn on the public.
       if (!this.options.values.privateFeed) {
         this.options.values.publicFeed = true;
       } else {
@@ -191,16 +117,6 @@ export class FeedPublicComponent {
       }
     }
   }
-
-  // async optionsUpdated($event: any, type: any) {
-  //   if (type == 1) {
-  //     this.showCached = false;
-  //   } else {
-  //     this.showBlocked = false;
-  //   }
-
-  //   await this.load();
-  // }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe('(max-width: 599px)').pipe(
     map((result) => result.matches),
@@ -210,16 +126,16 @@ export class FeedPublicComponent {
   async ngOnInit() {
     this.options.values.privateFeed = true;
 
-    // useReactiveContext // New construct in Angular 14 for subscription.
-    // https://medium.com/generic-ui/the-new-way-of-subscribing-in-an-angular-component-f74ef79a8ffc
-
     this.appState.updateTitle('');
 
     if (this.relay) {
       return;
     }
 
-    // const relay = relayInit('wss://relay.nostr.info');
     this.relay = await Relay.connect('wss://nostr-pub.wellorder.net');
   }
+  
+  sub: any;
+  relay?: Relay;
+  initialLoad = true;
 }

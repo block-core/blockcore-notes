@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, signal } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06, Kind, getEventHash, validateEvent, signEvent } from 'nostr-tools';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';
@@ -7,23 +7,42 @@ import { ThemeService } from '../../services/theme';
 import { ProfileService } from '../../services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
     selector: 'app-create',
     templateUrl: './create.html',
     styleUrls: ['../connect.css', './create.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      FormsModule,
+      MatCardModule,
+      MatInputModule,
+      MatButtonModule,
+      MatIconModule,
+      MatStepperModule,
+      RouterModule,
+      MatDividerModule
+    ]
 })
 export class CreateProfileComponent {
-  privateKey: string = '';
-  privateKeyHex: string = '';
-  publicKey: string = '';
-  publicKeyHex: string = '';
-  password: string = '';
-  error: string = '';
-  profile: any = {};
-  step = 1;
-  mnemonic = '';
+  privateKey = signal<string>('');
+  privateKeyHex = signal<string>('');
+  publicKey = signal<string>('');
+  publicKeyHex = signal<string>('');
+  password = signal<string>('');
+  error = signal<string>('');
+  profile = signal<any>({});
+  step = signal<number>(1);
+  mnemonic = signal<string>('');
 
   constructor(
     private utilities: Utilities,
@@ -36,13 +55,14 @@ export class CreateProfileComponent {
   ) {}
 
   ngOnInit() {
-    // this.mnemonic = bip39.generateMnemonic(wordlist);
-    this.mnemonic = nip06.generateSeedWords();
-    this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
-    this.privateKey = nip19.nsecEncode(this.privateKeyHex);
+    const generatedMnemonic = nip06.generateSeedWords();
+    this.mnemonic.set(generatedMnemonic);
+    
+    const generatedPrivateKey = nip06.privateKeyFromSeedWords(generatedMnemonic);
+    this.privateKeyHex.set(generatedPrivateKey);
+    this.privateKey.set(nip19.nsecEncode(generatedPrivateKey));
 
     this.updatePublicKey();
-    // const masterSeed = bip39.mnemonicToSeedSync(this.mnemonic);
   }
 
   async connect() {
@@ -63,85 +83,93 @@ export class CreateProfileComponent {
 
   async persistKey() {
     setTimeout(async () => {
-      if (!this.privateKeyHex) {
-        return;
-      }
-
-      if (!this.publicKeyHex) {
+      const currentPrivateKeyHex = this.privateKeyHex();
+      const currentPublicKeyHex = this.publicKeyHex();
+      const currentPassword = this.password();
+      
+      if (!currentPrivateKeyHex || !currentPublicKeyHex) {
         return;
       }
 
       // First attempt to get public key from the private key to see if it's possible:
-      const encrypted = await this.security.encryptData(this.privateKeyHex, this.password);
-      const decrypted = await this.security.decryptData(encrypted, this.password);
+      const encrypted = await this.security.encryptData(currentPrivateKeyHex, currentPassword);
+      const decrypted = await this.security.decryptData(encrypted, currentPassword);
 
-      if (this.privateKeyHex == decrypted) {
+      if (currentPrivateKeyHex === decrypted) {
         localStorage.setItem('blockcore:notes:nostr:prvkey', encrypted);
-        localStorage.setItem('blockcore:notes:nostr:pubkey', this.publicKeyHex);
+        localStorage.setItem('blockcore:notes:nostr:pubkey', currentPublicKeyHex);
 
-        this.profile.npub = this.publicKey;
-        this.profile.pubkey = this.publicKeyHex;
+        const currentProfile = this.profile();
+        currentProfile.npub = this.publicKey();
+        currentProfile.pubkey = currentPublicKeyHex;
 
         // Create and sign the profile event.
-        const profileContent = this.utilities.reduceProfile(this.profile!);
-        let unsignedEvent = this.dataService.createEventWithPubkey(Kind.Metadata, JSON.stringify(profileContent), this.publicKeyHex);
+        const profileContent = this.utilities.reduceProfile(currentProfile);
+        let unsignedEvent = this.dataService.createEventWithPubkey(Kind.Metadata, JSON.stringify(profileContent), currentPublicKeyHex);
         let signedEvent = unsignedEvent as Event;
         signedEvent.id = await getEventHash(unsignedEvent);
 
         if (!validateEvent(signedEvent)) {
-          this.error = 'Unable to validate the event. Cannot continue.';
+          this.error.set('Unable to validate the event. Cannot continue.');
+          return;
         }
 
-        const signature = signEvent(signedEvent, this.privateKeyHex) as any;
+        const signature = signEvent(signedEvent, currentPrivateKeyHex) as any;
         signedEvent.sig = signature;
 
         // Make sure we reset the secrets.
-        this.mnemonic = '';
-        this.privateKey = '';
-        this.privateKeyHex = '';
-        this.publicKey = '';
-        this.publicKeyHex = '';
-        this.password = '';
-        this.profile = null;
+        this.mnemonic.set('');
+        this.privateKey.set('');
+        this.privateKeyHex.set('');
+        this.publicKey.set('');
+        this.publicKeyHex.set('');
+        this.password.set('');
+        this.profile.set(null);
 
         this.profileService.newProfileEvent = signedEvent;
 
         this.router.navigateByUrl('/');
       } else {
-        this.error = 'Unable to encrypt and decrypt. Cannot continue.';
-        console.error(this.error);
+        this.error.set('Unable to encrypt and decrypt. Cannot continue.');
+        console.error(this.error());
       }
 
-      // this.hidePrivateKey = false;
     }, 10);
   }
 
   updatePublicKey() {
-    this.error = '';
-    this.publicKey = '';
-    this.privateKeyHex = '';
+    this.error.set('');
+    this.publicKey.set('');
+    this.privateKeyHex.set('');
 
-    if (!this.privateKey) {
-      this.publicKey = '';
+    const currentPrivateKey = this.privateKey();
+    
+    if (!currentPrivateKey) {
+      this.publicKey.set('');
       return;
     }
 
-    if (this.privateKey.startsWith('npub')) {
-      this.error = 'The key value must be a "nsec" value. You entered "npub", which is your public key.';
+    if (currentPrivateKey.startsWith('npub')) {
+      this.error.set('The key value must be a "nsec" value. You entered "npub", which is your public key.');
       return;
     }
 
-    if (this.privateKey.startsWith('nsec')) {
-      this.privateKeyHex = nip19.decode(this.privateKey).data as any;
+    let privateKeyHexValue = '';
+    
+    if (currentPrivateKey.startsWith('nsec')) {
+      privateKeyHexValue = nip19.decode(currentPrivateKey).data as any;
     } else {
-      this.privateKeyHex = this.privateKey;
+      privateKeyHexValue = currentPrivateKey;
     }
+
+    this.privateKeyHex.set(privateKeyHexValue);
 
     try {
-      this.publicKeyHex = getPublicKey(this.privateKeyHex);
-      this.publicKey = nip19.npubEncode(this.publicKeyHex);
+      const publicKeyHexValue = getPublicKey(privateKeyHexValue);
+      this.publicKeyHex.set(publicKeyHexValue);
+      this.publicKey.set(nip19.npubEncode(publicKeyHexValue));
     } catch (err: any) {
-      this.error = err.message;
+      this.error.set(err.message);
     }
   }
 }

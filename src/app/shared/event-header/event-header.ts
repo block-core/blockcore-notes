@@ -1,19 +1,37 @@
-import { Component, Input, OnChanges, SimpleChange, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChange } from '@angular/core';
+import { UIService } from '../../services/ui';
+import { QueueService } from '../../services/queue.service';
+import { ProfileService } from '../../services/profile';
+import { CircleService } from '../../services/circle';
+import { Utilities } from '../../services/utilities';
+import { Circle, NostrProfileDocument } from '../../services/interfaces';
 import { Subscription } from 'rxjs';
-import { CircleService } from 'src/app/services/circle';
-import { ProfileService } from 'src/app/services/profile';
-import { QueueService } from 'src/app/services/queue.service';
-import { UIService } from 'src/app/services/ui';
-import { Utilities } from 'src/app/services/utilities';
-import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { RouterModule } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ProfileNameComponent } from '../profile-name/profile-name';
+import { ProfileImageComponent } from '../profile-image/profile-image';
+import { DirectoryIconComponent } from '../directory-icon/directory-icon';
+import { DateComponent } from '../date/date';
 
 @Component({
     selector: 'app-event-header',
     templateUrl: './event-header.html',
     styleUrls: ['./event-header.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatCardModule,
+      RouterModule,
+      MatTooltipModule,
+      ProfileNameComponent,
+      ProfileImageComponent,
+      DirectoryIconComponent,
+      DateComponent
+    ]
 })
-export class EventHeaderComponent implements OnChanges {
+export class EventHeaderComponent implements OnChanges, OnDestroy, OnInit {
   @Input() displayName: boolean = true;
   @Input() displayContent: boolean = true;
   @Input() iconSize: string = 'small';

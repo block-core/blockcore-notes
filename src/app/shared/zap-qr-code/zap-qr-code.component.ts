@@ -1,18 +1,25 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LNURLInvoice, NostrProfileDocument } from 'src/app/services/interfaces';
-import { Utilities } from 'src/app/services/utilities';
-
-export interface InvoiceQrCodeDialogData {
-  invoice: LNURLInvoice,
-  profile: NostrProfileDocument
-}
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { InvoiceQrCodeDialogData, LNURLInvoice, NostrProfileDocument } from '../../services/interfaces';
+import { Utilities } from '../../services/utilities';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { QRCodeModule } from 'angularx-qrcode';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-zap-qr-code',
     templateUrl: './zap-qr-code.component.html',
     styleUrls: ['./zap-qr-code.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatButtonModule,
+      QRCodeModule,
+      MatCardModule,
+      MatIconModule
+    ]
 })
 export class ZapQrCodeComponent implements OnInit {
   invoice: LNURLInvoice = {
@@ -33,8 +40,6 @@ export class ZapQrCodeComponent implements OnInit {
     this.profile = this.data.profile
     this.updateProfileDetails()
   }
-
-
 
   async updateProfileDetails() {
     if (!this.profile) {

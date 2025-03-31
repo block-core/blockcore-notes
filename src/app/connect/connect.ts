@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, NgZone } from '@angular/core';
-import { Component } from '@angular/core';
+import { Component, NgZone, signal, effect } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { AuthenticationService } from '../services/authentication';
 import { RelayService } from '../services/relay';
@@ -9,63 +8,52 @@ import { ThemeService } from '../services/theme';
 import { Utilities } from '../services/utilities';
 import { ConsentDialog } from './consent-dialog/consent-dialog';
 import { SpacesService } from '../services/spaces';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-connect',
     templateUrl: './connect.html',
     styleUrls: ['./connect.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      RouterModule,
+      MatCardModule,
+      MatButtonModule,
+      MatInputModule,
+      MatIconModule,
+      MatCheckboxModule,
+      FormsModule
+    ]
 })
 export class ConnectComponent {
-  extensionDiscovered = false;
-  timeout: any;
-  consent: boolean = false;
-  readOnlyLogin = false;
-
+  extensionDiscovered = signal<boolean>(false);
+  searchingForExtension = signal<boolean>(true);
+  showReadOnly = signal<boolean>(false);
+  readOnlyKey = signal<string>('');
+  publicKey = signal<string | undefined>(undefined);
+  error = signal<string>('');
+  openIndentity = signal<any>(undefined);
+  
   constructor(
-    public spacesService: SpacesService,
-    public theme: ThemeService,
-    private appState: ApplicationState,
-    private cd: ChangeDetectorRef,
+    private spacesService: SpacesService,
+    private dialog: MatDialog,
+    private zone: NgZone,
     private relayService: RelayService,
-    private authService: AuthenticationService,
     private utilities: Utilities,
+    private authService: AuthenticationService,
+    public theme: ThemeService,
     private router: Router,
-    private ngZone: NgZone,
-    public dialog: MatDialog
+    private appState: ApplicationState
   ) {}
 
-  persist() {
-    localStorage.setItem('blockcore:notes:nostr:consent', this.consent.toString());
-  }
-
-  giveConsent() {
-    const dialogRef = this.dialog.open(ConsentDialog, {
-      data: false,
-      maxWidth: '100vw',
-      panelClass: 'full-width-dialog',
-    });
-
-    dialogRef.afterClosed().subscribe(async (result) => {
-      if (!result) {
-        return;
-      }
-
-      if (result === true) {
-        this.consent = true;
-        this.persist();
-      }
-    });
-  }
-
   async connect() {
-    // if (!this.consent) {
-    //   const element = document.getElementById('consent-card');
-    //   // document.body.scroll(0, 5000);
-    //   element!.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
-    //   return;
-    // }
-
     const userInfo = await this.authService.login();
 
     if (userInfo.authenticated()) {
@@ -73,69 +61,48 @@ export class ConnectComponent {
     }
   }
 
-  scroll(value: number) {
-    const element = document.getElementById('container');
-
-    if (!element) {
-      console.log('NOT FOUND!');
-      return;
-    }
-
-    element.scroll(0, value);
-
-    // element.scrollIntoView();
-    // element.scrollIntoView(false);
-    // element.scrollIntoView({ block: 'end' });
-    // element.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
-    // element.scrollBy({top: 500, left: 0, behavior: 'smooth'})
-  }
-
-  async anonymous(readOnlyKey?: string) {
-    const userInfo = await this.authService.anonymous(readOnlyKey);
+  async anonymous() {
+    const userInfo = await this.authService.anonymous(this.readOnlyKey());
 
     if (userInfo.authenticated()) {
       this.router.navigateByUrl('/');
     }
   }
 
+  toggleReadOnly() {
+    this.showReadOnly.update(value => !value);
+  }
+
+  updatePublicKey() {
+    this.error.set('');
+    this.publicKey.set('');
+
+    const currentReadOnlyKey = this.readOnlyKey();
+    
+    if (!currentReadOnlyKey) {
+      this.publicKey.set('');
+      return;
+    }
+
+    if (currentReadOnlyKey.startsWith('nsec')) {
+      this.error.set('The key value must be a "npub" value. You entered "nsec", which is your private key. Never reveal your private key!');
+      return;
+    }
+
+    try {
+      const publicKey = this.utilities.ensureHexIdentifier(currentReadOnlyKey);
+      this.publicKey.set(publicKey);
+    } catch (err: any) {
+      this.error.set(err.message);
+    }
+  }
+
   ngOnInit() {
-    this.consent = localStorage.getItem('blockcore:notes:nostr:consent') === 'true';
-    this.checkForExtension();
+    this.appState.updateTitle('Connect');
+    this.appState.showBackButton = false;
   }
 
-  ngOnDestroy() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-  }
-
-  readOnlyKey = 'npub1sg6plzptd64u62a878hep2kev88swjh3tw00gjsfl8f237lmu63q0uf63m';
-
-  checkedTimes = 0;
-  showInstallLink = false;
-  searchingForExtension = true;
-
-  checkForExtension() {
-    this.checkedTimes++;
-    const gt = globalThis as any;
-
-    if (gt.nostr) {
-      this.searchingForExtension = false;
-      this.extensionDiscovered = true;
-      return;
-    }
-
-    if (this.checkedTimes > 10) {
-      this.searchingForExtension = false;
-      this.showInstallLink = true;
-
-      return;
-    }
-
-    this.timeout = setTimeout(() => {
-      this.ngZone.run(() => {
-        this.checkForExtension();
-      });
-    }, 250);
+  onSubmit() {
+    this.connect();
   }
 }

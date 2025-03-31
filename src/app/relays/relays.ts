@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
-import { Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate';
 import { StorageService } from '../services/storage';
 import { EventService } from '../services/event';
@@ -15,12 +14,34 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from '../services/data';
 import { NostrService } from '../services/nostr';
 import { UploadService } from '../services/upload';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { RelayComponent } from '../shared/relay/relay';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-relays-management',
     templateUrl: './relays.html',
     styleUrls: ['./relays.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatCardModule,
+      MatButtonModule,
+      MatExpansionModule,
+      MatIconModule,
+      RouterModule,
+      MatTabsModule,
+      MatToolbarModule,
+      RelayComponent,
+      MatProgressSpinnerModule
+    ]
 })
 export class RelaysManagementComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;
@@ -63,62 +84,24 @@ export class RelaysManagementComponent {
     this.optionsService.save();
   }
 
-  // async deleteRelay(relay: Relay) {
-  //   await this.relayService.deleteRelay(relay.url);
-  // }
-
   async deleteRelays() {
     await this.relayService.deleteRelays([]);
   }
 
   async clearProfileCache() {
-    // await this.profileService.wipeNonFollow();
     this.wipedNonFollow = true;
   }
 
-  // async onRelayChanged(relay: NostrRelay) {
-  //   if (relay.metadata.enabled && relay.metadata.read) {
-  //     await relay.connect();
-  //   } else if (!relay.metadata.read) {
-  //     await relay.close();
-  //   } else {
-  //     await relay.close();
-  //   }
-
-  //   await this.relayService.putRelayMetadata(relay.metadata);
-  // }
-
   async clearNotesCache() {
-    // await this.feedService.wipe();
     this.wipedNotes = true;
   }
 
   async getDefaultRelays() {
-    // Append the default relays.
     await this.relayService.appendRelays(this.nostr.defaultRelays);
   }
 
-  // private getPublicPublicKeys() {
-  //   console.log(this.profileService.following);
-  //   const items: string[] = [];
-
-  //   for (let i = 0; i < this.circleService.circles.length; i++) {
-  //     const circle = this.circleService.circles[i];
-
-  //     if (circle.public) {
-  //       const profiles = this.getFollowingInCircle(circle.id);
-  //       const pubkeys = profiles.map((p) => p.pubkey);
-  //       items.push(...pubkeys);
-  //     }
-  //   }
-
-  //   return items;
-  // }
-
   async getRelays() {
     const relays = await this.nostr.relays();
-
-    // Append the default relays.
     await this.relayService.appendRelays(relays);
   }
 
@@ -137,7 +120,6 @@ export class RelaysManagementComponent {
   }
 
   registerHandler(protocol: string, parameter: string) {
-    // navigator.registerProtocolHandler(protocol, `./index.html?${parameter}=%s`);
     navigator.registerProtocolHandler(protocol, `/?${parameter}=%s`);
   }
 
@@ -153,7 +135,6 @@ export class RelaysManagementComponent {
         return;
       }
 
-      // Append the Web Socket prefix if missing.
       if (result.url.indexOf('://') === -1) {
         result.url = 'wss://' + result.url;
       }

@@ -7,12 +7,26 @@ import { MediaService } from '../services/media';
 import { OptionsService } from '../services/options';
 import { Utilities } from '../services/utilities';
 import { AddMediaDialog, AddMediaDialogData } from './add-media-dialog/add-media-dialog';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MediaPlayerComponent } from '../shared/media-player/media-player';
 
 @Component({
     selector: 'app-queue',
     templateUrl: './queue.html',
     styleUrls: ['./queue.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatCardModule,
+      MatButtonModule,
+      MatIconModule,
+      MatListModule,
+      MediaPlayerComponent
+    ]
 })
 export class QueueComponent {
   constructor(private contentService: ContentService, public dialog: MatDialog, private appState: ApplicationState, public optionsService: OptionsService, public media: MediaService, public utilities: Utilities) {}

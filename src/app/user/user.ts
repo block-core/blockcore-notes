@@ -22,6 +22,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
+import { ProfileHeaderComponent } from '../components/profile-header/profile-header.component';
+import { ProfileActionsComponent } from '../components/profile-actions/profile-actions.component';
+import { EventComponent } from '../components/event/event.component';
 
 @Component({
     selector: 'app-user',
@@ -34,7 +40,13 @@ import { MatIconModule } from '@angular/material/icon';
         MatTabsModule,
         MatButtonModule,
         MatIconModule,
-        TranslateModule
+        TranslateModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatMenuModule,
+        ProfileHeaderComponent,
+        ProfileActionsComponent,
+        EventComponent
     ]
 })
 export class UserComponent {

@@ -1,17 +1,29 @@
-import { Component, Input } from '@angular/core';
-import { NotesService } from 'src/app/services/notes';
-import { ProfileService } from 'src/app/services/profile';
-import { Utilities } from 'src/app/services/utilities';
-import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../../services/interfaces';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { copyToClipboard } from '../utilities';
+import { ProfileService } from '../../services/profile';
+import { NotesService } from '../../services/notes';
+import { Utilities } from '../../services/utilities';
+import { LabelService } from '../../services/label';
+import { NostrNoteDocument, NostrEventDocument, NostrProfileDocument, NostrProfile } from '../../services/interfaces';
 import { nip19 } from 'nostr-tools';
-import { LabelService } from 'src/app/services/label';
+import { copyToClipboard } from '../utilities';
+import { CommonModule } from '@angular/common';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-event-actions',
     templateUrl: './event-actions.html',
-    standalone: false
+    standalone: true,
+    imports: [
+      CommonModule,
+      MatMenuModule,
+      MatButtonModule,
+      MatIconModule,
+      RouterModule
+    ]
 })
 export class EventActionsComponent {
   @Input() fab: boolean = false;
