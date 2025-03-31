@@ -5,7 +5,8 @@ import { Utilities } from 'src/app/services/utilities';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 export interface InvoiceQrCodeDialogData {
   invoice: LNURLInvoice,
@@ -15,7 +16,7 @@ export interface InvoiceQrCodeDialogData {
 @Component({
   selector: 'app-zap-qr-code',
   standalone: true,
-  imports: [MatTooltipModule, MatButtonModule, MatIconModule, AsyncPipe],
+  imports: [CommonModule, MatTooltipModule, MatButtonModule, MatIconModule, AsyncPipe, QRCodeComponent],
   templateUrl: './zap-qr-code.component.html',
   styleUrls: ['./zap-qr-code.component.scss']
 })

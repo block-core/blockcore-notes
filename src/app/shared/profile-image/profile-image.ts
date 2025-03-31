@@ -1,10 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile';
 import { NostrProfile } from '../../services/interfaces';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-profile-image',
   templateUrl: './profile-image.html',
+  imports: [MatTooltipModule],
 })
 export class ProfileImageComponent {
   @Input() publicKey: string = '';
