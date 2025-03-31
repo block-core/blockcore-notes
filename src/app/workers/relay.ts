@@ -1,4 +1,4 @@
-import { Event, Filter, Kind, relayInit } from 'nostr-tools';
+import { Event, Filter, kinds, Relay } from 'nostr-tools';
 import { NostrRelay, NostrRelaySubscription, NostrSub, QueryJob } from '../services/interfaces';
 import { RelayResponse } from '../services/messages';
 import { Queue } from '../services/queue';
@@ -18,7 +18,7 @@ export class RelayWorker {
   }
 
   async publish(event: Event) {
-    if (event.kind == Kind.Article || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
+    if (event.kind == kinds.Article || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
       // If we don't have metadata from the relay, don't publish articles.
       if (!this.relay.nip11) {
         console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article/Badge will not be published here.`);
@@ -221,7 +221,8 @@ export class RelayWorker {
   /** Provide event to publish and terminate immediately. */
   async connect(event?: any) {
     // const relay = relayInit('wss://relay.nostr.info');
-    const relay = relayInit(this.url) as NostrRelay;
+    // const relay = relayInit(this.url) as NostrRelay;
+    const relay = Relay.connect(this.url);
     // relay.subscriptions = [];
 
     this.relay = relay;

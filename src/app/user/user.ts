@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone, signal, inject } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities, now } from '../services/utilities';
 import { relayInit, Relay } from 'nostr-tools';
@@ -10,6 +10,7 @@ import { OptionsService } from '../services/options';
 import { NavigationService } from '../services/navigation';
 import { CircleService } from '../services/circle';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { map, Observable, of, Subscription, tap, BehaviorSubject, finalize } from 'rxjs';
 import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
@@ -17,12 +18,24 @@ import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
 import { StorageService } from '../services/storage';
 import { MetricService } from '../services/metric-service';
+import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-user',
     templateUrl: './user.html',
     styleUrls: ['./user.css'],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatTabsModule,
+        MatButtonModule,
+        MatIconModule,
+        TranslateModule
+    ]
 })
 export class UserComponent {
   // pubkey?: string | null;
