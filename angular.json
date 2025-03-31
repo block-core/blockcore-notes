@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "allowedCommonJsDependencies": ["sanitize-html", "moment", "browser-level", "qrcode", "qs", "photoswipe", "photoswipe/dist/photoswipe-ui-default", "@scure/bip39", "@scure/bip39/wordlists/english.js"],
+            "allowedCommonJsDependencies": ["sanitize-html", "browser-level", "qrcode", "qs", "photoswipe", "photoswipe/dist/photoswipe-ui-default", "@scure/bip39", "@scure/bip39/wordlists/english.js"],
             "outputPath": {
               "base": "dist"
             },

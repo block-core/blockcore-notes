@@ -692,14 +692,12 @@ export class DataService {
   async cleanProfiles() {
     // const profileTable = this.storage.table<NostrProfileDocument>('profile');
     // const iterator = profileTable.iterator<string, NostrProfileDocument>({ keyEncoding: 'utf8', valueEncoding: 'json' });
-    // const now = moment();
     // for await (const [key, value] of iterator) {
     //   // Skip all profiles that the user is following, blocked or muted.
     //   if (value.follow || value.block || value.mute) {
     //     continue;
     //   }
     //   const lastChanged = value.modified || value.created;
-    //   const date = moment.unix(lastChanged).add(-2, 'days');
     //   var days = now.diff(date, 'days');
     //   if (days > this.daysToKeepProfiles) {
     //     console.log('Profile removed from cache: ', value);

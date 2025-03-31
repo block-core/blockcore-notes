@@ -3,7 +3,6 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities, now } from '../services/utilities';
 import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
