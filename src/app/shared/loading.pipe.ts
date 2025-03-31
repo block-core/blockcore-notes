@@ -12,7 +12,7 @@ const defaultError = 'Whopsidaisy, something unexpected happened.';
 
 @Pipe({
     name: 'withStatus',
-    standalone: false
+    standalone: true
 })
 export class WithStatusPipe implements PipeTransform {
   transform<T = any>(val: Observable<T>): Observable<WithStatusResult<T>> {

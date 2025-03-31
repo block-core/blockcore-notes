@@ -39,12 +39,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AgoPipe } from './shared/ago.pipe';
 import { SettingsComponent } from './settings/settings';
 import { ProfileComponent } from './profile/profile';
 import { ProfileImageComponent } from './shared/profile-image/profile-image';
 import { ProfileNameComponent } from './shared/profile-name/profile-name';
-import { Bech32Pipe } from './shared/bech32.pipe';
 import { DirectoryIconComponent } from './shared/directory-icon/directory-icon';
 import { AppUpdateService } from './services/app-update';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -63,7 +61,6 @@ import { FeedPublicComponent } from './feed-public/feed-public';
 import { NotesComponent } from './notes/notes';
 import { NgxColorsModule } from 'ngx-colors';
 import { NoteComponent } from './note/note';
-import { CircleStylePipe } from './shared/circle-style';
 import { ReplyListComponent } from './shared/reply-list/reply-list';
 import { ContentComponent } from './shared/content/content';
 import { InfiniteScrollDirective } from './shared/scroll.directive';
@@ -75,7 +72,6 @@ import { EventActionsComponent } from './shared/event-actions/event-actions';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ChatComponent } from './chat/chat';
 import { FeedComponent } from './feed/feed';
-import { WithStatusPipe } from './shared/loading.pipe';
 import { EventThreadComponent } from './shared/event-thread/event-thread';
 import { EventReactionsComponent } from './shared/event-reactions/event-reactions';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
@@ -101,7 +97,6 @@ import { MediaPlayerComponent } from './shared/media-player/media-player';
 import { DateComponent } from './shared/date/date';
 import { ContentPodcastComponent } from './shared/content-podcast/content-podcast';
 import { MatSliderModule } from '@angular/material/slider';
-import { TimePipe } from './shared/time.pipe';
 import { QueueComponent } from './queue/queue';
 import { MessagesComponent } from './messages/messages';
 import { MessageComponent } from './message/message';
@@ -117,12 +112,10 @@ import { AddRelayDialog } from './shared/add-relay-dialog/add-relay-dialog';
 import { AddMediaDialog } from './queue/add-media-dialog/add-media-dialog';
 import { ConnectKeyComponent } from './connect/key/key';
 import { PasswordDialog } from './shared/password-dialog/password-dialog';
-import { UsernamePipe } from './shared/username';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { EditorComponent } from './editor/editor';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ArticleComponent } from './article/article';
-import { LabelPipe } from './shared/label.pipe';
 import { LabelComponent } from './shared/label/label';
 import { RelaysManagementComponent } from './relays/relays';
 import { BadgesComponent } from './badges/badges';
@@ -155,168 +148,181 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DragScrollModule } from 'ngx-drag-scroll';
 import { ZappersListDialogComponent } from './shared/zappers-list-dialog/zappers-list-dialog.component';
 import { ExampleComponent } from './example/example';
-@NgModule({ declarations: [
-        AppComponent,
-        ProfileImageComponent,
-        DirectoryIconComponent,
-        ProfileNameComponent,
-        ProfileComponent,
-        ConnectComponent,
-        LogoutComponent,
-        HomeComponent,
-        AgoPipe,
-        Bech32Pipe,
-        CircleStylePipe,
-        WithStatusPipe,
-        FollowDialog,
-        SettingsComponent,
-        UserComponent,
-        NoteDialog,
-        CircleDialog,
-        CirclesComponent,
-        PeopleComponent,
-        EventHeaderComponent,
-        ProfileActionsComponent,
-        FeedPrivateComponent,
-        FeedPublicComponent,
-        NotesComponent,
-        NoteComponent,
-        ReplyListComponent,
-        ContentComponent,
-        InfiniteScrollDirective,
-        ImportFollowDialog,
-        ProfileHeaderComponent,
-        AddRelayDialog,
-        ProfileImageDialog,
-        EventActionsComponent,
-        ChatComponent,
-        FeedComponent,
-        EventThreadComponent,
-        EventReactionsComponent,
-        ContentPhotosComponent,
-        FollowingComponent,
-        FollowersComponent,
-        ProfileWidgetComponent,
-        EventButtonsComponent,
-        UserItemComponent,
-        UserProfileComponent,
-        UserListComponent,
-        ChatDetailComponent,
-        ChatItemComponent,
-        ChatListComponent,
-        MessageBubbleComponent,
-        StatusComponent,
-        ContentMusicComponent,
-        MediaPlayerComponent,
-        DateComponent,
-        ContentPodcastComponent,
-        TimePipe,
-        QueueComponent,
-        MessagesComponent,
-        MessageComponent,
-        DevelopmentComponent,
-        RelayComponent,
-        RelaysComponent,
-        LabelsComponent,
-        EventComponent,
-        NotificationsComponent,
-        NotificationLabelComponent,
-        RelayListComponent,
-        AddMediaDialog,
-        ConnectKeyComponent,
-        PasswordDialog,
-        UsernamePipe,
-        EditorComponent,
-        ArticleComponent,
-        LabelComponent,
-        LabelPipe,
-        RelaysManagementComponent,
-        BadgesComponent,
-        LoginComponent,
-        ConsentDialog,
-        CreateProfileComponent,
-        QrScanDialog,
-        ContentEditorDirective,
-        ContentInputHeightDirective,
-        ZapQrCodeComponent,
-        ZapDialogComponent,
-        EditorBadgesComponent,
-        BadgeCardComponent,
-        TagsComponent,
-        BadgeComponent,
-        ZappersListDialogComponent,
-        ExampleComponent
-    ],
-    exports: [],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
-        LoggerModule.forRoot({ level: NgxLoggerLevel.INFO, enableSourceMaps: true, serverLogLevel: NgxLoggerLevel.OFF }, // Don't send logs anywhere!
-        {
-            writerProvider: {
-                provide: TOKEN_LOGGER_WRITER_SERVICE,
-                useClass: LogWriterService,
-            },
-        }),
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatCheckboxModule,
-        MatInputModule,
-        MatButtonModule,
-        MatSelectModule,
-        MatRadioModule,
-        MatCardModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatIconModule,
-        MatListModule,
-        MatGridListModule,
-        MatMenuModule,
-        MatTreeModule,
-        MatBadgeModule,
-        MatTabsModule,
-        MatTooltipModule,
-        MtxTooltipModule,
-        MatExpansionModule,
-        MatTableModule,
-        MatStepperModule,
-        MatProgressSpinnerModule,
-        MatChipsModule,
-        MatPaginatorModule,
-        MatSlideToggleModule,
-        MatAutocompleteModule,
-        MentionModule,
-        PickerModule,
-        FormsModule,
-        ReactiveFormsModule,
-        LayoutModule,
-        MatBottomSheetModule,
-        NgxLoadingButtonsModule,
-        MatSliderModule,
-        MatSnackBarModule,
-        MatProgressBarModule,
-        MatDialogModule,
-        MatDatepickerModule,
-        MatButtonToggleModule,
-        ScrollingModule,
-        PhotoGalleryModule,
-        ClipboardModule,
-        NgxMatDatetimePickerModule,
-        NgxMatNativeDateModule,
-        NgxMatTimepickerModule,
-        NgxColorsModule,
-        QRCodeModule,
-        DragScrollModule,
-        ServiceWorkerModule.register('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            // enabled: true,
-            // Register the ServiceWorker as soon as the application is stable
-            // or after 30 seconds (whichever comes first).
-            registrationStrategy: 'registerWhenStable:30000',
-        })], providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } }, AuthGuardService, AppUpdateService, CheckForUpdateService, ChatService, UserService, provideHttpClient(withInterceptorsFromDi())] })
-export class AppModule {}
+import { AgoPipe } from './shared/ago.pipe';
+import { Bech32Pipe } from './shared/bech32.pipe';
+import { WithStatusPipe } from './shared/loading.pipe';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    ProfileImageComponent,
+    DirectoryIconComponent,
+    ProfileNameComponent,
+    ProfileComponent,
+    ConnectComponent,
+    LogoutComponent,
+    HomeComponent,
+    FollowDialog,
+    SettingsComponent,
+    UserComponent,
+    NoteDialog,
+    CircleDialog,
+    CirclesComponent,
+    PeopleComponent,
+    EventHeaderComponent,
+    ProfileActionsComponent,
+    FeedPrivateComponent,
+    FeedPublicComponent,
+    NotesComponent,
+    NoteComponent,
+    ReplyListComponent,
+    ContentComponent,
+    InfiniteScrollDirective,
+    ImportFollowDialog,
+    ProfileHeaderComponent,
+    AddRelayDialog,
+    ProfileImageDialog,
+    EventActionsComponent,
+    ChatComponent,
+    FeedComponent,
+    EventThreadComponent,
+    EventReactionsComponent,
+    ContentPhotosComponent,
+    FollowingComponent,
+    FollowersComponent,
+    ProfileWidgetComponent,
+    EventButtonsComponent,
+    UserItemComponent,
+    UserProfileComponent,
+    UserListComponent,
+    ChatDetailComponent,
+    ChatItemComponent,
+    ChatListComponent,
+    MessageBubbleComponent,
+    StatusComponent,
+    ContentMusicComponent,
+    MediaPlayerComponent,
+    DateComponent,
+    ContentPodcastComponent,
+    QueueComponent,
+    MessagesComponent,
+    MessageComponent,
+    DevelopmentComponent,
+    RelayComponent,
+    RelaysComponent,
+    LabelsComponent,
+    EventComponent,
+    NotificationsComponent,
+    NotificationLabelComponent,
+    RelayListComponent,
+    AddMediaDialog,
+    ConnectKeyComponent,
+    PasswordDialog,
+    EditorComponent,
+    ArticleComponent,
+    LabelComponent,
+    RelaysManagementComponent,
+    BadgesComponent,
+    LoginComponent,
+    ConsentDialog,
+    CreateProfileComponent,
+    QrScanDialog,
+    ContentEditorDirective,
+    ContentInputHeightDirective,
+    ZapQrCodeComponent,
+    ZapDialogComponent,
+    EditorBadgesComponent,
+    BadgeCardComponent,
+    TagsComponent,
+    BadgeComponent,
+    ZappersListDialogComponent,
+    ExampleComponent
+  ],
+  imports: [
+    BrowserModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    }),
+    LoggerModule.forRoot({ level: NgxLoggerLevel.INFO, enableSourceMaps: true, serverLogLevel: NgxLoggerLevel.OFF }, // Don't send logs anywhere!
+    {
+      writerProvider: {
+        provide: TOKEN_LOGGER_WRITER_SERVICE,
+        useClass: LogWriterService,
+      },
+    }),
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatRadioModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule,
+    MatGridListModule,
+    MatMenuModule,
+    MatTreeModule,
+    MatBadgeModule,
+    MatTabsModule,
+    MatTooltipModule,
+    MtxTooltipModule,
+    MatExpansionModule,
+    MatTableModule,
+    MatStepperModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    MatPaginatorModule,
+    MatSlideToggleModule,
+    MatAutocompleteModule,
+    MentionModule,
+    PickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LayoutModule,
+    MatBottomSheetModule,
+    NgxLoadingButtonsModule,
+    MatSliderModule,
+    MatSnackBarModule,
+    MatProgressBarModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    MatButtonToggleModule,
+    ScrollingModule,
+    PhotoGalleryModule,
+    ClipboardModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule,
+    NgxColorsModule,
+    QRCodeModule,
+    DragScrollModule,
+    AgoPipe,
+    Bech32Pipe,
+    WithStatusPipe,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // enabled: true,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000',
+    })
+  ],
+  providers: [
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+    AuthGuardService,
+    AppUpdateService,
+    CheckForUpdateService,
+    ChatService,
+    UserService,
+    provideHttpClient(withInterceptorsFromDi())
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

@@ -4,7 +4,7 @@ import { Utilities } from '../services/utilities';
 
 @Pipe({
     name: 'bech32',
-    standalone: false
+    standalone: true
 })
 export class Bech32Pipe implements PipeTransform {
   constructor(private utilities: Utilities) {}
