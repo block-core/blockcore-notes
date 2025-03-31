@@ -90,7 +90,7 @@ export class RelayService {
         this.unsubscribe(this.profileEventSubscription);
 
         // Then create a new subscription:
-        const kindsList = this.options.values.enableReactions ? [kinds.ShortTextNote, kinds.Reaction, 6] : [Kind.Text, 6];
+        const kindsList = this.options.values.enableReactions ? [kinds.ShortTextNote, kinds.Reaction, 6] : [kinds.ShortTextNote, 6];
 
         if (this.options.values.enableZapping) {
           kindsList.push(kinds.Zap);

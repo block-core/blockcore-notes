@@ -4,7 +4,7 @@ import { NavigationService } from '../services/navigation';
 import { Location, CommonModule } from '@angular/common';
 import { ApplicationState } from '../services/applicationstate';
 import { BlogEvent, NostrEvent } from '../services/interfaces';
-import { Event, Kind } from 'nostr-tools';
+import { Event, kinds } from 'nostr-tools';
 import { Subscription } from 'rxjs';
 import { now, Utilities } from '../services/utilities';
 import { QueueService } from '../services/queue.service';
@@ -109,7 +109,7 @@ export class EditorComponent {
       this.event = {
         contentCut: false,
         tagsCut: false,
-        kind: Kind.Text,
+        kind: kinds.ShortTextNote,
         content: content ? content : '',
         tags: [],
         created_at: now(),

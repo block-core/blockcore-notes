@@ -1,4 +1,4 @@
-import { Event, Filter, Kind, relayInit } from 'nostr-tools';
+import { Event, Filter, kinds } from 'nostr-tools';
 import { NostrRelay, NostrRelaySubscription, NostrSub, QueryJob } from '../services/interfaces';
 import { RelayResponse } from '../services/messages';
 import { Queue } from '../services/queue';
@@ -18,7 +18,7 @@ export class RelayWorker {
   }
 
   async publish(event: Event) {
-    if (event.kind == Kind.Article || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
+    if (event.kind == kinds.LongFormArticle || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
       // If we don't have metadata from the relay, don't publish articles.
       if (!this.relay.nip11) {
         console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article/Badge will not be published here.`);
@@ -31,17 +31,24 @@ export class RelayWorker {
       }
     }
 
-    let pub = this.relay.publish(event);
-    pub.on('ok', () => {
-      console.log(`${this.relay.url} has accepted our event`);
-    });
+    try {
+      let pub = await this.relay.publish(event);
+      console.log(`we saw the event on ${this.relay.url}`);
+    } catch (err) {
+      console.log(`failed to publish to ${this.relay.url}: ${err}`);
+      postMessage({ type: 'failure', data: err, url: this.relay.url } as RelayResponse);
+    }
+
+    // pub.on('ok', () => {
+    //   console.log(`${this.relay.url} has accepted our event`);
+    // });
     // pub.on('seen', () => {
     //   console.log(`we saw the event on ${this.relay.url}`);
     // });
-    pub.on('failed', (reason: any) => {
-      console.log(`failed to publish to ${this.relay.url}: ${reason}`);
-      postMessage({ type: 'failure', data: reason, url: this.relay.url } as RelayResponse);
-    });
+    // pub.on('failed', (reason: any) => {
+    //   console.log(`failed to publish to ${this.relay.url}: ${reason}`);
+    //   postMessage({ type: 'failure', data: reason, url: this.relay.url } as RelayResponse);
+    // });
   }
 
   /** Enques a job to be processed against connected relays. */
@@ -485,7 +492,7 @@ export class RelayWorker {
     //   return;
     // }
 
-    const filter = { kinds: [Kind.Article], authors: ids };
+    const filter = { kinds: [kinds.LongFormArticle], authors: ids };
     const sub = this.relay.sub([filter]) as NostrSub;
     this.articleSub = sub;
 
@@ -642,9 +649,9 @@ export class RelayWorker {
     //   return;
     // }
 
-    const kinds = [Kind.Text];
+    const kindsList = [kinds.ShortTextNote];
 
-    const sub = this.relay.sub([{ kinds: kinds, ids: ids }]) as NostrSub;
+    const sub = this.relay.sub([{ kinds: kindsList, ids: ids }]) as NostrSub;
     this.eventSub = sub;
 
     sub.on('event', (originalEvent: any) => {
@@ -679,7 +686,7 @@ export class RelayWorker {
   }
 
   subscribe(filters: Filter[], id: string) {
-    if (!this.relay || this.relay.status != 1) {
+    if (!this.relay || !this.relay.connected) {
       // If we don't have a connection yet, schedule the subscription to be added later.
       this.queue.queues.subscriptions.jobs.push({ id: id, filters: filters, type: 'Event', events: [] });
       console.warn('This relay does not have active connection and subscription cannot be created at this time. Subscription has been scheduled for adding later.');

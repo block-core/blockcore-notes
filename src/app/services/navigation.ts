@@ -5,7 +5,7 @@ import { tap, delay, timer, takeUntil, timeout, Observable, of, BehaviorSubject,
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from '../shared/create-note-dialog/create-note-dialog';
 import { ApplicationState } from './applicationstate';
-import { Event, Kind } from 'nostr-tools';
+import { Event, kinds } from 'nostr-tools';
 import { DataService } from './data';
 import { EventService } from './event';
 
@@ -92,7 +92,7 @@ export class NavigationService {
       note = JSON.stringify(note);
     }
 
-    let event = this.dataService.createEvent(Kind.Text, note);
+    let event = this.dataService.createEvent(kinds.ShortTextNote, note);
 
     // Parse hashtags:
     event.tags = this.eventService.parseContentReturnTags(event.content);
@@ -115,7 +115,7 @@ export class NavigationService {
       note = JSON.stringify(note);
     }
 
-    let event = this.dataService.createEvent(Kind.Article, note);
+    let event = this.dataService.createEvent(kinds.LongFormArticle, note);
 
     if (blog.slug) {
       event.tags.push(['d', blog.slug]);
