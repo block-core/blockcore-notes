@@ -10,7 +10,7 @@ import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument, TokenKeyword } from '../../services/interfaces';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 import { nip19 } from 'nostr-tools';
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -37,7 +37,8 @@ interface MediaItem {
     MatTooltipModule,
     ReplyListComponent,
     MatChipsModule,
-    RouterModule
+    RouterModule,
+    CommonModule
   ]
 })
 export class ContentComponent {
