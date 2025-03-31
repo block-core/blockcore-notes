@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Event, getEventHash, Kind, UnsignedEvent, validateEvent, verifySignature } from 'nostr-tools';
+import { Event, getEventHash, kinds, UnsignedEvent, validateEvent, verifyEvent } from 'nostr-tools';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { RelayService } from 'src/app/services/relay';
 import { EventService } from 'src/app/services/event';
@@ -169,7 +169,7 @@ export class ZapDialogComponent implements OnInit {
   items: NostrRelayDocument[] = [];
 
   async createZapEvent(targetPubKey: string, note?: any, msg?: string) {
-    let zapEvent = this.dataService.createEvent(Kind.ZapRequest, '');
+    let zapEvent = this.dataService.createEvent(kinds.ZapRequest, '');
 
     zapEvent.content = msg ? msg : '';
     Object.assign([], zapEvent.tags);
@@ -214,7 +214,7 @@ export class ZapDialogComponent implements OnInit {
       throw new Error('The event is not valid. Cannot publish.');
     }
 
-    let veryOk = await verifySignature(event as any);
+    let veryOk = await verifyEvent(event as any);
 
     if (!veryOk) {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
