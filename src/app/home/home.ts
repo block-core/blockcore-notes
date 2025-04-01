@@ -45,7 +45,7 @@ interface DefaultProfile {
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
-  imports: [DragScrollDirective, DragScrollComponent, MatButtonModule, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
+  imports: [DragScrollDirective, MatButtonModule, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
 })
 export class HomeComponent {
   publicKey?: string | null;
