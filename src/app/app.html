@@ -12,16 +12,20 @@
   </div>
 
   <mat-toolbar class="app-toolbar">
-    <button *ngIf="!appState.showSearch && (isHandset$ | async) === true" type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+    @if(!appState.showSearch && (isHandset$ | async) === true) {
+    <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
+    }
     <span></span>
 
     <img class="logo-icon" *ngIf="appState.showLogo && !appState.showSearch && (isHandset$ | async) === false" height="38" width="38" src="assets/icons/icon-128x128.webp" />
 
-    <button *ngIf="!appState.showSearch && appState.showBackButton" mat-icon-button (click)="goBack()">
+    @if (!appState.showSearch && appState.showBackButton) {
+    <button mat-icon-button (click)="goBack()">
       <mat-icon class="arrow-back">arrow_back</mat-icon>
     </button>
+    }
 
     <div *ngIf="!appState.showSearch" class="top-spacer">{{ appState.title$ | async }}</div>
 

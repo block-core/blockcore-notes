@@ -20,7 +20,7 @@
             "allowedCommonJsDependencies": ["sanitize-html", "moment", "browser-level", "qrcode", "qs", "photoswipe", "photoswipe/dist/photoswipe-ui-default", "@scure/bip39", "@scure/bip39/wordlists/english.js"],
             "outputPath": "dist",
             "index": "src/index.html",
-            "polyfills": ["zone.js", "src/polyfills.ts"],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
