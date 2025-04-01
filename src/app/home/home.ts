@@ -30,6 +30,7 @@ import { CommonModule } from '@angular/common';
 import { AgoPipe } from '../shared/ago.pipe';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 import { MatButtonModule } from '@angular/material/button';
+import { DragScrollDirective } from '../shared/directives/drag-scroll.directive';
 
 interface DefaultProfile {
   pubkey: string;
@@ -44,7 +45,7 @@ interface DefaultProfile {
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
-  imports: [DragScrollComponent, MatButtonModule, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
+  imports: [DragScrollDirective, DragScrollComponent, MatButtonModule, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
 })
 export class HomeComponent {
   publicKey?: string | null;

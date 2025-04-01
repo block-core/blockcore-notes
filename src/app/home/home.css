@@ -96,7 +96,7 @@
   max-width: 1100px;
   align-self: center;
   /* flex-direction: row; */
-  
+
 }
 
 .home-left {
@@ -204,4 +204,128 @@ drag-scroll {
   width: 100%;
   display: flex;
   align-items: center;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  touch-action: pan-x;
+}
+
+drag-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.horizontal-scroll-container {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  padding: 8px 0;
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: pan-x;
+  cursor: grab;
+  height: 90px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.horizontal-scroll-container.active {
+  cursor: grabbing;
+  will-change: scroll-position;
+}
+
+.horizontal-scroll-container app-event-header {
+  flex: 0 0 auto;
+  margin-right: 6px;
+  transform: scale(1);
+  transition: transform 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+/* Prevent profile image dragging */
+.horizontal-scroll-container img,
+.horizontal-scroll-container app-event-header img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none !important;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.horizontal-scroll-container app-event-header:hover {
+  transform: scale(1);
+}
+
+.profile-line-more-button {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  width: 64px;
+  margin-left: 4px;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+}
+
+@supports (-webkit-overflow-scrolling: touch) {
+  .horizontal-scroll-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.horizontal-scroll-container > * {
+  height: 64px;
+}
+
+.profile-line-more-button {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  width: 64px;
+  margin-left: 4px;
+}
+
+.profile-line-more-button mat-icon {
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 64px !important;
+  height: 64px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.profile-line-more-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  margin-left: 4px;
+  pointer-events: auto;
+}
+
+.profile-line-more-button {
+  margin: 0;
+  padding: 0;
+  height: 64px;
+  width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
 }

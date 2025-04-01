@@ -2,14 +2,23 @@
   <!-- <button mat-flat-button class="wipe-button" (click)="db.clearAndReload()">Issues? Wipe Local Database</button> -->
 
   <div class="profile-line">
-    <drag-scroll [scrollbar-hidden]="true">
+    <div class="horizontal-scroll-container" appDragScroll>
       @for (profile of profiles; track profile) {
-        <app-event-header [listType]="'icon'" [iconSize]="'thumbnail'" [displayName]="false" [displayContent]="false" [profile]="profile"></app-event-header>
+        <app-event-header
+          [listType]="'icon'"
+          [iconSize]="'thumbnail'"
+          [displayName]="false"
+          [displayContent]="false"
+          [profile]="profile"
+          draggable="false">
+        </app-event-header>
       }
-      <button mat-icon-button routerLink="/people" class="profile-line-more-button">
-        <mat-icon>more_horiz</mat-icon>
-      </button>
-    </drag-scroll>
+      <div class="profile-line-more-wrapper">
+        <button mat-icon-button routerLink="/people" class="profile-line-more-button">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+      </div>
+    </div>
 
     <div class="home-right">
       <br /><br />
@@ -168,7 +177,7 @@
           <p>{{ 'Home.PrototypeTitle' | translate }}</p>
           <p>{{ 'Home.PrototypeSubtitle' | translate }}</p>
           <p>
-            <a href="https://geyser.fund/project/blockcore" target="_blank">geyser.fund/blockcore</a>
+            <a href="https://geyser.fund/project/blockcore" target="_blank" rel="noopener">geyser.fund/blockcore</a>
           </p>
         </mat-card-content>
       </mat-card>
