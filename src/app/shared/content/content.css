@@ -17,10 +17,6 @@ img {
 
 .event-images {
   text-align: left;
-
-  touch-action: pan-y pinch-zoom;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 .event-video {
