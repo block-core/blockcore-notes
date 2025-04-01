@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { BadgeService } from '../services/badge';
 import { QueueService } from '../services/queue.service';
@@ -18,11 +18,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { BadgeCardComponent } from '../shared/badge-card/badge-card';
 import { ProfileNameComponent } from '../shared/profile-name/profile-name';
 import { DateComponent } from '../shared/date/date';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-badges',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatTabsModule, MatExpansionModule, TranslateModule, EventHeaderComponent, MatIconModule, BadgeCardComponent, ProfileNameComponent, DateComponent],
+  imports: [CommonModule, MatButtonModule, RouterModule, MatSnackBarModule, MatTabsModule, MatExpansionModule, TranslateModule, EventHeaderComponent, MatIconModule, BadgeCardComponent, ProfileNameComponent, DateComponent],
   templateUrl: 'badges.html',
   styleUrls: ['badges.css'],
 })

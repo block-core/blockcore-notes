@@ -28,6 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-settings',
@@ -35,7 +36,7 @@ import { MatInputModule } from '@angular/material/input';
   styleUrls: ['./settings.css'],
   imports: [
     ClipboardModule,
-    MatTabsModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatSelectModule, TranslateModule, CommonModule]
+    MatTabsModule, MatIconModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatSelectModule, TranslateModule, CommonModule]
 })
 export class SettingsComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, NgZone } from '@angular/core';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { AuthenticationService } from '../services/authentication';
 import { RelayService } from '../services/relay';
@@ -24,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatIconModule,
     MatProgressSpinnerModule,
     MatCardModule,
+    RouterModule,
     MatButtonModule,
     CommonModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './connect.html',

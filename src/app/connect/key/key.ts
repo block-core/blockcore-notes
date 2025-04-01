@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { base64 } from '@scure/base';
 import { Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
 import { privateKeyFromSeedWords, generateSeedWords } from 'nostr-tools/nip06';
@@ -15,13 +15,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-key',
   templateUrl: './key.html',
   styleUrls: ['../connect.css', './key.css'],
-  imports: [CommonModule, MatIconModule, MatCardModule, TranslateModule, MatFormFieldModule, MatInputModule, FormsModule],
+  imports: [CommonModule, MatButtonModule, RouterModule, MatIconModule, MatCardModule, TranslateModule, MatFormFieldModule, MatInputModule, FormsModule],
 })
 export class ConnectKeyComponent {
   privateKey: string = '';

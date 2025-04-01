@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { base64 } from '@scure/base';
 import { Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
 import { AuthenticationService } from '../../services/authentication';
@@ -12,12 +12,13 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['../connect.css', './login.css'],
-  imports: [MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule],
+  imports: [MatIconModule, MatCardModule, MatButtonModule, RouterModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule],
 })
 export class LoginComponent {
   privateKey: string = '';

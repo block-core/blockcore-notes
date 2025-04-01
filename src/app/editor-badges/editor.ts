@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TagsComponent } from '../shared/tags/tags';
 import { BadgeCardComponent } from '../shared/badge-card/badge-card';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 export interface NoteDialogData {
   note: string;
@@ -30,7 +31,7 @@ export interface NoteDialogData {
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonToggleModule, TagsComponent, BadgeCardComponent, MatSelectModule, MatSnackBarModule, ReactiveFormsModule],
+  imports: [CommonModule, MatFormFieldModule, MatButtonModule, MatInputModule, FormsModule, MatButtonToggleModule, TagsComponent, BadgeCardComponent, MatSelectModule, MatSnackBarModule, ReactiveFormsModule],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
 })

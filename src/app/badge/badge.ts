@@ -18,11 +18,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-badge',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatBadgeModule, BadgeCardComponent, DateComponent, ProfileNameComponent, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule],
+  imports: [CommonModule, MatButtonModule, MatSnackBarModule, MatBadgeModule, BadgeCardComponent, DateComponent, ProfileNameComponent, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule],
   templateUrl: 'badge.html',
   styleUrls: ['badge.css'],
 })

@@ -10,12 +10,13 @@ import { AddMediaDialog, AddMediaDialogData } from './add-media-dialog/add-media
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-queue',
   templateUrl: './queue.html',
   styleUrls: ['./queue.css'],
-  imports: [CommonModule, MatListModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatListModule, MatIconModule],
 })
 export class QueueComponent {
   constructor(private contentService: ContentService, public dialog: MatDialog, private appState: ApplicationState, public optionsService: OptionsService, public media: MediaService, public utilities: Utilities) {}
