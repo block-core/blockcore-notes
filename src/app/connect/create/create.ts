@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { finalizeEvent, Relay, Event, utils, getPublicKey, nip19, kinds, getEventHash, validateEvent } from 'nostr-tools';
 import { privateKeyFromSeedWords, generateSeedWords } from 'nostr-tools/nip06';
 import { AuthenticationService } from '../../services/authentication';
@@ -26,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
     ClipboardModule,
     CommonModule,
     MatButtonModule,
+    RouterModule,
     MatCardModule, FormsModule, MatInputModule, TranslateModule]
 })
 export class CreateProfileComponent {
@@ -56,8 +57,6 @@ export class CreateProfileComponent {
     const privateKey = privateKeyFromSeedWords(this.mnemonic);
     const secretKeyHex = bytesToHex(privateKey);
     this.privateKeyHex = secretKeyHex;
-    debugger;
-    // TODO: Verify if this work.
     this.privateKey = nip19.nsecEncode(hexToBytes(this.privateKeyHex));
 
     this.updatePublicKey();

@@ -49,7 +49,8 @@
         </p>
 
         <div class="connect-action">
-          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">{{ 'Create.Continue' | translate }}</button>
+          <button class="start-button" [routerLink]="['../']" mat-button>{{ 'Create.Back' | translate }}</button>
+          <button class="start-button" (click)="step = 2" mat-flat-button color="primary">{{ 'Create.Continue' | translate }}</button>
         </div>
       </mat-card-content>
     </mat-card>
@@ -71,8 +72,8 @@
         <p>{{ 'Create.SecretRecoveryPhraseWarning' | translate }}</p>
 
         <div class="connect-action">
-          <button class="start-button" (click)="step = 1" mat-raised-button color="primary">{{ 'Create.Back' | translate }}</button>
-          <button class="start-button" (click)="step = 3" mat-raised-button color="primary">{{ 'Create.Continue' | translate }}</button>
+          <button class="start-button" (click)="step = 1" mat-button>{{ 'Create.Back' | translate }}</button>
+          <button class="start-button" (click)="step = 3" mat-flat-button>{{ 'Create.Continue' | translate }}</button>
         </div>
       </mat-card-content>
     </mat-card>
@@ -109,8 +110,8 @@
         <p class="dimmed">From your secret recovery phrase, your public key and private key are derived. Some Nostr clients require the private key to be imported.</p>
 
         <div class="connect-action">
-          <button class="start-button" (click)="step = 2" mat-raised-button color="primary">{{ 'Create.Back' | translate }}</button>
-          <button class="start-button" (click)="persistKey()" mat-raised-button color="primary">{{ 'Create.SaveAndLogIn' | translate }}</button>
+          <button class="start-button" (click)="step = 2" mat-button>{{ 'Create.Back' | translate }}</button>
+          <button class="start-button" (click)="persistKey()" mat-flat-button>{{ 'Create.SaveAndLogIn' | translate }}</button>
         </div>
       </mat-card-content>
     </mat-card>
