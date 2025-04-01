@@ -1,5 +1,5 @@
-import { Event, Filter, kinds } from 'nostr-tools';
-import { NostrRelay, NostrRelaySubscription, NostrSub, QueryJob } from '../services/interfaces';
+import { Event, Filter, kinds, Relay } from 'nostr-tools';
+import { NostrRelay, NostrRelaySubscription, NostrSubscription, QueryJob } from '../services/interfaces';
 import { RelayResponse } from '../services/messages';
 import { Queue } from '../services/queue';
 
@@ -228,44 +228,56 @@ export class RelayWorker {
   /** Provide event to publish and terminate immediately. */
   async connect(event?: any) {
     // const relay = relayInit('wss://relay.nostr.info');
-    const relay = relayInit(this.url) as NostrRelay;
+    try {
+    const relay = await Relay.connect(this.url) as NostrRelay;
     // relay.subscriptions = [];
-
     this.relay = relay;
 
-    relay.on('connect', async () => {
-      console.log(`${this.url}: Connected.`);
-      postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
+    // If the async connect call works, we are connected.
+    console.log(`${this.url}: Connected.`);
+    postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
 
-      // If there was an event provided, publish it and then disconnect.
-      if (event) {
-        await this.publish(event);
-        this.disconnect();
-        postMessage({ type: 'terminated', url: this.url } as RelayResponse);
-      } else {
-        // Make sure we set the relay as well before processing.
-        // this.relay = relay;
+    // If there was an event provided, publish it and then disconnect.
+    if (event) {
+      await this.publish(event);
+      this.disconnect();
+      postMessage({ type: 'terminated', url: this.url } as RelayResponse);
+    } else {
+      // Make sure we set the relay as well before processing.
+      // this.relay = relay;
 
-        // Upon connection, make sure we process anything that is in the queue immediately:
-        this.process();
-        // onConnected(relay);
-        //this.onConnected(relay);
-      }
-    });
+      // Upon connection, make sure we process anything that is in the queue immediately:
+      this.process();
+      // onConnected(relay);
+      //this.onConnected(relay);
+  }
 
-    relay.on('disconnect', () => {
-      console.log(`${this.url}: DISCONNECTED!`);
-      this.subscriptions = [];
-      postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
-    });
+  this.relay.onclose = () => {
+    console.log(`${this.url}: DISCONNECTED!`);
+    this.subscriptions = [];
+    postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
+  }
 
-    relay.on('notice', (msg: any) => {
-      console.log(`${this.url}: NOTICE: ${msg}`);
-      postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
-    });
+  this.relay.onnotice = (msg: any) => {
+    console.log(`${this.url}: NOTICE: ${msg}`);
+    postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
+  }
 
-    try {
-      await relay.connect();
+    // relay.on('connect', async () => {
+      
+    // });
+
+    // relay.on('disconnect', () => {
+
+    // });
+
+    // relay.on('notice', (msg: any) => {
+    //   console.log(`${this.url}: NOTICE: ${msg}`);
+    //   postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
+    // });
+
+  
+      // await relay.connect();
     } catch (err) {
       postMessage({ type: 'error', relay: this.url, error: 'Unable to connect.' });
       console.error('Unable to connect.');
@@ -273,8 +285,8 @@ export class RelayWorker {
   }
 
   disconnect() {
-    if (this.relay.status == 1) {
-      console.log(`${this.url}: relay.status: ${this.relay.status}, calling close!`);
+    if (this.relay.connected) {
+      console.log(`${this.url}: relay.status: ${this.relay.connected}, calling close!`);
       this.relay.close();
     }
   }
@@ -307,19 +319,19 @@ export class RelayWorker {
   //   }
   // }
 
-  profileSub?: NostrSub;
+  profileSub?: NostrSubscription;
   profileTimer?: any;
 
-  contactsSub?: NostrSub;
+  contactsSub?: NostrSubscription;
   contactsTimer?: any;
 
-  eventSub?: NostrSub;
+  eventSub?: NostrSubscription;
   eventTimer?: any;
 
-  articleSub?: NostrSub;
+  articleSub?: NostrSubscription;
   articleTimer?: any;
 
-  badgeDefinitionSub?: NostrSub;
+  badgeDefinitionSub?: NostrSubscription;
   badgeDefinitionTimer?: any;
 
   clearProfileSub() {
@@ -370,7 +382,7 @@ export class RelayWorker {
     //   return;
     // }
 
-    const sub = this.relay.sub([{ kinds: [0], authors: pubkeys }]) as NostrSub;
+    const sub = this.relay.subscribe([{ kinds: [0], authors: pubkeys }]) as NostrSubscription;
     this.profileSub = sub;
     // sub.id = id;
     // console.log('SUBSCRIPTION:', sub);
