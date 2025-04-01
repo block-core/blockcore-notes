@@ -1,5 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 import { EventService } from 'src/app/services/event';
 import { NostrEventDocument } from 'src/app/services/interfaces';
 
@@ -13,6 +16,7 @@ export interface ImportFollowDialogData {
   selector: 'import-follow-dialog',
   templateUrl: 'import-follow-dialog.html',
   styleUrls: ['import-follow-dialog.scss'],
+  imports: [MatDialogModule, MatButtonModule, FormsModule, MatInputModule],
 })
 export class ImportFollowDialog {
   constructor(private eventService: EventService, public dialogRef: MatDialogRef<ImportFollowDialogData>, @Inject(MAT_DIALOG_DATA) public data: ImportFollowDialogData) {}

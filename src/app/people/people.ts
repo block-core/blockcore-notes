@@ -29,12 +29,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 import { AgoPipe } from '../shared/ago.pipe';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-people',
   templateUrl: './people.html',
   styleUrls: ['./people.css'],
-  imports: [MatExpansionModule, TranslateModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatCardModule, CommonModule, EventHeaderComponent, ProfileActionsComponent, MatProgressSpinnerModule, DirectoryIconComponent, AgoPipe],
+  imports: [MatExpansionModule, MatButtonModule, MatIconModule, TranslateModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatCardModule, CommonModule, EventHeaderComponent, ProfileActionsComponent, MatProgressSpinnerModule, DirectoryIconComponent, AgoPipe],
 })
 export class PeopleComponent {
   publicKey?: string | null;
