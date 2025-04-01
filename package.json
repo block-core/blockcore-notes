@@ -26,7 +26,7 @@
     "@angular/platform-browser-dynamic": "19.2.4",
     "@angular/router": "19.2.4",
     "@angular/service-worker": "19.2.4",
-    "@blockcore/ngx-logger": "^0.0.2",
+    "@blockcore/ngx-logger": "^0.0.3",
     "@ctrl/ngx-emoji-mart": "^9.2.0",
     "@ng-matero/extensions": "^19.3.0",
     "@ngx-translate/core": "^16.0.4",
