@@ -78,7 +78,7 @@ export class FeedComponent {
 
   ngOnDestroy() {
     if (this.sub) {
-      this.sub.unsub();
+      this.sub.close();
     }
   }
 

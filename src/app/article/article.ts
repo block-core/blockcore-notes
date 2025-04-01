@@ -203,7 +203,7 @@ export class ArticleComponent {
 
   ngOnDestroy() {
     if (this.sub) {
-      this.sub.unsub();
+      this.sub.close();
     }
 
     this.ui.clear();

@@ -302,7 +302,7 @@ export class RelayWorker {
     this.subscriptions.splice(index, 1);
 
     // Unsub from the relay.
-    sub.sub?.unsub();
+    sub.sub?.close();
     console.log('Unsubscribed: ', id);
   }
 

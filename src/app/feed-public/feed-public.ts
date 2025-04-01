@@ -178,7 +178,7 @@ export class FeedPublicComponent {
 
   ngOnDestroy() {
     if (this.sub) {
-      this.sub.unsub();
+      this.sub.close();
     }
 
     if (this.relay) {

@@ -9,12 +9,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-media-player',
   templateUrl: './media-player.html',
   styleUrls: ['./media-player.css'],
-  imports: [TimePipe, MatIconModule, CommonModule, MatSliderModule, FormsModule],
+  imports: [TimePipe, MatButtonModule, MatIconModule, CommonModule, MatSliderModule, FormsModule],
 })
 export class MediaPlayerComponent {
   @Input() miniplayer = false;
