@@ -1,4 +1,5 @@
 import { Event, Filter, Relay } from 'nostr-tools';
+import { Subscription } from 'nostr-tools/abstract-relay';
 
 export interface Circle {
   id?: number;
@@ -233,7 +234,7 @@ export interface NostrProfile {
   website: string;
 }
 
-export interface NostrSubscription {
+export interface NostrSubscription extends Subscription {
   loading: boolean;
   timeout: any;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { kinds } from 'nostr-tools';
+import { kinds, Event } from 'nostr-tools';
 import { DataValidation } from './data-validation';
 import { NostrEvent, NostrEventDocument } from './interfaces';
 
@@ -9,7 +9,7 @@ import { NostrEvent, NostrEventDocument } from './interfaces';
 export class EventService {
   constructor(private validator: DataValidation) {}
 
-  processEvent(originalEvent: NostrEvent): NostrEvent | null {
+  processEvent(originalEvent: Event): NostrEvent | null {
     let event;
 
     if (!originalEvent) {
@@ -23,10 +23,10 @@ export class EventService {
 
     if (originalEvent.kind == kinds.Contacts) {
       // Validate the contacts:
-      event = this.validator.validateContacts(originalEvent);
+      event = this.validator.validateContacts(originalEvent as NostrEvent);
     } else {
       // Validate the event:
-      event = this.validator.validateEvent(originalEvent);
+      event = this.validator.validateEvent(originalEvent as NostrEvent);
     }
 
     if (!event) {

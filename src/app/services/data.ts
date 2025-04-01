@@ -581,27 +581,44 @@ export class DataService {
 
   downloadFromRelay(filters: Filter[], relay: NostrRelay, requestTimeout = 10000): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
-      const sub = relay.sub([...filters], {}) as NostrSubscription;
+      const sub = relay.subscribe([...filters], {
+
+        onevent: (event: Event) => {
+          const parsedEvent = this.eventService.processEvent(event);
+
+          if (!parsedEvent) {
+            return;
+          }
+  
+          observer.next(parsedEvent);
+        },
+
+        oneose: () => {
+          observer.complete();
+        },
+
+
+        onclose(reason) {
+          
+          // sub.unsub();
+        },
+
+
+      }) as NostrSubscription;
       // relay.subscriptions.push(sub);
 
-      sub.on('event', (originalEvent: any) => {
-        const event = this.eventService.processEvent(originalEvent);
+      // sub.on('event', (originalEvent: any) => {
+ 
+      // });
 
-        if (!event) {
-          return;
-        }
-
-        observer.next(event);
-      });
-
-      sub.on('eose', () => {
-        observer.complete();
-      });
+      // sub.on('eose', () => {
+       
+      // });
 
       return () => {
         // console.log('downloadFromRelay:finished:unsub');
         // When the observable is finished, this return function is called.
-        sub.unsub();
+        // sub.unsub();
       };
     }).pipe(
       timeout(requestTimeout),
@@ -622,71 +639,83 @@ export class DataService {
       this.isFetching = false;
 
       try {
-        profileSub.unsub();
+        profileSub.close();
+        // profileSub.unsub();
       } catch (err) {
         console.warn('Error during automatic failover for profile fetch.', err);
       }
     }, 30000);
 
     this.isFetching = true;
-    let profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
+    let profileSub = relay.subscribe([{ kinds: [0], authors: authors }], {
 
-    profileSub.on('event', async (event: Event) => {
-      const originalEvent = event as NostrEvent;
-      const prossedEvent = this.eventService.processEvent(originalEvent);
+      oneose: () => {
+        // profileSub.unsub();
+        this.isFetching = false;
+      },
 
-      if (!prossedEvent) {
-        return;
+      onevent: (event: Event) => {
+        const originalEvent = event as NostrEvent;
+        const prossedEvent = this.eventService.processEvent(originalEvent);
+  
+        if (!prossedEvent) {
+          return;
+        }
+  
+        try {
+          const jsonParsed = JSON.parse(prossedEvent.content) as NostrProfileDocument;
+          const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
+  
+          // Keep a copy of the created_at value.
+          profile.created_at = prossedEvent.created_at;
+  
+          // Persist the profile.
+          // await this.profileService.updateProfile(prossedEvent.pubkey, profile);
+  
+          // TODO: Add NIP-05 and nostr.directory verification.
+          // const displayName = encodeURIComponent(profile.name);
+          // const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
+  
+          // const rawResponse = await fetch(url, {
+          //   method: 'GET',
+          //   mode: 'cors',
+          // });
+  
+          // if (rawResponse.status === 200) {
+          //   const content = await rawResponse.json();
+          //   const directoryPublicKey = content.names[displayName];
+  
+          //   if (event.pubkey === directoryPublicKey) {
+          //     if (!profile.verifications) {
+          //       profile.verifications = [];
+          //     }
+  
+          //     profile.verifications.push('@nostr.directory');
+  
+          //     // Update the profile with verification data.
+          //     await this.profile.putProfile(event.pubkey, profile);
+          //   } else {
+          //     // profile.verified = false;
+          //     console.warn('Nickname reuse:', url);
+          //   }
+          // } else {
+          //   // profile.verified = false;
+          // }
+        } catch (err) {
+          console.warn('This profile event was not parsed due to errors:', prossedEvent);
+        }
       }
 
-      try {
-        const jsonParsed = JSON.parse(prossedEvent.content) as NostrProfileDocument;
-        const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
 
-        // Keep a copy of the created_at value.
-        profile.created_at = prossedEvent.created_at;
-
-        // Persist the profile.
-        // await this.profileService.updateProfile(prossedEvent.pubkey, profile);
-
-        // TODO: Add NIP-05 and nostr.directory verification.
-        // const displayName = encodeURIComponent(profile.name);
-        // const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
-
-        // const rawResponse = await fetch(url, {
-        //   method: 'GET',
-        //   mode: 'cors',
-        // });
-
-        // if (rawResponse.status === 200) {
-        //   const content = await rawResponse.json();
-        //   const directoryPublicKey = content.names[displayName];
-
-        //   if (event.pubkey === directoryPublicKey) {
-        //     if (!profile.verifications) {
-        //       profile.verifications = [];
-        //     }
-
-        //     profile.verifications.push('@nostr.directory');
-
-        //     // Update the profile with verification data.
-        //     await this.profile.putProfile(event.pubkey, profile);
-        //   } else {
-        //     // profile.verified = false;
-        //     console.warn('Nickname reuse:', url);
-        //   }
-        // } else {
-        //   // profile.verified = false;
-        // }
-      } catch (err) {
-        console.warn('This profile event was not parsed due to errors:', prossedEvent);
-      }
     });
 
-    profileSub.on('eose', () => {
-      profileSub.unsub();
-      this.isFetching = false;
-    });
+    // profileSub.on('event', async (event: Event) => {
+      
+    // });
+
+    // profileSub.on('eose', () => {
+     
+    // });
   }
 
   async cleanProfiles() {
@@ -846,16 +875,26 @@ export class DataService {
     for (let i = 0; i < this.relayService.relays.length; i++) {
       const relay = this.relayService.relays[i];
 
-      let pub = relay.publish(event);
-      pub.on('ok', () => {
+      let pub = await relay.publish(event);
+
+      console.log('Publish result: ', pub);
+
+      if (pub == 'ok') {
         console.log(`${relay.url} has accepted our event`);
-      });
+      }
+
+      if (pub == 'failed') {
+        console.log(`failed to publish to ${relay.url}: ${pub}`);
+      }
+
+      // pub.on('ok', () => {
+      // });
       // pub.on('seen', () => {
       //   console.log(`we saw the event on ${relay.url}`);
       // });
-      pub.on('failed', (reason: any) => {
-        console.log(`failed to publish to ${relay.url}: ${reason}`);
-      });
+      // pub.on('failed', (reason: any) => {
+      //   console.log(`failed to publish to ${relay.url}: ${reason}`);
+      // });
     }
   }
 }
