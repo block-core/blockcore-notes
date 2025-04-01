@@ -13,12 +13,13 @@ import { LabelComponent } from '../shared/label/label';
 import { TranslateModule } from '@ngx-translate/core';
 import { AgoPipe } from '../shared/ago.pipe';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-notes',
   templateUrl: 'notes.html',
   styleUrls: ['notes.css'],
-  imports: [LabelsComponent, CommonModule, EventHeaderComponent, EventActionsComponent, MatCardModule, ContentComponent, LabelComponent, TranslateModule, AgoPipe],
+  imports: [LabelsComponent, MatButtonModule, CommonModule, EventHeaderComponent, EventActionsComponent, MatCardModule, ContentComponent, LabelComponent, TranslateModule, AgoPipe],
 })
 export class NotesComponent {
   details = false;

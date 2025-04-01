@@ -17,12 +17,13 @@ import { NostrService } from '../services/nostr';
 import { UploadService } from '../services/upload';
 import { TranslateModule } from '@ngx-translate/core';
 import { RelaysComponent } from '../shared/relays/relays';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-relays-management',
   templateUrl: './relays.html',
   styleUrls: ['./relays.css'],
-  imports: [MatExpansionModule, TranslateModule, RelaysComponent],
+  imports: [MatExpansionModule, MatButtonModule, TranslateModule, RelaysComponent],
 })
 export class RelaysManagementComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;

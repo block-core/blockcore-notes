@@ -8,12 +8,14 @@ import { ProfileService } from 'src/app/services/profile';
 import { MatDialog } from '@angular/material/dialog';
 import { ZappersListDialogComponent } from '../zappers-list-dialog/zappers-list-dialog.component';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-event-reactions',
   templateUrl: './event-reactions.html',
   styleUrls: ['./event-reactions.css'],
-  imports: [CommonModule],
+  imports: [CommonModule, MatButtonModule, MatTooltipModule],
 })
 export class EventReactionsComponent {
   // @Input() threadEntry?: ThreadEntry | undefined;

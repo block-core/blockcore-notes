@@ -37,8 +37,6 @@ export class ZapService {
 
     try {
       const decodedBolt11 = decode(bolt11);
-      debugger;
-      // TODO: Find out of .value is gone? Does the code work?
       const amount: any = decodedBolt11.sections.find((s: any) => s.name === 'amount');
       const hash: any = decodedBolt11.sections.find((s: any) => s.name === 'description_hash');
       

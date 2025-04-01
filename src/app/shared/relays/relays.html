@@ -1,5 +1,5 @@
 <mat-accordion multi>
-    <ng-template ngFor let-relay [ngForOf]="relays" [ngForTrackBy]="trackByFn">
+    @for (relay of relays; track trackByFn($index, relay)) {
         <app-relay [relay]="relay"></app-relay>
-    </ng-template>
+    }
 </mat-accordion>

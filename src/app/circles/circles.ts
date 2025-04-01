@@ -23,6 +23,7 @@ import { CircleStylePipe } from '../shared/circle-style';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { AgoPipe } from '../shared/ago.pipe';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-circles',
@@ -31,6 +32,7 @@ import { AgoPipe } from '../shared/ago.pipe';
     TranslateModule,
     MatCardModule,
     CircleStylePipe,
+    MatButtonModule,
     AgoPipe,
     MatMenuModule,
     MatIconModule,

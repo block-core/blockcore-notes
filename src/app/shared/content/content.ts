@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { ReplyListComponent } from '../reply-list/reply-list';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatButtonModule } from '@angular/material/button';
 
 interface MediaItem {
   url: SafeResourceUrl;
@@ -26,7 +27,7 @@ interface MediaItem {
   selector: 'app-content',
   templateUrl: './content.html',
   styleUrls: ['./content.css'],
-  imports: [ReplyListComponent, MatChipsModule, RouterModule, CommonModule, MatTooltipModule, MatIconModule],
+  imports: [ReplyListComponent, MatButtonModule, MatTooltipModule, MatChipsModule, RouterModule, CommonModule, MatTooltipModule, MatIconModule],
 })
 export class ContentComponent {
   // @Input() event?: NostrEventDocument;
