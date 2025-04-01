@@ -15,6 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-connect',
@@ -23,6 +24,7 @@ import { MatCardModule } from '@angular/material/card';
     MatIconModule,
     MatProgressSpinnerModule,
     MatCardModule,
+    MatButtonModule,
     CommonModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './connect.html',
   styleUrls: ['./connect.css'],

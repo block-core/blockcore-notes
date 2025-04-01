@@ -18,6 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-event-buttons',
@@ -25,7 +26,7 @@ import { MatInputModule } from '@angular/material/input';
   styleUrls: ['./event-buttons.css'],
   imports: [MatIconModule,
     NgxLoadingButtonsModule ,
-    CommonModule, PickerComponent, MatFormFieldModule, MatInputModule, FormsModule],
+    CommonModule, MatButtonModule, PickerComponent, MatFormFieldModule, MatInputModule, FormsModule],
 })
 export class EventButtonsComponent {
   @Input() event?: NostrEventDocument;
