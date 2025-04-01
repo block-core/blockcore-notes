@@ -37,9 +37,10 @@ export class ZapService {
 
     try {
       const decodedBolt11 = decode(bolt11);
-
-      const amount = decodedBolt11.sections.find((s: any) => s.name === 'amount')?.value;
-      const hash = decodedBolt11.sections.find((s: any) => s.name === 'description_hash')?.value;
+      debugger;
+      // TODO: Find out of .value is gone? Does the code work?
+      const amount = decodedBolt11.sections.find((s: any) => s.name === 'amount');
+      const hash = decodedBolt11.sections.find((s: any) => s.name === 'description_hash');
       return { amount, hash };
     } catch (error) {
       console.error('Invalid zap: Could not decode bolt11', event);

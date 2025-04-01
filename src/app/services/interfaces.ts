@@ -1,4 +1,4 @@
-import { Event, Filter, Relay, Sub } from 'nostr-tools';
+import { Event, Filter, Relay } from 'nostr-tools';
 
 export interface Circle {
   id?: number;
@@ -77,7 +77,7 @@ export interface NostrRelay extends Relay {
 export interface NostrRelaySubscription {
   id: string;
   // subid: string;
-  sub?: NostrSub;
+  sub?: any;
   filters: Filter[];
   events: Event[];
   // events: Map<string, Event>;
@@ -133,9 +133,9 @@ export interface NostrBadgeDefinition extends NostrEvent {
   hashtags: string[];
 }
 
-export interface NostrSub extends Sub {
-  // id: string;
-}
+// export interface NostrSub extends Sub {
+//   // id: string;
+// }
 
 export interface LoadMoreOptions {
   until?: number;
@@ -233,7 +233,7 @@ export interface NostrProfile {
   website: string;
 }
 
-export interface NostrSubscription extends Sub {
+export interface NostrSubscription {
   loading: boolean;
   timeout: any;
 }

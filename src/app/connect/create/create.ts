@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { finalizeEvent, Relay, Event, utils, getPublicKey, nip19, kinds, getEventHash, validateEvent, signEvent } from 'nostr-tools';
+import { finalizeEvent, Relay, Event, utils, getPublicKey, nip19, kinds, getEventHash, validateEvent } from 'nostr-tools';
 import { privateKeyFromSeedWords, generateSeedWords } from 'nostr-tools/nip06';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';

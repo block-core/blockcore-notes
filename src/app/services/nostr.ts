@@ -6,6 +6,7 @@ import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/pa
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from './interfaces';
 import { SecurityService } from './security';
 import { StorageService } from './storage';
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -77,7 +78,7 @@ export class NostrService {
             reject('Invalid Nostr event.');
           }
 
-          const signature = signEvent(event, prvkey) as any;
+          const signature = finalizeEvent(event, hexToBytes(prvkey)) as any;
           event.sig = signature;
 
           resolve(event);
