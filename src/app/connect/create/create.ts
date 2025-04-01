@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-create',
@@ -24,6 +25,7 @@ import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
   imports: [MatIconModule, 
     ClipboardModule,
     CommonModule,
+    MatButtonModule,
     MatCardModule, FormsModule, MatInputModule, TranslateModule]
 })
 export class CreateProfileComponent {
