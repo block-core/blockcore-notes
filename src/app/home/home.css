@@ -249,10 +249,11 @@ drag-scroll::-webkit-scrollbar {
   -webkit-user-select: none;
   -webkit-user-drag: none;
   user-drag: none;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  pointer-events: all;
 }
 
-/* Prevent profile image dragging */
 .horizontal-scroll-container img,
 .horizontal-scroll-container app-event-header img {
   -webkit-user-drag: none;
@@ -260,6 +261,7 @@ drag-scroll::-webkit-scrollbar {
   pointer-events: none !important;
   -webkit-user-select: none;
   user-select: none;
+  touch-action: none;
 }
 
 .horizontal-scroll-container app-event-header:hover {
@@ -317,6 +319,7 @@ drag-scroll::-webkit-scrollbar {
   height: 64px;
   margin-left: 4px;
   pointer-events: auto;
+  pointer-events: all;
 }
 
 .profile-line-more-button {
@@ -328,4 +331,5 @@ drag-scroll::-webkit-scrollbar {
   align-items: center;
   justify-content: center;
   pointer-events: auto;
+  pointer-events: all;
 }

@@ -10,7 +10,9 @@
           [displayName]="false"
           [displayContent]="false"
           [profile]="profile"
-          draggable="false">
+          [routerLink]="['/p', profile.pubkey]"
+          draggable="false"
+          ondragstart="return false;">
         </app-event-header>
       }
       <div class="profile-line-more-wrapper">
