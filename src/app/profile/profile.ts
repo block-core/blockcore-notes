@@ -20,12 +20,13 @@ import { AgoPipe } from '../shared/ago.pipe';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-profile',
   templateUrl: 'profile.html',
   styleUrls: ['profile.css'],
-  imports: [ProfileHeaderComponent, MatButtonModule, CommonModule, MatCardModule, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule, AgoPipe],
+  imports: [ProfileHeaderComponent, MatIconModule, MatButtonModule, CommonModule, MatCardModule, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule, AgoPipe],
 })
 export class ProfileComponent {
   pubkey?: string;

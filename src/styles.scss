@@ -15,6 +15,8 @@ html {
   @include mat.theme((
     color: (
       theme-type: light,
+      // primary: mat.$azure-palette,
+      // tertiary: mat.$blue-palette,
       primary: notes-theme.$primary-palette,
       tertiary: notes-theme.$tertiary-palette,
     ),
@@ -35,6 +37,8 @@ html {
     color: (
       theme-type: dark,
       primary: notes-theme.$primary-palette,
+      // primary: mat.$azure-palette,
+      // tertiary: mat.$blue-palette,
     )
   ));
   
@@ -132,7 +136,7 @@ body {
   scroll-behavior: smooth;
 }
 body {
-  font-size: 16px;
+  font-size: 18px;
   // background-color: mat.$background-color;
   // overflow: hidden;
   overscroll-behavior-y: contain;
@@ -320,12 +324,12 @@ h3 {
 
 a {
   // color: rgb(206, 206, 206);
-  color: #c7b3ea !important;
+  // color: #c7b3ea !important;
   text-decoration: none;
 }
 
 a:hover {
-  color: #9c27b0 !important;
+  // color: #9c27b0 !important;
   transition: text-decoration 250ms ease;
   transition: color 250ms ease;
 }
@@ -811,30 +815,30 @@ select {
 
 .dimmed {
   font-size: 0.9em;
-  color: rgba(0, 0, 0, 0.65);
+  // color: rgba(0, 0, 0, 0.65);
 }
 
 .dark .dimmed {
   font-size: 0.9em;
-  color: rgba(255, 255, 255, 0.65);
+  // color: rgba(255, 255, 255, 0.65);
 }
 
 small {
   font-size: 0.85em;
-  color: rgba(0, 0, 0, 0.65);
+  // color: rgba(0, 0, 0, 0.65);
 }
 
 .dark small {
   font-size: 0.85em;
-  color: rgba(255, 255, 255, 0.65);
+  // color: rgba(255, 255, 255, 0.65);
 }
 
 .content-item-label {
-  color: rgba(0, 0, 0, 0.65);
+  // color: rgba(0, 0, 0, 0.65);
 }
 
 .dark .content-item-label {
-  color: rgba(255, 255, 255, 0.65);
+  // color: rgba(255, 255, 255, 0.65);
 }
 
 .space {
@@ -1072,9 +1076,9 @@ textarea.noscrollbars {
 }
 
 .card-background {
-  background-color: rgba(0, 0, 0, 0.05) !important;
+  // background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 .dark .card-background {
-  background-color: rgba(0, 0, 0, 0.25) !important;
+  // background-color: rgba(0, 0, 0, 0.25) !important;
 }
