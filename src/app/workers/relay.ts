@@ -15,7 +15,7 @@ export class RelayWorker {
 
   queue: Queue;
 
-  logger = inject(LoggerService);
+  logger = console;
 
   constructor(public url: string) {
     this.queue = new Queue();
