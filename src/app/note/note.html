@@ -16,7 +16,7 @@
   </div>
 
   <mat-card *ngIf="event.rootEventId" class="button-card">
-    <button mat-flat-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon>{{ 'Note.ViewThread' | translate }}</button>
+    <button mat-stroked-button (click)="open(event.rootEventId)"><mat-icon>keyboard_double_arrow_up</mat-icon>{{ 'Note.ViewThread' | translate }}</button>
   </mat-card>
 
   <div class="parent-event" *ngIf="ui.parentEvent$ | async as parentEvent">
@@ -25,7 +25,7 @@
 
   <div class="current-event events2 noclick" [ngClass]="{'is-root': !event.parentEventId, 'has-root': event.parentEventId, 'no-lines': !optionsService.values.showLines, 'lines': optionsService.values.showLines }">
     <mat-card *ngIf="event.parentEventId" class="button-card">
-      <button mat-flat-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon>{{ 'Note.ViewParent' | translate }}</button>
+      <button mat-stroked-button (click)="open(event.parentEventId)"><mat-icon>keyboard_arrow_up</mat-icon>{{ 'Note.ViewParent' | translate }}</button>
     </mat-card>
 
     <div class="events-header">

@@ -26,12 +26,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 import { ContentComponent } from '../shared/content/content';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-note',
   templateUrl: './note.html',
   styleUrls: ['./note.css'],
-  imports: [CommonModule, TranslateModule, MatIconModule, EventHeaderComponent, EventActionsComponent, EventReactionsComponent, EventButtonsComponent, EventThreadComponent, DateComponent, MatDividerModule, FormsModule, DirectoryIconComponent, ContentComponent, MatExpansionModule, MatSlideToggleModule, MatCardModule, EventComponent],
+  imports: [CommonModule, TranslateModule, MatButtonModule, MatIconModule, EventHeaderComponent, EventActionsComponent, EventReactionsComponent, EventButtonsComponent, EventThreadComponent, DateComponent, MatDividerModule, FormsModule, DirectoryIconComponent, ContentComponent, MatExpansionModule, MatSlideToggleModule, MatCardModule, EventComponent],
 })
 export class NoteComponent {
   // id?: string | null;

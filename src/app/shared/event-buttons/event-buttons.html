@@ -23,7 +23,7 @@
       <emoji-mart class="picker" *ngIf="isEmojiPickerTextVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmojiInText($event)" title="Choose your emoji"></emoji-mart>
       <div class="reply-widget-middle"></div>
       <small class="error" *ngIf="error">{{ error }}</small>
-      <button mat-stroked-button (click)="hideReply()" color="primary">Cancel</button>
+      <button mat-button (click)="hideReply()" color="primary">Cancel</button>
       <button *ngIf="publishing" [mtBasicSpinner]="true" mat-icon-button></button>
       <button *ngIf="!publishing" mat-flat-button [disabled]="note?.length == 0" (click)="addReply()" color="primary">Reply</button>
 
