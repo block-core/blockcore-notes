@@ -68,7 +68,7 @@
           </mat-form-field>
 
           <br />
-          <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-raised-button>{{ 'Key.Connect' | translate }}</button><br /><br />
+          <button [disabled]="!publicKey" class="start-button" (click)="persistKey()" mat-flat-button>{{ 'Key.Connect' | translate }}</button><br /><br />
         </form>
 
         <p *ngIf="!error" class="public-key dimmed"><strong>{{ 'Key.PublicKeyHex' | translate }}</strong>: {{ publicKeyHex }}</p>
