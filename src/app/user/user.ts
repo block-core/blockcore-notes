@@ -31,6 +31,7 @@ import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon'
 import { AgoPipe } from '../shared/ago.pipe';
 import { CommonModule } from '@angular/common';
 import { WithStatusPipe } from '../shared/loading.pipe';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-user',
@@ -47,6 +48,7 @@ import { WithStatusPipe } from '../shared/loading.pipe';
     EventActionsComponent,
     ContentComponent,
     TranslateModule,
+    MatButtonModule,
     DirectoryIconComponent,
     MatTabsModule, ProfileHeaderComponent, ContentMusicComponent, ContentPodcastComponent],
   // changeDetection: ChangeDetectionStrategy.OnPush,
