@@ -18,9 +18,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "allowedCommonJsDependencies": ["sanitize-html", "moment", "browser-level", "qrcode", "qs", "photoswipe", "photoswipe/dist/photoswipe-ui-default", "@scure/bip39", "@scure/bip39/wordlists/english.js"],
-            "outputPath": {
-              "base": "dist"
-            },
+            "outputPath": "dist",
             "index": "src/index.html",
             "polyfills": ["zone.js", "src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",

@@ -1,6 +1,6 @@
 {
   "name": "@blockcore/notes",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +9,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "version": "node -p \"require('./package.json').version\"",
+    "get-version": "node -p \"require('./package.json').version\"",
     "changelog": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "private": true,
