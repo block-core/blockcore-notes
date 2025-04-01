@@ -9,7 +9,7 @@ export class RelayType {
   status = 'ok';
 
   start() {
-    console.log(`${this.url}: start method new Worker called.`);
+    // console.log(`${this.url}: start method new Worker called.`);
     this.worker = new Worker(new URL('../workers/relay.worker', import.meta.url));
     return this.worker;
   }

@@ -15,7 +15,15 @@ export class RelayWorker {
 
   queue: Queue;
 
-  logger = console;
+  // logger = console;
+  // Enable this to hide all logging from the relay.
+  logger = {
+    log: (message?: any, ...optionalParams: any) => {},
+    info: (message?: any, ...optionalParams: any) => {},
+    warn: (message?: any, ...optionalParams: any) => {},
+    error: (message?: any, ...optionalParams: any) => {},
+    debug: (message?: any, ...optionalParams: any) => {}
+  };
 
   constructor(public url: string) {
     this.queue = new Queue();
@@ -37,20 +45,20 @@ export class RelayWorker {
 
     try {
       let pub = await this.relay.publish(event);
-      console.log(`we saw the event on ${this.relay.url}`);
+      this.logger.info(`we saw the event on ${this.relay.url}`);
     } catch (err) {
-      console.log(`failed to publish to ${this.relay.url}: ${err}`);
+      this.logger.error(`failed to publish to ${this.relay.url}: ${err}`);
       postMessage({ type: 'failure', data: err, url: this.relay.url } as RelayResponse);
     }
 
     // pub.on('ok', () => {
-    //   console.log(`${this.relay.url} has accepted our event`);
+    //   this.logger.info(`${this.relay.url} has accepted our event`);
     // });
     // pub.on('seen', () => {
-    //   console.log(`we saw the event on ${this.relay.url}`);
+    //   this.logger.info(`we saw the event on ${this.relay.url}`);
     // });
     // pub.on('failed', (reason: any) => {
-    //   console.log(`failed to publish to ${this.relay.url}: ${reason}`);
+    //   this.logger.info(`failed to publish to ${this.relay.url}: ${reason}`);
     //   postMessage({ type: 'failure', data: reason, url: this.relay.url } as RelayResponse);
     // });
   }
@@ -72,7 +80,7 @@ export class RelayWorker {
       throw Error(`This type of job (${job.type}) is currently not supported.`);
     }
 
-    console.log(`${this.url}: Job enqued...processing...`);
+    this.logger.info(`${this.url}: Job enqueued...processing...`);
 
     // We always delay the processing in case we receive more.
     setTimeout(() => {
@@ -109,11 +117,9 @@ export class RelayWorker {
 
   processProfiles() {
     if (!this.relay || !this.relay.connected || this.queue.queues.profile.active) {
-      console.log(`${this.url}: processProfiles: Relay not ready or currently active: ${this.queue.queues.profile.active}.`, this.relay);
+      this.logger.info(`${this.url}: processProfiles: Relay not ready or currently active: ${this.queue.queues.profile.active}.`, this.relay);
       return;
     }
-
-    // console.log(`${this.url}: processProfiles: Processing with downloading... Count: ` + this.queue.queues.profile.jobs.length);
 
     if (this.queue.queues.profile.jobs.length == 0) {
       this.queue.queues.profile.active = false;
@@ -126,8 +132,6 @@ export class RelayWorker {
       .splice(0, 500)
       .map((j) => j.identifier)
       .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
-
-    // console.log('profilesToDownload:', profilesToDownload);
 
     this.downloadProfile(profilesToDownload, profilesToDownload.length * 3);
   }
@@ -153,11 +157,11 @@ export class RelayWorker {
 
   processEvents() {
     if (!this.relay || !this.relay.connected || this.queue.queues.event.active) {
-      console.log(`${this.url}: processEvents: Relay not ready or currently active: ${this.queue.queues.event.active}.`, this.relay);
+      this.logger.info(`${this.url}: processEvents: Relay not ready or currently active: ${this.queue.queues.event.active}.`, this.relay);
       return;
     }
 
-    console.log(`${this.url}: processEvents: Processing with downloading... Count: ` + this.queue.queues.event.jobs.length);
+    this.logger.info(`${this.url}: processEvents: Processing with downloading... Count: ` + this.queue.queues.event.jobs.length);
 
     if (this.queue.queues.event.jobs.length == 0) {
       this.queue.queues.event.active = false;
@@ -166,24 +170,25 @@ export class RelayWorker {
 
     this.queue.queues.event.active = true;
 
-    console.log(this.relay);
+    this.logger.info(this.relay);
 
     const eventsToDownload = this.queue.queues.event.jobs
       .splice(0, 500)
       .map((j) => j.identifier)
       .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
 
-    console.log('eventsToDownload:', eventsToDownload);
+    this.logger.info('eventsToDownload:', eventsToDownload);
     this.downloadEvent(eventsToDownload, eventsToDownload.length * 3);
   }
 
   processArticle() {
     if (!this.relay || !this.relay.connected || this.queue.queues.article.active) {
-      console.log(`${this.url}: processArticle: Relay not ready or currently active: ${this.queue.queues.article.active}.`, this.relay);
+      
+      this.logger.info(`${this.url}: processArticle: Relay not ready or currently active: ${this.queue.queues.article.active}.`, this.relay);
       return;
     }
 
-    console.log(`${this.url}: processArticle: Processing with downloading... Count: ` + this.queue.queues.article.jobs.length);
+    this.logger.info(`${this.url}: processArticle: Processing with downloading... Count: ` + this.queue.queues.article.jobs.length);
 
     if (this.queue.queues.article.jobs.length == 0) {
       this.queue.queues.article.active = false;
@@ -192,24 +197,24 @@ export class RelayWorker {
 
     this.queue.queues.article.active = true;
 
-    console.log(this.relay);
+    this.logger.info(this.relay);
 
     const eventsToDownload = this.queue.queues.article.jobs
       .splice(0, 500)
       .map((j) => j.identifier)
       .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
 
-    console.log('articleToDownload:', eventsToDownload);
+    this.logger.info('articleToDownload:', eventsToDownload);
     this.downloadArticle(eventsToDownload, eventsToDownload.length * 3);
   }
 
   processBadgeDefinition() {
     if (!this.relay || !this.relay.connected || this.queue.queues.badgedefinition.active) {
-      console.log(`${this.url}: processBadgeDefinition: Relay not ready or currently active: ${this.queue.queues.badgedefinition.active}.`, this.relay);
+      this.logger.info(`${this.url}: processBadgeDefinition: Relay not ready or currently active: ${this.queue.queues.badgedefinition.active}.`, this.relay);
       return;
     }
 
-    console.log(`${this.url}: processBadgeDefinition: Processing with downloading... Count: ` + this.queue.queues.badgedefinition.jobs.length);
+    this.logger.info(`${this.url}: processBadgeDefinition: Processing with downloading... Count: ` + this.queue.queues.badgedefinition.jobs.length);
 
     if (this.queue.queues.badgedefinition.jobs.length == 0) {
       this.queue.queues.badgedefinition.active = false;
@@ -218,14 +223,14 @@ export class RelayWorker {
 
     this.queue.queues.badgedefinition.active = true;
 
-    console.log(this.relay);
+    this.logger.info(this.relay);
 
     const eventsToDownload = this.queue.queues.badgedefinition.jobs
       .splice(0, 500)
       .map((j) => j.identifier)
       .filter((v, i, a) => a.indexOf(v) === i); // Unique, it can happen that multiple of same is added.
 
-    console.log('badgeDefinitionsToDownload:', eventsToDownload);
+    this.logger.info('badgeDefinitionsToDownload:', eventsToDownload);
     this.downloadBadgeDefinition(eventsToDownload, eventsToDownload.length * 3);
   }
 
@@ -238,7 +243,7 @@ export class RelayWorker {
     this.relay = relay;
 
     // If the async connect call works, we are connected.
-    console.log(`${this.url}: Connected.`);
+    this.logger.info(`${this.url}: Connected.`);
     postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
 
     // If there was an event provided, publish it and then disconnect.
@@ -257,13 +262,13 @@ export class RelayWorker {
   }
 
   this.relay.onclose = () => {
-    console.log(`${this.url}: DISCONNECTED!`);
+    this.logger.info(`${this.url}: DISCONNECTED!`);
     this.subscriptions = [];
     postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
   }
 
   this.relay.onnotice = (msg: any) => {
-    console.log(`${this.url}: NOTICE: ${msg}`);
+    this.logger.info(`${this.url}: NOTICE: ${msg}`);
     postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
   }
 
@@ -276,7 +281,7 @@ export class RelayWorker {
     // });
 
     // relay.on('notice', (msg: any) => {
-    //   console.log(`${this.url}: NOTICE: ${msg}`);
+    //   this.logger.info(`${this.url}: NOTICE: ${msg}`);
     //   postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
     // });
 
@@ -290,7 +295,7 @@ export class RelayWorker {
 
   disconnect() {
     if (this.relay.connected) {
-      console.log(`${this.url}: relay.status: ${this.relay.connected}, calling close!`);
+      this.logger.info(`${this.url}: relay.status: ${this.relay.connected}, calling close!`);
       this.relay.close();
     }
   }
@@ -307,7 +312,7 @@ export class RelayWorker {
 
     // Unsub from the relay.
     sub.sub?.close();
-    console.log('Unsubscribed: ', id);
+    this.logger.info('Unsubscribed: ', id);
   }
 
   // subscribeAll(subscriptions: NostrRelaySubscription[]) {
@@ -364,25 +369,25 @@ export class RelayWorker {
   }
 
   downloadProfile(pubkeys: string[], timeoutSeconds: number = 12) {
-    console.log('DOWNLOAD PROFILE....');
+    this.logger.info('DOWNLOAD PROFILE....');
     let finalizedCalled = false;
 
     if (!this.relay) {
       debugger;
-      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      this.logger.warn('This relay does not have active connection and download cannot be executed at this time.');
       return;
     }
 
     // If the profilesub already exists, unsub and remove.
     if (this.profileSub) {
-      console.log('Profile sub already existed, unsub before continue.');
+      this.logger.info('Profile sub already existed, unsub before continue.');
       this.clearProfileSub();
     }
 
     // Skip if the subscription is already added.
     // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
     //   debugger;
-    //   console.log('This subscription is already added!');
+    //   this.logger.info('This subscription is already added!');
     //   return;
     // }
 
@@ -391,14 +396,14 @@ export class RelayWorker {
     const sub = this.relay.subscribe([{ kinds: [0], authors: pubkeys }], {
 
       onevent: (event: Event) => {
-        console.log('POST MESSAGE BACK TO MAIN');
+        this.logger.info('POST MESSAGE BACK TO MAIN');
         postMessage({ url: url, type: 'event', data: event } as RelayResponse);
-        console.log('FINISHED POST MESSAGE BACK TO MAIN');
-        // console.log('CLEAR PROFILE SUBSCRIPTION....');
+        this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
+        // this.logger.info('CLEAR PROFILE SUBSCRIPTION....');
       },
 
     oneose: () => {
-      console.log('eose on profile, profile likely not found.');
+      this.logger.info('eose on profile, profile likely not found.');
       clearTimeout(this.profileTimer);
       this.clearProfileSub();
       this.queue.queues.profile.active = false;
@@ -411,33 +416,33 @@ export class RelayWorker {
     }) as NostrSubscription;
     this.profileSub = sub;
     // sub.id = id;
-    // console.log('SUBSCRIPTION:', sub);
+    // this.logger.info('SUBSCRIPTION:', sub);
     // this.subscriptions.push({ id: id, filters: filters, sub: sub });
 
     // const sub = relay.sub(filters, {}) as NostrSubscription;
     // relay.subscriptions.push(sub);
 
     // sub.on('event', (originalEvent: any) => {
-    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   this.logger.info('POST MESSAGE BACK TO MAIN');
     //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
-    //   // console.log('CLEAR PROFILE SUBSCRIPTION....');
+    //   this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
+    //   // this.logger.info('CLEAR PROFILE SUBSCRIPTION....');
 
     //   // this.clearProfileSub();
     //   // clearTimeout(this.profileTimer);
-    //   // console.log('FINISHED CLEAR PROFILE SUBSCRIPTION....');
+    //   // this.logger.info('FINISHED CLEAR PROFILE SUBSCRIPTION....');
 
     //   // this.queue.queues.profile.active = false;
     //   // this.processProfiles();
 
     //   // if (!finalizedCalled) {
     //   //   finalizedCalled = true;
-    //   //   console.log('Calling finalized!!!');
+    //   //   this.logger.info('Calling finalized!!!');
     //   //   finalized();
-    //   //   console.log('Called finalized!!!');
+    //   //   this.logger.info('Called finalized!!!');
     //   // }
 
-    //   // console.log('Profile event received, finalized called.');
+    //   // this.logger.info('Profile event received, finalized called.');
 
     //   // const event = this.eventService.processEvent(originalEvent);
     //   // if (!event) {
@@ -447,17 +452,17 @@ export class RelayWorker {
     // });
 
     // sub.on('eose', () => {
-    //   console.log('eose on profile, profile likely not found.');
+    //   this.logger.info('eose on profile, profile likely not found.');
     //   clearTimeout(this.profileTimer);
     //   this.clearProfileSub();
     //   this.queue.queues.profile.active = false;
     //   this.processProfiles();
     // });
 
-    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
+    this.logger.info('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
     this.profileTimer = setTimeout(() => {
-      console.warn(`${this.url}: Profile download timeout reached.`);
+      this.logger.warn(`${this.url}: Profile download timeout reached.`);
       this.clearProfileSub();
       this.queue.queues.profile.active = false;
       this.processProfiles();
@@ -472,11 +477,11 @@ export class RelayWorker {
   }
 
   downloadContacts(pubkey: string, finalized: any, timeoutSeconds: number = 3000) {
-    console.log('DOWNLOAD CONTACTS....');
+    this.logger.info('DOWNLOAD CONTACTS....');
     let finalizedCalled = false;
 
     if (!this.relay) {
-      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      this.logger.warn('This relay does not have active connection and download cannot be executed at this time.');
       return;
     }
 
@@ -523,25 +528,25 @@ export class RelayWorker {
   }
 
   downloadArticle(ids: string[], timeoutSeconds: number = 12) {
-    console.log('DOWNLOAD ARTICLE....');
+    this.logger.info('DOWNLOAD ARTICLE....');
     let finalizedCalled = false;
 
     if (!this.relay) {
       debugger;
-      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      this.logger.warn('This relay does not have active connection and download cannot be executed at this time.');
       return;
     }
 
     // If the profilesub already exists, unsub and remove.
     if (this.articleSub) {
-      console.log('Article sub already existed, unsub before continue.');
+      this.logger.info('Article sub already existed, unsub before continue.');
       this.clearArticleSub();
     }
 
     // Skip if the subscription is already added.
     // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
     //   debugger;
-    //   console.log('This subscription is already added!');
+    //   this.logger.info('This subscription is already added!');
     //   return;
     // }
 
@@ -549,13 +554,13 @@ export class RelayWorker {
     const sub = this.relay.subscribe([filter], {
 
       onevent: (event: Event) => {
-        console.log('POST MESSAGE BACK TO MAIN');
+        this.logger.info('POST MESSAGE BACK TO MAIN');
         postMessage({ url: this.url, type: 'event', data: event } as RelayResponse);
-        console.log('FINISHED POST MESSAGE BACK TO MAIN');
+        this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
       },
 
       oneose: () => {
-        console.log('eose on event.');
+        this.logger.info('eose on event.');
         clearTimeout(this.articleTimer);
         this.clearArticleSub();
         this.queue.queues.article.active = false;
@@ -568,23 +573,23 @@ export class RelayWorker {
     this.articleSub = sub;
 
     // sub.on('event', (originalEvent: any) => {
-    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   this.logger.info('POST MESSAGE BACK TO MAIN');
     //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    //   this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
     // });
 
     // sub.on('eose', () => {
-    //   console.log('eose on event.');
+    //   this.logger.info('eose on event.');
     //   clearTimeout(this.articleTimer);
     //   this.clearArticleSub();
     //   this.queue.queues.article.active = false;
     //   this.processArticle();
     // });
 
-    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
+    this.logger.info('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
     this.articleTimer = setTimeout(() => {
-      console.warn(`${this.url}: Event download timeout reached.`);
+      this.logger.warn(`${this.url}: Event download timeout reached.`);
       this.clearArticleSub();
       this.queue.queues.article.active = false;
       this.processArticle();
@@ -599,24 +604,24 @@ export class RelayWorker {
   }
 
   downloadBadgeDefinition(ids: string[], timeoutSeconds: number = 12) {
-    console.log('DOWNLOAD BADGE DEFINITION....');
+    this.logger.info('DOWNLOAD BADGE DEFINITION....');
 
     if (!this.relay) {
       debugger;
-      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      this.logger.warn('This relay does not have active connection and download cannot be executed at this time.');
       return;
     }
 
     // If the profilesub already exists, unsub and remove.
     if (this.badgeDefinitionSub) {
-      console.log('Article sub already existed, unsub before continue.');
+      this.logger.info('Article sub already existed, unsub before continue.');
       this.clearBadgeDefinitionSub();
     }
 
     // Skip if the subscription is already added.
     // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
     //   debugger;
-    //   console.log('This subscription is already added!');
+    //   this.logger.info('This subscription is already added!');
     //   return;
     // }
 
@@ -635,14 +640,14 @@ export class RelayWorker {
     const sub = this.relay.subscribe(filters, {
 
       onevent: (event: Event) => {
-        console.log('POST MESSAGE BACK TO MAIN');
+        this.logger.info('POST MESSAGE BACK TO MAIN');
         postMessage({ url: this.url, type: 'event', data: event } as RelayResponse);
-        console.log('FINISHED POST MESSAGE BACK TO MAIN');
+        this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
       },
 
 
       oneose: () => {
-        console.log('eose on event.');
+        this.logger.info('eose on event.');
         clearTimeout(this.badgeDefinitionTimer);
         this.clearBadgeDefinitionSub();
         this.queue.queues.badgedefinition.active = false;
@@ -656,23 +661,23 @@ export class RelayWorker {
     this.badgeDefinitionSub = sub;
 
     // sub.on('event', (originalEvent: any) => {
-    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   this.logger.info('POST MESSAGE BACK TO MAIN');
     //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    //   this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
     // });
 
     // sub.on('eose', () => {
-    //   console.log('eose on event.');
+    //   this.logger.info('eose on event.');
     //   clearTimeout(this.badgeDefinitionTimer);
     //   this.clearBadgeDefinitionSub();
     //   this.queue.queues.badgedefinition.active = false;
     //   this.processBadgeDefinition();
     // });
 
-    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
+    this.logger.info('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
     this.badgeDefinitionTimer = setTimeout(() => {
-      console.warn(`${this.url}: Event download timeout reached.`);
+      this.logger.warn(`${this.url}: Event download timeout reached.`);
       this.clearBadgeDefinitionSub();
       this.queue.queues.badgedefinition.active = false;
       this.processBadgeDefinition();
@@ -688,7 +693,7 @@ export class RelayWorker {
 
   download(filters: Filter[], id: string, type: string = 'Event', timeoutSeconds: number = 12) {
     if (!this.relay) {
-      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      this.logger.warn('This relay does not have active connection and download cannot be executed at this time.');
       return;
     }
 
@@ -729,25 +734,25 @@ export class RelayWorker {
   }
 
   downloadEvent(ids: string[], timeoutSeconds: number = 12) {
-    console.log('DOWNLOAD EVENT....');
+    this.logger.info('DOWNLOAD EVENT....');
     let finalizedCalled = false;
 
     if (!this.relay) {
       debugger;
-      console.warn('This relay does not have active connection and download cannot be executed at this time.');
+      this.logger.warn('This relay does not have active connection and download cannot be executed at this time.');
       return;
     }
 
     // If the profilesub already exists, unsub and remove.
     if (this.eventSub) {
-      console.log('Event sub already existed, unsub before continue.');
+      this.logger.info('Event sub already existed, unsub before continue.');
       this.clearEventSub();
     }
 
     // Skip if the subscription is already added.
     // if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
     //   debugger;
-    //   console.log('This subscription is already added!');
+    //   this.logger.info('This subscription is already added!');
     //   return;
     // }
 
@@ -756,13 +761,13 @@ export class RelayWorker {
     const sub = this.relay.subscribe([{ kinds: kindsList, ids: ids }], {
 
       onevent: (event: Event) => {
-        console.log('POST MESSAGE BACK TO MAIN');
+        this.logger.info('POST MESSAGE BACK TO MAIN');
         postMessage({ url: this.url, type: 'event', data: event } as RelayResponse);
-        console.log('FINISHED POST MESSAGE BACK TO MAIN');
+        this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
       },
 
       oneose: () => {
-        console.log('eose on event.');
+        this.logger.info('eose on event.');
         clearTimeout(this.eventTimer);
         this.clearEventSub();
         this.queue.queues.event.active = false;
@@ -774,23 +779,23 @@ export class RelayWorker {
     this.eventSub = sub;
 
     // sub.on('event', (originalEvent: any) => {
-    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   this.logger.info('POST MESSAGE BACK TO MAIN');
     //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    //   this.logger.info('FINISHED POST MESSAGE BACK TO MAIN');
     // });
 
     // sub.on('eose', () => {
-    //   console.log('eose on event.');
+    //   this.logger.info('eose on event.');
     //   clearTimeout(this.eventTimer);
     //   this.clearEventSub();
     //   this.queue.queues.event.active = false;
     //   this.processEvents();
     // });
 
-    console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
+    this.logger.info('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
     this.eventTimer = setTimeout(() => {
-      console.warn(`${this.url}: Event download timeout reached.`);
+      this.logger.warn(`${this.url}: Event download timeout reached.`);
       this.clearEventSub();
       this.queue.queues.event.active = false;
       this.processEvents();
@@ -808,13 +813,13 @@ export class RelayWorker {
     if (!this.relay || !this.relay.connected) {
       // If we don't have a connection yet, schedule the subscription to be added later.
       this.queue.queues.subscriptions.jobs.push({ id: id, filters: filters, type: 'Event', events: [] });
-      console.warn('This relay does not have active connection and subscription cannot be created at this time. Subscription has been scheduled for adding later.');
+      this.logger.warn('This relay does not have active connection and subscription cannot be created at this time. Subscription has been scheduled for adding later.');
       return;
     }
 
     // Skip if the subscription is already added.
     if (this.subscriptions.findIndex((s) => s.id == id) > -1) {
-      console.log('This subscription is already added!');
+      this.logger.info('This subscription is already added!');
       return;
     }
 
@@ -825,7 +830,7 @@ export class RelayWorker {
       },
 
       oneose: () => {
-        console.log('eose on event.');
+        this.logger.info('eose on event.');
         // clearTimeout(this.eventTimer);
         // this.clearEventSub();
         // this.queue.queues.event.active = false;
@@ -835,7 +840,7 @@ export class RelayWorker {
     }) as NostrSubscription;
     // sub.id = id;
 
-    console.log('SUBSCRIPTION:', sub);
+    this.logger.info('SUBSCRIPTION:', sub);
     this.subscriptions.push({ id: id, filters: filters, sub: sub, type: 'Event', events: [] });
 
     // const sub = relay.sub(filters, {}) as NostrSubscription;
@@ -851,11 +856,11 @@ export class RelayWorker {
     // });
 
     // sub.on('eose', () => {
-    //   console.log('eose on:', this.url);
+    //   this.logger.info('eose on:', this.url);
     // });
 
     // return () => {
-    //   console.log('subscribeToRelay:finished:unsub');
+    //   this.logger.info('subscribeToRelay:finished:unsub');
     //   // When the observable is finished, this return function is called.
     //   sub.unsub();
     //   const subIndex = relay.subscriptions.findIndex((s) => s == sub);
@@ -887,7 +892,7 @@ export class RelayWorker {
         postMessage({ type: 'nip11', data: { error: `Unable to get NIP-11 data. Status: ${rawResponse.statusText}` }, url: this.url } as RelayResponse);
       }
     } catch (err) {
-      console.warn(err);
+      this.logger.warn(err);
       postMessage({ type: 'nip11', data: { error: `Unable to get NIP-11 data. Status: ${err}` }, url: this.url } as RelayResponse);
     }
   }

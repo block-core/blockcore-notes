@@ -14,7 +14,7 @@ addEventListener('message', async (ev: MessageEvent) => {
     case 'connect':
       // If the relay worker is already connected and valid, avoid re-creating.
       if (relayWorker && relayWorker.relay && relayWorker.relay.connected) {
-        console.log('Already connected...');
+        // console.log('Already connected...');
         break;
       } else {
         relayWorker = new RelayWorker(request.data.url);
@@ -46,7 +46,7 @@ addEventListener('message', async (ev: MessageEvent) => {
       } catch (err) {
         console.error('Error during disconnect.', err);
       }
-      console.log(`${relayWorker.url}: Sending 'terminated' event.`);
+      // console.log(`${relayWorker.url}: Sending 'terminated' event.`);
       postMessage({ type: 'terminated', url: relayWorker.url } as RelayResponse);
       break;
   }

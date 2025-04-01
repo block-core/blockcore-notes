@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrRelay, NostrSubscription, QueryJob } from './interfaces';
 import { ProfileService } from './profile';
 import { EventService } from './event';
@@ -13,6 +13,7 @@ import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { CircleService } from './circle';
 import { NostrService } from './nostr';
+import { LoggerService } from './logger';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,8 @@ export class DataService {
 
   // Observable that can be merged with to avoid performing calls unless we have connected to relays.
   connected$ = this.appState.connected$.pipe(map((status) => status === true));
+
+  logger = inject(LoggerService);
 
   constructor(
     private nostr: NostrService,
@@ -42,7 +45,7 @@ export class DataService {
   ) {
     // We use a global observable for the connected state to avoid having many subscriptions and we'll skip processing until this is true.
     this.appState.connected$.subscribe((connected) => {
-      console.log('Connection state changed: ', connected);
+    this.logger.info('Connection state changed: ', connected);
       this.connected = connected;
 
       if (this.connected) {
@@ -78,7 +81,7 @@ export class DataService {
       return;
     }
 
-    console.log('PUBLISH EVENT:', event);
+    this.logger.info('PUBLISH EVENT:', event);
     this.relayService.publish(event);
   }
 
@@ -199,7 +202,7 @@ export class DataService {
       return;
     }
 
-    console.log('PUBLISH EVENT:', event);
+    this.logger.info('PUBLISH EVENT:', event);
     this.relayService.publish(event);
   }
 
