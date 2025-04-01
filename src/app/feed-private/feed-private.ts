@@ -25,11 +25,12 @@ import { EventActionsComponent } from '../shared/event-actions/event-actions';
 import { ContentComponent } from '../shared/content/content';
 import { AgoPipe } from '../shared/ago.pipe';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-feed-private',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatButtonToggleModule, MatIconModule, RouterModule, MatExpansionModule, MatTooltipModule, MatCardModule, EventHeaderComponent, EventActionsComponent, ContentComponent, AgoPipe, DirectoryIconComponent],
+  imports: [CommonModule, MatButtonModule, MatSnackBarModule, MatButtonToggleModule, MatIconModule, RouterModule, MatExpansionModule, MatTooltipModule, MatCardModule, EventHeaderComponent, EventActionsComponent, ContentComponent, AgoPipe, DirectoryIconComponent],
   templateUrl: './feed-private.html',
   styleUrls: ['./feed-private.css'],
 })

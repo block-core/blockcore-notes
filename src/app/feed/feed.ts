@@ -16,11 +16,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { FeedPrivateComponent } from '../feed-private/feed-private';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatTabsModule, MatIconModule, FeedPrivateComponent],
+  imports: [CommonModule, MatButtonModule, MatSnackBarModule, MatTabsModule, MatIconModule, FeedPrivateComponent],
   templateUrl: './feed.html',
 })
 export class FeedComponent {

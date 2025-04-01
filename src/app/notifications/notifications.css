@@ -14,10 +14,10 @@
 .notification-date {
   text-align: right;
   flex-grow: 1;
-  color: rgba(255, 255, 255, 0.5);
+  /* color: rgba(255, 255, 255, 0.5); */
 }
 
 .notification-message-seen {
   font-style: italic;
-  color: rgba(255, 255, 255, 0.5);
+  /* color: rgba(255, 255, 255, 0.5); */
 }
