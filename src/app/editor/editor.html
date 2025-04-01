@@ -65,9 +65,9 @@
           </mat-form-field> -->
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
-      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
+      <button mat-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
       <!-- <button type="button" mat-stroked-button disabled="disabled">Save Draft</button>&nbsp; -->
-      <button mat-flat-button [disabled]="!articleForm.valid" type="submit" color="primary">Publish Article</button>
+      <button mat-flat-button [disabled]="!articleForm.valid" type="submit">Publish Article</button>
     </div>
   </form>
 
@@ -106,9 +106,9 @@
           </mat-form-field> -->
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
-      <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
+      <button mat-button type="button" (click)="onCancel()">Cancel</button>&nbsp;
       <!-- <button mat-stroked-button type="button" disabled="disabled">Save Draft</button>&nbsp; -->
-      <button mat-flat-button [disabled]="!noteForm.valid" type="submit" color="primary">Publish Note</button>
+      <button mat-flat-button [disabled]="!noteForm.valid" type="submit">Publish Note</button>
     </div>
 
   </form>
