@@ -69,6 +69,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MediaPlayerComponent } from './shared/media-player/media-player';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 import { LoggerService } from './services/logger';
+import { MobileMenuComponent } from './shared/mobile-menu/mobile-menu';
 
 @Component({
   selector: 'app-root',
@@ -118,7 +119,7 @@ import { LoggerService } from './services/logger';
     FormsModule,
     ReactiveFormsModule,
     NgxLoadingButtonsModule,
-
+    MobileMenuComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],

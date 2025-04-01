@@ -175,7 +175,7 @@
       </div>
       <mat-divider></mat-divider>
       <mat-nav-list>
-        <a class="nav-link"[routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>person</mat-icon>
           <span>{{ 'App.ViewProfile' | translate }}</span>
         </a>
@@ -213,6 +213,10 @@
           <router-outlet></router-outlet>
         </div>
         <app-media-player class="app-mediaplayer" *ngIf="options.values.showMediaPlayer"></app-media-player>
+        
+        @if ((isHandset$ | async) === true) {
+        <app-mobile-menu  class="app-mobilemenu"></app-mobile-menu>
+      }
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>

@@ -269,3 +269,10 @@ header {
   flex-shrink: 1;
   box-sizing: border-box;
 }
+
+.app-mobilemenu {
+  flex-basis: 96px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  box-sizing: border-box;
+}
