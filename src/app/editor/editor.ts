@@ -21,6 +21,8 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EventComponent } from '../shared/event/event';
 import { ContentEditorDirective } from '../shared/content-input-directive/content-input.directive';
 import { MentionModule } from 'angular-mentions';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 export interface NoteDialogData {
   note: string;
@@ -31,7 +33,8 @@ export interface NoteDialogData {
   standalone: true,
   imports: [
     MentionModule,
-    CommonModule, MatSnackBarModule, PickerModule, EventComponent, ContentEditorDirective, ReactiveFormsModule, FormsModule, MatButtonToggleModule, MatFormFieldModule, MatSelectModule, MatIconModule],
+    MatButtonModule,
+    CommonModule, MatSnackBarModule, PickerModule, EventComponent, ContentEditorDirective, ReactiveFormsModule, FormsModule, MatButtonToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
 })

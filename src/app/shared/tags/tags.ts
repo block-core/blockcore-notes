@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-tags',
   templateUrl: 'tags.html',
   styleUrls: ['tags.css'],
-  imports: [FormsModule, MatFormFieldModule, MatChipsModule, MatIconModule],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatChipsModule, MatIconModule],
 })
 export class TagsComponent {
   addOnBlur = true;

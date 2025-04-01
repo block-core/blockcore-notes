@@ -17,11 +17,12 @@ import { ProfileNameComponent } from '../shared/profile-name/profile-name';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-badge',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatBadgeModule, BadgeCardComponent, DateComponent, ProfileNameComponent, MatFormFieldModule, TranslateModule, FormsModule],
+  imports: [CommonModule, MatSnackBarModule, MatBadgeModule, BadgeCardComponent, DateComponent, ProfileNameComponent, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule],
   templateUrl: 'badge.html',
   styleUrls: ['badge.css'],
 })

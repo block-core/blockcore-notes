@@ -14,12 +14,13 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-profile-actions',
   templateUrl: './profile-actions.html',
   styleUrls: ['./profile-actions.css'],
-  imports: [MatIconModule, MatMenuModule, CommonModule],
+  imports: [MatIconModule, MatButtonModule, MatMenuModule, CommonModule],
 })
 export class ProfileActionsComponent {
   @Input() fab: boolean = false;

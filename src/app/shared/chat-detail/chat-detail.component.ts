@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { CommonModule } from '@angular/common';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'app-chat-detail',
   templateUrl: './chat-detail.component.html',
@@ -22,7 +23,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
   imports: [ChatListComponent, 
     MatSidenavModule,
     CommonModule,
-    PickerModule, MatProgressSpinnerModule, MatIconModule, MatFormFieldModule, MatMenuModule, MessageBubbleComponent, FormsModule],
+    PickerModule, MatProgressSpinnerModule, MatIconModule, MatFormFieldModule, MatInputModule, MatMenuModule, MessageBubbleComponent, FormsModule],
 })
 export class ChatDetailComponent implements OnInit, OnDestroy {
   @ViewChild('scrollable', { static: false }) scrollable!: { nativeElement: { scrollTop: any; scrollHeight: any } };

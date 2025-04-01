@@ -14,13 +14,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
+import { MatInputModule } from '@angular/material/input';
 
 
 @Component({
   selector: 'app-key',
   templateUrl: './key.html',
   styleUrls: ['../connect.css', './key.css'],
-  imports: [CommonModule, MatIconModule, MatCardModule, TranslateModule, MatFormFieldModule, FormsModule],
+  imports: [CommonModule, MatIconModule, MatCardModule, TranslateModule, MatFormFieldModule, MatInputModule, FormsModule],
 })
 export class ConnectKeyComponent {
   privateKey: string = '';

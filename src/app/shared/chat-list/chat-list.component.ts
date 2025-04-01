@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
 
 interface ChatModel {
   id: string;
@@ -17,7 +18,7 @@ interface ChatModel {
   selector: 'app-chat-list',
   templateUrl: './chat-list.component.html',
   styleUrls: ['./chat-list.component.scss'],
-  imports: [ChatItemComponent, MatIconModule, MatFormFieldModule, MatListModule, RouterModule, CommonModule],
+  imports: [ChatItemComponent, MatIconModule, MatFormFieldModule, MatInputModule, MatListModule, RouterModule, CommonModule],
 })
 export class ChatListComponent implements OnInit {
   @Output() openChatSidebar: EventEmitter<string> = new EventEmitter();

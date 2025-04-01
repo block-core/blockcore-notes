@@ -11,12 +11,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['../connect.css', './login.css'],
-  imports: [MatIconModule, MatCardModule, MatFormFieldModule, FormsModule, CommonModule],
+  imports: [MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule],
 })
 export class LoginComponent {
   privateKey: string = '';

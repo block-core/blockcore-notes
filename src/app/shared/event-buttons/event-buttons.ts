@@ -17,6 +17,7 @@ import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-event-buttons',
@@ -24,7 +25,7 @@ import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
   styleUrls: ['./event-buttons.css'],
   imports: [MatIconModule,
     NgxLoadingButtonsModule ,
-    CommonModule, PickerComponent, MatFormFieldModule, FormsModule],
+    CommonModule, PickerComponent, MatFormFieldModule, MatInputModule, FormsModule],
 })
 export class EventButtonsComponent {
   @Input() event?: NostrEventDocument;

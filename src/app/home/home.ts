@@ -29,6 +29,7 @@ import { NotificationLabelComponent } from '../shared/notification-label/notific
 import { CommonModule } from '@angular/common';
 import { AgoPipe } from '../shared/ago.pipe';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { MatButtonModule } from '@angular/material/button';
 
 interface DefaultProfile {
   pubkey: string;
@@ -43,7 +44,7 @@ interface DefaultProfile {
   selector: 'app-home',
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
-  imports: [DragScrollComponent, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
+  imports: [DragScrollComponent, MatButtonModule, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
   // animations: [
   //   trigger('fade', [
   //     transition('void => active', [

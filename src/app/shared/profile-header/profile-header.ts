@@ -18,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { MtxTooltipModule } from '@ng-matero/extensions/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-profile-header',
@@ -25,6 +26,7 @@ import { MtxTooltipModule } from '@ng-matero/extensions/tooltip';
   styleUrls: ['./profile-header.css'],
   imports: [CommonModule, ProfileActionsComponent, 
     MtxTooltipModule , 
+    MatButtonModule,
     MatTooltipModule, MatIconModule, RouterModule, ],
 })
 export class ProfileHeaderComponent {

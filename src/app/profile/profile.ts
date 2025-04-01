@@ -18,12 +18,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { AgoPipe } from '../shared/ago.pipe';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-profile',
   templateUrl: 'profile.html',
   styleUrls: ['profile.css'],
-  imports: [ProfileHeaderComponent, CommonModule, MatCardModule, MatFormFieldModule, TranslateModule, FormsModule, AgoPipe],
+  imports: [ProfileHeaderComponent, MatButtonModule, CommonModule, MatCardModule, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule, AgoPipe],
 })
 export class ProfileComponent {
   pubkey?: string;

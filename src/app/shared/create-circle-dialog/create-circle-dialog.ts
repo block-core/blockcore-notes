@@ -7,12 +7,13 @@ import { circleStyles } from '../defaults';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'create-circle-dialog',
   templateUrl: 'create-circle-dialog.html',
   styleUrls: ['create-circle-dialog.scss'],
-  imports: [MatFormFieldModule, FormsModule, MatSelectModule, MatDialogModule],
+  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatSelectModule, MatDialogModule],
 })
 export class CircleDialog {
   styles = circleStyles;

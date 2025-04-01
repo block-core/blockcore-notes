@@ -4,6 +4,7 @@ import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, Unty
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 export interface NoteDialogData {
@@ -16,7 +17,7 @@ export interface NoteDialogData {
   styleUrls: ['create-note-dialog.scss'],
   imports: [FormsModule, 
     MatDialogModule,
-    CommonModule, ReactiveFormsModule, MatIconModule, MatFormFieldModule, PickerModule],
+    CommonModule, ReactiveFormsModule, MatIconModule, MatFormFieldModule, MatInputModule, PickerModule],
 })
 export class NoteDialog {
   @ViewChild('picker') picker: unknown;

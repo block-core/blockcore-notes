@@ -28,12 +28,13 @@ import { ProfileActionsComponent } from '../shared/profile-actions/profile-actio
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 import { AgoPipe } from '../shared/ago.pipe';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-people',
   templateUrl: './people.html',
   styleUrls: ['./people.css'],
-  imports: [MatExpansionModule, TranslateModule, MatFormFieldModule, MatSelectModule, MatCardModule, CommonModule, EventHeaderComponent, ProfileActionsComponent, MatProgressSpinnerModule, DirectoryIconComponent, AgoPipe],
+  imports: [MatExpansionModule, TranslateModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatCardModule, CommonModule, EventHeaderComponent, ProfileActionsComponent, MatProgressSpinnerModule, DirectoryIconComponent, AgoPipe],
 })
 export class PeopleComponent {
   publicKey?: string | null;
