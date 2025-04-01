@@ -83,6 +83,10 @@
           <mat-icon>notes</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Feed' | translate }}</span>
         </a>
+        <!-- <a class="nav-link" [routerLink]="['/articles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>article</mat-icon>
+          <span *ngIf="displayLabels">{{ 'App.Articles' | translate }}</span>
+        </a> -->
         <a class="nav-link" [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon [matBadgeHidden]="(ui.unreadNotifications$ | async) == 0" [matBadge]="ui.unreadNotifications$ | async">notifications</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Notifications' | translate }}</span>

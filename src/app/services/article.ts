@@ -16,6 +16,10 @@ export class ArticleService {
     return this.articles.find((a) => a.slug == slug);
   }
 
+  load() {
+    
+  }
+
   put(event: NostrEvent) {
     const article = event as NostrArticle;
     article.slug = this.eventService.firstDTag(event);

@@ -33,6 +33,7 @@ import { CreateProfileComponent } from './connect/create/create';
 import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
 import { ExampleComponent } from './example/example';
+import { ArticlesComponent } from './articles/articles.component';
 
 export const routes: Routes = [
   {
@@ -70,6 +71,14 @@ export const routes: Routes = [
   {
     path: 'feed/:circle',
     component: FeedPrivateComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'articles',
+    component: ArticlesComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

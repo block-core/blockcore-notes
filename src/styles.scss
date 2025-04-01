@@ -41,7 +41,6 @@ html {
   
 }
 
-
 a {
   color: var(--mdc-text-button-label-text-color, var(--mat-sys-primary));
   text-decoration: none;
@@ -52,7 +51,6 @@ a:hover {
   transition: color 250ms ease;
   color: var(--mat-sys-inverse-primary);
 }
-
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.

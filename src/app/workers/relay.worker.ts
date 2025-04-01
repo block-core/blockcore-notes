@@ -6,14 +6,14 @@ import { RelayWorker } from './relay';
 let relayWorker: RelayWorker;
 
 addEventListener('message', async (ev: MessageEvent) => {
-  // console.log(`${relayWorker?.url}: MESSAGE RECEIVED IN RELAY WORKER!!`, JSON.stringify(ev.data));
+  console.log(`${relayWorker?.url}: MESSAGE RECEIVED IN RELAY WORKER!!`, JSON.stringify(ev.data));
 
   const request = ev.data as RelayRequest;
 
   switch (request.type) {
     case 'connect':
       // If the relay worker is already connected and valid, avoid re-creating.
-      if (relayWorker && relayWorker.relay && relayWorker.relay.status == 1) {
+      if (relayWorker && relayWorker.relay && relayWorker.relay.connected) {
         console.log('Already connected...');
         break;
       } else {
