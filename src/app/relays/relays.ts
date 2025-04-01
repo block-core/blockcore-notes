@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatAccordion } from '@angular/material/expansion';
+import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { Relay } from 'nostr-tools';
 import { ApplicationState } from '../services/applicationstate';
 import { StorageService } from '../services/storage';
@@ -15,11 +15,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from '../services/data';
 import { NostrService } from '../services/nostr';
 import { UploadService } from '../services/upload';
+import { TranslateModule } from '@ngx-translate/core';
+import { RelaysComponent } from '../shared/relays/relays';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-relays-management',
   templateUrl: './relays.html',
   styleUrls: ['./relays.css'],
+  imports: [MatExpansionModule, MatButtonModule, TranslateModule, RelaysComponent],
 })
 export class RelaysManagementComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;

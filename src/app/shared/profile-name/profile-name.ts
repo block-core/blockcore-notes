@@ -3,10 +3,14 @@ import { ProfileService } from 'src/app/services/profile';
 import { StorageService } from 'src/app/services/storage';
 import { Utilities } from 'src/app/services/utilities';
 import { NostrProfile } from '../../services/interfaces';
+import { RouterModule } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile-name',
   templateUrl: './profile-name.html',
+  imports: [RouterModule, MatTooltipModule, CommonModule],
 })
 export class ProfileNameComponent {
   @Input() pubkey: string = '';

@@ -12,11 +12,22 @@ import { ApplicationState } from 'src/app/services/applicationstate';
 import { nip05 } from 'nostr-tools';
 import { ZapDialogComponent } from '../zap-dialog/zap-dialog.component';
 import { ZapUiService } from 'src/app/services/zap-ui';
+import { CommonModule } from '@angular/common';
+import { ProfileActionsComponent } from '../profile-actions/profile-actions';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+import { MtxTooltipModule } from '@ng-matero/extensions/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-profile-header',
   templateUrl: './profile-header.html',
   styleUrls: ['./profile-header.css'],
+  imports: [CommonModule, ProfileActionsComponent, 
+    MtxTooltipModule , 
+    MatButtonModule,
+    MatTooltipModule, MatIconModule, RouterModule, ],
 })
 export class ProfileHeaderComponent {
   @Input() pubkey: string = '';

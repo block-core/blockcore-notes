@@ -1,17 +1,30 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { relayInit, Relay, Event, utils, getPublicKey, nip19, nip06, Kind, getEventHash, validateEvent, signEvent } from 'nostr-tools';
+import { finalizeEvent, Relay, Event, utils, getPublicKey, nip19, kinds, getEventHash, validateEvent } from 'nostr-tools';
+import { privateKeyFromSeedWords, generateSeedWords } from 'nostr-tools/nip06';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 import { ProfileService } from '../../services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { TranslateModule } from '@ngx-translate/core';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { CommonModule } from '@angular/common';
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.html',
   styleUrls: ['../connect.css', './create.css'],
+  imports: [MatIconModule, 
+    ClipboardModule,
+    CommonModule,
+    MatCardModule, FormsModule, MatInputModule, TranslateModule]
 })
 export class CreateProfileComponent {
   privateKey: string = '';
@@ -36,9 +49,14 @@ export class CreateProfileComponent {
 
   ngOnInit() {
     // this.mnemonic = bip39.generateMnemonic(wordlist);
-    this.mnemonic = nip06.generateSeedWords();
-    this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
-    this.privateKey = nip19.nsecEncode(this.privateKeyHex);
+    this.mnemonic = generateSeedWords();
+
+    const privateKey = privateKeyFromSeedWords(this.mnemonic);
+    const secretKeyHex = bytesToHex(privateKey);
+    this.privateKeyHex = secretKeyHex;
+    debugger;
+    // TODO: Verify if this work.
+    this.privateKey = nip19.nsecEncode(hexToBytes(this.privateKeyHex));
 
     this.updatePublicKey();
     // const masterSeed = bip39.mnemonicToSeedSync(this.mnemonic);
@@ -83,7 +101,7 @@ export class CreateProfileComponent {
 
         // Create and sign the profile event.
         const profileContent = this.utilities.reduceProfile(this.profile!);
-        let unsignedEvent = this.dataService.createEventWithPubkey(Kind.Metadata, JSON.stringify(profileContent), this.publicKeyHex);
+        let unsignedEvent = this.dataService.createEventWithPubkey(kinds.Metadata, JSON.stringify(profileContent), this.publicKeyHex);
         let signedEvent = unsignedEvent as Event;
         signedEvent.id = await getEventHash(unsignedEvent);
 
@@ -91,7 +109,7 @@ export class CreateProfileComponent {
           this.error = 'Unable to validate the event. Cannot continue.';
         }
 
-        const signature = signEvent(signedEvent, this.privateKeyHex) as any;
+        const signature = finalizeEvent(signedEvent, hexToBytes(this.privateKeyHex)) as any;
         signedEvent.sig = signature;
 
         // Make sure we reset the secrets.
@@ -137,7 +155,7 @@ export class CreateProfileComponent {
     }
 
     try {
-      this.publicKeyHex = getPublicKey(this.privateKeyHex);
+      this.publicKeyHex = getPublicKey(hexToBytes(this.privateKeyHex));
       this.publicKey = nip19.npubEncode(this.publicKeyHex);
     } catch (err: any) {
       this.error = err.message;

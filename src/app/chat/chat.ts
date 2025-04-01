@@ -1,8 +1,27 @@
 import { Component, ChangeDetectorRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ApplicationState } from '../services/applicationstate';
+import { CommonModule } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ChatListComponent } from '../shared/chat-list/chat-list.component';
+import { UserListComponent } from '../shared/user-list/user-list.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { ChatDetailComponent } from '../shared/chat-detail/chat-detail.component';
+import { UserProfileComponent } from '../shared/user-profile/user-profile.component';
+
 @Component({
   selector: 'app-chat',
+  standalone: true,
+  imports: [CommonModule, 
+    ChatListComponent,
+    UserListComponent,
+    MatToolbarModule,
+    MatIconModule,
+    ChatDetailComponent,
+    UserProfileComponent,
+    MatSidenavModule, MatTabsModule],
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss'],
   encapsulation: ViewEncapsulation.None,

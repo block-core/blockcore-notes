@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay, Event, getEventHash, Kind } from 'nostr-tools';
-import * as moment from 'moment';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -13,11 +11,22 @@ import { DataService } from '../services/data';
 import { UIService } from '../services/ui';
 import { NavigationService } from '../services/navigation';
 import { UploadService } from '../services/upload';
+import { ProfileHeaderComponent } from '../shared/profile-header/profile-header';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { AgoPipe } from '../shared/ago.pipe';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-profile',
   templateUrl: 'profile.html',
   styleUrls: ['profile.css'],
+  imports: [ProfileHeaderComponent, MatIconModule, MatButtonModule, CommonModule, MatCardModule, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule, AgoPipe],
 })
 export class ProfileComponent {
   pubkey?: string;

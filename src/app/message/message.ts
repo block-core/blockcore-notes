@@ -1,11 +1,13 @@
 import { Component, ChangeDetectorRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ApplicationState } from '../services/applicationstate';
+import { ChatDetailComponent } from '../shared/chat-detail/chat-detail.component';
 @Component({
   selector: 'app-message',
   templateUrl: './message.html',
   styleUrls: ['./message.css'],
   encapsulation: ViewEncapsulation.None,
+  imports: [ChatDetailComponent],
 })
 export class MessageComponent {
   @ViewChild('chatSidebar', { static: false }) chatSidebar!: MatSidenav;

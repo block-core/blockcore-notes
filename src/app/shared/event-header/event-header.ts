@@ -6,11 +6,18 @@ import { QueueService } from 'src/app/services/queue.service';
 import { UIService } from 'src/app/services/ui';
 import { Utilities } from 'src/app/services/utilities';
 import { Circle, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Bech32Pipe } from '../bech32.pipe';
+import { RelayListComponent } from '../relay-list/relay-list';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-event-header',
   templateUrl: './event-header.html',
   styleUrls: ['./event-header.css'],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatTooltipModule, Bech32Pipe, RelayListComponent],
 })
 export class EventHeaderComponent implements OnChanges {
   // @Input() pubkey: string = '';

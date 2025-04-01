@@ -2,8 +2,7 @@ import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
+import { Relay } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -11,9 +10,24 @@ import { NotesService } from '../services/notes';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OptionsService } from '../services/options';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ContentComponent } from '../shared/content/content';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { AgoPipe } from '../shared/ago.pipe';
 
 @Component({
   selector: 'app-feed-public',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule, MatProgressBarModule, MatExpansionModule, MatSlideToggleModule, FormsModule, MatCardModule, EventHeaderComponent, EventActionsComponent, MatTooltipModule, ContentComponent, DirectoryIconComponent, AgoPipe],
   templateUrl: './feed-public.html',
 })
 export class FeedPublicComponent {
@@ -164,7 +178,7 @@ export class FeedPublicComponent {
 
   ngOnDestroy() {
     if (this.sub) {
-      this.sub.unsub();
+      this.sub.close();
     }
 
     if (this.relay) {
@@ -187,7 +201,7 @@ export class FeedPublicComponent {
       if (!this.options.values.privateFeed) {
         this.options.values.publicFeed = true;
       } else {
-        this.options.values.publicFeed = false;
+        this.options.values.privateFeed = false;
       }
     }
   }
@@ -220,21 +234,21 @@ export class FeedPublicComponent {
     }
 
     // const relay = relayInit('wss://relay.nostr.info');
-    this.relay = relayInit('wss://nostr-pub.wellorder.net');
+    this.relay = await Relay.connect('wss://nostr-pub.wellorder.net');
 
-    this.relay.on('connect', () => {
-      console.log(`connected to ${this.relay?.url}`);
-      // this.onConnected(this.relay);
-    });
+    // this.relay.on('connect', () => {
+    //   console.log(`connected to ${this.relay?.url}`);
+    //   // this.onConnected(this.relay);
+    // });
 
-    this.relay.on('disconnect', () => {
-      console.log(`DISCONNECTED! ${this.relay?.url}`);
-    });
+    // this.relay.on('disconnect', () => {
+    //   console.log(`DISCONNECTED! ${this.relay?.url}`);
+    // });
 
-    this.relay.on('notice', (msg: any) => {
-      console.log(`NOTICE FROM ${this.relay?.url}: ${msg}`);
-    });
+    // this.relay.on('notice', (msg: any) => {
+    //   console.log(`NOTICE FROM ${this.relay?.url}: ${msg}`);
+    // });
 
-    this.relay.connect();
+    // this.relay.connect();
   }
 }

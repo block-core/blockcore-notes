@@ -1,5 +1,5 @@
-import { Event, Filter, Kind, relayInit } from 'nostr-tools';
-import { NostrRelay, NostrRelaySubscription, NostrSub, QueryJob } from '../services/interfaces';
+import { Event, Filter, kinds, Relay } from 'nostr-tools';
+import { NostrRelay, NostrRelaySubscription, NostrSubscription, QueryJob } from '../services/interfaces';
 import { RelayResponse } from '../services/messages';
 import { Queue } from '../services/queue';
 
@@ -18,7 +18,7 @@ export class RelayWorker {
   }
 
   async publish(event: Event) {
-    if (event.kind == Kind.Article || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
+    if (event.kind == kinds.LongFormArticle || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
       // If we don't have metadata from the relay, don't publish articles.
       if (!this.relay.nip11) {
         console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article/Badge will not be published here.`);
@@ -31,17 +31,24 @@ export class RelayWorker {
       }
     }
 
-    let pub = this.relay.publish(event);
-    pub.on('ok', () => {
-      console.log(`${this.relay.url} has accepted our event`);
-    });
+    try {
+      let pub = await this.relay.publish(event);
+      console.log(`we saw the event on ${this.relay.url}`);
+    } catch (err) {
+      console.log(`failed to publish to ${this.relay.url}: ${err}`);
+      postMessage({ type: 'failure', data: err, url: this.relay.url } as RelayResponse);
+    }
+
+    // pub.on('ok', () => {
+    //   console.log(`${this.relay.url} has accepted our event`);
+    // });
     // pub.on('seen', () => {
     //   console.log(`we saw the event on ${this.relay.url}`);
     // });
-    pub.on('failed', (reason: any) => {
-      console.log(`failed to publish to ${this.relay.url}: ${reason}`);
-      postMessage({ type: 'failure', data: reason, url: this.relay.url } as RelayResponse);
-    });
+    // pub.on('failed', (reason: any) => {
+    //   console.log(`failed to publish to ${this.relay.url}: ${reason}`);
+    //   postMessage({ type: 'failure', data: reason, url: this.relay.url } as RelayResponse);
+    // });
   }
 
   /** Enques a job to be processed against connected relays. */
@@ -79,7 +86,7 @@ export class RelayWorker {
   }
 
   processSubscriptions() {
-    if (!this.relay || this.relay.status != 1) {
+    if (!this.relay || !this.relay.connected) {
       return;
     }
 
@@ -97,7 +104,7 @@ export class RelayWorker {
   }
 
   processProfiles() {
-    if (!this.relay || this.relay.status != 1 || this.queue.queues.profile.active) {
+    if (!this.relay || !this.relay.connected || this.queue.queues.profile.active) {
       console.log(`${this.url}: processProfiles: Relay not ready or currently active: ${this.queue.queues.profile.active}.`, this.relay);
       return;
     }
@@ -122,7 +129,7 @@ export class RelayWorker {
   }
 
   processContacts() {
-    if (!this.relay || this.relay.status != 1 || this.queue.queues.contacts.active) {
+    if (!this.relay || !this.relay.connected || this.queue.queues.contacts.active) {
       return;
     }
 
@@ -141,7 +148,7 @@ export class RelayWorker {
   }
 
   processEvents() {
-    if (!this.relay || this.relay.status != 1 || this.queue.queues.event.active) {
+    if (!this.relay || !this.relay.connected || this.queue.queues.event.active) {
       console.log(`${this.url}: processEvents: Relay not ready or currently active: ${this.queue.queues.event.active}.`, this.relay);
       return;
     }
@@ -167,7 +174,7 @@ export class RelayWorker {
   }
 
   processArticle() {
-    if (!this.relay || this.relay.status != 1 || this.queue.queues.article.active) {
+    if (!this.relay || !this.relay.connected || this.queue.queues.article.active) {
       console.log(`${this.url}: processArticle: Relay not ready or currently active: ${this.queue.queues.article.active}.`, this.relay);
       return;
     }
@@ -193,7 +200,7 @@ export class RelayWorker {
   }
 
   processBadgeDefinition() {
-    if (!this.relay || this.relay.status != 1 || this.queue.queues.badgedefinition.active) {
+    if (!this.relay || !this.relay.connected || this.queue.queues.badgedefinition.active) {
       console.log(`${this.url}: processBadgeDefinition: Relay not ready or currently active: ${this.queue.queues.badgedefinition.active}.`, this.relay);
       return;
     }
@@ -221,44 +228,56 @@ export class RelayWorker {
   /** Provide event to publish and terminate immediately. */
   async connect(event?: any) {
     // const relay = relayInit('wss://relay.nostr.info');
-    const relay = relayInit(this.url) as NostrRelay;
+    try {
+    const relay = await Relay.connect(this.url) as NostrRelay;
     // relay.subscriptions = [];
-
     this.relay = relay;
 
-    relay.on('connect', async () => {
-      console.log(`${this.url}: Connected.`);
-      postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
+    // If the async connect call works, we are connected.
+    console.log(`${this.url}: Connected.`);
+    postMessage({ type: 'status', data: 1, url: relay.url } as RelayResponse);
 
-      // If there was an event provided, publish it and then disconnect.
-      if (event) {
-        await this.publish(event);
-        this.disconnect();
-        postMessage({ type: 'terminated', url: this.url } as RelayResponse);
-      } else {
-        // Make sure we set the relay as well before processing.
-        // this.relay = relay;
+    // If there was an event provided, publish it and then disconnect.
+    if (event) {
+      await this.publish(event);
+      this.disconnect();
+      postMessage({ type: 'terminated', url: this.url } as RelayResponse);
+    } else {
+      // Make sure we set the relay as well before processing.
+      // this.relay = relay;
 
-        // Upon connection, make sure we process anything that is in the queue immediately:
-        this.process();
-        // onConnected(relay);
-        //this.onConnected(relay);
-      }
-    });
+      // Upon connection, make sure we process anything that is in the queue immediately:
+      this.process();
+      // onConnected(relay);
+      //this.onConnected(relay);
+  }
 
-    relay.on('disconnect', () => {
-      console.log(`${this.url}: DISCONNECTED!`);
-      this.subscriptions = [];
-      postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
-    });
+  this.relay.onclose = () => {
+    console.log(`${this.url}: DISCONNECTED!`);
+    this.subscriptions = [];
+    postMessage({ type: 'status', data: 0, url: relay.url } as RelayResponse);
+  }
 
-    relay.on('notice', (msg: any) => {
-      console.log(`${this.url}: NOTICE: ${msg}`);
-      postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
-    });
+  this.relay.onnotice = (msg: any) => {
+    console.log(`${this.url}: NOTICE: ${msg}`);
+    postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
+  }
 
-    try {
-      await relay.connect();
+    // relay.on('connect', async () => {
+      
+    // });
+
+    // relay.on('disconnect', () => {
+
+    // });
+
+    // relay.on('notice', (msg: any) => {
+    //   console.log(`${this.url}: NOTICE: ${msg}`);
+    //   postMessage({ type: 'notice', data: msg, url: relay.url } as RelayResponse);
+    // });
+
+  
+      // await relay.connect();
     } catch (err) {
       postMessage({ type: 'error', relay: this.url, error: 'Unable to connect.' });
       console.error('Unable to connect.');
@@ -266,8 +285,8 @@ export class RelayWorker {
   }
 
   disconnect() {
-    if (this.relay.status == 1) {
-      console.log(`${this.url}: relay.status: ${this.relay.status}, calling close!`);
+    if (this.relay.connected) {
+      console.log(`${this.url}: relay.status: ${this.relay.connected}, calling close!`);
       this.relay.close();
     }
   }
@@ -283,7 +302,7 @@ export class RelayWorker {
     this.subscriptions.splice(index, 1);
 
     // Unsub from the relay.
-    sub.sub?.unsub();
+    sub.sub?.close();
     console.log('Unsubscribed: ', id);
   }
 
@@ -300,43 +319,43 @@ export class RelayWorker {
   //   }
   // }
 
-  profileSub?: NostrSub;
+  profileSub?: NostrSubscription;
   profileTimer?: any;
 
-  contactsSub?: NostrSub;
+  contactsSub?: NostrSubscription;
   contactsTimer?: any;
 
-  eventSub?: NostrSub;
+  eventSub?: NostrSubscription;
   eventTimer?: any;
 
-  articleSub?: NostrSub;
+  articleSub?: NostrSubscription;
   articleTimer?: any;
 
-  badgeDefinitionSub?: NostrSub;
+  badgeDefinitionSub?: NostrSubscription;
   badgeDefinitionTimer?: any;
 
   clearProfileSub() {
-    this.profileSub?.unsub();
+    this.profileSub?.close();
     this.profileSub = undefined;
   }
 
   clearContactsSub() {
-    this.contactsSub?.unsub();
+    this.contactsSub?.close();
     this.contactsSub = undefined;
   }
 
   clearEventSub() {
-    this.eventSub?.unsub();
+    this.eventSub?.close();
     this.eventSub = undefined;
   }
 
   clearArticleSub() {
-    this.articleSub?.unsub();
+    this.articleSub?.close();
     this.articleTimer = undefined;
   }
 
   clearBadgeDefinitionSub() {
-    this.badgeDefinitionSub?.unsub();
+    this.badgeDefinitionSub?.close();
     this.badgeDefinitionTimer = undefined;
   }
 
@@ -363,7 +382,29 @@ export class RelayWorker {
     //   return;
     // }
 
-    const sub = this.relay.sub([{ kinds: [0], authors: pubkeys }]) as NostrSub;
+    const url = this.url;
+
+    const sub = this.relay.subscribe([{ kinds: [0], authors: pubkeys }], {
+
+      onevent: (event: Event) => {
+        console.log('POST MESSAGE BACK TO MAIN');
+        postMessage({ url: url, type: 'event', data: event } as RelayResponse);
+        console.log('FINISHED POST MESSAGE BACK TO MAIN');
+        // console.log('CLEAR PROFILE SUBSCRIPTION....');
+      },
+
+    oneose: () => {
+      console.log('eose on profile, profile likely not found.');
+      clearTimeout(this.profileTimer);
+      this.clearProfileSub();
+      this.queue.queues.profile.active = false;
+      this.processProfiles();
+    }
+      
+
+
+
+    }) as NostrSubscription;
     this.profileSub = sub;
     // sub.id = id;
     // console.log('SUBSCRIPTION:', sub);
@@ -372,42 +413,42 @@ export class RelayWorker {
     // const sub = relay.sub(filters, {}) as NostrSubscription;
     // relay.subscriptions.push(sub);
 
-    sub.on('event', (originalEvent: any) => {
-      console.log('POST MESSAGE BACK TO MAIN');
-      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-      console.log('FINISHED POST MESSAGE BACK TO MAIN');
-      // console.log('CLEAR PROFILE SUBSCRIPTION....');
+    // sub.on('event', (originalEvent: any) => {
+    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    //   // console.log('CLEAR PROFILE SUBSCRIPTION....');
 
-      // this.clearProfileSub();
-      // clearTimeout(this.profileTimer);
-      // console.log('FINISHED CLEAR PROFILE SUBSCRIPTION....');
+    //   // this.clearProfileSub();
+    //   // clearTimeout(this.profileTimer);
+    //   // console.log('FINISHED CLEAR PROFILE SUBSCRIPTION....');
 
-      // this.queue.queues.profile.active = false;
-      // this.processProfiles();
+    //   // this.queue.queues.profile.active = false;
+    //   // this.processProfiles();
 
-      // if (!finalizedCalled) {
-      //   finalizedCalled = true;
-      //   console.log('Calling finalized!!!');
-      //   finalized();
-      //   console.log('Called finalized!!!');
-      // }
+    //   // if (!finalizedCalled) {
+    //   //   finalizedCalled = true;
+    //   //   console.log('Calling finalized!!!');
+    //   //   finalized();
+    //   //   console.log('Called finalized!!!');
+    //   // }
 
-      // console.log('Profile event received, finalized called.');
+    //   // console.log('Profile event received, finalized called.');
 
-      // const event = this.eventService.processEvent(originalEvent);
-      // if (!event) {
-      //   return;
-      // }
-      // observer.next(event);
-    });
+    //   // const event = this.eventService.processEvent(originalEvent);
+    //   // if (!event) {
+    //   //   return;
+    //   // }
+    //   // observer.next(event);
+    // });
 
-    sub.on('eose', () => {
-      console.log('eose on profile, profile likely not found.');
-      clearTimeout(this.profileTimer);
-      this.clearProfileSub();
-      this.queue.queues.profile.active = false;
-      this.processProfiles();
-    });
+    // sub.on('eose', () => {
+    //   console.log('eose on profile, profile likely not found.');
+    //   clearTimeout(this.profileTimer);
+    //   this.clearProfileSub();
+    //   this.queue.queues.profile.active = false;
+    //   this.processProfiles();
+    // });
 
     console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
@@ -440,18 +481,33 @@ export class RelayWorker {
       this.clearContactsSub();
     }
 
-    const sub = this.relay.sub([{ kinds: [3], authors: [pubkey] }]) as NostrSub;
+    const sub = this.relay.subscribe([{ kinds: [3], authors: [pubkey] }], {
+
+      onevent: (event: Event) => {
+
+        postMessage({ url: this.url, type: 'event', data: event } as RelayResponse);
+        this.clearContactsSub();
+        clearTimeout(this.contactsTimer);
+        if (!finalizedCalled) {
+          finalizedCalled = true;
+          finalized();
+        }
+      }
+
+
+
+    }) as NostrSubscription;
     this.contactsSub = sub;
 
-    sub.on('event', (originalEvent: any) => {
-      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-      this.clearContactsSub();
-      clearTimeout(this.contactsTimer);
-      if (!finalizedCalled) {
-        finalizedCalled = true;
-        finalized();
-      }
-    });
+    // sub.on('event', (originalEvent: any) => {
+    //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+    //   this.clearContactsSub();
+    //   clearTimeout(this.contactsTimer);
+    //   if (!finalizedCalled) {
+    //     finalizedCalled = true;
+    //     finalized();
+    //   }
+    // });
 
     this.contactsTimer = setTimeout(() => {
       this.clearContactsSub();
@@ -485,23 +541,41 @@ export class RelayWorker {
     //   return;
     // }
 
-    const filter = { kinds: [Kind.Article], authors: ids };
-    const sub = this.relay.sub([filter]) as NostrSub;
+    const filter = { kinds: [kinds.LongFormArticle], authors: ids };
+    const sub = this.relay.subscribe([filter], {
+
+      onevent: (event: Event) => {
+        console.log('POST MESSAGE BACK TO MAIN');
+        postMessage({ url: this.url, type: 'event', data: event } as RelayResponse);
+        console.log('FINISHED POST MESSAGE BACK TO MAIN');
+      },
+
+      oneose: () => {
+        console.log('eose on event.');
+        clearTimeout(this.articleTimer);
+        this.clearArticleSub();
+        this.queue.queues.article.active = false;
+        this.processArticle();
+      }
+
+
+
+    }) as NostrSubscription;
     this.articleSub = sub;
 
-    sub.on('event', (originalEvent: any) => {
-      console.log('POST MESSAGE BACK TO MAIN');
-      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-      console.log('FINISHED POST MESSAGE BACK TO MAIN');
-    });
+    // sub.on('event', (originalEvent: any) => {
+    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    // });
 
-    sub.on('eose', () => {
-      console.log('eose on event.');
-      clearTimeout(this.articleTimer);
-      this.clearArticleSub();
-      this.queue.queues.article.active = false;
-      this.processArticle();
-    });
+    // sub.on('eose', () => {
+    //   console.log('eose on event.');
+    //   clearTimeout(this.articleTimer);
+    //   this.clearArticleSub();
+    //   this.queue.queues.article.active = false;
+    //   this.processArticle();
+    // });
 
     console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
@@ -554,22 +628,42 @@ export class RelayWorker {
       filters.push({ kinds: [30009], authors: [pubkey], ['#d']: [slug] });
     }
 
-    const sub = this.relay.sub(filters) as NostrSub;
+    const sub = this.relay.subscribe(filters, {
+
+      onevent: (event: Event) => {
+        console.log('POST MESSAGE BACK TO MAIN');
+        postMessage({ url: this.url, type: 'event', data: event } as RelayResponse);
+        console.log('FINISHED POST MESSAGE BACK TO MAIN');
+      },
+
+
+      oneose: () => {
+        console.log('eose on event.');
+        clearTimeout(this.badgeDefinitionTimer);
+        this.clearBadgeDefinitionSub();
+        this.queue.queues.badgedefinition.active = false;
+        this.processBadgeDefinition();
+      }
+
+
+
+
+    }) as NostrSubscription;
     this.badgeDefinitionSub = sub;
 
-    sub.on('event', (originalEvent: any) => {
-      console.log('POST MESSAGE BACK TO MAIN');
-      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-      console.log('FINISHED POST MESSAGE BACK TO MAIN');
-    });
+    // sub.on('event', (originalEvent: any) => {
+    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    // });
 
-    sub.on('eose', () => {
-      console.log('eose on event.');
-      clearTimeout(this.badgeDefinitionTimer);
-      this.clearBadgeDefinitionSub();
-      this.queue.queues.badgedefinition.active = false;
-      this.processBadgeDefinition();
-    });
+    // sub.on('eose', () => {
+    //   console.log('eose on event.');
+    //   clearTimeout(this.badgeDefinitionTimer);
+    //   this.clearBadgeDefinitionSub();
+    //   this.queue.queues.badgedefinition.active = false;
+    //   this.processBadgeDefinition();
+    // });
 
     console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
@@ -594,24 +688,35 @@ export class RelayWorker {
       return;
     }
 
-    let sub: NostrSub | undefined = this.relay.sub(filters) as NostrSub;
+    let sub: NostrSubscription | undefined = this.relay.subscribe(filters, {
 
-    sub.on('event', (originalEvent: any) => {
-      postMessage({ url: this.url, type: 'event', data: originalEvent, subscription: id } as RelayResponse);
-    });
+      onevent: (event: Event) => {
+        postMessage({ url: this.url, type: 'event', data: event, subscription: id } as RelayResponse);
 
-    sub.on('eose', () => {
-      clearTimeout(timer);
+      },
 
-      if (sub) {
-        sub.unsub();
-        sub = undefined;
-      }
-    });
+      oneose: () => {
+        clearTimeout(timer);
+
+        if (sub) {
+          sub.close();
+          sub = undefined;
+        }
+      },
+
+
+    }) as NostrSubscription;
+
+    // sub.on('event', (originalEvent: any) => {
+    // });
+
+    // sub.on('eose', () => {
+      
+    // });
 
     const timer = setTimeout(() => {
       if (sub) {
-        sub.unsub();
+        sub.close();
         sub = undefined;
       }
 
@@ -642,24 +747,41 @@ export class RelayWorker {
     //   return;
     // }
 
-    const kinds = [Kind.Text];
+    const kindsList = [kinds.ShortTextNote];
 
-    const sub = this.relay.sub([{ kinds: kinds, ids: ids }]) as NostrSub;
+    const sub = this.relay.subscribe([{ kinds: kindsList, ids: ids }], {
+
+      onevent: (event: Event) => {
+        console.log('POST MESSAGE BACK TO MAIN');
+        postMessage({ url: this.url, type: 'event', data: event } as RelayResponse);
+        console.log('FINISHED POST MESSAGE BACK TO MAIN');
+      },
+
+      oneose: () => {
+        console.log('eose on event.');
+        clearTimeout(this.eventTimer);
+        this.clearEventSub();
+        this.queue.queues.event.active = false;
+        this.processEvents();
+      }
+
+
+    }) as NostrSubscription;
     this.eventSub = sub;
 
-    sub.on('event', (originalEvent: any) => {
-      console.log('POST MESSAGE BACK TO MAIN');
-      postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
-      console.log('FINISHED POST MESSAGE BACK TO MAIN');
-    });
+    // sub.on('event', (originalEvent: any) => {
+    //   console.log('POST MESSAGE BACK TO MAIN');
+    //   postMessage({ url: this.url, type: 'event', data: originalEvent } as RelayResponse);
+    //   console.log('FINISHED POST MESSAGE BACK TO MAIN');
+    // });
 
-    sub.on('eose', () => {
-      console.log('eose on event.');
-      clearTimeout(this.eventTimer);
-      this.clearEventSub();
-      this.queue.queues.event.active = false;
-      this.processEvents();
-    });
+    // sub.on('eose', () => {
+    //   console.log('eose on event.');
+    //   clearTimeout(this.eventTimer);
+    //   this.clearEventSub();
+    //   this.queue.queues.event.active = false;
+    //   this.processEvents();
+    // });
 
     console.log('REGISTER TIMEOUT!!', timeoutSeconds * 1000);
 
@@ -679,7 +801,7 @@ export class RelayWorker {
   }
 
   subscribe(filters: Filter[], id: string) {
-    if (!this.relay || this.relay.status != 1) {
+    if (!this.relay || !this.relay.connected) {
       // If we don't have a connection yet, schedule the subscription to be added later.
       this.queue.queues.subscriptions.jobs.push({ id: id, filters: filters, type: 'Event', events: [] });
       console.warn('This relay does not have active connection and subscription cannot be created at this time. Subscription has been scheduled for adding later.');
@@ -692,7 +814,21 @@ export class RelayWorker {
       return;
     }
 
-    const sub = this.relay.sub(filters) as NostrSub;
+    const sub = this.relay.subscribe(filters, {
+
+      onevent: (event: Event) => {
+        postMessage({ url: this.url, subscription: id, type: 'event', data: event } as RelayResponse);
+      },
+
+      oneose: () => {
+        console.log('eose on event.');
+        // clearTimeout(this.eventTimer);
+        // this.clearEventSub();
+        // this.queue.queues.event.active = false;
+        // this.processEvents();
+      },
+
+    }) as NostrSubscription;
     // sub.id = id;
 
     console.log('SUBSCRIPTION:', sub);
@@ -701,18 +837,18 @@ export class RelayWorker {
     // const sub = relay.sub(filters, {}) as NostrSubscription;
     // relay.subscriptions.push(sub);
 
-    sub.on('event', (originalEvent: any) => {
-      postMessage({ url: this.url, subscription: id, type: 'event', data: originalEvent } as RelayResponse);
-      // const event = this.eventService.processEvent(originalEvent);
-      // if (!event) {
-      //   return;
-      // }
-      // observer.next(event);
-    });
+    // sub.on('event', (originalEvent: any) => {
+    //   postMessage({ url: this.url, subscription: id, type: 'event', data: originalEvent } as RelayResponse);
+    //   // const event = this.eventService.processEvent(originalEvent);
+    //   // if (!event) {
+    //   //   return;
+    //   // }
+    //   // observer.next(event);
+    // });
 
-    sub.on('eose', () => {
-      console.log('eose on:', this.url);
-    });
+    // sub.on('eose', () => {
+    //   console.log('eose on:', this.url);
+    // });
 
     // return () => {
     //   console.log('subscribeToRelay:finished:unsub');

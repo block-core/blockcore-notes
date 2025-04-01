@@ -6,11 +6,19 @@ import { StorageService } from '../services/storage';
 import { UIService } from '../services/ui';
 import { Utilities } from '../services/utilities';
 import { map, Observable, shareReplay, Subscription } from 'rxjs';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatCardModule } from '@angular/material/card';
+import { NotificationLabelComponent } from '../shared/notification-label/notification-label';
+import { CommonModule } from '@angular/common';
+import { DateComponent } from '../shared/date/date';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.html',
   styleUrls: ['./notifications.css'],
+  imports: [MatExpansionModule, MatButtonModule, TranslateModule, MatCardModule, NotificationLabelComponent, CommonModule, DateComponent],
 })
 export class NotificationsComponent {
   constructor(public navigation: NavigationService, private utilities: Utilities, private db: StorageService, private relayService: RelayService, public ui: UIService, private appState: ApplicationState) {}

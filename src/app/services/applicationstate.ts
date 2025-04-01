@@ -9,7 +9,7 @@ import { Direction } from '@angular/cdk/bidi';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ApplicationState {
   constructor(public translate: TranslateService, private breakpointObserver: BreakpointObserver, private authService: AuthenticationService, private location: Location, private titleService: Title) {

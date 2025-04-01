@@ -3,7 +3,7 @@ import { NostrEvent, NostrEventDocument, NostrProfileDocument, NostrRelay, Nostr
 import { ProfileService } from './profile';
 import { EventService } from './event';
 import { RelayService } from './relay';
-import { Filter, Relay, Event, getEventHash, validateEvent, verifySignature, Kind, UnsignedEvent } from 'nostr-tools';
+import { Filter, Relay, Event, getEventHash, validateEvent, verifyEvent, kinds, UnsignedEvent } from 'nostr-tools';
 import { DataValidation } from './data-validation';
 import { ApplicationState } from './applicationstate';
 import { timeout, map, merge, Observable, delay, Observer, race, take, switchMap, mergeMap, tap, finalize, concatMap, mergeAll, exhaustMap, catchError, of, combineAll, combineLatestAll, filter, from } from 'rxjs';
@@ -135,7 +135,7 @@ export class DataService {
       throw new Error('The event is not valid. Cannot publish.');
     }
 
-    let veryOk = await verifySignature(event as any); // Required .id and .sig, which we know has been added at this stage.
+    let veryOk = await verifyEvent(event as any); // Required .id and .sig, which we know has been added at this stage.
 
     if (!veryOk) {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
@@ -186,7 +186,7 @@ export class DataService {
     const mappedRelays = this.getJsonFormattedRelayList();
 
     let originalEvent: UnsignedEvent = {
-      kind: Kind.Contacts,
+      kind: kinds.Contacts,
       created_at: Math.floor(Date.now() / 1000),
       content: JSON.stringify(mappedRelays),
       pubkey: this.appState.getPublicKey(),
@@ -205,7 +205,7 @@ export class DataService {
 
   async initialDataLoad() {
     // Listen to profile and contacts of the logged on user.
-    this.relayService.subscribe([{ authors: [this.appState.getPublicKey()], kinds: [Kind.Metadata, Kind.Contacts] }], 'self');
+    this.relayService.subscribe([{ authors: [this.appState.getPublicKey()], kinds: [kinds.Metadata, kinds.Contacts] }], 'self');
 
     // Download the profile of the user.
     // this.enque({
@@ -238,7 +238,7 @@ export class DataService {
     // Notifications is a hard-coded subscription identifier.
     // Previously there was no filter on kind, then "started following you" events was shown due to kind 3, but downloading kind 3 for everyone is
     // fairly heavy operation so disabled for now.
-    this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100, kinds: [Kind.Text, Kind.Reaction, 6] }], 'notifications');
+    this.relayService.subscribe([{ ['#p']: [this.appState.getPublicKey()], limit: 100, kinds: [kinds.ShortTextNote, kinds.Reaction, 6] }], 'notifications');
 
     // Load the 10 latest notifications to be displayed on home page.
     const notifications = await this.storage.storage.getNotifications(10);
@@ -565,7 +565,7 @@ export class DataService {
   async updateMetadata(profile: NostrProfileDocument) {
     const profileContent = this.utilities.reduceProfile(profile!);
 
-    let event = this.createEvent(Kind.Metadata, JSON.stringify(profileContent));
+    let event = this.createEvent(kinds.Metadata, JSON.stringify(profileContent));
 
     const signedEvent = await this.signEvent(event);
 
@@ -581,27 +581,44 @@ export class DataService {
 
   downloadFromRelay(filters: Filter[], relay: NostrRelay, requestTimeout = 10000): Observable<NostrEventDocument> {
     return new Observable<NostrEventDocument>((observer: Observer<NostrEventDocument>) => {
-      const sub = relay.sub([...filters], {}) as NostrSubscription;
+      const sub = relay.subscribe([...filters], {
+
+        onevent: (event: Event) => {
+          const parsedEvent = this.eventService.processEvent(event);
+
+          if (!parsedEvent) {
+            return;
+          }
+  
+          observer.next(parsedEvent);
+        },
+
+        oneose: () => {
+          observer.complete();
+        },
+
+
+        onclose(reason) {
+          
+          // sub.unsub();
+        },
+
+
+      }) as NostrSubscription;
       // relay.subscriptions.push(sub);
 
-      sub.on('event', (originalEvent: any) => {
-        const event = this.eventService.processEvent(originalEvent);
+      // sub.on('event', (originalEvent: any) => {
+ 
+      // });
 
-        if (!event) {
-          return;
-        }
-
-        observer.next(event);
-      });
-
-      sub.on('eose', () => {
-        observer.complete();
-      });
+      // sub.on('eose', () => {
+       
+      // });
 
       return () => {
         // console.log('downloadFromRelay:finished:unsub');
         // When the observable is finished, this return function is called.
-        sub.unsub();
+        // sub.unsub();
       };
     }).pipe(
       timeout(requestTimeout),
@@ -622,71 +639,83 @@ export class DataService {
       this.isFetching = false;
 
       try {
-        profileSub.unsub();
+        profileSub.close();
+        // profileSub.unsub();
       } catch (err) {
         console.warn('Error during automatic failover for profile fetch.', err);
       }
     }, 30000);
 
     this.isFetching = true;
-    let profileSub = relay.sub([{ kinds: [0], authors: authors }], {});
+    let profileSub = relay.subscribe([{ kinds: [0], authors: authors }], {
 
-    profileSub.on('event', async (event: Event) => {
-      const originalEvent = event as NostrEvent;
-      const prossedEvent = this.eventService.processEvent(originalEvent);
+      oneose: () => {
+        // profileSub.unsub();
+        this.isFetching = false;
+      },
 
-      if (!prossedEvent) {
-        return;
+      onevent: (event: Event) => {
+        const originalEvent = event as NostrEvent;
+        const prossedEvent = this.eventService.processEvent(originalEvent);
+  
+        if (!prossedEvent) {
+          return;
+        }
+  
+        try {
+          const jsonParsed = JSON.parse(prossedEvent.content) as NostrProfileDocument;
+          const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
+  
+          // Keep a copy of the created_at value.
+          profile.created_at = prossedEvent.created_at;
+  
+          // Persist the profile.
+          // await this.profileService.updateProfile(prossedEvent.pubkey, profile);
+  
+          // TODO: Add NIP-05 and nostr.directory verification.
+          // const displayName = encodeURIComponent(profile.name);
+          // const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
+  
+          // const rawResponse = await fetch(url, {
+          //   method: 'GET',
+          //   mode: 'cors',
+          // });
+  
+          // if (rawResponse.status === 200) {
+          //   const content = await rawResponse.json();
+          //   const directoryPublicKey = content.names[displayName];
+  
+          //   if (event.pubkey === directoryPublicKey) {
+          //     if (!profile.verifications) {
+          //       profile.verifications = [];
+          //     }
+  
+          //     profile.verifications.push('@nostr.directory');
+  
+          //     // Update the profile with verification data.
+          //     await this.profile.putProfile(event.pubkey, profile);
+          //   } else {
+          //     // profile.verified = false;
+          //     console.warn('Nickname reuse:', url);
+          //   }
+          // } else {
+          //   // profile.verified = false;
+          // }
+        } catch (err) {
+          console.warn('This profile event was not parsed due to errors:', prossedEvent);
+        }
       }
 
-      try {
-        const jsonParsed = JSON.parse(prossedEvent.content) as NostrProfileDocument;
-        const profile = this.validator.sanitizeProfile(jsonParsed) as NostrProfileDocument;
 
-        // Keep a copy of the created_at value.
-        profile.created_at = prossedEvent.created_at;
-
-        // Persist the profile.
-        // await this.profileService.updateProfile(prossedEvent.pubkey, profile);
-
-        // TODO: Add NIP-05 and nostr.directory verification.
-        // const displayName = encodeURIComponent(profile.name);
-        // const url = `https://www.nostr.directory/.well-known/nostr.json?name=${displayName}`;
-
-        // const rawResponse = await fetch(url, {
-        //   method: 'GET',
-        //   mode: 'cors',
-        // });
-
-        // if (rawResponse.status === 200) {
-        //   const content = await rawResponse.json();
-        //   const directoryPublicKey = content.names[displayName];
-
-        //   if (event.pubkey === directoryPublicKey) {
-        //     if (!profile.verifications) {
-        //       profile.verifications = [];
-        //     }
-
-        //     profile.verifications.push('@nostr.directory');
-
-        //     // Update the profile with verification data.
-        //     await this.profile.putProfile(event.pubkey, profile);
-        //   } else {
-        //     // profile.verified = false;
-        //     console.warn('Nickname reuse:', url);
-        //   }
-        // } else {
-        //   // profile.verified = false;
-        // }
-      } catch (err) {
-        console.warn('This profile event was not parsed due to errors:', prossedEvent);
-      }
     });
 
-    profileSub.on('eose', () => {
-      profileSub.unsub();
-      this.isFetching = false;
-    });
+    // profileSub.on('event', async (event: Event) => {
+      
+    // });
+
+    // profileSub.on('eose', () => {
+     
+    // });
   }
 
   async cleanProfiles() {
@@ -712,11 +741,11 @@ export class DataService {
   }
 
   /** Creates an event ready for modification, signing and publish. */
-  createEvent(kind: Kind | number, content: any): UnsignedEvent {
+  createEvent(kind: number | number, content: any): UnsignedEvent {
     return this.createEventWithPubkey(kind, content, this.appState.getPublicKey());
   }
 
-  createEventWithPubkey(kind: Kind | number, content: any, pubkey: string): UnsignedEvent {
+  createEventWithPubkey(kind: number | number, content: any, pubkey: string): UnsignedEvent {
     let event: UnsignedEvent = {
       kind: kind,
       created_at: Math.floor(Date.now() / 1000),
@@ -749,7 +778,7 @@ export class DataService {
       throw new Error('The event is not valid. Cannot publish.');
     }
 
-    let veryOk = await verifySignature(signedEvent as any); // Required .id and .sig, which we know has been added at this stage.
+    let veryOk = await verifyEvent(signedEvent as any); // Required .id and .sig, which we know has been added at this stage.
 
     if (!veryOk) {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
@@ -828,7 +857,7 @@ export class DataService {
       throw new Error('The event is not valid. Cannot publish.');
     }
 
-    let veryOk = await verifySignature(signedEvent as any); // Required .id and .sig, which we know has been added at this stage.
+    let veryOk = await verifyEvent(signedEvent as any); // Required .id and .sig, which we know has been added at this stage.
 
     if (!veryOk) {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
@@ -846,16 +875,26 @@ export class DataService {
     for (let i = 0; i < this.relayService.relays.length; i++) {
       const relay = this.relayService.relays[i];
 
-      let pub = relay.publish(event);
-      pub.on('ok', () => {
+      let pub = await relay.publish(event);
+
+      console.log('Publish result: ', pub);
+
+      if (pub == 'ok') {
         console.log(`${relay.url} has accepted our event`);
-      });
+      }
+
+      if (pub == 'failed') {
+        console.log(`failed to publish to ${relay.url}: ${pub}`);
+      }
+
+      // pub.on('ok', () => {
+      // });
       // pub.on('seen', () => {
       //   console.log(`we saw the event on ${relay.url}`);
       // });
-      pub.on('failed', (reason: any) => {
-        console.log(`failed to publish to ${relay.url}: ${reason}`);
-      });
+      // pub.on('failed', (reason: any) => {
+      //   console.log(`failed to publish to ${relay.url}: ${reason}`);
+      // });
     }
   }
 }

@@ -1,5 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ApplicationState } from 'src/app/services/applicationstate';
 
 export interface PasswordDialogData {
@@ -11,6 +14,7 @@ export interface PasswordDialogData {
   selector: 'password-dialog',
   templateUrl: 'password-dialog.html',
   styleUrls: ['password-dialog.css'],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatDialogModule],
 })
 export class PasswordDialog {
   publicKey?: string;

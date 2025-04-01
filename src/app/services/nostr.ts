@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { getEventHash, getPublicKey, signEvent, validateEvent } from 'nostr-tools';
+import { getEventHash, getPublicKey, finalizeEvent, validateEvent } from 'nostr-tools';
 import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from './interfaces';
 import { SecurityService } from './security';
 import { StorageService } from './storage';
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -64,7 +65,9 @@ export class NostrService {
             return;
           }
 
-          const pubkey = getPublicKey(prvkey);
+          const prvKeyArray = new TextEncoder().encode(prvkey);
+
+          const pubkey = getPublicKey(prvKeyArray);
 
           if (event.pubkey != pubkey) {
             reject('The event public key is not correct for this private key');
@@ -75,7 +78,7 @@ export class NostrService {
             reject('Invalid Nostr event.');
           }
 
-          const signature = signEvent(event, prvkey) as any;
+          const signature = finalizeEvent(event, hexToBytes(prvkey)) as any;
           event.sig = signature;
 
           resolve(event);

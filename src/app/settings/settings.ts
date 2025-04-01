@@ -18,12 +18,25 @@ import { UploadService } from '../services/upload';
 import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
 import { SecurityService } from '../services/security';
 import * as QRCode from 'qrcode';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.html',
   styleUrls: ['./settings.css'],
+  imports: [
+    ClipboardModule,
+    MatTabsModule, MatIconModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatSelectModule, TranslateModule, CommonModule]
 })
 export class SettingsComponent {
   @ViewChild(MatAccordion) accordion!: MatAccordion;
@@ -229,7 +242,9 @@ export class SettingsComponent {
 
       this.verifiedWalletPassword = true;
 
-      const privateKey = nip19.nsecEncode(prvkey);
+      const prvKeyArray = new TextEncoder().encode(prvkey);
+
+      const privateKey = nip19.nsecEncode(prvKeyArray);
       this.privateKey = privateKey;
 
       this.qrCodePrivateKey = await QRCode.toDataURL('nostr:' + this.privateKey, {

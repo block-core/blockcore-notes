@@ -5,11 +5,18 @@ import { OptionsService } from 'src/app/services/options';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { TimePipe } from '../time.pipe';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
+import { MatSliderModule } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-media-player',
   templateUrl: './media-player.html',
   styleUrls: ['./media-player.css'],
+  imports: [TimePipe, RouterModule, MatButtonModule, MatIconModule, CommonModule, MatSliderModule, FormsModule],
 })
 export class MediaPlayerComponent {
   @Input() miniplayer = false;

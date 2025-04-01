@@ -2,15 +2,14 @@ import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay } from 'nostr-tools';
-import * as moment from 'moment';
+import { Relay } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
 import { OptionsService } from '../services/options';
 import { NavigationService } from '../services/navigation';
 import { CircleService } from '../services/circle';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { map, Observable, of, Subscription, tap, BehaviorSubject, finalize } from 'rxjs';
 import { DataService } from '../services/data';
 import { NotesService } from '../services/notes';
@@ -18,11 +17,38 @@ import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
 import { StorageService } from '../services/storage';
 import { MetricService } from '../services/metric-service';
+import { ProfileHeaderComponent } from '../shared/profile-header/profile-header';
+import { ContentMusicComponent } from '../shared/content-music/content-music';
+import { ContentPodcastComponent } from '../shared/content-podcast/content-podcast';
+import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { ContentComponent } from '../shared/content/content';
+import { TranslateModule } from '@ngx-translate/core';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { AgoPipe } from '../shared/ago.pipe';
+import { CommonModule } from '@angular/common';
+import { WithStatusPipe } from '../shared/loading.pipe';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.html',
   styleUrls: ['./user.css'],
+  imports: [
+    PhotoGalleryModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    EventHeaderComponent,
+    AgoPipe,
+    CommonModule,
+    WithStatusPipe,
+    EventActionsComponent,
+    ContentComponent,
+    TranslateModule,
+    DirectoryIconComponent,
+    MatTabsModule, ProfileHeaderComponent, ContentMusicComponent, ContentPodcastComponent],
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent {
@@ -165,7 +191,7 @@ export class UserComponent {
         }
 
         // TODO: Increase this, made low during development.
-        const timeAgo = moment().subtract(5, 'minutes').unix();
+        const timeAgo = Math.floor(new Date().getTime() / 1000) - (5 * 60);
 
         // If following is nothing and it's been a while since we retrieved the profile,
         // go grab the contacts list.

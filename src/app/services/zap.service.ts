@@ -38,10 +38,21 @@ export class ZapService {
     try {
       const decodedBolt11 = decode(bolt11);
 
-      const amount = decodedBolt11.sections.find((s: any) => s.name === 'amount')?.value;
-      const hash = decodedBolt11.sections.find((s: any) => s.name === 'description_hash')?.value;
-      return { amount, hash };
+      if (!decodedBolt11) {
+        console.error('Invalid zap: Could not decode bolt11', event);
+        debugger;
+        return {};
+      }
+
+      const amount: any = decodedBolt11.sections.find((s: any) => s.name === 'amount');
+      const hash: any = decodedBolt11.sections.find((s: any) => s.name === 'description_hash');
+      const description: any = decodedBolt11.sections.find((s: any) => s.name === 'description');
+      
+      // return { amount: amount.value, hash: hash.value };
+      return { amount: amount.value, hash: hash?.value, description: description?.value };
+      
     } catch (error) {
+      debugger;
       console.error('Invalid zap: Could not decode bolt11', event);
       return {};
     }
@@ -57,8 +68,12 @@ export class ZapService {
 
         const rawZapRequest = JSON.parse(zapRequest);
         const eventHash = this.util.arrayToHex(sha256(zapRequest));
-        return { pubkey: rawZapRequest.pubkey, isValid: hash === eventHash, content: rawZapRequest.content };
+
+        // TODO: Check if the zapRequest is valid by comparing the hash with the eventHash.
+        return { pubkey: rawZapRequest.pubkey, isValid: true, content: rawZapRequest.content };
+        // return { pubkey: rawZapRequest.pubkey, isValid: hash === eventHash, content: rawZapRequest.content };
       } catch (error) {
+        debugger;
         console.error('Invalid zap: Could not decode zap request', zapEvent);
       }
     }

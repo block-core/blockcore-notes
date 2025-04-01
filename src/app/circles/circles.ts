@@ -14,9 +14,29 @@ import { copyToClipboard } from '../shared/utilities';
 import { Subscription, tap } from 'rxjs';
 import { DataService } from '../services/data';
 import { NavigationService } from '../services/navigation';
+import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatCardModule } from '@angular/material/card';
+import { CircleStylePipe } from '../shared/circle-style';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { AgoPipe } from '../shared/ago.pipe';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-circles',
+  standalone: true,
+  imports: [CommonModule, 
+    TranslateModule,
+    MatCardModule,
+    CircleStylePipe,
+    MatButtonModule,
+    AgoPipe,
+    MatMenuModule,
+    MatIconModule,
+    MatDialogModule, MatSnackBarModule],
   templateUrl: './circles.html',
   styleUrls: ['./circles.css'],
 })

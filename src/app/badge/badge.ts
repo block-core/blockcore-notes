@@ -8,9 +8,22 @@ import { NavigationService } from '../services/navigation';
 import { RelayService } from '../services/relay';
 import { Utilities } from '../services/utilities';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatBadgeModule } from '@angular/material/badge';
+import { BadgeCardComponent } from '../shared/badge-card/badge-card';
+import { DateComponent } from '../shared/date/date';
+import { ProfileNameComponent } from '../shared/profile-name/profile-name';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-badge',
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatSnackBarModule, MatBadgeModule, BadgeCardComponent, DateComponent, ProfileNameComponent, MatFormFieldModule, MatInputModule, TranslateModule, FormsModule],
   templateUrl: 'badge.html',
   styleUrls: ['badge.css'],
 })

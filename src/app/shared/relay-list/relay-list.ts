@@ -1,9 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Utilities } from 'src/app/services/utilities';
 
 @Component({
   selector: 'app-relay-list',
   templateUrl: './relay-list.html',
+  imports: [CommonModule],
 })
 export class RelayListComponent {
   @Input() relays: any;

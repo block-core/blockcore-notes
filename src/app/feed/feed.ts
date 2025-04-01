@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { relayInit, Relay, Event } from 'nostr-tools';
+import { Relay, Event } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { NostrEvent, NostrNoteDocument, NostrProfile, NostrProfileDocument } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -11,9 +11,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { OptionsService } from '../services/options';
 import { AuthenticationService } from '../services/authentication';
 import { NavigationService } from '../services/navigation';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
+import { FeedPrivateComponent } from '../feed-private/feed-private';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-feed',
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatSnackBarModule, MatTabsModule, MatIconModule, FeedPrivateComponent],
   templateUrl: './feed.html',
 })
 export class FeedComponent {
@@ -71,7 +79,7 @@ export class FeedComponent {
 
   ngOnDestroy() {
     if (this.sub) {
-      this.sub.unsub();
+      this.sub.close();
     }
   }
 

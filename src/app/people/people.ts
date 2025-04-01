@@ -2,8 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
-import { nip05, relayInit } from 'nostr-tools';
-import * as moment from 'moment';
+import { nip05 } from 'nostr-tools';
 import { DataValidation } from '../services/data-validation';
 import { Circle, NostrEvent, NostrProfile, NostrEventDocument, NostrProfileDocument, ProfileStatus } from '../services/interfaces';
 import { ProfileService } from '../services/profile';
@@ -18,11 +17,24 @@ import { DataService } from '../services/data';
 import { CircleService } from '../services/circle';
 import { OptionsService } from '../services/options';
 import { MetricService } from '../services/metric-service';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { ProfileActionsComponent } from '../shared/profile-actions/profile-actions';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { AgoPipe } from '../shared/ago.pipe';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-people',
   templateUrl: './people.html',
   styleUrls: ['./people.css'],
+  imports: [MatExpansionModule, TranslateModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatCardModule, CommonModule, EventHeaderComponent, ProfileActionsComponent, MatProgressSpinnerModule, DirectoryIconComponent, AgoPipe],
 })
 export class PeopleComponent {
   publicKey?: string | null;

@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/esm/camera/core';
 import { OptionsService } from 'src/app/services/options';
@@ -12,6 +14,7 @@ export interface DialogData {
   selector: 'qr-scan-dialog',
   templateUrl: 'qr-scan.html',
   styleUrls: ['qr-scan.css'],
+  imports: [MatIconModule, CommonModule],
 })
 export class QrScanDialog implements OnInit {
   private html5QrCode!: Html5Qrcode;

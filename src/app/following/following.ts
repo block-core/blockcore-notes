@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ApplicationState } from '../services/applicationstate';
 import { DataService } from '../services/data';
@@ -8,9 +8,14 @@ import { NostrEventDocument, NostrProfileDocument } from '../services/interfaces
 import { ProfileService } from '../services/profile';
 import { QueueService } from '../services/queue.service';
 import { UIService } from '../services/ui';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ProfileWidgetComponent } from '../shared/profile-widget/profile-widget';
 
 @Component({
   selector: 'app-following',
+  standalone: true,
+  imports: [CommonModule, MatSnackBarModule, RouterModule, MatTabsModule, ProfileWidgetComponent],
   templateUrl: './following.html',
   styleUrls: ['./following.css'],
 })

@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ApplicationState } from './services/applicationstate';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Router, TitleStrategy } from '@angular/router';
+import { Router, RouterModule, TitleStrategy } from '@angular/router';
 import { AuthenticationService } from './services/authentication';
 import { AppUpdateService } from './services/app-update';
 import { CheckForUpdateService } from './services/check-for-update';
@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NoteDialog } from './shared/create-note-dialog/create-note-dialog';
 import { Observable, map, shareReplay, startWith, debounceTime, tap } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { JsonPipe, Location } from '@angular/common';
+import { JsonPipe, Location, CommonModule } from '@angular/common';
 import { RelayService } from './services/relay';
 import { DataService } from './services/data';
 import { ProfileService } from './services/profile';
@@ -18,20 +18,107 @@ import { NostrProfileDocument } from './services/interfaces';
 import { ThemeService } from './services/theme';
 import { NostrProtocolRequest } from './common/NostrProtocolRequest';
 import { SearchService } from './services/search';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CircleService } from './services/circle';
 import { StorageService } from './services/storage';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { UIService } from './services/ui';
 import { OptionsService } from './services/options';
 import { LabelService } from './services/label';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BadgeService } from './services/badge';
 import { State } from './services/state';
 import { EventService } from './services/event';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatRippleModule } from '@angular/material/core';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSliderModule } from '@angular/material/slider';
+import { MediaPlayerComponent } from './shared/media-player/media-player';
+import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatSidenavModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatListModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatBottomSheetModule,
+    MatSlideToggleModule,
+    MatAutocompleteModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatTooltipModule,
+    MatExpansionModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatStepperModule,
+    MatTreeModule,
+    MatBadgeModule,
+    MatMenuModule,
+    MatGridListModule,
+    MatCardModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatButtonToggleModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRippleModule,
+    MatSortModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatOptionModule,
+    MatSliderModule,
+    RouterModule, 
+    MediaPlayerComponent,
+    TranslateModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxLoadingButtonsModule,
+
+  ],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })

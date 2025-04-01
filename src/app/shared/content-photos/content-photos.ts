@@ -4,12 +4,14 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument } from '../../services/interfaces';
+import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
 import { ProfileImageDialog } from '../profile-image-dialog/profile-image-dialog';
 
 @Component({
   selector: 'app-content-photos',
   templateUrl: './content-photos.html',
   styleUrls: ['./content-photos.css'],
+  imports: [PhotoGalleryModule],
 })
 export class ContentPhotosComponent {
   // @Input() event?: NostrEventDocument;

@@ -75,15 +75,15 @@
       </mat-toolbar> -->
 
       <mat-nav-list>
-        <a [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>home</mat-icon>
           <span *ngIf="displayLabels">{{'App.Home' | translate }}</span>
         </a>
-        <a [routerLink]="['/feed']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/feed']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>notes</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Feed' | translate }}</span>
         </a>
-        <a [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon [matBadgeHidden]="(ui.unreadNotifications$ | async) == 0" [matBadge]="ui.unreadNotifications$ | async">notifications</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Notifications' | translate }}</span>
         </a>
@@ -95,15 +95,15 @@
             <mat-icon matBadge="2">mail</mat-icon>
           <span *ngIf="displayLabels">Messages</span>
         </a> -->
-        <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>people</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.People' | translate }}</span>
         </a>
-        <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>animation</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Circles' | translate }}</span>
         </a>
-        <a [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>bookmarks</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Bookmarks' | translate }}</span>
         </a>
@@ -115,11 +115,11 @@
           <mat-icon>construction</mat-icon>
           <span *ngIf="displayLabels">Example</span>
         </a> -->
-        <a [routerLink]="['/relays']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/relays']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>dns</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Relays' | translate }}</span>
         </a>
-        <a mat-menu-item (click)="toggleMenuSize()">
+        <a class="nav-link" mat-menu-item (click)="toggleMenuSize()">
           <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
           <mat-icon *ngIf="!displayLabels">chevron_right</mat-icon>
         </a>
@@ -144,7 +144,7 @@
             <img loading="lazy" *ngIf="!profile?.banner" [src]="bgimagePath" alt="background" class="bg" />
 
             <div class="desc">
-              <h3><span *ngIf="profile?.name">@</span>{{ profile?.name }}</h3>
+              <h3><span *ngIf="profile?.name">&#64;</span>{{ profile?.name }}</h3>
               <p>{{ profile?.about }}</p>
             </div>
           </div>
@@ -167,31 +167,31 @@
       </div>
       <mat-divider></mat-divider>
       <mat-nav-list>
-        <a [routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link"[routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>person</mat-icon>
           <span>{{ 'App.ViewProfile' | translate }}</span>
         </a>
-        <a [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>edit</mat-icon>
           <span>{{ 'App.EditProfile' | translate }}</span>
         </a>
-        <a [routerLink]="['/badges', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/badges', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>badge</mat-icon>
           <span>{{ 'App.Badges' | translate }}</span>
         </a>
-        <a mat-menu-item (click)="toggleProfileMenu(); openMediaPlayer()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" mat-menu-item (click)="toggleProfileMenu(); openMediaPlayer()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>play_circle</mat-icon>
           <span>{{ 'App.MediaPlayer' | translate }}</span>
         </a>
-        <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>settings</mat-icon>
           <span>{{ 'App.Settings' | translate }}</span>
         </a>
-        <a [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>help_outline</mat-icon>
           <span>{{ 'App.About' | translate }}</span>
         </a>
-        <a [routerLink]="['/logout']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/logout']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>logout</mat-icon>
           <span>{{ 'App.Logout' | translate }}</span>
         </a>

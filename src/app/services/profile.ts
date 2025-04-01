@@ -8,7 +8,7 @@ import { CacheService } from './cache';
 import { QueueService } from './queue.service';
 import { UIService } from './ui';
 import { DataService } from './data';
-import { Event, Kind } from 'nostr-tools';
+import { Event } from 'nostr-tools';
 import { MetricService } from './metric-service';
 
 @Injectable({

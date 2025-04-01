@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
 import { DataValidation } from '../services/data-validation';
@@ -13,9 +13,24 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from '../services/storage';
 import { UIService } from '../services/ui';
 import { CircleService } from '../services/circle';
+import { CommonModule } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { EventHeaderComponent } from '../shared/event-header/event-header';
+import { EventActionsComponent } from '../shared/event-actions/event-actions';
+import { ContentComponent } from '../shared/content/content';
+import { AgoPipe } from '../shared/ago.pipe';
+import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-feed-private',
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatSnackBarModule, MatButtonToggleModule, MatIconModule, RouterModule, MatExpansionModule, MatTooltipModule, MatCardModule, EventHeaderComponent, EventActionsComponent, ContentComponent, AgoPipe, DirectoryIconComponent],
   templateUrl: './feed-private.html',
   styleUrls: ['./feed-private.css'],
 })

@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { ProfileService } from 'src/app/services/profile';
 import { Utilities } from 'src/app/services/utilities';
 
@@ -11,6 +13,7 @@ export interface ReplyEntry {
   selector: 'app-reply-list',
   templateUrl: 'reply-list.html',
   styleUrls: ['reply-list.css'],
+  imports: [RouterModule, CommonModule],
 })
 export class ReplyListComponent {
   @Input() keys: string[] = [];

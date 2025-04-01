@@ -1,16 +1,20 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Event, getEventHash, Kind, UnsignedEvent, validateEvent, verifySignature } from 'nostr-tools';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Event, getEventHash, kinds, UnsignedEvent, validateEvent, verifyEvent } from 'nostr-tools';
 import { ApplicationState } from 'src/app/services/applicationstate';
 import { RelayService } from 'src/app/services/relay';
 import { EventService } from 'src/app/services/event';
 import { NostrService } from 'src/app/services/nostr';
 import { Utilities } from 'src/app/services/utilities';
 import { DataService } from 'src/app/services/data';
-import { ZapQrCodeComponent } from '../zap-qr-code/zap-qr-code.component';
 import { NostrProfileDocument, LNURLPayRequest, LNURLInvoice, NostrEventDocument, NostrRelayDocument } from 'src/app/services/interfaces';
 import { StorageService } from 'src/app/services/storage';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormField, MatInputModule } from '@angular/material/input';
+import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ZapQrCodeComponent } from '../zap-qr-code/zap-qr-code.component';
 
 export interface ZapDialogData {
   profile: NostrProfileDocument;
@@ -21,6 +25,11 @@ export interface ZapDialogData {
   selector: 'app-zap-dialog',
   templateUrl: './zap-dialog.component.html',
   styleUrls: ['./zap-dialog.component.scss'],
+  imports: [
+    CommonModule, 
+MatTooltipModule,
+    
+    MatIconModule, FormsModule, MatFormField, ReactiveFormsModule, MatInputModule],
 })
 export class ZapDialogComponent implements OnInit {
   sendZapForm!: UntypedFormGroup;
@@ -169,7 +178,7 @@ export class ZapDialogComponent implements OnInit {
   items: NostrRelayDocument[] = [];
 
   async createZapEvent(targetPubKey: string, note?: any, msg?: string) {
-    let zapEvent = this.dataService.createEvent(Kind.ZapRequest, '');
+    let zapEvent = this.dataService.createEvent(kinds.ZapRequest, '');
 
     zapEvent.content = msg ? msg : '';
     Object.assign([], zapEvent.tags);
@@ -214,7 +223,7 @@ export class ZapDialogComponent implements OnInit {
       throw new Error('The event is not valid. Cannot publish.');
     }
 
-    let veryOk = await verifySignature(event as any);
+    let veryOk = await verifyEvent(event as any);
 
     if (!veryOk) {
       throw new Error('The event signature not valid. Maybe you choose a different account than the one specified?');
