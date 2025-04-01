@@ -127,7 +127,7 @@ export class ArticleComponent {
   // }
 
   ngOnInit() {
-    console.log('CURRENT EVENT:', this.navigation.currentEvent);
+    // console.log('CURRENT EVENT:', this.navigation.currentEvent);
 
     // Remove the pubkey whenever event is opened, but don't reset state data.
     this.ui.setPubKey(undefined, false);

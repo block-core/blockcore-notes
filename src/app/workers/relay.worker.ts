@@ -6,7 +6,7 @@ import { RelayWorker } from './relay';
 let relayWorker: RelayWorker;
 
 addEventListener('message', async (ev: MessageEvent) => {
-  console.log(`${relayWorker?.url}: MESSAGE RECEIVED IN RELAY WORKER!!`, JSON.stringify(ev.data));
+  // console.log(`${relayWorker?.url}: MESSAGE RECEIVED IN RELAY WORKER!!`, JSON.stringify(ev.data));
 
   const request = ev.data as RelayRequest;
 

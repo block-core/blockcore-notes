@@ -2,6 +2,8 @@ import { Event, Filter, kinds, Relay } from 'nostr-tools';
 import { NostrRelay, NostrRelaySubscription, NostrSubscription, QueryJob } from '../services/interfaces';
 import { RelayResponse } from '../services/messages';
 import { Queue } from '../services/queue';
+import { LoggerService } from '../services/logger';
+import { inject } from '@angular/core';
 
 export class RelayWorker {
   relay!: NostrRelay;
@@ -13,6 +15,8 @@ export class RelayWorker {
 
   queue: Queue;
 
+  logger = inject(LoggerService);
+
   constructor(public url: string) {
     this.queue = new Queue();
   }
@@ -21,13 +25,13 @@ export class RelayWorker {
     if (event.kind == kinds.LongFormArticle || (event.kind as number) == 30008 || (event.kind as number) == 30009) {
       // If we don't have metadata from the relay, don't publish articles.
       if (!this.relay.nip11) {
-        console.log(`${this.relay.url}: This relay does not return NIP-11 metadata. Article/Badge will not be published here.`);
+        this.logger.info(`${this.relay.url}: This relay does not return NIP-11 metadata. Article/Badge will not be published here.`);
         return;
       } else if (!this.relay.nip11.supported_nips.includes(33)) {
-        console.log(`${this.relay.url}: This relay does not NIP-23. Article/Badge will not be published here.`);
+        this.logger.info(`${this.relay.url}: This relay does not support NIP-23. Article/Badge will not be published here.`);
         return;
       } else {
-        console.log(`${this.relay.url}: This relay supports NIP-23. Publishing article/badge on this relay.`);
+        this.logger.info(`${this.relay.url}: This relay supports NIP-23. Publishing article/badge on this relay.`);
       }
     }
 

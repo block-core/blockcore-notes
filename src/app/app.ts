@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef, inject } from '@angular/core';
 import { ApplicationState } from './services/applicationstate';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, RouterModule, TitleStrategy } from '@angular/router';
@@ -68,6 +68,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSliderModule } from '@angular/material/slider';
 import { MediaPlayerComponent } from './shared/media-player/media-player';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
+import { LoggerService } from './services/logger';
 
 @Component({
   selector: 'app-root',
@@ -131,6 +132,7 @@ export class AppComponent {
   profile: NostrProfileDocument | undefined;
   visibilityHandler: any;
   searchControl: FormControl = new FormControl();
+  logger = inject(LoggerService);
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -282,7 +284,7 @@ export class AppComponent {
 
   /** Run initialize whenever user has been authenticated. */
   async initialize() {
-    console.log('INITIALIZE IS RUNNING....');
+    this.logger.info('INITIALIZE IS RUNNING....');
 
     // this.translate.addLangs(['ar', 'el', 'en', 'fa', 'fr', 'he', 'no', 'ru']);
     // availible language translations 
@@ -326,7 +328,7 @@ export class AppComponent {
     await this.labelService.initialize();
 
     this.appState.connected$.subscribe(() => {
-      console.log('Connected to relay.. this can sometimes be triggered multiple times.');
+      this.logger.info('Connected to relay.. this can sometimes be triggered multiple times.');
 
       if (this.profileService.newProfileEvent) {
         // Wait for more relays to be connected.
@@ -370,7 +372,7 @@ export class AppComponent {
 
     this.sharedWorker = new SharedWorker('/assets/shared.worker.js');
     this.sharedWorker.port.onmessage = (ev: any) => {
-      console.log(ev.data);
+      this.logger.info('Shared worker message received:', ev.data);
     };
     this.sharedWorker.port.start();
 

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
@@ -27,6 +27,7 @@ import { FormsModule } from '@angular/forms';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 import { ContentComponent } from '../shared/content/content';
 import { MatButtonModule } from '@angular/material/button';
+import { LoggerService } from '../services/logger';
 
 @Component({
   selector: 'app-note',
@@ -37,6 +38,7 @@ import { MatButtonModule } from '@angular/material/button';
 export class NoteComponent {
   // id?: string | null;
   // event?: NostrEventDocument;
+  logger = inject(LoggerService);
 
   constructor(
     public appState: ApplicationState,
@@ -125,7 +127,7 @@ export class NoteComponent {
   // }
 
   ngOnInit() {
-    console.log('CURRENT EVENT:', this.navigation.currentEvent);
+    this.logger.info('NOTE COMPONENT INIT', this.navigation.currentEvent);
 
     // Remove the pubkey whenever event is opened, but don't reset state data.
     this.ui.setPubKey(undefined, false);

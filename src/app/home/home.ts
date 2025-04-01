@@ -45,16 +45,6 @@ interface DefaultProfile {
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
   imports: [DragScrollComponent, MatButtonModule, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
-  // animations: [
-  //   trigger('fade', [
-  //     transition('void => active', [
-  //       // using status here for transition
-  //       style({ opacity: 0 }),
-  //       animate(250, style({ opacity: 1 })),
-  //     ]),
-  //     transition('* => void', [animate(250, style({ opacity: 0 }))]),
-  //   ]),
-  // ],
 })
 export class HomeComponent {
   publicKey?: string | null;
@@ -135,7 +125,6 @@ export class HomeComponent {
     private formBuilder: UntypedFormBuilder,
     private metricService: MetricService
   ) {
-    console.log('HOME constructor!!'); // Hm.. called twice, why?
   }
 
   note?: string;

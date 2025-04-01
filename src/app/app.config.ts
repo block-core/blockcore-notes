@@ -61,7 +61,7 @@ export const appConfig: ApplicationConfig = {
     //   },
     // })]),
     
-    importProvidersFrom(LoggerModule.forRoot({ level: NgxLoggerLevel.INFO, enableSourceMaps: true, serverLogLevel: NgxLoggerLevel.OFF }, // Don't send logs anywhere!
+    importProvidersFrom(LoggerModule.forRoot({ level: NgxLoggerLevel.INFO, enableSourceMaps: false, serverLogLevel: NgxLoggerLevel.OFF }, // Don't send logs anywhere!
       {
           writerProvider: {
               provide: TOKEN_LOGGER_WRITER_SERVICE,

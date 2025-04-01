@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -8,6 +8,7 @@ import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NostrRelayDocument } from 'src/app/services/interfaces';
+import { LoggerService } from 'src/app/services/logger';
 import { OptionsService } from 'src/app/services/options';
 import { RelayService } from 'src/app/services/relay';
 
@@ -21,6 +22,7 @@ import { RelayService } from 'src/app/services/relay';
 export class RelayComponent {
   relay!: NostrRelayDocument;
 
+  logger = inject(LoggerService);
   //   relayType = 1;
   //   relayPrivacy = 0;
 
@@ -83,9 +85,9 @@ export class RelayComponent {
   ngOnInit() {}
 
   async onRelayTypeChange(change: MatSelectionListChange) {
-    console.log('onRelayTypeChange', change.options[0].value);
+    this.logger.info('onRelayTypeChange', change.options[0].value);
     this.relay.type = change.options[0].value;
-    console.log('SAVING:', this.relay);
+    this.logger.info('Saving', this.relay);
     await this.relayService.setRelayType(this.relay.url, this.relay.type);
 
     if (!this.relay.enabled || this.relay.type > 2) {
@@ -96,16 +98,18 @@ export class RelayComponent {
   }
 
   async onRelayPublicChange(change: MatSelectionListChange) {
-    console.log('onRelayPublicChange', change.options[0].value);
+    this.logger.info('onRelayPublicChange', change.options[0].value);
     this.relay.public = change.options[0].value;
-    console.log('SAVING:', this.relay);
+
+    this.logger.info('SAVING:', this.relay);
     await this.relayService.setRelayPublic(this.relay.url, this.relay.public);
   }
 
   async onRelayStatusChange(change: MatSelectionListChange) {
-    console.log('onRelayStatusChange', change.options[0].value);
+    this.logger.info('onRelayStatusChange', change.options[0].value);
     this.relay.enabled = change.options[0].value;
-    console.log('SAVING:', this.relay);
+
+    this.logger.info('SAVING:', this.relay);
     await this.relayService.setRelayEnabled(this.relay.url, this.relay.enabled);
 
     if (this.relay.enabled || this.relay.type > 2) {

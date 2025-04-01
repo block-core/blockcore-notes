@@ -73,15 +73,6 @@ export class FeedPrivateComponent {
     private snackBar: MatSnackBar,
     private ngZone: NgZone
   ) {
-    // console.log('HOME constructor!!'); // Hm.. called twice, why?
-  }
-
-  ngAfterViewInit() {
-    console.log('ngAfterViewInit');
-  }
-
-  ngAfterContentInit() {
-    console.log('ngAfterContentInit');
   }
 
   // cursor: any;

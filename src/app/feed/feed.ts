@@ -41,15 +41,15 @@ export class FeedComponent {
     private breakpointObserver: BreakpointObserver,
     private ngZone: NgZone
   ) {
-    console.log('HOME constructor!!'); // Hm.. called twice, why?
+    
   }
 
   ngAfterViewInit() {
-    console.log('ngAfterViewInit');
+    
   }
 
   ngAfterContentInit() {
-    console.log('ngAfterContentInit');
+    
   }
 
   optionsUpdated() {

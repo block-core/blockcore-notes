@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { NostrEventDocument, NostrProfile, NostrProfileDocument, ProfileStatus } from './interfaces';
 import { BehaviorSubject, from, map, Observable, tap, shareReplay } from 'rxjs';
 import { ApplicationState } from './applicationstate';
@@ -10,6 +10,7 @@ import { UIService } from './ui';
 import { DataService } from './data';
 import { Event } from 'nostr-tools';
 import { MetricService } from './metric-service';
+import { LoggerService } from './logger';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,8 @@ export class ProfileService {
 
   // TODO: Tune the size of the profile cache, need testing to verify what level of cache makes sense and memory usage of it.
   #cache = new CacheService(500);
+
+  logger = inject(LoggerService);
 
   // items$ = dexieToRx(liveQuery(() => this.list(ProfileStatus.Follow)));
 
@@ -212,7 +215,7 @@ export class ProfileService {
           })
           .catch((err) => {
             debugger;
-            console.warn('FAILED TO GET PROFILE:', err);
+            this.logger.warn('FAILED TO GET PROFILE:', err);
           })
           .finally(() => {
             // console.log('FINALLY IN DB GET!');
@@ -516,10 +519,10 @@ export class ProfileService {
     profile.modified = now;
     profile.retrieved = now;
 
-    console.log('START PUT PROFILE', profile.name);
+    this.logger.info('UPDATE PROFILE:', profile.name);
     // Put into cache and database.
     await this.putProfile(profile);
-    console.log('END PUT PROFILE', profile.pubkey);
+    this.logger.info('PUT PROFILE:', profile.pubkey);
 
     // Insert this profile into the cache.
     this.#cache.set(profile.pubkey, profile);

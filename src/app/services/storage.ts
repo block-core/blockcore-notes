@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ApplicationState } from './applicationstate';
 import { Circle, NostrEventDocument, NostrNoteDocument, NostrProfileDocument, NostrRelayDocument, StateDocument } from './interfaces';
 import { Storage } from '../types/storage';
+import { LoggerService } from './logger';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,8 @@ import { Storage } from '../types/storage';
 export class StorageService {
   storage!: Storage;
   state!: StateDocument;
+
+  logger = inject(LoggerService);
 
   constructor(private appState: ApplicationState) {}
 
@@ -35,7 +38,7 @@ export class StorageService {
 
     // Update the state on interval.
     setTimeout(async () => {
-      console.log('Persisting state...');
+      this.logger.info('Persisting state...');
 
       // The since will always be set slightly back in time to counteract difference in clocks
       // for different event creators on the nostr network.
@@ -51,10 +54,10 @@ export class StorageService {
   }
 
   async clearAndReload() {
-    console.log('Deleting storage...');
+    this.logger.info('Deleting storage...');
 
     setTimeout(() => {
-      console.log('Reloading!');
+      this.logger.info('Reloading...');
       location.reload();
     }, 1000);
 
@@ -62,7 +65,7 @@ export class StorageService {
       // this.db.close();
       await this.delete();
     } catch (err) {
-      console.error(err);
+      this.logger.error('Failed to delete storage.', err);
     }
   }
 
@@ -74,7 +77,7 @@ export class StorageService {
     try {
       this.storage.close();
     } catch (err) {
-      console.error('Failed to close storage.', err);
+      this.logger.error('Failed to close storage.', err);
     }
   }
 

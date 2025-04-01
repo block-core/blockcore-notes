@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
@@ -31,6 +31,7 @@ import { AgoPipe } from '../shared/ago.pipe';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { LoggerService } from '../services/logger';
 
 @Component({
   selector: 'app-people',
@@ -75,6 +76,7 @@ export class PeopleComponent {
 
   selected = 'name-asc';
   searchTerm: any;
+  logger = inject(LoggerService);
 
   constructor(
     private circleService: CircleService,
@@ -195,7 +197,7 @@ export class PeopleComponent {
 
     this.subscriptions.push(
       this.profileService.following$.subscribe(async () => {
-        console.log('FOLLOWING CHANGED!!!');
+        this.logger.info('Following changed!!');
         await this.load();
       })
     );

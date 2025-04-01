@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
@@ -21,6 +21,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { LoggerService } from '../services/logger';
 
 @Component({
   selector: 'app-profile',
@@ -38,6 +39,7 @@ export class ProfileComponent {
   profileName = '';
   loading!: boolean;
   subscriptions: Subscription[] = [];
+  logger = inject(LoggerService);
 
   #profileChanged: BehaviorSubject<NostrProfileDocument | undefined> = new BehaviorSubject<NostrProfileDocument | undefined>(this.profile);
 
@@ -74,7 +76,7 @@ export class ProfileComponent {
           profile = this.profileService.emptyProfile(this.appState.getPublicKey());
         }
 
-        console.log('PROFILE SERVICE:', profile);
+        this.logger.info('PROFILE:', profile);
         this.originalProfile = profile;
 
         if (this.originalProfile) {
@@ -138,7 +140,7 @@ export class ProfileComponent {
 
   async updateMetadata() {
     if (this.profile?.picture != this.originalProfile?.picture) {
-      console.log('Upload profile image...');
+      this.logger.info('Upload profile image...');
 
       const uploadResult = await this.upload.upload(this.selectedProfileFile);
       console.log(uploadResult);
@@ -149,17 +151,18 @@ export class ProfileComponent {
     }
 
     if (this.profile?.banner != this.originalProfile?.banner) {
-      console.log('Upload banner image...');
+      this.logger.info('Upload banner image...');
 
       const uploadResult = await this.upload.upload(this.selectedBannerFile);
-      console.log(uploadResult);
+
+      this.logger.info('Upload result:', uploadResult);
 
       if (uploadResult.url) {
         this.profile!.banner = uploadResult.url;
       }
     }
 
-    console.log(this.profile);
+    this.logger.info('Update profile:', this.profile);
 
     await this.dataService.updateMetadata(this.profile!);
 

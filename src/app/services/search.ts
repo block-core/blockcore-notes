@@ -1,15 +1,18 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { nip19 } from 'nostr-tools';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ApplicationState } from './applicationstate';
 import { ProfileService } from './profile';
+import { LoggerService } from './logger';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
   results$: Observable<any>;
+
+  logger = inject(LoggerService);
 
   resultsChanged: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
@@ -22,7 +25,7 @@ export class SearchService {
       return;
     }
 
-    console.log('Searching for: ', searchText);
+    this.logger.info('Search:', searchText);
 
     if (searchText.startsWith('npub')) {
       const pubkey = nip19.decode(searchText) as any;
@@ -57,7 +60,7 @@ export class SearchService {
   }
 
   open(selected: any) {
-    console.log('SELECTED:', selected);
+    this.logger.info('Selected:', selected);
 
     if (!selected) {
       return;
