@@ -35,7 +35,7 @@ export class ConnectKeyComponent {
   constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {}
 
   setPrivateKey() {
-    this.privateKeyHex = privateKeyFromSeedWords(this.mnemonic);
+    this.privateKeyHex = bytesToHex(privateKeyFromSeedWords(this.mnemonic));
     this.privateKey = nip19.nsecEncode(hexToBytes(this.privateKeyHex));
     this.updatePublicKey();
   }

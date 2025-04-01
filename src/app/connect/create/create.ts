@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Relay, Event, utils, getPublicKey, nip19, kinds, getEventHash, validateEvent, signEvent } from 'nostr-tools';
+import { finalizeEvent, Relay, Event, utils, getPublicKey, nip19, kinds, getEventHash, validateEvent, signEvent } from 'nostr-tools';
 import { privateKeyFromSeedWords, generateSeedWords } from 'nostr-tools/nip06';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';
@@ -109,7 +109,7 @@ export class CreateProfileComponent {
           this.error = 'Unable to validate the event. Cannot continue.';
         }
 
-        const signature = signEvent(signedEvent, this.privateKeyHex) as any;
+        const signature = finalizeEvent(signedEvent, hexToBytes(this.privateKeyHex)) as any;
         signedEvent.sig = signature;
 
         // Make sure we reset the secrets.

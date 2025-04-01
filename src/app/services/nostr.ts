@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { getEventHash, getPublicKey, signEvent, validateEvent } from 'nostr-tools';
+import { getEventHash, getPublicKey, finalizeEvent, validateEvent } from 'nostr-tools';
 import { PasswordDialog, PasswordDialogData } from '../shared/password-dialog/password-dialog';
 import { NostrEventDocument, NostrNoteDocument, NostrProfile, NostrProfileDocument } from './interfaces';
 import { SecurityService } from './security';
