@@ -16,9 +16,9 @@ export class NostrService {
   defaultRelays: any = {
     'wss://relay.damus.io': { read: true, write: true },
     'wss://relay.primal.net': { read: true, write: true },
-    'wss://purplepag.es': { read: true, write: true },
+    'wss://relay.snort.social': { read: true, write: true },
+    'wss://purplepag.es': { read: true, write: false }, // TODO: Add special handling for this to write profiles only?
     'wss://nos.lol': { read: true, write: true },
-    'wss://relay.nostr.wirednet.jp': { read: true, write: true },
   };
 
   constructor(public dialog: MatDialog, private snackBar: MatSnackBar, private security: SecurityService) {}
