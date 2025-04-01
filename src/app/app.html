@@ -75,15 +75,15 @@
       </mat-toolbar> -->
 
       <mat-nav-list>
-        <a [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>home</mat-icon>
           <span *ngIf="displayLabels">{{'App.Home' | translate }}</span>
         </a>
-        <a [routerLink]="['/feed']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/feed']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>notes</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Feed' | translate }}</span>
         </a>
-        <a [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/notifications']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon [matBadgeHidden]="(ui.unreadNotifications$ | async) == 0" [matBadge]="ui.unreadNotifications$ | async">notifications</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Notifications' | translate }}</span>
         </a>
@@ -95,15 +95,15 @@
             <mat-icon matBadge="2">mail</mat-icon>
           <span *ngIf="displayLabels">Messages</span>
         </a> -->
-        <a [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/people']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>people</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.People' | translate }}</span>
         </a>
-        <a [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/circles']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>animation</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Circles' | translate }}</span>
         </a>
-        <a [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/notes']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>bookmarks</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Bookmarks' | translate }}</span>
         </a>
@@ -115,11 +115,11 @@
           <mat-icon>construction</mat-icon>
           <span *ngIf="displayLabels">Example</span>
         </a> -->
-        <a [routerLink]="['/relays']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/relays']" mat-menu-item (click)="toggleMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>dns</mat-icon>
           <span *ngIf="displayLabels">{{ 'App.Relays' | translate }}</span>
         </a>
-        <a mat-menu-item (click)="toggleMenuSize()">
+        <a class="nav-link" mat-menu-item (click)="toggleMenuSize()">
           <mat-icon *ngIf="displayLabels">chevron_left</mat-icon>
           <mat-icon *ngIf="!displayLabels">chevron_right</mat-icon>
         </a>

@@ -118,6 +118,10 @@ header {
   cursor: pointer;
 }
 
+.nav-link {
+  color: var(--mat-sys-on-background) !important;
+}
+
 .data {
   margin-top: 0.6em;
   color: #81878b;
