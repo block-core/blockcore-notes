@@ -14,17 +14,18 @@
       mat-button 
       class="mobile-nav-button" 
       [routerLink]="['/people']">
-      <div style="display: flex; flex-direction: column; align-items: center;">
+      <div class="mobile-nav-button-content">
         <mat-icon>people</mat-icon>
         <span>{{ 'App.People' | translate }}</span>
       </div>
     </button>
+
     <button 
     mat-button 
     class="mobile-nav-button" 
     [routerLink]="['/notifications']">
-    <div style="display: flex; flex-direction: column; align-items: center;">
-      <mat-icon>notifications</mat-icon>
+    <div class="mobile-nav-button-content">
+      <mat-icon aria-hidden="false" [matBadgeHidden]="(ui.unreadNotifications$ | async) == 0" [matBadge]="ui.unreadNotifications$ | async">notifications</mat-icon>
       <span>{{ 'App.Notifications' | translate }}</span>
     </div>
   </button>
@@ -32,7 +33,7 @@
   mat-button 
   class="mobile-nav-button" 
   [routerLink]="['/p', appState.getPublicKey()]">
-  <div style="display: flex; flex-direction: column; align-items: center;">
+  <div class="mobile-nav-button-content">
     <mat-icon>person</mat-icon>
     <span>{{ 'App.Profile' | translate }}</span>
   </div>
