@@ -292,20 +292,27 @@ export class ContentComponent {
 
         i = res.push(keyword);
       } else if (token.startsWith('nostr:')) {
-        const decoded = nip19.decode(token.substring(6));
-        const val = decoded.data as any;
+        const tokenToDecode = token.substring(6);
 
-        if (decoded.type === 'nprofile') {
-          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val.pubkey, token: decoded.type });
-        } else if (decoded.type === 'npub') {
-          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val, token: decoded.type });
-        } else if (decoded.type === 'note') {
-          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val, token: decoded.type });
-        } else if (decoded.type === 'nevent') {
-          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val.id, token: decoded.type });
-        } else {
-          i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token.substring(6), token: decoded.type });
+        // This value was discovered so skip to avoid issues.
+        if (tokenToDecode !== 'npubs?') {
+          const decoded = nip19.decode(tokenToDecode);
+          const val = decoded.data as any;
+  
+          if (decoded.type === 'nprofile') {
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val.pubkey, token: decoded.type });
+          } else if (decoded.type === 'npub') {
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val, token: decoded.type });
+          } else if (decoded.type === 'note') {
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val, token: decoded.type });
+          } else if (decoded.type === 'nevent') {
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: val.id, token: decoded.type });
+          } else {
+            i = res.push({ safeWord: this.utilities.sanitizeUrlAndBypass(token), word: token.substring(6), token: decoded.type });
+          }
         }
+
+
       } else if (token.startsWith('@')) {
         const username = token.substring(1);
         const npub = this.profileService.following.find((follower) => follower.name === username)?.npub;
