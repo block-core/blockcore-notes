@@ -167,31 +167,31 @@
       </div>
       <mat-divider></mat-divider>
       <mat-nav-list>
-        <a [routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link"[routerLink]="['/p', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>person</mat-icon>
           <span>{{ 'App.ViewProfile' | translate }}</span>
         </a>
-        <a [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/profile']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>edit</mat-icon>
           <span>{{ 'App.EditProfile' | translate }}</span>
         </a>
-        <a [routerLink]="['/badges', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/badges', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>badge</mat-icon>
           <span>{{ 'App.Badges' | translate }}</span>
         </a>
-        <a mat-menu-item (click)="toggleProfileMenu(); openMediaPlayer()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" mat-menu-item (click)="toggleProfileMenu(); openMediaPlayer()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>play_circle</mat-icon>
           <span>{{ 'App.MediaPlayer' | translate }}</span>
         </a>
-        <a [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/settings']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>settings</mat-icon>
           <span>{{ 'App.Settings' | translate }}</span>
         </a>
-        <a [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/about']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>help_outline</mat-icon>
           <span>{{ 'App.About' | translate }}</span>
         </a>
-        <a [routerLink]="['/logout']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/logout']" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>logout</mat-icon>
           <span>{{ 'App.Logout' | translate }}</span>
         </a>
