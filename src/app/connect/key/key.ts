@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { base64 } from '@scure/base';
-import { Relay, Event, utils, getPublicKey, nip19, nip06 } from 'nostr-tools';
+import { Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
+import { privateKeyFromSeedWords, generateSeedWords } from 'nostr-tools/nip06';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
 import { QrScanDialog } from './qr-scan-dialog/qr-scan';
@@ -12,6 +13,8 @@ import { MatCardModule } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
+
 
 @Component({
   selector: 'app-key',
@@ -32,8 +35,8 @@ export class ConnectKeyComponent {
   constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {}
 
   setPrivateKey() {
-    this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
-    this.privateKey = nip19.nsecEncode(this.privateKeyHex);
+    this.privateKeyHex = privateKeyFromSeedWords(this.mnemonic);
+    this.privateKey = nip19.nsecEncode(hexToBytes(this.privateKeyHex));
     this.updatePublicKey();
   }
 
@@ -102,7 +105,7 @@ export class ConnectKeyComponent {
     }
 
     try {
-      this.publicKeyHex = getPublicKey(this.privateKeyHex);
+      this.publicKeyHex = getPublicKey(hexToBytes(this.privateKeyHex));
       this.publicKey = nip19.npubEncode(this.publicKeyHex);
     } catch (err: any) {
       this.error = err.message;

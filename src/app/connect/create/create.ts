@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Relay, Event, utils, getPublicKey, nip19, nip06, kinds, getEventHash, validateEvent, signEvent } from 'nostr-tools';
+import { Relay, Event, utils, getPublicKey, nip19, kinds, getEventHash, validateEvent, signEvent } from 'nostr-tools';
+import { privateKeyFromSeedWords, generateSeedWords } from 'nostr-tools/nip06';
 import { AuthenticationService } from '../../services/authentication';
 import { SecurityService } from '../../services/security';
 import { ThemeService } from '../../services/theme';
@@ -14,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 
 @Component({
   selector: 'app-create',
@@ -47,9 +49,14 @@ export class CreateProfileComponent {
 
   ngOnInit() {
     // this.mnemonic = bip39.generateMnemonic(wordlist);
-    this.mnemonic = nip06.generateSeedWords();
-    this.privateKeyHex = nip06.privateKeyFromSeedWords(this.mnemonic);
-    this.privateKey = nip19.nsecEncode(this.privateKeyHex);
+    this.mnemonic = generateSeedWords();
+
+    const privateKey = privateKeyFromSeedWords(this.mnemonic);
+    const secretKeyHex = bytesToHex(privateKey);
+    this.privateKeyHex = secretKeyHex;
+    debugger;
+    // TODO: Verify if this work.
+    this.privateKey = nip19.nsecEncode(hexToBytes(this.privateKeyHex));
 
     this.updatePublicKey();
     // const masterSeed = bip39.mnemonicToSeedSync(this.mnemonic);
@@ -148,7 +155,7 @@ export class CreateProfileComponent {
     }
 
     try {
-      this.publicKeyHex = getPublicKey(this.privateKeyHex);
+      this.publicKeyHex = getPublicKey(hexToBytes(this.privateKeyHex));
       this.publicKey = nip19.npubEncode(this.publicKeyHex);
     } catch (err: any) {
       this.error = err.message;

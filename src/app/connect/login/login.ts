@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 
 @Component({
   selector: 'app-login',
@@ -101,7 +102,7 @@ export class LoginComponent {
     }
 
     try {
-      this.publicKeyHex = getPublicKey(this.privateKeyHex);
+      this.publicKeyHex = getPublicKey(hexToBytes(this.privateKeyHex));
       this.publicKey = nip19.npubEncode(this.publicKeyHex);
     } catch (err: any) {
       this.error = err.message;
