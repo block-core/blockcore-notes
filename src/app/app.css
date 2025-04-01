@@ -30,6 +30,10 @@
   }
 }
 
+.sidenav-small {
+  width: var(--mat-sidenav-container-width, 48px);
+}
+
 .sidenav-small .mat-icon {
   margin-right: 0 !important;
 }
