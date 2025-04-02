@@ -19,6 +19,9 @@
         <button class="start-button full-button" (click)="step = 3" mat-flat-button color="accent">{{ 'Key.PrivateKey' | translate }}</button>
         <br /><br />
         <button class="start-button full-button" (click)="scanQrCode()" mat-flat-button color="accent"><mat-icon>qr_code_scanner</mat-icon>{{ 'Key.ScanQRCode' | translate }}</button>
+      
+        <br><br>
+        <button class="start-button" [routerLink]="['/connect', 'login']" mat-button>{{ 'Create.Back' | translate }}</button>
       </mat-card-content>
     </mat-card>
 
@@ -31,7 +34,10 @@
           <textarea class="note-input" matInput type="text" [(ngModel)]="mnemonic" rows="2"></textarea>
         </mat-form-field>
         <br />
-        <button [disabled]="!mnemonic" class="start-button" (click)="setPrivateKey(); step = 3" mat-raised-button>{{ 'Key.Continue' | translate }}</button><br /><br />
+        <br>
+        
+        <button class="start-button" (click)="step = 1" mat-button>{{ 'Create.Back' | translate }}</button>
+        &nbsp;<button [disabled]="!mnemonic" class="start-button" (click)="setPrivateKey(); step = 3" mat-flat-button>{{ 'Key.Continue' | translate }}</button><br /><br />
 
         <!-- <div><button class="skip-button" (click)="persistKey(privateKey)" color="primary" mat-raised-button>Connect (read-only)</button></div> -->
       </mat-card-content>
@@ -75,6 +81,9 @@
         <p *ngIf="error" class="error">{{ 'Key.Error' | translate }}: {{ error }}</p>
         <p class="dimmed">Remember that Blockcore cannot change or reset your password. Make sure you have a separate backup of your <strong>private key</strong> in case you loose your password.</p>
         <p class="dimmed">You will be asked to enter password (if supplied) when Notes need to sign events on your behalf.</p>
+
+        <br><br>
+        <button class="start-button" (click)="step = 1" mat-button>{{ 'Create.Back' | translate }}</button>
 
         <!-- <div><button class="skip-button" (click)="persistKey(privateKey)" color="primary" mat-raised-button>Connect (read-only)</button></div> -->
       </mat-card-content>

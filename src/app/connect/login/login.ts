@@ -13,12 +13,13 @@ import { CommonModule } from '@angular/common';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['../connect.css', './login.css'],
-  imports: [MatIconModule, MatCardModule, MatButtonModule, RouterModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule],
+  imports: [MatIconModule, TranslateModule, MatCardModule, MatButtonModule, RouterModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule],
 })
 export class LoginComponent {
   privateKey: string = '';
@@ -34,7 +35,9 @@ export class LoginComponent {
 
   // hidePrivateKey = false;
 
-  constructor(private authService: AuthenticationService, public theme: ThemeService, private router: Router, private security: SecurityService) {}
+  constructor(public translate: TranslateService, private authService: AuthenticationService, public theme: ThemeService, private router: Router, private security: SecurityService) {
+    this.translate.use('en'); // This ensures translations are loaded
+  }
 
   async connect() {
     const userInfo = await this.authService.login();

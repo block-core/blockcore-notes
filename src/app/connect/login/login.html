@@ -31,10 +31,13 @@
                 <mat-label>Public Key</mat-label>
                 <input matInput type="text" [(ngModel)]="readOnlyKey" />
               </mat-form-field>
-              <div><button class="skip-button" (click)="anonymous(readOnlyKey)" color="primary" mat-raised-button>Connect (read-only)</button></div>
+              <div><button class="skip-button" (click)="anonymous(readOnlyKey)" color="primary" mat-flat-button>Connect (read-only)</button></div>
             </div>
           </div>
         </div>
+        <br>
+        <button class="start-button" [routerLink]="['../']" mat-button>{{ 'Create.Back' | translate }}</button>
+
       </mat-card-content>
     </mat-card>
 

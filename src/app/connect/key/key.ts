@@ -10,7 +10,7 @@ import { QrScanDialog } from './qr-scan-dialog/qr-scan';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
@@ -34,7 +34,9 @@ export class ConnectKeyComponent {
   step = 1;
   mnemonic: string = '';
 
-  constructor(public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {}
+  constructor(public translate: TranslateService, public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {
+    this.translate.use('en'); // This ensures translations are loaded
+  }
 
   setPrivateKey() {
     this.privateKeyHex = bytesToHex(privateKeyFromSeedWords(this.mnemonic));
