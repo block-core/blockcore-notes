@@ -8,10 +8,11 @@
     </button>
     <div class="connect-button" *ngIf="searchingForExtension">
       <button class="start-button" mat-flat-button color="accent">
-        <mat-spinner class="spinner" color="accent" diameter="30"></mat-spinner>
+        <mat-spinner class="progress-spinner-negative" diameter="30"></mat-spinner>
       </button>
     </div>
     <div class="connect-button" *ngIf="showInstallLink">
+      <mat-spinner class="progress-spinner-negative" diameter="30"></mat-spinner>
       <a class="start-button" (click)="connect()" mat-flat-button color="accent" href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank"
         >Install <span class="hide-tiny">extension</span></a
       >
