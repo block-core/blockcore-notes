@@ -59,19 +59,23 @@
           <mat-card-title>Status</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <h3><mat-icon>dns</mat-icon> Relays</h3>
+          <h3 class="icon-text-container"><mat-icon>dns</mat-icon> Relays</h3>
           <p>
             @for(relay of relayService.items; track relay.url) {
+              <span class="icon-text-container">
               <mat-icon class="relay-status-icon" *ngIf="!relay.enabled">cloud_off</mat-icon>
               <mat-icon class="relay-status-icon" *ngIf="relay.enabled && relay.status == 1" [ngClass]="['relay-status-' + relay.status]">cloud_done</mat-icon>
               <mat-icon class="relay-status-icon" *ngIf="relay.enabled && relay.status !== 1" [ngClass]="['relay-status-' + relay.status]">cloud</mat-icon>
               {{ relay.nip11?.name }} ({{ relay.eventcount }})
-              <br />
+              </span>
             }
           </p>
-          <h3><mat-icon>info</mat-icon> Data</h3>
+          <h3 class="icon-text-container"><mat-icon>info</mat-icon> Data</h3>
           <p>
-            <mat-icon>people</mat-icon> Following: {{ profileService.following.length }}<br />
+            <span class="icon-text-container">
+              <mat-icon>people</mat-icon> 
+              <span>Following: {{ profileService.following.length }}</span>
+            </span>
           </p>
         </mat-card-content>
       </mat-card>
