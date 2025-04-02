@@ -81,6 +81,7 @@
     "PrivateKeyImportDescription": "First choose if your backup is a secret recovery phrase or a private key.",
     "SecretRecoveryPhrase": "Secret Recovery Phrase",
     "PrivateKey": "Private Key",
+    "PublicKey": "Public Key",
     "ScanQRCode": "Scan QR-code",
     "SecretRecoveryPhraseImport": "Secret Recovery Phrase Import",
     "Continue": "Continue",
