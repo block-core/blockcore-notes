@@ -180,9 +180,6 @@
   overflow-x: scroll;
   display: flex;
   flex-direction: row;
-  margin-bottom: 0.2em;
-  /* align-items: center; */
-
 }
 
 .profile-line::-webkit-scrollbar-thumb {
@@ -229,14 +226,13 @@ drag-scroll::-webkit-scrollbar {
   overflow-x: auto;
   overflow-y: hidden;
   width: 100%;
-  padding: 8px 0;
   scroll-behavior: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
   touch-action: pan-x;
   cursor: grab;
-  height: 90px;
+  height: 80px;
 }
 
 .horizontal-scroll-container::-webkit-scrollbar {

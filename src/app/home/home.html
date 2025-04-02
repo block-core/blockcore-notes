@@ -23,39 +23,6 @@
     </div>
 
     <div class="home-right">
-      <br /><br />
-      <!-- <div class="centered">
-        <button routerLink="/editor" mat-fab extended color="primary">
-          <mat-icon>note_add</mat-icon>
-          {{ 'Home.WriteANote' | translate }}
-        </button>
-      </div> -->
-
-      <br /><br />
-
-      <!-- <mat-card class="home-card">
-        <mat-card-header>
-          <mat-card-title>Create Note</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <br />
-          <form [formGroup]="formGroup">
-            <div mat-dialog-content class="mat-dialog-content">
-
-              <emoji-mart class="picker" *ngIf="isEmojiPickerVisible" emoji="point_up" [isNative]="true" [showPreview]="false" (emojiSelect)="addEmoji($event)" title="Choose your emoji"></emoji-mart>
-              <mat-form-field class="input-full-width">
-                <mat-label>Note</mat-label>
-                <textarea class="note-input" matInput type="text" [(ngModel)]="note" formControlName="note" rows="6"></textarea>
-              </mat-form-field>
-
-            </div>
-            <div mat-dialog-actions class="mat-dialog-actions" align="end">
-              <button mat-stroked-button (click)="onCancel()">Cancel</button>&nbsp;
-              <button mat-flat-button (click)="postNote()" color="primary" cdkFocusInitial>Post</button>
-            </div>
-          </form>
-        </mat-card-content>
-      </mat-card> -->
 
       <mat-card class="events clickable" (click)="navigation.openEvent($event, event)" *ngFor="let event of latestItems; trackBy: trackByFn">
         <div class="events-header">
@@ -65,25 +32,6 @@
         <app-content [event]="event"></app-content>
       </mat-card>
 
-      <!-- <p class="view-more-container">
-        <button mat-button routerLink="/feed">{{ 'Home.ViewFollowingNotes' | translate }}</button>
-      </p> -->
-
-      <!-- <mat-card class="home-card">
-        <mat-card-header>
-          <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba1.jpg" />
-          <mat-card-title>Shiba Inu</mat-card-title>
-          <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-        </mat-card-header>
-        <img mat-card-image class="home-card-image" src="https://material.angular.io/assets/img/examples/shiba2.jpg" />
-        <mat-card-content>
-          <p>The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan. A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally bred for hunting.</p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-button>Like</button>
-          <button mat-button>Comments</button>
-        </mat-card-actions>
-      </mat-card> -->
     </div>
   </div>
 
@@ -103,59 +51,6 @@
           </div>
         </mat-card-content>
       </mat-card>
-
-      <!-- <mat-card class="home-card">
-        <mat-card-header>
-          <mat-card-title>Following</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="activity-feed" *ngIf="ui.activityFeed$ | async as activityFeed">
-          <app-event-header [listType]="'icon'" [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of profiles" [profile]="profile"></app-event-header>
-          <div class="centered">
-            <button mat-button routerLink="/people">See all following</button>
-          </div>
-        </mat-card-content>
-      </mat-card> -->
-
-      <!-- <mat-card class="home-card">
-        <mat-card-header>
-          <mat-card-title>News</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>02-11: Activity feed and notifications has been added.</p>
-          <p>01-19: <a routerLink="/e/63f78a0588f88c5e6931efcf032c8f600656eb5425785aea99b15ce0967be4a7">Nostr conference is in the planning</a>.</p>
-          <p>01-20: Blockcore Notes "Home" launched as UI-mockup.</p>
-        </mat-card-content>
-      </mat-card> -->
-
-      <!-- <mat-card class="home-card">
-        <mat-card-header>
-          <mat-card-title>Photos</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <img loading="lazy" class="home-card-thumbnail" height="56" width="56" [src]="img" *ngFor="let img of images" />
-        </mat-card-content>
-      </mat-card> -->
-
-      <!-- <mat-card class="home-card">
-        <mat-card-header>
-          <mat-card-title>Music</mat-card-title>
-        </mat-card-header>
-        <mat-card-content> [Coming soon] </mat-card-content>
-      </mat-card>
-
-      <mat-card class="home-card">
-        <mat-card-header>
-          <mat-card-title>Podcast</mat-card-title>
-        </mat-card-header>
-        <mat-card-content> [Coming soon] </mat-card-content>
-      </mat-card>
-
-      <mat-card class="home-card">
-        <mat-card-header>
-          <mat-card-title>Films</mat-card-title>
-        </mat-card-header>
-        <mat-card-content> [Coming soon] </mat-card-content>
-      </mat-card> -->
 
       <mat-card class="home-card">
         <mat-card-header>
@@ -187,65 +82,4 @@
 
   </div>
 
-  <!-- <div class="dashboard-header">
-    <mat-card>
-      <mat-card-content>2300 <small>Followers</small></mat-card-content>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content>500 <small>Following</small></mat-card-content>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content>640 <small>Profiles (Cached)</small></mat-card-content>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-content>4 <small>Notes (Saved)</small></mat-card-content>
-    </mat-card>
-  </div> -->
-
-  <!-- <div class="dashboard">
-    <div class="dashboard-left"> -->
-  <!-- <h1 class="marginless">Hi, having fun yet?</h1> -->
-
-  <!-- <button (click)="downloadProfiles()">Click me</button>
-
-      <button (click)="subscribeEvents()">Click me2</button>
-
-      <button (click)="subscribeEvents2()">Click me3</button>
-
-      <button (click)="downloadProfiles2()">Click me4</button> -->
-
-  <!-- <p>You can import your existing followers:</p>
-      <button class="follow-button" mat-flat-button color="primary" (click)="import(this.appState.getPublicKey())">Import your following list</button>
-      <br /><br /> -->
-
-  <!-- <h2>PROTOTYPE</h2>
-      <p>Blockcore Notes is a prototype. Please wipe your local database once in a while to fix bugs and issues.</p>
-      <p>
-        <button mat-flat-button color="warn" (click)="clearDatabase()">Wipe Local Database</button>
-      </p> -->
-
-  <!-- <div *ngIf="defaults$ | async as defaults">
-        <div *ngIf="defaults.length > 0">
-          <p>If you are new to Blockcore Notes, here are some interesting people you can follow.</p>
-
-          <div class="card-container">
-            <mat-card class="default-card" *ngFor="let profile of defaults; trackBy: trackByProfile" [@fade]="profile.checked">
-              <mat-card-header>
-                <img mat-card-avatar [src]="profile.picture" />
-                <mat-card-title [matTooltip]="profile.pubkey" matTooltipPosition="above">{{ profile.name }}</mat-card-title>
-                <mat-card-subtitle>{{ profile.about }}</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content class="follow-card-content">
-                <mat-slide-toggle class="follow-toggle" color="primary" (change)="follow(profile)" [(ngModel)]="profile.checked">Follow {{ profile.name }}</mat-slide-toggle>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </div>
-      </div> -->
-  <!-- </div> -->
-  <!-- <div class="dashboard-right"></div> -->
-  <!-- </div> -->
 </div>
