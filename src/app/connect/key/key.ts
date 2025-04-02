@@ -16,8 +16,6 @@ import { FormsModule } from '@angular/forms';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateService } from '@ngx-translate/core'; //Added this for the transalation i18n
-
 
 @Component({
   selector: 'app-key',
