@@ -16,13 +16,19 @@ import { FormsModule } from '@angular/forms';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateService } from '@ngx-translate/core'; //Added this for the transalation i18n
 
 
 @Component({
   selector: 'app-key',
   templateUrl: './key.html',
   styleUrls: ['../connect.css', './key.css'],
-  imports: [CommonModule, MatButtonModule, RouterModule, MatIconModule, MatCardModule, TranslateModule, MatFormFieldModule, MatInputModule, FormsModule],
+  imports: [CommonModule, 
+    MatButtonModule, 
+    RouterModule, 
+    MatIconModule, 
+    MatCardModule, 
+    TranslateModule, MatFormFieldModule, MatInputModule, FormsModule],
 })
 export class ConnectKeyComponent {
   privateKey: string = '';
@@ -34,7 +40,13 @@ export class ConnectKeyComponent {
   step = 1;
   mnemonic: string = '';
 
-  constructor(public translate: TranslateService, public dialog: MatDialog, public theme: ThemeService, private router: Router, private security: SecurityService) {
+  constructor(
+    private translate: TranslateService,
+    public dialog: MatDialog, 
+    public theme: ThemeService, 
+    private router: Router, 
+    private security: SecurityService
+  ) {
     this.translate.use('en'); // This ensures translations are loaded
   }
 
