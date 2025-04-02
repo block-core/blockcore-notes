@@ -17,6 +17,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create',
@@ -41,6 +42,7 @@ export class CreateProfileComponent {
   mnemonic = '';
 
   constructor(
+    private translate: TranslateService, // Add TranslateService
     private utilities: Utilities,
     private dataService: DataService,
     private profileService: ProfileService,
@@ -48,7 +50,9 @@ export class CreateProfileComponent {
     public theme: ThemeService,
     private router: Router,
     private security: SecurityService
-  ) {}
+  ) {
+    this.translate.use('en'); // This ensures translations are loaded
+  }
 
   ngOnInit() {
     // this.mnemonic = bip39.generateMnemonic(wordlist);
