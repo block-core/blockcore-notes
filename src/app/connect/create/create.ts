@@ -17,7 +17,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core'; //Added this for the transalation i18n
 
 @Component({
   selector: 'app-create',
