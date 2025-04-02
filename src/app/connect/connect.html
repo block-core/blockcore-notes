@@ -1,17 +1,18 @@
 <div class="connect-container">
   <div class="connect-menu">
     <img class="connect-logo" width="128" height="128" src="assets/icons/icon-256x256.webp" />
-    <div class="logo-text"><span class="hide-tiny">Blockcore</span> Notes</div>
+    <div class="logo-text"><span class="hide-tiny">Blockcore</span>&nbsp;Notes</div>
     <div class="connect-spacer"></div>
     <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="theme-toggle">
       <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode" : "light_mode" }}</mat-icon>
     </button>
     <div class="connect-button" *ngIf="searchingForExtension">
       <button class="start-button" mat-flat-button color="accent">
-        <mat-spinner class="spinner" color="accent" diameter="30"></mat-spinner>
+        <mat-spinner class="progress-spinner-negative" diameter="30"></mat-spinner>
       </button>
     </div>
     <div class="connect-button" *ngIf="showInstallLink">
+      <mat-spinner class="progress-spinner-negative" diameter="30"></mat-spinner>
       <a class="start-button" (click)="connect()" mat-flat-button color="accent" href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank"
         >Install <span class="hide-tiny">extension</span></a
       >
