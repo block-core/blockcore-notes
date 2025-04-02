@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, NgZone, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ApplicationState } from '../services/applicationstate';
 import { Utilities } from '../services/utilities';
@@ -31,6 +31,7 @@ import { AgoPipe } from '../shared/ago.pipe';
 import { DirectoryIconComponent } from '../shared/directory-icon/directory-icon';
 import { MatButtonModule } from '@angular/material/button';
 import { DragScrollDirective } from '../shared/directives/drag-scroll.directive';
+import { RelayService } from '../services/relay';
 
 interface DefaultProfile {
   pubkey: string;
@@ -48,6 +49,10 @@ interface DefaultProfile {
   imports: [DragScrollDirective, MatButtonModule, AgoPipe, DirectoryIconComponent, EventHeaderComponent, MatIconModule, TranslateModule, MatCardModule, ContentComponent, EventActionsComponent, NotificationLabelComponent, CommonModule, RouterModule],
 })
 export class HomeComponent {
+  relayService = inject(RelayService);
+  profileService = inject(ProfileService);
+  dataService = inject(DataService);
+
   publicKey?: string | null;
   subscriptions: Subscription[] = [];
 
@@ -114,12 +119,10 @@ export class HomeComponent {
     public options: OptionsService,
     public dialog: MatDialog,
     public navigation: NavigationService,
-    public profileService: ProfileService,
     private validator: DataValidation,
     private authService: AuthenticationService,
     private utilities: Utilities,
     private snackBar: MatSnackBar,
-    private dataService: DataService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private ngZone: NgZone,

@@ -1,0 +1,20 @@
+{ "enabled": true, 
+"public": true, 
+"url": "wss://nos.lol", 
+"type": 1, 
+"modified": 1743587934, 
+"status": 1,
+
+"nip11": {
+     "contact": "https://wikifreedia.xyz/nos.lol/", 
+     "description": "Generally accepts notes, except spammy ones.",
+      "limitation": { "max_limit": 500, "max_message_length": 131072, "max_subscriptions": 20 }, 
+      "name": "nos.lol",
+       "negentropy": 1, 
+       "pubkey": "c5fadeb5d90d68baffc631455a07ca340ccf1e31110955e16d45eb5f87147cd9", 
+       "software": "git+https://github.com/hoytech/strfry.git",
+        "supported_nips": [ 1, 2, 4, 9, 11, 22, 28, 40, 70, 77 ], 
+        "version": "1.0.4" },
+         "eventcount": 102 
+        
+        }

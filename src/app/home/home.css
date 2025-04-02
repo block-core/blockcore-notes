@@ -337,3 +337,33 @@ drag-scroll::-webkit-scrollbar {
   pointer-events: auto;
   pointer-events: all;
 }
+
+
+.relay-status--1 {
+  color: rgb(49, 49, 210);
+}
+
+.relay-status-0 {
+  color: gray;
+}
+
+.relay-status-1 {
+  color: rgb(34, 179, 34);
+}
+
+.relay-status-2 {
+  color: orange;
+}
+
+.relay-status-3 {
+  color: red;
+}
+
+.relay-status-4 {
+  color: rgb(49, 49, 210);
+}
+
+h3 {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}

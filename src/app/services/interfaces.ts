@@ -98,6 +98,7 @@ export interface NostrRelayDocument {
   url: string;
   // read: boolean;
   // write: boolean;
+  contact?: any;
   nip11?: any;
   error?: string;
   enabled: boolean;
