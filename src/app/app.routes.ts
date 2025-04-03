@@ -34,6 +34,7 @@ import { EditorBadgesComponent } from './editor-badges/editor';
 import { BadgeComponent } from './badge/badge';
 import { ExampleComponent } from './example/example';
 import { ArticlesComponent } from './articles/articles.component';
+import { FilesComponent } from './files/files.component';
 
 export const routes: Routes = [
   {
@@ -71,6 +72,14 @@ export const routes: Routes = [
   {
     path: 'feed/:circle',
     component: FeedPrivateComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      data: LoadingResolverService,
+    },
+  },
+  {
+    path: 'files/:id',
+    component: FilesComponent,
     canActivate: [AuthGuard],
     resolve: {
       data: LoadingResolverService,

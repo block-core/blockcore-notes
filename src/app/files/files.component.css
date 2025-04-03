@@ -1,0 +1,56 @@
+.loading {
+  margin: auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.input-full-width {
+  width: 100% !important;
+}
+
+.search {
+  margin-top: 1em;
+  padding: 1em 1em 0em 1em;
+  margin-bottom: 1em;
+  border-radius: 10px;
+}
+
+.people-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin-top: 1em;
+}
+
+.people-list-1 {
+  display: block;
+}
+
+.people-list-2 {
+  display: block;
+}
+
+/* .people-list > * {
+  flex: 1 1 240px;
+} */
+
+.people-card {
+  flex: 1 1 240px;
+}
+
+.profile-banner {
+  min-height: 240px;
+  /* margin-bottom: 30em;
+  position: fixed; */
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  margin-top: -2em;
+}
+
+.people-actions button {
+  margin-right: 0.4em;
+  margin-bottom: 0.4em;
+}

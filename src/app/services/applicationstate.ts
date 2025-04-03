@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Subject, map, shareReplay, Observable } from 'rxjs';
 import { AuthenticationService } from './authentication';
 import { Action } from './interfaces';
@@ -87,6 +87,8 @@ export class ApplicationState {
 
   connectedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.connected);
 
+  connectedSignal = signal(false);
+
   initializedChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   /** This will check if status has changed and trigger. If status is the same, the observable is not triggered. */
@@ -94,6 +96,7 @@ export class ApplicationState {
     if (this.connected != status) {
       this.connected = status;
       this.connectedChanged.next(status);
+      this.connectedSignal.set(status);
     }
   }
 

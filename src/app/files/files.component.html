@@ -1,0 +1,135 @@
+<div class="feed-page">
+  <!-- <p class="search">
+    <mat-form-field appearance="fill" class="input-full-width">
+      <mat-label>Search in People</mat-label>
+      <input matInput placeholder="name, display name, about or pubkey" type="search" (keyup.enter)="search()" [(ngModel)]="searchTerm" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </p> -->
+
+  <div class="options">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'People.Options' | translate }}</mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <!-- <p>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="showBlocked" (change)="optionsUpdated($event, 1)">Show blocked</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="showMuted" (change)="optionsUpdated($event, 2)">Show muted</mat-slide-toggle>
+          <mat-slide-toggle class="options-slider" [(ngModel)]="showCached" (change)="optionsUpdated($event, 3)">Show cached</mat-slide-toggle>
+        </p> -->
+
+        <mat-form-field class="options-field">
+          <mat-label>{{ 'People.Show' | translate }}</mat-label>
+          <mat-select (selectionChange)="showChanged()" [(value)]="optionsService.values.peopleDisplayType">
+            <mat-option [value]="1">{{ 'People.Following' | translate }}</mat-option>
+            <mat-option [value]="2">{{ 'People.Muted' | translate }}</mat-option>
+            <mat-option [value]="3">{{ 'People.Blocked' | translate }}</mat-option>
+            <mat-option [value]="0">{{ 'People.Cached' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="options-field">
+          <mat-label>{{ 'People.Sorting' | translate }}</mat-label>
+          <mat-select (selectionChange)="updateSorting()" [(value)]="optionsService.values.peopleDisplaySort">
+            <mat-option value="name-asc">{{ 'People.NameAZ' | translate }}</mat-option>
+            <mat-option value="name-desc">{{ 'People.NameZA' | translate }}</mat-option>
+            <mat-option value="followed-asc">{{ 'People.FollowedNewest' | translate }}</mat-option>
+            <mat-option value="followed-desc">{{ 'People.FollowedOldest' | translate }}</mat-option>
+            <mat-option value="created-asc">{{ 'People.UpdatedNewest' | translate }}</mat-option>
+            <mat-option value="created-desc">{{ 'People.UpdatedOldest' | translate }}</mat-option>
+            <mat-option value="interesting-asc">{{ 'People.MostInteresting' | translate }}</mat-option>
+            <mat-option value="interesting-desc">{{ 'People.LessInteresting' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="options-field">
+          <mat-label>{{ 'People.View' | translate }}</mat-label>
+          <mat-select (selectionChange)="showChanged()" [(value)]="optionsService.values.peopleDisplayView">
+            <mat-option [value]="6">{{ 'People.LargeIcons' | translate }}</mat-option>
+            <mat-option [value]="5">{{ 'People.MediumIcons' | translate }}</mat-option>
+            <mat-option [value]="4">{{ 'People.SmallIcons' | translate }} </mat-option>
+            <!-- <mat-option [value]="3">List</mat-option> -->
+            <mat-option [value]="2">{{ 'People.Details' | translate }} </mat-option>
+            <mat-option [value]="0">{{ 'People.Tiles' | translate }}</mat-option>
+            <mat-option [value]="1">{{ 'People.Content' | translate }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.peopleDisplayAbout">Display about</mat-slide-toggle>
+        <mat-slide-toggle class="options-slider" (change)="optionsService.save()" [(ngModel)]="optionsService.values.peopleDisplayDate">Display date</mat-slide-toggle> -->
+
+        <p class="people-actions">
+          <!-- <button mat-stroked-button (click)="importFollowList()">Import Following List</button> -->
+          <button mat-stroked-button (click)="dataService.publishContactsAndRelays()">{{ 'People.PublishFollowList' | translate }} </button>
+          <button mat-stroked-button (click)="downloadFollowing()">{{ 'People.SavePublicFollowing' | translate }} </button>
+          <!-- <button mat-stroked-button (click)="dataService.save()">Save People List (backup)</button> -->
+        </p>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+  <div class="people-list" [ngClass]="['people-list-' + optionsService.values.peopleDisplayView]">
+    <ng-template [ngIf]="!loading">
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 0 || optionsService.values.peopleDisplayView == null">
+        <mat-card class="people-card people clickable" (click)="navigation.openProfile($event, profile)" *ngFor="let profile of sortedItems; trackBy: trackByFn">
+          <!-- ; trackBy: trackByFn track by won't update when changing circle. -->
+          <div class="events-header">
+            <!-- <div [style.background-image]="utilities.getBannerBackgroundStyle(profile.banner)" class="profile-banner"></div> -->
+            <app-event-header [profile]="profile">
+              <small> <span class="clickable" *ngIf="profile.created">{{ 'People.Followed' | translate }} {{ profile.created | ago }}</span> <app-directory-icon [pubkey]="profile.pubkey"></app-directory-icon> </small>
+            </app-event-header>
+            <app-profile-actions [profile]="profile"></app-profile-actions>
+          </div>
+          <div class="content clickable">{{ profile.about }}</div>
+        </mat-card>
+      </ng-template>
+
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 1">
+        <app-event-header [listType]="'content'" [iconSize]="'small'" [displayName]="true" [displayContent]="true" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 2">
+        <app-event-header [listType]="'details'" [iconSize]="'small'" [displayName]="true" [displayContent]="true" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 3">
+        <app-event-header [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 4">
+        <app-event-header [listType]="'icon'" [iconSize]="'small'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 5">
+        <app-event-header [listType]="'icon'" [iconSize]="'medium'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+      <ng-template [ngIf]="optionsService.values.peopleDisplayView == 6">
+        <app-event-header [listType]="'icon'" [iconSize]="'large'" [displayName]="false" [displayContent]="false" *ngFor="let profile of sortedItems; trackBy: trackByFn" [profile]="profile"></app-event-header>
+      </ng-template>
+    </ng-template>
+
+    <ng-template [ngIf]="loading"><mat-spinner class="loading"></mat-spinner></ng-template>
+  </div>
+
+  <p class="centered">Count: {{sortedItems.length}}</p>
+
+  <!-- 
+  <div *ngIf="items$ | withLoading | async as items">
+    <ng-template [ngIf]="items.value">Value: {{ items.value }}</ng-template>
+    <ng-template [ngIf]="items.error">Error {{ items.error }}</ng-template>
+    <ng-template [ngIf]="items.loading">Loading...</ng-template>
+  </div> -->
+
+  <!-- <div *ngIf="items$ | async as profiles"> -->
+  <!-- <div class="centered" style="width: 100%">
+      <br />
+      <mat-spinner class="loading"></mat-spinner>
+    </div> -->
+
+  <!-- Count: {{ profiles.length }} -->
+  <!-- </div> -->
+
+  <!-- <p class="dimmed">People are those you are following. You can use circles to organize your people.</p> -->
+</div>

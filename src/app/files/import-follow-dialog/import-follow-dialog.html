@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Import complete following list</h1>
+<div mat-dialog-content class="mat-dialog-content">
+  <p>Choose if you want to import from your latest contacts event or from file (backup) on your device.</p>
+  <!-- <p>The existing value is your own public key, use this to import your own public following list.</p> -->
+
+  <p>
+    <button mat-stroked-button (click)="import()">Import my latest contacts</button>
+  </p>
+  <p>
+    Import from file:
+    <input type="file" accept=".json" (change)="onFileSelected($event)" />
+  </p>
+
+  <!-- <mat-form-field appearance="fill" class="input-full-width">
+      <mat-icon class="circle" matPrefix>person_add</mat-icon>
+      <mat-label>Public Key</mat-label>
+      <input matInput type="text" [(ngModel)]="data.pubkey" />
+    </mat-form-field> -->
+</div>
+
+<div mat-dialog-actions class="mat-dialog-actions" align="end">
+  <button mat-stroked-button (click)="onNoClick()">Cancel</button>
+  <!-- <button mat-flat-button [mat-dialog-close]="data" color="primary" cdkFocusInitial>Import</button> -->
+</div>

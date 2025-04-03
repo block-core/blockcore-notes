@@ -183,6 +183,10 @@
           <mat-icon>edit</mat-icon>
           <span>{{ 'App.EditProfile' | translate }}</span>
         </a>
+        <!-- <a class="nav-link" [routerLink]="['/files', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
+          <mat-icon>folder</mat-icon>
+          <span>{{ 'App.Files' | translate }}</span>
+        </a> -->
         <a class="nav-link" [routerLink]="['/badges', appState.getPublicKey()]" mat-menu-item (click)="toggleProfileMenu()" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">
           <mat-icon>badge</mat-icon>
           <span>{{ 'App.Badges' | translate }}</span>
