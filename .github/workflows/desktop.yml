@@ -3,10 +3,6 @@ name: Desktop Build and Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version number for the release'
-        required: true
-        default: '0.1.0'
       prerelease:
         description: 'Is this a pre-release?'
         type: boolean
@@ -30,6 +26,11 @@ jobs:
           node-version: 22
           cache: 'npm'
 
+      - name: Variables
+        run: |
+          echo VERSION=$(npm run version --silent) >> $GITHUB_ENV
+        shell: bash
+    
       - name: Install Rust (stable)
         uses: dtolnay/rust-toolchain@stable
 
@@ -47,15 +48,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v${{ github.event.inputs.version }}
-          releaseName: "Blockcore Notes v${{ github.event.inputs.version }}"
+          tagName: ${{ env.VERSION }}
+          releaseName: "Blockcore Notes v${{ env.VERSION }}"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: ${{ github.event.inputs.prerelease }}
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifacts-${{ matrix.platform }}
-          path: |
-            target/release/bundle/
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: artifacts-${{ matrix.platform }}
+      #     path: |
+      #       target/release/bundle/
