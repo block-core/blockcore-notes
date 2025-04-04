@@ -39,7 +39,7 @@ export class ConnectComponent {
   constructor(
     public spacesService: SpacesService,
     public theme: ThemeService,
-    private appState: ApplicationState,
+    public appState: ApplicationState,
     private cd: ChangeDetectorRef,
     private relayService: RelayService,
     private authService: AuthenticationService,

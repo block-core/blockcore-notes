@@ -30,7 +30,13 @@ export class ApplicationState {
     this.title$ = this.titleChanged.asObservable();
 
     this.initialized$ = this.initializedChanged.asObservable();
+
+    if ('__TAURI_INTERNALS__' in window) {
+      this.desktop.set(true);
+    }
   }
+
+  desktop = signal(false);
 
   getPublicKey(): string {
     return this.authService.authInfo$.getValue().publicKeyHex!;

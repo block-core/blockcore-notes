@@ -6,28 +6,35 @@
     <button (click)="theme.darkMode = !theme.darkMode" mat-icon-button class="theme-toggle">
       <mat-icon aria-label="Menu" class="material-icons">{{ theme.darkMode ? "dark_mode" : "light_mode" }}</mat-icon>
     </button>
+    @if (!appState.desktop()) {
     <div class="connect-button" *ngIf="searchingForExtension">
       <button class="start-button" mat-flat-button color="accent">
         <mat-spinner class="progress-spinner-negative" diameter="30"></mat-spinner>
       </button>
     </div>
     <div class="connect-button" *ngIf="showInstallLink">
-      <a class="start-button" (click)="connect()" mat-flat-button color="accent" href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj" target="_blank"
-        >Install <span class="hide-tiny">extension</span></a
-      >
+      <a class="start-button" (click)="connect()" mat-flat-button color="accent"
+        href="https://chrome.google.com/webstore/detail/blockcore-wallet/peigonhbenoefaeplkpalmafieegnapj"
+        target="_blank">Install <span class="hide-tiny">extension</span></a>
     </div>
+    }
     <div class="connect-button" *ngIf="extensionDiscovered">
-      <button class="start-button" *ngIf="consent" (click)="connect()" mat-flat-button color="accent">Connect <span class="hide-tiny">using extension</span></button>
-      <button class="start-button" *ngIf="!consent" (click)="giveConsent()" mat-flat-button color="accent">Give consent</button>
+      <button class="start-button" *ngIf="consent" (click)="connect()" mat-flat-button color="accent">Connect <span
+          class="hide-tiny">using extension</span></button>
+      <button class="start-button" *ngIf="!consent" (click)="giveConsent()" mat-flat-button color="accent">Give
+        consent</button>
     </div>
   </div>
   <div class="connect-content">
     <mat-card class="card first-card">
       <mat-card-content>
+
         <h1 class="centered">New ways to connect with humanity</h1>
         <p class="centered" *ngIf="consent">
-          <button class="start-button" color="accent" routerLink="/connect/create" mat-flat-button>Create new profile</button><br /><br />
-          <button class="start-button" color="accent" routerLink="/connect/login" mat-flat-button>Log in</button><br /><br />
+          <button class="start-button" color="accent" routerLink="/connect/create" mat-flat-button>Create new
+            profile</button><br /><br />
+          <button class="start-button" color="accent" routerLink="/connect/login" mat-flat-button>Log
+            in</button><br /><br />
         </p>
         <p class="centered" *ngIf="!consent">
           <button class="start-button" (click)="giveConsent()" mat-flat-button color="accent">Give consent</button>
@@ -82,10 +89,13 @@
       <mat-card-content>
         <h1>Freedom of expression</h1>
         <p>
-          Share your thoughts and interact with others in a fully transparent and open manner that is not restricted by any boundaries. Experience the world of <strong>Nostr</strong>. Nostr is a uncensorable protocol for communication with
+          Share your thoughts and interact with others in a fully transparent and open manner that is not restricted by
+          any boundaries. Experience the world of <strong>Nostr</strong>. Nostr is a uncensorable protocol for
+          communication with
           your friends and the world.
         </p>
-        <p class="notice"><strong>PROTOTYPE:</strong> This app is currently under development and should be considered prototype-quality.</p>
+        <p class="notice"><strong>PROTOTYPE:</strong> This app is currently under development and should be considered
+          prototype-quality.</p>
       </mat-card-content>
     </mat-card>
 
@@ -93,7 +103,9 @@
       <mat-card-content>
         <h1>Follow your favorite creators</h1>
         <p>
-          No matter if they are photographers, film makers, bloggers, journalists or anyone else who likes to share and engage in communities and chats, Blockcore Notes have you covered with dynamic content layouts and organization of
+          No matter if they are photographers, film makers, bloggers, journalists or anyone else who likes to share and
+          engage in communities and chats, Blockcore Notes have you covered with dynamic content layouts and
+          organization of
           people.
         </p>
       </mat-card-content>
@@ -102,7 +114,8 @@
     <mat-card class="card">
       <mat-card-content>
         <h1>Be humble and kind</h1>
-        <p>Being uncensorable and uncancellable means more responsibility is on you, you are in control and you are responsible.</p>
+        <p>Being uncensorable and uncancellable means more responsibility is on you, you are in control and you are
+          responsible.</p>
         <p>💛🖤</p>
         <p class="centered" *ngIf="consent">
           <br />

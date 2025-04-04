@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { base64 } from '@scure/base';
 import { Relay, Event, utils, getPublicKey, nip19 } from 'nostr-tools';
@@ -14,6 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from 'src/app/services/authentication';
 import { ThemeService } from 'src/app/services/theme';
 import { SecurityService } from 'src/app/services/security';
+import { ApplicationState } from 'src/app/services/applicationstate';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,7 @@ import { SecurityService } from 'src/app/services/security';
   imports: [MatIconModule, TranslateModule, MatCardModule, MatButtonModule, RouterModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule],
 })
 export class LoginComponent {
+  appState = inject(ApplicationState)
   privateKey: string = '';
   privateKeyHex: string = '';
 
