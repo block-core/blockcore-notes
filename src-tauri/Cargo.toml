@@ -1,5 +1,5 @@
 [package]
-name = "Blockcore Notes"
+name = "blockcore-notes"
 version = "2.0.0"
 description = "Blockcore Notes"
 authors = ["you"]
