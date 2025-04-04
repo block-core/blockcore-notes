@@ -1,4 +1,18 @@
 <mat-accordion multi>
+    <!-- @for(relay of relayService.relays) {
+
+    } -->
+
+    <!-- @for (item of items; track item.id; let idx = $index, e = $even) {
+        Item #{{ idx }}: {{ item.name }}
+    } -->
+
+    @for(relay of relayService.relays(); track relay.url) {
+        <app-relay2 [relay]="relay"></app-relay2>
+         <!-- {{ relay | json}} -->
+    }
+
+
     @for (relay of relays; track trackByFn($index, relay)) {
         <app-relay [relay]="relay"></app-relay>
     }

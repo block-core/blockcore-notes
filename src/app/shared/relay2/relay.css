@@ -1,0 +1,94 @@
+.mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mat-expansion-panel {
+  margin-bottom: 0.4em;
+}
+
+.relay-status--1 {
+  color: rgb(49, 49, 210);
+}
+
+.relay-status-0 {
+  color: gray;
+}
+
+.relay-status-1 {
+  color: rgb(34, 179, 34);
+}
+
+.relay-status-2 {
+  color: orange;
+}
+
+.relay-status-3 {
+  color: red;
+}
+
+.relay-status-4 {
+  color: rgb(49, 49, 210);
+}
+
+.relay-status-icon {
+  margin-left: 0.2em;
+}
+
+/* .relay-type-0 {
+  color: rgb(234, 136, 9) !important;
+}
+
+.relay-type-1 {
+}
+
+.relay-type-2 {
+  color: rgb(49, 49, 210) !important;
+} */
+
+.primary-relay {
+  color: rgb(198, 3, 181);
+}
+
+.relay-options {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.settings-action-buttons {
+  padding-top: 0.8em;
+  padding-bottom: 1em;
+}
+
+.settings-action-buttons button {
+  margin-bottom: 1em;
+  margin-right: 1em;
+}
+
+/* When changing the sidenav-content to flex, the toolbar does not render properly, so a minor hack is needed. */
+@media only screen and (max-width: 599px) {
+  .settings-action-buttons button {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .mat-expansion-panel-header-title {
+    flex-grow: 3 !important;
+  }
+
+  .mat-expansion-panel-header-description {
+    flex-grow: 1 !important;
+  }
+}
+
+.relay-button {
+  margin-top: 0.8em;
+}
+.options-slider {
+  margin-left: 1em;
+}
+
+.relay-favicon {
+  margin-right: 1em;
+}

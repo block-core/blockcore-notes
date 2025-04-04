@@ -70,6 +70,7 @@ import { MediaPlayerComponent } from './shared/media-player/media-player';
 import { NgxLoadingButtonsModule } from 'ngx-loading-buttons';
 import { LoggerService } from './services/logger';
 import { MobileMenuComponent } from './shared/mobile-menu/mobile-menu';
+import { Relay2Service } from './services/relay2';
 
 @Component({
   selector: 'app-root',
@@ -134,6 +135,7 @@ export class AppComponent {
   visibilityHandler: any;
   searchControl: FormControl = new FormControl();
   logger = inject(LoggerService);
+  relay2Service = inject(Relay2Service);
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -315,6 +317,8 @@ export class AppComponent {
 
     await this.profileService.initialize(this.appState.getPublicKey());
     // await this.relayStorage.initialize();
+
+    await this.relay2Service.initialize();
 
     await this.relayService.initialize();
 

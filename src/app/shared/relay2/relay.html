@@ -1,0 +1,103 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">
+      <img class="relay-favicon" onerror="this.src='/assets/blank.png'" [src]="relayFavIcon(relay.url)" width="32" height="32" />
+      <span *ngIf="relay.metadata">{{ relay.metadata.name }}</span>
+      <span *ngIf="!relay.metadata">{{ relay.url.substring(6) }}</span>
+    </mat-panel-title>
+    <mat-panel-description>
+      <span class="hide-small" [ngClass]="{ 'primary-relay': optionsService.values.primaryRelay == relay.url }">{{ relay.url }}</span>
+      <div>
+        <mat-icon class="relay-status-icon hide-small" *ngIf="relay.data!.type === 1">edit_note</mat-icon>
+        <mat-icon class="relay-status-icon hide-small" *ngIf="relay.data!.type === 2">edit_off</mat-icon>
+        <mat-icon class="relay-status-icon hide-small" *ngIf="relay.data!.type === 3">edit</mat-icon>
+        <!-- <mat-icon class="online" *ngIf="relay.public === true" [ngClass]="['relay-status-' + relay.status, 'relay-type-' + relay.type]">cloud</mat-icon> -->
+
+        <mat-icon class="relay-status-icon" *ngIf="!relay.data!.enabled">cloud_off</mat-icon>
+        <mat-icon class="relay-status-icon" *ngIf="relay.data!.enabled && relay.data!.status == 1" [ngClass]="['relay-status-' + relay.data!.status]">cloud_done</mat-icon>
+        <mat-icon class="relay-status-icon" *ngIf="relay.data!.enabled && relay.data!.status !== 1" [ngClass]="['relay-status-' + relay.data!.status]">cloud</mat-icon>
+
+        <mat-icon class="relay-status-icon hide-small" *ngIf="relay.data!.public === true">public</mat-icon>
+        <mat-icon class="relay-status-icon hide-small" *ngIf="relay.data!.public === false">public_off</mat-icon>
+
+        <!-- <mat-icon class="online" [ngClass]="['relay-status-' + relay.status, 'relay-type-' + relay.type]">cloud_off</mat-icon> -->
+      </div>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div *ngIf="relay.data!.error" class="error">{{ relay.data!.error }}</div>
+  <div *ngIf="relay.metadata">
+    <h2 *ngIf="relay.metadata.name">{{ relay.metadata.name }}</h2>
+    {{ relay.metadata.description }}<br /><br />
+    <span class="dimmed">
+      <span *ngIf="relay.metadata.pubkey"><a [routerLink]="['/p', relay.metadata.pubkey]">{{ 'Relay.Administrator' | translate }}</a><br /></span>
+      <span *ngIf="relay.metadata.contact">{{ 'Relay.Contact' | translate }}: {{ relay.metadata.contact }}<br /></span>
+      NIPs: {{ relay.metadata.supported_nips }}<br />
+      {{'Relay.Software' | translate}}: {{ relay.metadata.software }} ({{ relay.metadata.version }})<br />
+      <span class="wrap"> ID: {{ relay.metadata.pubkey }}</span></span
+    >
+  </div>
+  <br />
+  <div class="dimmed" *ngIf="relay.relay.connectionTimeout"> {{ 'Relay.Timeouts' | translate }} {{ relay.relay.connectionTimeout }}</div>
+  <div class="dimmed" *ngIf="relay.data!.eventcount"> {{ 'Relay.Events'| translate }}: {{ relay.data!.eventcount }}</div>
+  <div class="dimmed">Status: {{ relay.data!.status }}</div>
+  <!-- <div>Subscriptions Count : {{ relay.subscriptions.length }}</div> -->
+  <mat-card class="relay-options mat-elevation-z8">
+    <mat-card-header>
+      <mat-card-title>{{ 'Relay.RelayOptions' | translate }} </mat-card-title>
+      <!-- <mat-card-subtitle>Control if this relay is used for reading, writing and if it should be part of your public relay list. Additionally you can keep the relay in your list but disable it to not use.</mat-card-subtitle> -->
+    </mat-card-header>
+    <mat-card-content>
+      <mat-selection-list (selectionChange)="onRelayTypeChange($event)" [multiple]="false">
+        <mat-list-option *ngFor="let item of typesOfRelays" [selected]="relay.data!.type == item.type" [value]="item.type">
+          <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+          <span matListItemTitle>{{item.title}}</span>
+          <span matListItemLine>{{item.description}}</span>
+        </mat-list-option>
+      </mat-selection-list>
+
+      <!-- <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.enabled">Enabled</mat-slide-toggle>
+      <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.profile">Write Profile/Following</mat-slide-toggle>
+      <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.write">Write</mat-slide-toggle>
+      <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.read">Read</mat-slide-toggle>
+      <mat-slide-toggle class="options-slider" (change)="onRelayChanged(relay)" [(ngModel)]="relay.public">Public</mat-slide-toggle> -->
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="relay-options mat-elevation-z8">
+    <mat-card-header>
+      <mat-card-title>{{ 'Relay.RelayStatus' | translate }} </mat-card-title>
+      <mat-card-subtitle> {{'Relay.RelayStatus.Subtitle' | translate}} </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-selection-list (selectionChange)="onRelayStatusChange($event)" [multiple]="false">
+        <mat-list-option *ngFor="let item of typesOfStatus" [selected]="relay.data!.enabled == item.type" [value]="item.type">
+          <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+          <span matListItemTitle>{{item.title}}</span>
+          <span matListItemLine>{{item.description}}</span>
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="relay-options mat-elevation-z8">
+    <mat-card-header>
+      <mat-card-title>{{ 'Relay.RelayPrivacy' | translate }} </mat-card-title>
+      <!-- <mat-card-subtitle>Control if this relay is used for reading, writing and if it should be part of your public relay list. Additionally you can keep the relay in your list but disable it to not use.</mat-card-subtitle> -->
+    </mat-card-header>
+    <mat-card-content>
+      <mat-selection-list (selectionChange)="onRelayPublicChange($event)" [multiple]="false">
+        <mat-list-option *ngFor="let item of typesOfPrivacy" [selected]="relay.data!.public == item.type" [value]="item.type">
+          <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+          <span matListItemTitle>{{item.title}}</span>
+          <span matListItemLine>{{item.description}}</span>
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-card-content>
+  </mat-card>
+
+  <button class="relay-button" [disabled]="!relay.data!.public || optionsService.values.primaryRelay == relay.url" mat-raised-button color="primary" (click)="primaryRelay(relay)">{{'Relay.PrimaryRelay' | translate }} </button>&nbsp;
+  <button class="relay-button" mat-raised-button color="warn" (click)="deleteRelay(relay)">{{'Relay.Delete' | translate}} </button>
+  <!-- <button (click)="deleteRelay(relay)" mat-icon-button matTooltip="Remove from queue" color="grey">
+    <mat-icon>delete</mat-icon>
+  </button> -->
+</mat-expansion-panel>

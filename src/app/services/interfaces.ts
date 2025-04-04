@@ -1,5 +1,6 @@
 import { Event, Filter, Relay } from 'nostr-tools';
-import { Subscription } from 'nostr-tools/abstract-relay';
+import { AbstractRelay, Subscription } from 'nostr-tools/abstract-relay';
+import { RelayInformation } from 'nostr-tools/nip11';
 
 export interface Circle {
   id?: number;
@@ -92,6 +93,20 @@ export interface StateDocument {
   modified?: number;
   mediaQueue: MediaItem [];
   metrics: { users: any }
+}
+
+
+export interface RelayEntry {
+  url: string;
+
+  /** Always retrieved latest from the relay upon startup. */
+  metadata: RelayInformation;
+
+  /** Information about the relay stored in database. */
+  data?: NostrRelayDocument;
+
+  /** Instance of the relay from the pool. */
+  relay: AbstractRelay;
 }
 
 export interface NostrRelayDocument {
