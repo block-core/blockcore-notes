@@ -1,0 +1,21 @@
+<mat-label>Choose a timeout</mat-label>
+
+<mat-form-field>
+    <mat-label>Date</mat-label>
+    <input matInput [matDatepicker]="datepicker" [formControl]="dateControl" />
+    <mat-datepicker-toggle
+    matIconSuffix
+    [for]="datepicker"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #datepicker></mat-datepicker>
+</mat-form-field>
+
+<mat-form-field>
+    <mat-label>Time</mat-label>
+    <input matInput [matTimepicker]="timepicker" [formControl]="timeControl" />
+    <mat-timepicker-toggle
+    matIconSuffix
+    [for]="timepicker"
+    ></mat-timepicker-toggle>
+    <mat-timepicker #timepicker></mat-timepicker>
+</mat-form-field>

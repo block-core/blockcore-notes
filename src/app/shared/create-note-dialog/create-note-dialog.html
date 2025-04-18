@@ -11,16 +11,9 @@
         <mat-label>Note</mat-label>
         <textarea class="note-input" matInput type="text" [(ngModel)]="data.note" formControlName="note" rows="6"></textarea>
       </mat-form-field>
-
-      <!-- <mat-form-field>
-        <input matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a timeout" [formControl]="dateControl" [min]="minDate" />
-        <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
-          <ng-template>
-            <span>Set timeout</span>
-          </ng-template>
-        </ngx-mat-datetime-picker>
-      </mat-form-field> -->
+      <div class="footer">
+        <app-date-time></app-date-time>
+      </div>
     </div>
     <div mat-dialog-actions class="mat-dialog-actions" align="end">
       <mat-icon (click)="toggleSize()" class="hide-small maximize-button" matTooltip="Maximize the window">zoom_out_map</mat-icon>

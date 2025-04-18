@@ -23,6 +23,7 @@ import { ContentEditorDirective } from '../../shared/content-input-directive/con
 import { MentionModule } from 'angular-mentions';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { DateTimeComponent } from "../../shared/date-time/date-time.component";
 
 export interface NoteDialogData {
   note: string;
@@ -34,7 +35,9 @@ export interface NoteDialogData {
   imports: [
     MentionModule,
     MatButtonModule,
-    CommonModule, MatSnackBarModule, PickerModule, EventComponent, ContentEditorDirective, ReactiveFormsModule, FormsModule, MatButtonToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule],
+    CommonModule, MatSnackBarModule, PickerModule, EventComponent, ContentEditorDirective, ReactiveFormsModule, FormsModule, MatButtonToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule,
+    DateTimeComponent
+],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
 })
@@ -207,6 +210,7 @@ export class EditorComponent {
   items: string[] = ['Noah', 'Liam', 'Mason', 'Jacob'];
 
   public addEmojiArticle(event: { emoji: { native: any } }) {
+    console.log('Article');
     let startPos = (<any>this.articleContent).nativeElement.selectionStart;
     let value = this.articleForm.controls.content.value;
 

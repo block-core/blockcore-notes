@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { DateTimeComponent } from "../date-time/date-time.component";
 
 export interface NoteDialogData {
   note: string;
@@ -15,9 +16,9 @@ export interface NoteDialogData {
   selector: 'create-note-dialog',
   templateUrl: 'create-note-dialog.html',
   styleUrls: ['create-note-dialog.scss'],
-  imports: [FormsModule, 
+  imports: [FormsModule,
     MatDialogModule,
-    CommonModule, ReactiveFormsModule, MatIconModule, MatFormFieldModule, MatInputModule, PickerModule],
+    CommonModule, ReactiveFormsModule, MatIconModule, MatFormFieldModule, MatInputModule, PickerModule, DateTimeComponent],
 })
 export class NoteDialog {
   @ViewChild('picker') picker: unknown;

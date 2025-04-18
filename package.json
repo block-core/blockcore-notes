@@ -15,7 +15,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-material-components/datetime-picker": "^16.0.1",
     "@angular/animations": "19.2.4",
     "@angular/cdk": "19.2.7",
     "@angular/common": "19.2.4",
