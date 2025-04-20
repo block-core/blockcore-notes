@@ -1,6 +1,7 @@
 {
   "en": "English",
   "no": "Norsk",
+  "de": "German",
   "fr": "French",
   "el": "Greek",
   "fa": "Persian",
@@ -226,5 +227,11 @@
     "RelayPrivacy": "Relay Privacy",
     "PrimaryRelay": "Primary Relay",
     "Delete": "Delete"
+  },
+  "DateTimeComponent": {
+    "Label.Article": "Choose publish date and time",
+    "Label.Note": "Choose timeout",
+    "DateLabel": "Date",
+    "TimeLabel": "Time"
   }
 }

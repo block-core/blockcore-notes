@@ -46,3 +46,8 @@ h1 {
   min-height: 88px;
   padding: 1em;
 }
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+}

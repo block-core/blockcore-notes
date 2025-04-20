@@ -1,0 +1,19 @@
+<mat-label>{{ CustomLabel }}</mat-label>
+
+<form [formGroup]="dateTimeForm">
+  <mat-form-field>
+    <mat-label>{{ CustomDateLabel }}</mat-label>
+    <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="datepicker" formControlName="dateControl" />
+    <mat-hint>{{ CustomDateHint }}</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+    <mat-datepicker #datepicker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>{{ CustomTimeLabel }}</mat-label>
+    <input matInput [matTimepicker]="timepicker" formControlName="timeControl" />
+    <mat-hint>{{ CustomHoursHint }}</mat-hint>
+    <mat-timepicker-toggle matIconSuffix [for]="timepicker"></mat-timepicker-toggle>
+    <mat-timepicker #timepicker></mat-timepicker>
+  </mat-form-field>
+</form>

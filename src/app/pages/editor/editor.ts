@@ -1,12 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormsModule, UntypedFormGroup, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormsModule, Validators } from '@angular/forms';
 import { NavigationService } from '../../services/navigation';
 import { Location, CommonModule } from '@angular/common';
 import { ApplicationState } from '../../services/applicationstate';
 import { BlogEvent, NostrEvent } from '../../services/interfaces';
-import { Event, kinds } from 'nostr-tools';
+import { kinds } from 'nostr-tools';
 import { Subscription } from 'rxjs';
 import { now, Utilities } from '../../services/utilities';
+import { TranslateModule } from '@ngx-translate/core';
 import { QueueService } from '../../services/queue.service';
 import { ArticleService } from '../../services/article';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -23,6 +24,7 @@ import { ContentEditorDirective } from '../../shared/content-input-directive/con
 import { MentionModule } from 'angular-mentions';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { DateTimeComponent } from "../../shared/date-time/date-time.component";
 
 export interface NoteDialogData {
   note: string;
@@ -32,23 +34,39 @@ export interface NoteDialogData {
   selector: 'app-editor',
   standalone: true,
   imports: [
+    TranslateModule,
     MentionModule,
     MatButtonModule,
-    CommonModule, MatSnackBarModule, PickerModule, EventComponent, ContentEditorDirective, ReactiveFormsModule, FormsModule, MatButtonToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule],
+    CommonModule, MatSnackBarModule, PickerModule, EventComponent, ContentEditorDirective, ReactiveFormsModule, FormsModule, MatButtonToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule,
+    DateTimeComponent
+],
   templateUrl: 'editor.html',
   styleUrls: ['editor.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorComponent {
-  @ViewChild('picker') picker: unknown;
   @ViewChild('noteContent') noteContent?: FormControl;
   @ViewChild('articleContent') articleContent?: FormControl;
 
-  isEmojiPickerVisible: boolean | undefined;
+  eventType = new FormControl('text');
+
+  isEmojiPickerVisible: boolean = false;
+  isArticleEmojiPickerVisible: boolean = false;
+
+  ArticleDateTimeValue: Date = new Date();
+  NoteDateTimeValue: Date = new Date();
+
+  minNoteDateValue: Date = new Date();
+  minArticleDateValue: Date = new Date();
+
+  ArticleLabel: string = 'DateTimeComponent.Label.Article';
+  NoteLabel: string = 'DateTimeComponent.Label.Note';
+  DateLabel: string = 'DateTimeComponent.DateLabel';
+  TimeLabel: string = 'DateTimeComponent.TimeLabel';
 
   noteForm = this.fb.group({
     content: ['', Validators.required],
     expiration: [''],
-    dateControl: [],
   });
 
   articleForm = this.fb.group({
@@ -71,13 +89,9 @@ export class EditorComponent {
 
   minDate?: number;
 
-  eventType: string = 'text';
-
-  public dateControl = new FormControl(null);
+  followingUsers : string [] = this.profileService.following.map(follower => follower.name);
 
   subscriptions: Subscription[] = [];
-
-  followingUsers : string [] = this.profileService.following.map(follower => follower.name);
 
   constructor(
     private snackBar: MatSnackBar,
@@ -89,7 +103,8 @@ export class EditorComponent {
     private fb: FormBuilder,
     public navigation: NavigationService,
     public profileService: ProfileService,
-    private eventService: EventService
+    private eventService: EventService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -113,6 +128,16 @@ export class EditorComponent {
         this.updateEvent(text);
       })
     );
+  }
+
+  handleNoteDateTimeChange(dateTime: Date | null): void {
+    this.noteForm.patchValue({ expiration: dateTime?.toDateString() });
+    this.cdr.detectChanges();
+  }
+
+  handleArticleDateTimeChange(dateTime: Date | null): void {
+    this.articleForm.patchValue({ published_at: dateTime?.toDateString() });
+    this.cdr.detectChanges();
   }
 
   updateEvent(content: string | null) {
@@ -177,7 +202,7 @@ export class EditorComponent {
 
   noteTypeChanged() {
     // Load all articles for the user when toggling.
-    if (this.eventType == 'article') {
+    if (this.eventType.value == 'article') {
       this.queueService.enque(this.appState.getPublicKey(), 'Article');
     }
   }
