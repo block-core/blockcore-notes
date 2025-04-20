@@ -1,6 +1,7 @@
 {
   "en": "English",
   "no": "Norsk",
+  "de": "German",
   "fr": "French",
   "el": "Greek",
   "fa": "Persian",
@@ -225,5 +226,11 @@
     "RelayPrivacy": "Relay personvern",
     "PrimaryRelay": "Primær relay",
     "Delete": "Slett"
+  },
+  "DateTimeComponent": {
+    "Label.Article": "Velg publiseringsdato og -tidspunkt",
+    "Label.Note": "Velg tidsavbrudd",
+    "DateLabel": "Dato",
+    "TimeLabel": "Tid"
   }
 }
